@@ -1,21 +1,16 @@
-import React, {useState} from 'react';
-import Form from './components/Form';
-import SplashText from './components/SplashText';
-import Map from './components/Map';
-import JobButton from './components/JobButton'
+import { useState } from 'react';
 import { Workflow, Job } from './helpers/Workflow'
 import { Position } from './helpers/Position';
-import { InputType } from './helpers/InputType';
 import { AddNode } from './helpers/AddNode'
 import SplitPane from 'react-split-pane';
-import './components/Split.css';
-
+import DefinitionsPane from './components/panes/DefinitionsPane'
+import WorkflowsTabbed from './components/panes/WorkflowsTabbed';
 let id = 1;
 let key = 1;
 const getKey = () => key++
 const getId = () => `node_${id++}`
 
-const App: React.FC = () => {
+const App = () => {
 
   const [selector, setSelector] = useState(false);
   const [job, setJob] = useState('');
@@ -23,11 +18,11 @@ const App: React.FC = () => {
   const [executor, setExecutor] = useState('');
 
   const pushJob = (job: string) => {
-  
+
     const newNode: AddNode = {
       id: getId(),
       key: getKey(),
-      type: InputType(elements),
+      type: 'job',
       sourcePosition: 'right',
       targetPosition: 'left',
       className: 'dndnode',
@@ -51,19 +46,21 @@ const App: React.FC = () => {
   }
 
   return (
-    <SplitPane split="vertical" defaultSize="40%">
-      <div style={{width: '100%', height: '100%'}} className="bg-gray-900 px-32">
-        {selector ? 
-              (<Form addJob={addJob} />) 
-              : 
-              (<SplashText />)
-        }
-      </div>
-      <SplitPane split="horizontal" defaultSize={400}>
-        <JobButton enableJobForm={enableJobForm}/>
-          <Map items={elements}/>
-      </SplitPane>
-    </SplitPane>
+    <div>
+      <SplitPane split="vertical" defaultSize="75%" className="bg-circle-gray-700 z-10" resizerClassName="z-0 w-0.5 h-full transition duration-500  hover:bg-circle-blue-light cursor-ew-resize">
+        <SplitPane split="horizontal" defaultSize="70%" minSize="20%"
+          resizerClassName="h-0.5 cursor-ns-resize transition duration-500 hover:bg-circle-blue-light">
+
+          <WorkflowsTabbed workflows={[{ jobs: [], name: "build-and-test" }]} />
+
+          <div className='bg-circle-gray-900 w-full h-full border-r-2 border-circle-green-light'>
+
+          </div>
+        </SplitPane>
+
+        <DefinitionsPane />
+      </SplitPane >
+    </div>
   );
 }
 

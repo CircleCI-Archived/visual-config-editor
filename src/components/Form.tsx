@@ -13,22 +13,22 @@ const Form: React.FC<FormProps> = props => {
         event.preventDefault();
         props.addJob(name, executor)
         setName("");
-    } 
+    }
 
     return (
-            <div>
-                <form className='pt-20 text-green-300 font-mono' onSubmit={handleSubmit}>
+        <div>
+            <form className='pt-20 text-green-300 font-mono' onSubmit={handleSubmit}>
                 <div>
-                    <label className= "mt-4 font-bold">Job Name</label>
-                    <input className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                    type="text"
- 
-                    value={name}
-                    onChange={e => setName(e.target.value)}></input>
+                    <label className="mt-4 font-bold">Job Name</label>
+                    <input className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+
+                        value={name}
+                        onChange={e => setName(e.target.value)}></input>
                 </div>
 
                 <div>
-                    <label className= "mt-4 font-bold">Executor</label>
+                    <label className="mt-4 font-bold">Executor</label>
                     <select name="Executor" onChange={e => setExecutor(e.target.value)} value={executor} className="mt-4 bg-green-600 shadow text-white ml-4 font-bold py-1 px-1 rounded">
                         {/* <option value="" className="">- select</option> */}
                         <option value="docker" className="">docker</option>
@@ -36,8 +36,8 @@ const Form: React.FC<FormProps> = props => {
                         <option value="macos" className="">macos</option>
                         <option value="windows" className="">windows</option>
                     </select>
-                </div>   
-                
+                </div>
+
                 {/* <div>
                     <label className="mt-4 font-bold">Resource Class: </label>
                     <select name="resource_class" className="mt-4 bg-green-600 shadow text-white ml-4 font-bold py-1 px-1 rounded">
