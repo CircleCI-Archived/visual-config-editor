@@ -9,7 +9,7 @@ export interface DefintionsProps {
     items: Array<string>;
 }
 
-const Defintions = (props: DefintionsProps) => {
+const DefintionsSearch = (props: DefintionsProps) => {
     return (
         <div className="mb-6">
             <Collapsible triggerClassName="text-gray-100 text-2xl hover:bg-circle-gray-600 p-2 block bg-circle-gray-800 duration:50 transition-all w-full rounded-lg"
@@ -41,4 +41,4 @@ const Defintions = (props: DefintionsProps) => {
     );
 };
 
-export default Defintions;
+export default DefintionsSearch;
