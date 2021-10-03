@@ -6,7 +6,8 @@ export interface DefintionsProps {
     defintionTitle: string;
     icon?: ReactElement<any> | undefined
     addNewPlaceholder: string;
-    items: Array<string>;
+    items: Array<any> | undefined;
+    onAdd: Function
 }
 
 const Defintions = (props: DefintionsProps) => {
@@ -24,15 +25,15 @@ const Defintions = (props: DefintionsProps) => {
             >
                 <div className="w-full p-2 bg-circle-gray-200">
                     {
-                        props.items.map((item) =>
+                        props.items?.map((item) =>
                             <div className="w-full">
-                                {item}
+                                {item.toString()}
                             </div>)
                     }
                 </div>
                 <div className="w-full flex-inline h-15 p-2 rounded-b-lg bg-circle-gray-200">
                     <input type="text" placeholder={props.addNewPlaceholder} className="rounded-l pl-3 pt-0.5 pb-0.5 bg-gray-300 w-4/5" />
-                    <button className="w-1/5 rounded-r float-right text-white text-xl transition-colors hover:bg-circle-blue-light  bg-circle-blue">
+                    <button onClick={() => props.onAdd()} className="w-1/5 rounded-r float-right text-white text-xl transition-colors hover:bg-circle-blue-light  bg-circle-blue">
                         +
                     </button>
                 </div>
