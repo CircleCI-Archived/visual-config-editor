@@ -7,7 +7,7 @@ import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config
 import { Action, action } from 'easy-peasy';
 import { Elements } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { JobNodeProps as JobModel } from '../components/nodes/JobNode'
+import { JobNodeProps as JobModel } from '../components/containers/job/JobNode'
 
 export interface WorkflowModel {
     name: string
@@ -15,12 +15,15 @@ export interface WorkflowModel {
     jobNodes: Elements<JobModel>
 }
 
-export interface StoreModel {
-    config: Config;
-    definitions: CircleCIConfigObject;
+export interface DefinitionModel extends CircleCIConfigObject {
     orbs: ConfigOrbImport[];
     parameters: PipelineParameter<ParameterTypes>[];
-    workflows: WorkflowModel[]
+}
+
+export interface StoreModel {
+    config: Config;
+    definitions: DefinitionModel;
+    workflows: WorkflowModel[]; 
 }
 
 export interface StoreActions {
@@ -104,10 +107,10 @@ const Store: StoreModel & StoreActions = {
         executors: [],
         jobs: [],
         workflows: [],
+        orbs: [],
+        parameters: []
     },
     workflows: [],
-    orbs: [],
-    parameters: [],
     ...Actions
 }
 

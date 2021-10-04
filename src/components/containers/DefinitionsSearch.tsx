@@ -7,6 +7,7 @@ export interface DefintionsProps {
     icon?: ReactElement<any> | undefined
     addNewPlaceholder: string;
     items: Array<string>;
+    emptyText?: string;
 }
 
 const DefintionsSearch = (props: DefintionsProps) => {

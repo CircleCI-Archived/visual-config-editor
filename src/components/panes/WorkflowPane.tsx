@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactFlow, { Background, BackgroundVariant, Elements } from 'react-flow-renderer';
-import JobNode, { JobNodeProps } from '../nodes/JobNode';
+import JobNode, { JobNodeProps } from '../containers/job/JobNode';
 
 interface ElementProps {
   items: Elements<JobNodeProps>;
