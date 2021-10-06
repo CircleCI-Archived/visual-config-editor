@@ -4,7 +4,7 @@ const InspectorPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
   // const inspect = useStoreActions((actions) => actions.inspect)
 
-  if (inspecting && inspecting.dataType) {
+  if (inspecting && inspecting.dataType && inspecting.mode == 'editing') {
     const Inspector = inspecting.dataType.components.inspector;
 
     return <div className="p-5">
