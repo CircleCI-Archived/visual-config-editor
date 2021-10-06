@@ -1,69 +1,41 @@
-import React, {useState} from 'react';
-import Form from './components/Form';
-import SplashText from './components/SplashText';
-import Map from './components/Map';
-import JobButton from './components/JobButton'
-import { Workflow, Job } from './helpers/Workflow'
-import { Position } from './helpers/Position';
-import { InputType } from './helpers/InputType';
-import { AddNode } from './helpers/AddNode'
 import SplitPane from 'react-split-pane';
-import './components/Split.css';
+import DefinitionsPane from './components/panes/DefinitionsPane'
+import WorkflowsTabbed from './components/panes/WorkflowsTabbed';
+import { createStore, StoreProvider } from 'easy-peasy';
+import Store from './state/Store';
+import CreateNew from './components/containers/CreateNew';
+import { useStoreActions, useStoreState } from './state/Hooks';
+import InspectorPane from './components/panes/InspectorPane';
 
-let id = 1;
-let key = 1;
-const getKey = () => key++
-const getId = () => `node_${id++}`
-
-const App: React.FC = () => {
-
-  const [selector, setSelector] = useState(false);
-  const [job, setJob] = useState('');
-  const [elements, setElements] = useState<any>([]);
-  const [executor, setExecutor] = useState('');
-
-  const pushJob = (job: string) => {
-  
-    const newNode: AddNode = {
-      id: getId(),
-      key: getKey(),
-      type: InputType(elements),
-      sourcePosition: 'right',
-      targetPosition: 'left',
-      className: 'dndnode',
-      position: Position(elements),
-      data: { label: `${job}` },
-    };
-
-    setElements((es: {}[]) => es.concat(newNode));
-  }
-
-  const enableJobForm = () => {
-    setSelector(true);
-    Workflow();
-  }
-
-  const addJob = (name: string, executor: string) => {
-    setJob(name);
-    setExecutor(executor);
-    pushJob(name);
-    Job(job, executor)
-  }
-
+const App = () => {
   return (
-    <SplitPane split="vertical" defaultSize="40%">
-      <div style={{width: '100%', height: '100%'}} className="bg-gray-900 px-32">
-        {selector ? 
-              (<Form addJob={addJob} />) 
-              : 
-              (<SplashText />)
-        }
-      </div>
-      <SplitPane split="horizontal" defaultSize={400}>
-        <JobButton enableJobForm={enableJobForm}/>
-          <Map items={elements}/>
-      </SplitPane>
-    </SplitPane>
+    <StoreProvider store={createStore(Store)} >
+
+      <CreateNew />
+      <SplitPane split="vertical" defaultSize="75%" className="bounds bg-circle-gray-700" resizerClassName="z-0 w-0.5 h-full transition duration-500  hover:bg-circle-blue-light cursor-ew-resize">
+        <SplitPane split="horizontal" defaultSize="70%" minSize="20%"
+          resizerClassName="h-0.5  flex-col cursor-ns-resize transition duration-500 hover:bg-circle-blue-light">
+
+          <WorkflowsTabbed />
+
+          <div className='bg-circle-gray-900 w-full h-full border-r-2 border-circle-green-light'>
+            <div className="inline-flex border-b text-xl  pt-4 pb-0 border-circle-gray-800 w-full font-bold">
+              <div className="border-b-4 pl-4 pr-4 pb-2 w-max text-white border-circle-green">
+                INSPECTOR
+              </div>
+              <div className="pl-4 pr-4 pb-2 w-max text-circle-gray-500 hover:text-white transition-colors cursor-pointer">
+                CODE EDITOR
+              </div>
+            </div>
+
+            <InspectorPane />
+
+          </div>
+        </SplitPane>
+
+        <DefinitionsPane />
+      </SplitPane >
+    </StoreProvider>
   );
 }
 
