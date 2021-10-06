@@ -7,7 +7,7 @@ const WorkflowsTabbed = () => {
     const workflows = useStoreState((state) => state.workflows);
     const addWorkflow = useStoreActions((actions) => actions.addWorkflow);
 
-    return (<Tabs className="w-full h-full bg-white" >
+    return (<Tabs className="w-full h-full flex flex-col bg-white" >
         <TabList className="inline-flex pl-2 pt-2">
             {workflows?.map((workflow) =>
                 <Tab key={workflow.id} className="bg-circle-gray-200 w-max rounded-t-lg p-2 mr-2 cursor-pointer">
@@ -27,9 +27,8 @@ const WorkflowsTabbed = () => {
             </button>
         </TabList>
 
-
         {workflows?.map((workflow) =>
-            <TabPanel key={workflow.id} selectedClassName="h-full mr-4">
+            <TabPanel key={workflow.id} selectedClassName="flex-grow mr-4">
                 <WorkflowPane workflow={workflow} bgClassName="bg-circle-gray-800" className="ml-2 border-2 border-b-0 border-circle-gray-400" />
             </TabPanel>
         )}

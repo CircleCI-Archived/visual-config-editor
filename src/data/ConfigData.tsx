@@ -1,6 +1,6 @@
 import { Command, Job, Executor, Pipeline } from "@circleci/circleci-config-sdk";
 import { Action, State, StateMapper } from "easy-peasy";
-import { Elements } from "react-flow-renderer";
+import { Elements, FlowElement } from "react-flow-renderer";
 import { ReactElement } from "react-redux/node_modules/@types/react";
 import Store, { StoreModel } from "../state/Store";
 import ExecutorData from "./ExecutorData";
@@ -32,7 +32,6 @@ const componentToType = (data: any): ConfigData | undefined => {
         return;
       }
     });
-
   })
 
   return foundType;
@@ -58,7 +57,7 @@ export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any>
   node?: {
     dragTarget?: string,
     store: {
-      get: (state: State<storeType>, workflowName: string) => Elements<ConfigNodeProps> | undefined;
+      // get: (state: State<storeType>, workflowName: string) => FlowElement<ConfigNodeProps> | undefined;
       add: (state: Action<storeType>, data: ConfigNodeProps) => void;
       update: (state: Action<storeType>, data: ConfigNodeProps) => void;
       remove: (state: Action<storeType>, data: ConfigNodeProps) => void;

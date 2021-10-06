@@ -28,9 +28,9 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
     node: {
       dragTarget: 'workflow',
       store: {
-        get: (state, workflowName) => {
-          return state.workflows.find(workflow => workflow.name == workflowName)?.jobNodes;
-        },
+        // get: (state, workflowName) => {
+        //   return ;
+        // },
         add: (actions, job) => {
 
         },

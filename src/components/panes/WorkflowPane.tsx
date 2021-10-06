@@ -16,8 +16,8 @@ interface ElementProps {
 
 const WorkflowPane = (props: ElementProps) => {
   // const elements = useStoreState((state) => JobData.node?.store.get(state))
-  const jobNodes = useStoreState((state) => state.workflows[0].jobNodes);
-  const addWorkflowJob = useStoreActions((actions) => actions.addWorkflowJob);
+  const jobNodes = useStoreState((state) => state.workflows[0].elements);
+  const addWorkflowElement = useStoreActions((actions) => actions.addWorkflowElement);
 
   console.log(jobNodes)
 
@@ -36,12 +36,13 @@ const WorkflowPane = (props: ElementProps) => {
             },
             job: data
           },
+          connectable: true,
           type: 'job',
           id: v4(),
           position: { x: e.clientX, y: e.clientY },
         }
 
-        addWorkflowJob(workflowJob);
+        addWorkflowElement(workflowJob);
       }
     }}>
       <ReactFlow elements={jobNodes} className={props.className} selectNodesOnDrag={false} nodeTypes={{ job: JobNode }}

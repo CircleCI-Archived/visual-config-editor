@@ -23,7 +23,7 @@ const JobInspector: React.FunctionComponent<{ data: Job }> = (props) => {
               onBlur={handleBlur}
               value={values.name}
             />
-            <button type="submit">
+            <button type="submit" className="p-1 font-bold text-white bg-circle-blue rounded-lg">
               Submit
             </button>
           </form>

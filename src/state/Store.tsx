@@ -5,7 +5,7 @@ import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Elements, Node } from 'react-flow-renderer';
+import { Edge, Elements, FlowElement, Node } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { JobNodeProps as JobModel } from '../components/containers/nodes/JobNode'
 import ConfigData from '../data/ConfigData';
@@ -13,7 +13,7 @@ import ConfigData from '../data/ConfigData';
 export interface WorkflowModel {
   name: string
   id: string
-  jobNodes: Elements<JobModel>
+  elements: Elements<FlowElement>
 }
 
 export interface DefinitionModel extends CircleCIConfigObject {
@@ -31,16 +31,18 @@ export interface StoreModel {
   config: Config;
   definitions: DefinitionModel;
   workflows: WorkflowModel[];
-  inspecting: InspectModel | undefined;
+  inspecting: InspectModel;
 }
 
 export interface StoreActions {
-  inspect: Action<StoreModel, InspectModel | undefined>;
+  inspect: Action<StoreModel, InspectModel>;
 
   addWorkflow: Action<StoreModel, string>;
   removeWorkflow: Action<StoreModel, WorkflowModel>;
-  addWorkflowJob: Action<StoreModel, Node<JobModel>>;
-  removeWorkflowJob: Action<StoreModel, Node<JobModel>>;
+  
+  addWorkflowElement: Action<StoreModel, FlowElement<any>>;
+  removeWorkflowElement: Action<StoreModel, FlowElement<any>>;
+  setWorkflowElements: Action<StoreModel, Elements<any>>
 
   // config/declarations
   importOrb: Action<StoreModel, ConfigOrbImport>;
@@ -66,17 +68,20 @@ const Actions: StoreActions = {
   }),
 
   addWorkflow: action((state, name) => {
-    state.workflows.push({ name, id: v4(), jobNodes: [] });
+    state.workflows.push({ name, id: v4(), elements: [] });
   }),
   removeWorkflow: action((state, payload) => {
     state.workflows.filter((workflow) => workflow.id !== payload.id)
   }),
-
-  addWorkflowJob: action((state, payload) => {
-    state.workflows[0].jobNodes.push(payload);
+  
+  addWorkflowElement: action((state, payload) => {
+    state.workflows[0].elements.push(payload);
   }),
-  removeWorkflowJob: action((state, payload) => {
-
+  removeWorkflowElement: action((state, payload) => {
+    
+  }),
+  setWorkflowElements: action((state, payload) => {
+    state.workflows[0].elements = payload;
   }),
   // config/declarations
 
@@ -117,7 +122,7 @@ const Actions: StoreActions = {
 }
 
 const Store: StoreModel & StoreActions = {
-  inspecting: undefined,
+  inspecting: { mode: 'none' },
   config: new Config(),
   definitions: {
     version: 2.1,

@@ -3,17 +3,9 @@ import { useStoreActions, useStoreState } from "../../state/Hooks";
 import { dataMappings } from "../../data/ConfigData";
 
 const DefintionsPane = () => {
-  const orbs = useStoreState((state) => state.definitions.orbs);
-  const executors = useStoreState((state) => state.definitions.executors);
-  const commands = useStoreState((state) => state.definitions.commands);
-  const jobs = useStoreState((state) => state.definitions.jobs);
-  const importOrb = useStoreActions((actions) => actions.importOrb);
-  const defineExecutor = useStoreActions((actions) => actions.defineExecutor);
   /* TODO: DETERMINE PARAMETERS
   const parameters = useStoreState((state) => state.parameters); 
   const defineParameter = useStoreActions((actions) => actions.defineParameter); */
-  const defineCommand = useStoreActions((actions) => actions.defineCommand);
-  const defineJob = useStoreActions((actions) => actions.defineJob);
 
   return (
     <div className="h-full w-full pt-6 bg-circle-gray-900 flex flex-col">
