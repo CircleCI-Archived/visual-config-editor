@@ -30,7 +30,7 @@ const WorkflowsTabbed = () => {
 
         {workflows?.map((workflow) =>
             <TabPanel key={workflow.id} selectedClassName="h-full mr-4">
-                <WorkflowPane items={workflow.jobNodes} bgClassName="bg-circle-gray-800" className="ml-2 border-2 border-b-0 border-circle-gray-400" />
+                <WorkflowPane workflow={workflow} bgClassName="bg-circle-gray-800" className="ml-2 border-2 border-b-0 border-circle-gray-400" />
             </TabPanel>
         )}
     </Tabs>)

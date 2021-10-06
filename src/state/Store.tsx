@@ -5,113 +5,131 @@ import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Elements } from 'react-flow-renderer';
+import { Elements, Node } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { JobNodeProps as JobModel } from '../components/containers/job/JobNode'
+import { JobNodeProps as JobModel } from '../components/containers/nodes/JobNode'
+import ConfigData from '../data/ConfigData';
 
 export interface WorkflowModel {
-    name: string
-    id: string
-    jobNodes: Elements<JobModel>
+  name: string
+  id: string
+  jobNodes: Elements<JobModel>
 }
 
 export interface DefinitionModel extends CircleCIConfigObject {
-    orbs: ConfigOrbImport[];
-    parameters: PipelineParameter<ParameterTypes>[];
+  orbs: ConfigOrbImport[];
+  parameters: PipelineParameter<ParameterTypes>[];
+}
+
+export interface InspectModel { 
+  data?: any;
+  dataType?: ConfigData | undefined;
+  mode: 'creating' | 'editing' | 'none';
 }
 
 export interface StoreModel {
-    config: Config;
-    definitions: DefinitionModel;
-    workflows: WorkflowModel[]; 
+  config: Config;
+  definitions: DefinitionModel;
+  workflows: WorkflowModel[];
+  inspecting: InspectModel | undefined;
 }
 
 export interface StoreActions {
-    addWorkflow: Action<StoreModel, string>;
-    removeWorkflow: Action<StoreModel, WorkflowModel>;
-    addWorkflowJob: Action<StoreModel, JobModel>;
-    removeWorkflowJob: Action<StoreModel, JobModel>;
+  inspect: Action<StoreModel, InspectModel | undefined>;
 
-    // config/declarations
-    importOrb: Action<StoreModel, ConfigOrbImport>;
-    unimportOrb: Action<StoreModel, ConfigOrbImport>;
+  addWorkflow: Action<StoreModel, string>;
+  removeWorkflow: Action<StoreModel, WorkflowModel>;
+  addWorkflowJob: Action<StoreModel, Node<JobModel>>;
+  removeWorkflowJob: Action<StoreModel, Node<JobModel>>;
 
-    defineJob: Action<StoreModel, Job>;
-    undefineJob: Action<StoreModel, Job>;
+  // config/declarations
+  importOrb: Action<StoreModel, ConfigOrbImport>;
+  unimportOrb: Action<StoreModel, ConfigOrbImport>;
 
-    defineCommand: Action<StoreModel, Command>;
-    undefineCommand: Action<StoreModel, Command>;
+  defineJob: Action<StoreModel, Job>;
+  undefineJob: Action<StoreModel, Job>;
 
-    defineExecutor: Action<StoreModel, AbstractExecutor>;
-    undefineExecutor: Action<StoreModel, AbstractExecutor>;
+  defineCommand: Action<StoreModel, Command>;
+  undefineCommand: Action<StoreModel, Command>;
 
-    defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
-    undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
+  defineExecutor: Action<StoreModel, AbstractExecutor>;
+  undefineExecutor: Action<StoreModel, AbstractExecutor>;
+
+  defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
+  undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
 }
 
 const Actions: StoreActions = {
-    addWorkflow: action((state, name) => {
-        state.workflows.push({ name, id: v4(), jobNodes: [] });
-    }),
-    removeWorkflow: action((state, payload) => {
-        state.workflows.filter((workflow) => workflow.id !== payload.id)
-    }),
-    addWorkflowJob: action((state, payload) => {
-    }),
-    removeWorkflowJob: action((state, payload) => {
+  inspect: action((state, payload) => {
+    state.inspecting = payload;
+    console.log(state.inspecting)
+  }),
 
-    }),
-    // config/declarations
+  addWorkflow: action((state, name) => {
+    state.workflows.push({ name, id: v4(), jobNodes: [] });
+  }),
+  removeWorkflow: action((state, payload) => {
+    state.workflows.filter((workflow) => workflow.id !== payload.id)
+  }),
 
-    importOrb: action((state, payload) => {
+  addWorkflowJob: action((state, payload) => {
+    state.workflows[0].jobNodes.push(payload);
+  }),
+  removeWorkflowJob: action((state, payload) => {
 
-    }),
-    unimportOrb: action((state, payload) => {
+  }),
+  // config/declarations
 
-    }),
+  importOrb: action((state, payload) => {
 
-    defineJob: action((state, payload) => {
-        state.definitions.jobs?.push(payload);
-    }),
-    undefineJob: action((state, payload) => {
-        state.definitions.jobs?.filter((job) => job.name !== payload.name)
-    }),
+  }),
+  unimportOrb: action((state, payload) => {
 
-    defineCommand: action((state, payload) => {
+  }),
 
-    }),
-    undefineCommand: action((state, payload) => {
+  defineJob: action((state, payload) => {
+    state.definitions.jobs?.push(payload);
+  }),
+  undefineJob: action((state, payload) => {
+    state.definitions.jobs?.filter((job) => job.name !== payload.name)
+  }),
 
-    }),
+  defineCommand: action((state, payload) => {
 
-    defineExecutor: action((state, payload) => {
+  }),
+  undefineCommand: action((state, payload) => {
 
-    }),
-    undefineExecutor: action((state, payload) => {
+  }),
 
-    }),
+  defineExecutor: action((state, payload) => {
+    state.definitions.executors?.push(payload);
+  }),
+  undefineExecutor: action((state, payload) => {
+    state.definitions.jobs?.filter((executor) => executor.name !== payload.name)
+  }),
 
-    defineParameter: action((state, payload) => {
+  defineParameter: action((state, payload) => {
 
-    }),
-    undefineParameter: action((state, payload) => {
+  }),
+  undefineParameter: action((state, payload) => {
 
-    }),
+  }),
 }
 
 const Store: StoreModel & StoreActions = {
-    config: new Config(),
-    definitions: {
-        version: 2.1,
-        commands: [],
-        executors: [],
-        jobs: [],
-        workflows: [],
-        orbs: [],
-        parameters: []
-    },
+  inspecting: undefined,
+  config: new Config(),
+  definitions: {
+    version: 2.1,
+    commands: [],
+    executors: [],
+    jobs: [],
     workflows: [],
-    ...Actions
+    orbs: [],
+    parameters: []
+  },
+  workflows: [],
+  ...Actions
 }
 
 
