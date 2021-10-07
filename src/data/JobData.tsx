@@ -11,19 +11,19 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
       singular: "Job",
       plural: "Jobs"
     },
+    defaults: {
+      name: 'New Job',
+    },
+    transform: (defaults) => {
+      return new Job(defaults.name, defaults.executor, defaults.steps);
+    },
     store: {
       get: (state) => {
         return state.definitions.jobs;
       },
-      add: (actions, job) => {
-
-      },
-      update: (actions, job) => {
-
-      },
-      remove: (actions, job) => {
-
-      },
+      add: (actions) => actions.defineJob,
+      update: (actions) => actions.updateJob,
+      remove: (actions) => actions.undefineJob,
     },
     node: {
       dragTarget: 'workflow',
@@ -31,15 +31,13 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
         // get: (state, workflowName) => {
         //   return ;
         // },
-        add: (actions, job) => {
+        // add: (actions) => actions.workflow
+        // update: (actions, job) => {
 
-        },
-        update: (actions, job) => {
+        // },
+        // remove: (actions, job) => {
 
-        },
-        remove: (actions, job) => {
-
-        }
+        // }
       },
       component: JobNode,
     },

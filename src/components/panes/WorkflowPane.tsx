@@ -19,7 +19,6 @@ const WorkflowPane = (props: ElementProps) => {
   const jobNodes = useStoreState((state) => state.workflows[0].elements);
   const addWorkflowElement = useStoreActions((actions) => actions.addWorkflowElement);
 
-  console.log(jobNodes)
 
   return (
     <div className="w-full h-full" onDragOver={(e) => {

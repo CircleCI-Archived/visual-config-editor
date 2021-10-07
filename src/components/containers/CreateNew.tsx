@@ -1,4 +1,4 @@
-import { type } from "os";
+import { Formik } from "formik";
 import { useStoreActions, useStoreState } from "../../state/Hooks";
 
 export interface CreateNewProps {
@@ -8,12 +8,17 @@ export interface CreateNewProps {
 const CreateNew = () => {
   const inspecting = useStoreState((state) => state.inspecting);
   const inspect = useStoreActions((actions) => actions.inspect)
+  const configData = inspecting.dataType;
+  const add = useStoreActions((actions) => configData?.store.add(actions) || actions.error);
 
   const getInspector = () => {
-    if (inspecting && inspecting.dataType) {
-      const Inspector = inspecting.dataType.components.inspector;
-
-      return <Inspector data={inspecting.data} />;
+    if (configData) {
+      return <Formik initialValues={configData.defaults}
+        onSubmit={(values) => {
+          add(configData.transform(values))
+        }}>
+        {configData.components.inspector}
+      </Formik>
     }
   }
 
@@ -27,6 +32,7 @@ const CreateNew = () => {
             X
           </button>
         </div>
+
         {getInspector()}
       </div>
     </div>

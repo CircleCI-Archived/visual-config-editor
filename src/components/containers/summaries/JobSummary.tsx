@@ -5,7 +5,7 @@ import Definition from "../../atoms/Definition";
 const JobSummary: React.FunctionComponent<{ data: Job }> = (props) => {
   return (
     <div> 
-      {props.data.name} {props.data.executor.name}
+      {props.data.name} {props.data.executor?.name}
     </div>
   )
 }
