@@ -15,6 +15,7 @@ const CreateNew = () => {
     if (configData) {
       return <Formik initialValues={configData.defaults}
         onSubmit={(values) => {
+          console.log(values)
           add(configData.transform(values))
         }}>
         {configData.components.inspector}

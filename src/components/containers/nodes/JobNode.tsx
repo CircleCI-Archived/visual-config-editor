@@ -26,14 +26,11 @@ const JobNode: React.FunctionComponent<{ data: JobNodeProps }> = (props) => {
       <div className="flex-col flex w-full">
         {props.data.parameters.name || props.data.job.name}
         <p className="text-gray-200">
-          Executor: { JSON.stringify(props.data.job) }
+          Executor: { props.data.job.executor.name }
         </p>
-        <select className="w-min bg-gray-300 p-1 text-black rounded" >
-         
-        </select>
-        <p className="font-thin text-sm text-gray-600">
+        {/* <p className="font-thin text-sm text-gray-600">
           Close
-        </p>
+        </p> */}
       </div>
       <Handle
         type="source"

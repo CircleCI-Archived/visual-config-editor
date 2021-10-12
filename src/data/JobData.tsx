@@ -13,9 +13,10 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
     },
     defaults: {
       name: 'New Job',
+      executor: undefined
     },
-    transform: (defaults) => {
-      return new Job(defaults.name, defaults.executor, defaults.steps);
+    transform: (values) => {
+      return new Job(values.name, JSON.parse(values.executor), values.steps);
     },
     store: {
       get: (state) => {

@@ -8,9 +8,17 @@ const InspectorPane = () => {
 
   const getInspector = () => {
     if (configData) {
-      return <Formik initialValues={configData.defaults}
+      let data = {}
+
+      Object.assign(data, ...Object.keys(inspecting.data).map((key) => {
+        const value = inspecting.data[key];
+
+        return { [key]: typeof value == 'object' ? JSON.stringify(value) : value }
+      }));
+
+      return <Formik initialValues={data}
         onSubmit={(values) => {
-          update({ old: inspecting.data, new: configData.transform(values)})
+          update({ old: inspecting.data, new: configData.transform(values) })
         }}>
         {configData.components.inspector}
       </Formik>
