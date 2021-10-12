@@ -43,9 +43,6 @@ export { componentToType, dataMappings };
 type storeType = typeof Store;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Defaults<T> = {
-  [K in keyof KeysOfUnion<T>]?: KeysOfUnion<T>[K];
-}
 
 export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any> {
   name: {
@@ -64,6 +61,8 @@ export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any>
   },
   node?: {
     dragTarget?: string,
+    type: string,
+    transform?: (data: ConfigDataType) => ConfigNodeProps
     store: {
       // get: (state: State<storeType>, workflowName: string) => FlowElement<ConfigNodeProps> | undefined;
       // add: (state: Actions<storeType>) => ActionCreator<ConfigNodeProps>;

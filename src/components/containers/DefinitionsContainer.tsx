@@ -38,7 +38,7 @@ const Defintions = (props: DefintionsProps) => {
         {
           items?.map((item) =>
             <div className="w-full p-2 bg-circle-gray-200" key={item.name}>
-              <Definition data={item} type={props.type}></Definition>
+              <Definition data={item} type={props.type} />
             </div>)
         }
         <div className="w-full flex-inline h-15 p-2 rounded-b-lg bg-circle-gray-200 float-left">

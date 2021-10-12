@@ -4,6 +4,7 @@ import ExecutorSummary from "../components/containers/summaries/ExecutorSummary"
 import ExecutorInspector from "../components/containers/inspector/ExecutorInspector";
 import ExecutorIcon from "../icons/ExecutorIcon";
 import { Executor } from "@circleci/circleci-config-sdk";
+import ExecutorNode from "../components/containers/nodes/ExecutorNode";
 
 export type anyExecutor = Executor.DockerExecutor | Executor.MacOSExecutor | Executor.MachineExecutor | Executor.WindowsExecutor | AbstractExecutor
 
@@ -23,6 +24,14 @@ const ExecutorData = (): ConfigData<anyExecutor> => {
       add: (actions) => actions.defineExecutor,
       update: (actions) => actions.updateExecutor,
       remove: (actions) => actions.undefineExecutor
+    },
+    node: {
+      component: ExecutorNode,
+      dragTarget: 'workflow',
+      type: 'executor',
+      store: {
+
+      }
     },
     components: {
       icon: ExecutorIcon,

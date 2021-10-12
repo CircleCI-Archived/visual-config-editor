@@ -27,6 +27,14 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
     },
     node: {
       dragTarget: 'workflow',
+      type: 'job',
+      transform: (data) => {
+        return {
+          parameters: {
+          },
+          job: data
+        }
+      },
       store: {
         // get: (state, workflowName) => {
         //   return ;

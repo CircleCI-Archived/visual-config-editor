@@ -3,13 +3,9 @@ import Collapsible from 'react-collapsible';
 import { Job } from '@circleci/circleci-config-sdk';
 import { useCallback } from 'react-redux/node_modules/@types/react';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import { anyExecutor } from '../../../data/ExecutorData';
 
-export interface JobNodeProps {
-  parameters: any
-  job: Job
-}
-
-const JobNode: React.FunctionComponent<{ data: JobNodeProps }> = (props) => {
+const ExecutorNode: React.FunctionComponent<{ data: anyExecutor }> = (props) => {
   const elements = useStoreState((state) => state.workflows[0].elements);
   const setWorkflowElements = useStoreActions((actions) => actions.setWorkflowElements);
 
@@ -24,16 +20,7 @@ const JobNode: React.FunctionComponent<{ data: JobNodeProps }> = (props) => {
         onConnect={onConnect}
         position={Position.Left} style={{ borderRadius: 0 }} />
       <div className="flex-col flex w-full">
-        {props.data.parameters.name || props.data.job.name}
-        <p className="text-gray-200">
-          Executor: { JSON.stringify(props.data.job) }
-        </p>
-        <select className="w-min bg-gray-300 p-1 text-black rounded" >
-         
-        </select>
-        <p className="font-thin text-sm text-gray-600">
-          Close
-        </p>
+        { props.data.name }
       </div>
       <Handle
         type="source"
@@ -46,4 +33,4 @@ const JobNode: React.FunctionComponent<{ data: JobNodeProps }> = (props) => {
   )
 }
 
-export default JobNode;
+export default ExecutorNode;
