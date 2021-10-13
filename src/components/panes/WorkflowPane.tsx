@@ -24,7 +24,7 @@ const getTypes = (): NodeTypesType => Object.assign({}, ...dataMappings.map((com
 }))
 
 const WorkflowPane = (props: ElementProps) => {
-  const elements = useStoreState((state) => state.workflows[0].elements);
+  const elements = useStoreState((state) => state.workflows[state.selectedWorkflow].elements);
   const addWorkflowElement = useStoreActions((actions) => actions.addWorkflowElement);
 
   return (
@@ -34,8 +34,6 @@ const WorkflowPane = (props: ElementProps) => {
       }
     }} onDrop={(e) => {
       const transfer = JSON.parse(e.dataTransfer.getData('workflow'));
-
-      console.log(transfer);
 
       if (transfer) {
         const workflowNode: Node<any> = {
@@ -49,7 +47,7 @@ const WorkflowPane = (props: ElementProps) => {
         addWorkflowElement(workflowNode);
       }
     }}>
-      <ReactFlow elements={elements} className={props.className} selectNodesOnDrag={false} nodeTypes={getTypes()}
+      <ReactFlow elements={elements} className={props.className} selectNodesOnDrag={false} nodeTypes={getTypes()} snapToGrid={true}
       >
         <Background variant={BackgroundVariant.Lines} gap={150} color="#000000" className={props.bgClassName} size={1}
         />

@@ -29,10 +29,11 @@ export interface InspectModel {
 }
 
 export interface StoreModel {
-  config: Config;
+  config: Config | undefined;
   definitions: DefinitionModel;
   workflows: WorkflowModel[];
   inspecting: InspectModel;
+  selectedWorkflow: number;
 }
 
 export interface UpdateType<T> {
@@ -44,6 +45,7 @@ export interface StoreActions {
   inspect: Action<StoreModel, InspectModel>;
 
   addWorkflow: Action<StoreModel, string>;
+  selectWorkflow: Action<StoreModel, number>;
   removeWorkflow: Action<StoreModel, WorkflowModel>;
 
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
@@ -67,7 +69,8 @@ export interface StoreActions {
 
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
-
+  
+  generateConfig: Action<StoreModel>;
   error: Action<StoreModel, any>;
 }
 
@@ -79,18 +82,21 @@ const Actions: StoreActions = {
   addWorkflow: action((state, name) => {
     state.workflows.push({ name, id: v4(), elements: [] });
   }),
+  selectWorkflow: action((state, index) => {
+    state.selectedWorkflow = index;
+  }),
   removeWorkflow: action((state, payload) => {
     state.workflows.filter((workflow) => workflow.id !== payload.id)
   }),
 
   addWorkflowElement: action((state, payload) => {
-    state.workflows[0].elements.push(payload);
+    state.workflows[state.selectedWorkflow].elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
 
   }),
   setWorkflowElements: action((state, payload) => {
-    state.workflows[0].elements = payload;
+    state.workflows[state.selectedWorkflow].elements = payload;
   }),
   // config/declarations
 
@@ -146,15 +152,22 @@ const Actions: StoreActions = {
   undefineParameter: action((state, payload) => {
 
   }),
-
+  
   error: action((state, payload) => {
     console.error('An action was not found! ', payload)
-  })
+  }),
+  
+  generateConfig: action((state) => {
+    const defs = state.definitions;
+
+    state.config = new Config(false, defs.jobs, defs.workflows, defs.executors)
+  }),
 }
 
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
-  config: new Config(),
+  selectedWorkflow: 0,
+  config: undefined,
   definitions: {
     version: 2.1,
     commands: [],
