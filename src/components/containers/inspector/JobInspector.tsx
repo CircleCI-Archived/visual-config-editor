@@ -1,14 +1,14 @@
 import { Job } from "@circleci/circleci-config-sdk";
 import { FormikValues } from "formik";
 import { useStoreState } from "../../../state/Hooks";
+import { DefinitionModel } from "../../../state/Store";
 
-const JobInspector = ({
+const JobInspector = (definitions: DefinitionModel) => ({
   values,
   handleChange,
   handleBlur,
   handleSubmit
 }: FormikValues & { data: Job }) => {
-  const executors = useStoreState((state) => state.definitions.executors)
 
   return (
     <form onSubmit={handleSubmit}>
@@ -19,23 +19,21 @@ const JobInspector = ({
         value={values.name}
       />
       <br />
-      {console.log(values.executor)}
       <select
         name="executor"
         value={values.executor}
         onChange={handleChange}
         onBlur={handleBlur}>
         <option value={'undefined'} key={'undefined'}>Select Executor</option>
-        {executors?.map((executor) =>
+        {definitions.executors?.map((executor) =>
           <option value={JSON.stringify(executor)} key={executor.name}>{executor.name}</option>
         )}
       </select>
       <button type="submit" className="p-1 font-bold text-white bg-circle-blue rounded-lg">
-        Submit
+        Save
       </button>
     </form>
   )
 }
-
 
 export default JobInspector;

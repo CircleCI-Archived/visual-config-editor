@@ -1,11 +1,13 @@
 import { Job } from "@circleci/circleci-config-sdk";
 import ConfigData from "./ConfigData";
 import JobInspector from "../components/containers/inspector/JobInspector";
-import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
+// import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
 import JobSummary from "../components/containers/summaries/JobSummary";
+import { WorkflowJob } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob";
+import JobNode from "../components/containers/nodes/JobNode";
 
-const JobData = (): ConfigData<Job, JobNodeProps> => {
+const JobData = (): ConfigData<Job, WorkflowJob> => {
   return {
     name: {
       singular: "Job",
@@ -26,15 +28,11 @@ const JobData = (): ConfigData<Job, JobNodeProps> => {
       update: (actions) => actions.updateJob,
       remove: (actions) => actions.undefineJob,
     },
+    dragTarget: 'workflow',
     node: {
-      dragTarget: 'workflow',
       type: 'job',
       transform: (data) => {
-        return {
-          parameters: {
-          },
-          job: data
-        }
+        return new WorkflowJob(data);
       },
       store: {
         // get: (state, workflowName) => {

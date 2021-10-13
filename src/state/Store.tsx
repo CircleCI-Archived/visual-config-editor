@@ -1,11 +1,12 @@
-import { Config, Job } from '@circleci/circleci-config-sdk';
+import { Config, Executor, Job, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
+import { DockerExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
 import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Edge, Elements, FlowElement, isNode, Node, updateEdge } from 'react-flow-renderer';
+import { Edge, Elements, FlowElement, getIncomers, getOutgoers, isEdge, isNode, Node, updateEdge } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import JobNode, { JobNodeProps as JobModel, JobNodeProps } from '../components/containers/nodes/JobNode'
 import ConfigData from '../data/ConfigData';
@@ -13,7 +14,6 @@ import ConfigData from '../data/ConfigData';
 export interface WorkflowModel {
   name: string
   id: string
-
   elements: Elements<any>
 }
 
@@ -42,7 +42,7 @@ export interface UpdateType<T> {
 }
 
 export interface StoreActions {
-  inspect: Action<StoreModel, InspectModel>;
+  inspect: Action<StoreModel, InspectModel | undefined>;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -69,14 +69,19 @@ export interface StoreActions {
 
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
-  
+
   generateConfig: Action<StoreModel>;
   error: Action<StoreModel, any>;
 }
 
 const Actions: StoreActions = {
   inspect: action((state, payload) => {
-    state.inspecting = payload;
+    state.inspecting = {
+      mode: 'none',
+      data: undefined,
+      dataType: undefined,
+      ...payload,
+    };
   }),
 
   addWorkflow: action((state, name) => {
@@ -90,7 +95,9 @@ const Actions: StoreActions = {
   }),
 
   addWorkflowElement: action((state, payload) => {
-    state.workflows[state.selectedWorkflow].elements.push(payload);
+    const workflow = state.workflows[state.selectedWorkflow];
+
+    workflow.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
 
@@ -115,7 +122,7 @@ const Actions: StoreActions = {
       const index = state.definitions.jobs.findIndex((job) => job.name === payload.old.name)
 
       state.workflows[0].elements = state.workflows[0].elements.map((e) =>
-        isNode(e) && e.type == 'job' && e.data.job.name == payload.old.name ?
+        isNode(e) && e.type === 'job' && e.data.job.name === payload.old.name ?
           { ...e, data: { ...e.data, job: payload.new } } : e
       );
 
@@ -152,17 +159,39 @@ const Actions: StoreActions = {
   undefineParameter: action((state, payload) => {
 
   }),
-  
+
   error: action((state, payload) => {
     console.error('An action was not found! ', payload)
   }),
-  
+
   generateConfig: action((state) => {
     const defs = state.definitions;
+    
+    state.workflows.forEach((workflow) => {
+      const elements = workflow.elements;
+
+      // temp code. map traversal is limited by reactflow component. 
+      // will look into alternatives later.
+
+      const heads = [];
+
+      elements.forEach((element) => {
+        if (isNode(element)) {
+          const incomers = getIncomers(element, elements) 
+
+          if (incomers.length == 0) {
+            heads.push(incomers);
+          }
+        }
+      })
+
+    })
 
     state.config = new Config(false, defs.jobs, defs.workflows, defs.executors)
   }),
 }
+
+const defaultExecutor = new Executor.DockerExecutor('default', 'cimg/base:stable')
 
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
@@ -171,8 +200,8 @@ const Store: StoreModel & StoreActions = {
   definitions: {
     version: 2.1,
     commands: [],
-    executors: [],
-    jobs: [],
+    executors: [defaultExecutor],
+    jobs: [new Job('build', defaultExecutor), new Job('test', defaultExecutor), new Job('deploy', defaultExecutor)],
     workflows: [],
     orbs: [],
     parameters: []

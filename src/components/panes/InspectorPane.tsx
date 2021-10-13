@@ -3,8 +3,10 @@ import { useStoreActions, useStoreState } from "../../state/Hooks";
 
 const InspectorPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
+  const inspect = useStoreActions((actions) => actions.inspect);
   const configData = inspecting.dataType;
   const update = useStoreActions((actions) => configData?.store.update(actions) || actions.error);
+  const definitions = useStoreState((state) => state.definitions)
 
   const getInspector = () => {
     if (configData) {
@@ -20,7 +22,7 @@ const InspectorPane = () => {
         onSubmit={(values) => {
           update({ old: inspecting.data, new: configData.transform(values) })
         }}>
-        {configData.components.inspector}
+        {configData.components.inspector(definitions)}
       </Formik>
     }
   }

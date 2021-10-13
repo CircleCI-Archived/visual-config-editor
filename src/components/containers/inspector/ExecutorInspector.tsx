@@ -2,8 +2,9 @@ import { Job } from "@circleci/circleci-config-sdk";
 import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
 import { FormikValues } from "formik";
 import { ReactElement } from "react-redux/node_modules/@types/react";
+import { DefinitionModel } from "../../../state/Store";
 
-const ExecutorInspector = ({
+const ExecutorInspector = (definitions: DefinitionModel) => ({
   values,
   handleChange,
   handleBlur,

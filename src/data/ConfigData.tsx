@@ -1,9 +1,9 @@
 import { Command, Job, Executor, Pipeline } from "@circleci/circleci-config-sdk";
 import { Action, ActionCreator, Actions, State, StateMapper } from "easy-peasy";
 import { FormikConfig, FormikProps, FormikValues } from "formik";
-import { Elements, FlowElement } from "react-flow-renderer";
+import { Elements, FlowElement, NodeProps } from "react-flow-renderer";
 import { ReactElement } from "react-redux/node_modules/@types/react";
-import Store, { UpdateType } from "../state/Store";
+import Store, { DefinitionModel, UpdateType } from "../state/Store";
 import ExecutorData from "./ExecutorData";
 import JobData from "./JobData";
 
@@ -14,12 +14,12 @@ export interface DataMapping {
 
 const dataMappings: DataMapping[] = [
   {
-    component: [Job],
-    dataType: JobData
-  },
-  {
     component: [Executor.DockerExecutor, Executor.MacOSExecutor, Executor.MachineExecutor, Executor.WindowsExecutor],
     dataType: ExecutorData
+  },
+  {
+    component: [Job],
+    dataType: JobData
   },
 ];
 
@@ -59,8 +59,8 @@ export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any>
     update: (state: Actions<storeType>) => (data: UpdateType<ConfigDataType>) => void;
     remove: (state: Actions<storeType>) => (data: ConfigDataType) => void;
   },
+  dragTarget?: string,
   node?: {
-    dragTarget?: string,
     type: string,
     transform?: (data: ConfigDataType) => ConfigNodeProps
     store: {
@@ -69,12 +69,12 @@ export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any>
       // update: (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
       // remove:  (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
     },
-    component: React.FunctionComponent<{ data: ConfigNodeProps }>
+    component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>
   }
   components: {
     icon?: React.FunctionComponent<any>;
     summary: React.FunctionComponent<{ data: ConfigDataType }>;
 
-    inspector: (props: FormikValues & { data: ConfigDataType }) => JSX.Element;
+    inspector: (definitions: DefinitionModel) => (props: FormikValues & { data: ConfigDataType }) => JSX.Element;
   }
 }

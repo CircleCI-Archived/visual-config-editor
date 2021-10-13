@@ -8,16 +8,16 @@ const Definition = (props: { data: any, type: ConfigData }) => {
   return (
     <button className="w-full p-2 cursor-pointer text-white font-semibold bg-circle-blue rounded-md" draggable="true"
       onDragStart={(e) => {
-        const node = props.type.node;
+        const type = props.type;
 
-        if (node?.dragTarget) {
+        if (type?.dragTarget) {
           let configData = props.data;
 
-          if (node.transform) {
-            configData = node.transform(configData);
+          if (type.node?.transform) {
+            configData = type.node.transform(configData);
           }
 
-          e.dataTransfer.setData(node.dragTarget, JSON.stringify({ type: node.type, data: configData }));
+          e.dataTransfer.setData(type.dragTarget, JSON.stringify({ type: type.node?.type, data: configData }));
         }
       }}
       onClick={(e) => {
