@@ -4,11 +4,17 @@ import JobInspector from "../components/containers/inspector/JobInspector";
 // import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
 import JobSummary from "../components/containers/summaries/JobSummary";
-import { WorkflowJob } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob";
 import JobNode from "../components/containers/nodes/JobNode";
+import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow";
+
+export interface WorkflowJob {
+  job: Job,
+  parameters?: WorkflowJobParameters
+}
 
 const JobData = (): ConfigData<Job, WorkflowJob> => {
   return {
+    type: 'job',
     name: {
       singular: "Job",
       plural: "Jobs"
@@ -32,7 +38,7 @@ const JobData = (): ConfigData<Job, WorkflowJob> => {
     node: {
       type: 'job',
       transform: (data) => {
-        return new WorkflowJob(data);
+        return { job: data }
       },
       store: {
         // get: (state, workflowName) => {

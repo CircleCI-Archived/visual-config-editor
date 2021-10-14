@@ -3,12 +3,14 @@ import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Compone
 import ExecutorSummary from "../components/containers/summaries/ExecutorSummary";
 import ExecutorInspector from "../components/containers/inspector/ExecutorInspector";
 import ExecutorIcon from "../icons/ExecutorIcon";
-import { Executor } from "@circleci/circleci-config-sdk";
+import { Executor, Job } from "@circleci/circleci-config-sdk";
+import { WorkflowJob } from "./JobData";
 
 export type anyExecutor = Executor.DockerExecutor | Executor.MacOSExecutor | Executor.MachineExecutor | Executor.WindowsExecutor | AbstractExecutor
 
-const ExecutorData = (): ConfigData<anyExecutor> => {
+const ExecutorData = (): ConfigData<anyExecutor, WorkflowJob> => {
   return {
+    type: 'executor',
     name: {
       singular: "Executor",
       plural: "Executors"
@@ -25,6 +27,11 @@ const ExecutorData = (): ConfigData<anyExecutor> => {
       remove: (actions) => actions.undefineExecutor
     },
     dragTarget: 'job',
+    applyToNode: (data, nodeData) => {
+      const oldJob = nodeData.job;
+
+      return { job: new Job(oldJob.name, data, oldJob.steps) }
+    },
     components: {
       icon: ExecutorIcon,
       summary: ExecutorSummary,

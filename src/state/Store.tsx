@@ -2,13 +2,14 @@ import { Config, Executor, Job, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
 import { DockerExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
+import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob';
 import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
 import { Edge, Elements, FlowElement, getIncomers, getOutgoers, isEdge, isNode, Node, updateEdge } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import JobNode, { JobNodeProps as JobModel, JobNodeProps } from '../components/containers/nodes/JobNode'
+import JobNode from '../components/containers/nodes/JobNode'
 import ConfigData from '../data/ConfigData';
 
 export interface WorkflowModel {
@@ -70,7 +71,7 @@ export interface StoreActions {
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
 
-  generateConfig: Action<StoreModel>;
+  generateConfig: Action<DefinitionModel>;
   error: Action<StoreModel, any>;
 }
 
@@ -85,13 +86,13 @@ const Actions: StoreActions = {
   }),
 
   addWorkflow: action((state, name) => {
-    state.workflows.push({ name, id: v4(), elements: [] });
+    state.workflows = state.workflows.concat({ name, id: v4(), elements: [] });
   }),
   selectWorkflow: action((state, index) => {
     state.selectedWorkflow = index;
   }),
   removeWorkflow: action((state, payload) => {
-    state.workflows.filter((workflow) => workflow.id !== payload.id)
+    state.workflows = state.workflows.filter((workflow) => workflow.id !== payload.id)
   }),
 
   addWorkflowElement: action((state, payload) => {
@@ -119,18 +120,18 @@ const Actions: StoreActions = {
   }),
   updateJob: action((state, payload) => {
     if (state.definitions.jobs) {
-      const index = state.definitions.jobs.findIndex((job) => job.name === payload.old.name)
+      const workflows = state.workflows[state.selectedWorkflow];
 
-      state.workflows[0].elements = state.workflows[0].elements.map((e) =>
+      workflows.elements = workflows.elements.map((e) =>
         isNode(e) && e.type === 'job' && e.data.job.name === payload.old.name ?
           { ...e, data: { ...e.data, job: payload.new } } : e
       );
 
-      state.definitions.jobs[index] = payload.new;
+      state.definitions.jobs = state.definitions.jobs.map(job => job.name === payload.old.name ? payload.new : job); // mutating, should this be changed? it works 
     }
   }),
   undefineJob: action((state, payload) => {
-    state.definitions.jobs?.filter((job) => job.name === payload.name)
+    state.definitions.jobs = state.definitions.jobs?.filter((job) => job.name === payload.name)
   }),
 
   defineCommand: action((state, payload) => {
@@ -141,7 +142,7 @@ const Actions: StoreActions = {
   }),
 
   defineExecutor: action((state, payload) => {
-    state.definitions.executors?.push(payload);
+    state.definitions.executors = state.definitions.executors?.concat(payload);
   }),
   updateExecutor: action((state, payload) => {
     if (state.definitions.executors) {
@@ -157,37 +158,23 @@ const Actions: StoreActions = {
 
   }),
   undefineParameter: action((state, payload) => {
-
   }),
 
   error: action((state, payload) => {
     console.error('An action was not found! ', payload)
   }),
 
-  generateConfig: action((state) => {
-    const defs = state.definitions;
-    
-    state.workflows.forEach((workflow) => {
-      const elements = workflow.elements;
+  generateConfig: action((state, payload) => {
+    // const defs = state.definitions;
 
-      // temp code. map traversal is limited by reactflow component. 
-      // will look into alternatives later.
+    console.log(state)
 
-      const heads = [];
+    const config = new Config(false, state.jobs, state.workflows, state.executors);
 
-      elements.forEach((element) => {
-        if (isNode(element)) {
-          const incomers = getIncomers(element, elements) 
+    console.log(config)
 
-          if (incomers.length == 0) {
-            heads.push(incomers);
-          }
-        }
-      })
-
-    })
-
-    state.config = new Config(false, defs.jobs, defs.workflows, defs.executors)
+    //     console.log(state.config)
+    // console.log(state.config.stringify())
   }),
 }
 

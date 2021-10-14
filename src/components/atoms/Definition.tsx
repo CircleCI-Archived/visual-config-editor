@@ -17,7 +17,7 @@ const Definition = (props: { data: any, type: ConfigData }) => {
             configData = type.node.transform(configData);
           }
 
-          e.dataTransfer.setData(type.dragTarget, JSON.stringify({ type: type.node?.type, data: configData }));
+          e.dataTransfer.setData(type.dragTarget, JSON.stringify({ type: type.node?.type || type.type, data: configData }));
         }
       }}
       onClick={(e) => {

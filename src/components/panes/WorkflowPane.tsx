@@ -6,7 +6,7 @@ import dataTypes, { componentToType, dataMappings } from '../../data/ConfigData'
 import JobData from '../../data/JobData';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import Store, { WorkflowModel } from '../../state/Store';
-import JobNode, { JobNodeProps } from '../containers/nodes/JobNode';
+import JobNode from '../containers/nodes/JobNode';
 
 export interface ElementProps {
   className?: string;
@@ -33,18 +33,23 @@ const WorkflowPane = (props: ElementProps) => {
         e.preventDefault();
       }
     }} onDrop={(e) => {
-      const transfer = JSON.parse(e.dataTransfer.getData('workflow'));
 
-      if (transfer) {
-        const workflowNode: Node<any> = {
-          data: transfer.data,
-          connectable: true,
-          type: transfer.type,
-          id: v4(),
-          position: { x: e.clientX, y: e.clientY },
+      if (e.dataTransfer.types.includes('workflow')) {
+        const transfer = JSON.parse(e.dataTransfer.getData('workflow'));
+
+        console.log(transfer)
+
+        if (transfer) {
+          const workflowNode: Node<any> = {
+            data: transfer.data,
+            connectable: true,
+            type: transfer.type,
+            id: v4(),
+            position: { x: e.clientX, y: e.clientY },
+          }
+
+          addWorkflowElement(workflowNode);
         }
-
-        addWorkflowElement(workflowNode);
       }
     }}>
       <ReactFlow elements={elements} className={props.className} selectNodesOnDrag={false} nodeTypes={getTypes()} snapToGrid={true}
