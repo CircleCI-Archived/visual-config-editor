@@ -1,14 +1,35 @@
-import { useStoreState } from "../../state/Hooks";
+import { Formik } from "formik";
+import { useStoreActions, useStoreState } from "../../state/Hooks";
 
 const InspectorPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
-  // const inspect = useStoreActions((actions) => actions.inspect)
+  const inspect = useStoreActions((actions) => actions.inspect);
+  const configData = inspecting.dataType;
+  const update = useStoreActions((actions) => configData?.store.update(actions) || actions.error);
+  const definitions = useStoreState((state) => state.definitions)
+
+  const getInspector = () => {
+    if (configData) {
+      let data = {}
+
+      Object.assign(data, ...Object.keys(inspecting.data).map((key) => {
+        const value = inspecting.data[key];
+
+        return { [key]: typeof value == 'object' ? JSON.stringify(value) : value }
+      }));
+
+      return <Formik initialValues={data}
+        onSubmit={(values) => {
+          update({ old: inspecting.data, new: configData.transform(values) })
+        }}>
+        {configData.components.inspector(definitions)}
+      </Formik>
+    }
+  }
 
   if (inspecting && inspecting.dataType && inspecting.mode == 'editing') {
-    const Inspector = inspecting.dataType.components.inspector;
-
     return <div className="p-5">
-      <Inspector  data={inspecting.data} />;
+      {getInspector()}
     </div>
   }
   return (<p className="text-circle-green-light font-semibold p-5">

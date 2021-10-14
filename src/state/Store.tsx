@@ -1,19 +1,21 @@
-import { Config, Job } from '@circleci/circleci-config-sdk';
+import { Config, Executor, Job, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
+import { DockerExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
+import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob';
 import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Edge, Elements, FlowElement, Node } from 'react-flow-renderer';
+import { Edge, Elements, FlowElement, getIncomers, getOutgoers, isEdge, isNode, Node, updateEdge } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { JobNodeProps as JobModel } from '../components/containers/nodes/JobNode'
+import JobNode from '../components/containers/nodes/JobNode'
 import ConfigData from '../data/ConfigData';
 
 export interface WorkflowModel {
   name: string
   id: string
-  elements: Elements<FlowElement>
+  elements: Elements<any>
 }
 
 export interface DefinitionModel extends CircleCIConfigObject {
@@ -21,25 +23,32 @@ export interface DefinitionModel extends CircleCIConfigObject {
   parameters: PipelineParameter<ParameterTypes>[];
 }
 
-export interface InspectModel { 
+export interface InspectModel {
   data?: any;
   dataType?: ConfigData | undefined;
   mode: 'creating' | 'editing' | 'none';
 }
 
 export interface StoreModel {
-  config: Config;
+  config: Config | undefined;
   definitions: DefinitionModel;
   workflows: WorkflowModel[];
   inspecting: InspectModel;
+  selectedWorkflow: number;
+}
+
+export interface UpdateType<T> {
+  old: T
+  new: T
 }
 
 export interface StoreActions {
-  inspect: Action<StoreModel, InspectModel>;
+  inspect: Action<StoreModel, InspectModel | undefined>;
 
   addWorkflow: Action<StoreModel, string>;
+  selectWorkflow: Action<StoreModel, number>;
   removeWorkflow: Action<StoreModel, WorkflowModel>;
-  
+
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
   removeWorkflowElement: Action<StoreModel, FlowElement<any>>;
   setWorkflowElements: Action<StoreModel, Elements<any>>
@@ -49,39 +58,53 @@ export interface StoreActions {
   unimportOrb: Action<StoreModel, ConfigOrbImport>;
 
   defineJob: Action<StoreModel, Job>;
+  updateJob: Action<StoreModel, UpdateType<Job>>;
   undefineJob: Action<StoreModel, Job>;
 
   defineCommand: Action<StoreModel, Command>;
   undefineCommand: Action<StoreModel, Command>;
 
   defineExecutor: Action<StoreModel, AbstractExecutor>;
+  updateExecutor: Action<StoreModel, UpdateType<AbstractExecutor>>;
   undefineExecutor: Action<StoreModel, AbstractExecutor>;
 
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
+
+  generateConfig: Action<DefinitionModel>;
+  error: Action<StoreModel, any>;
 }
 
 const Actions: StoreActions = {
   inspect: action((state, payload) => {
-    state.inspecting = payload;
-    console.log(state.inspecting)
+    state.inspecting = {
+      mode: 'none',
+      data: undefined,
+      dataType: undefined,
+      ...payload,
+    };
   }),
 
   addWorkflow: action((state, name) => {
-    state.workflows.push({ name, id: v4(), elements: [] });
+    state.workflows = state.workflows.concat({ name, id: v4(), elements: [] });
+  }),
+  selectWorkflow: action((state, index) => {
+    state.selectedWorkflow = index;
   }),
   removeWorkflow: action((state, payload) => {
-    state.workflows.filter((workflow) => workflow.id !== payload.id)
+    state.workflows = state.workflows.filter((workflow) => workflow.id !== payload.id)
   }),
-  
+
   addWorkflowElement: action((state, payload) => {
-    state.workflows[0].elements.push(payload);
+    const workflow = state.workflows[state.selectedWorkflow];
+
+    workflow.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
-    
+
   }),
   setWorkflowElements: action((state, payload) => {
-    state.workflows[0].elements = payload;
+    state.workflows[state.selectedWorkflow].elements = payload;
   }),
   // config/declarations
 
@@ -95,8 +118,20 @@ const Actions: StoreActions = {
   defineJob: action((state, payload) => {
     state.definitions.jobs?.push(payload);
   }),
+  updateJob: action((state, payload) => {
+    if (state.definitions.jobs) {
+      const workflows = state.workflows[state.selectedWorkflow];
+
+      workflows.elements = workflows.elements.map((e) =>
+        isNode(e) && e.type === 'job' && e.data.job.name === payload.old.name ?
+          { ...e, data: { ...e.data, job: payload.new } } : e
+      );
+
+      state.definitions.jobs = state.definitions.jobs.map(job => job.name === payload.old.name ? payload.new : job); // mutating, should this be changed? it works 
+    }
+  }),
   undefineJob: action((state, payload) => {
-    state.definitions.jobs?.filter((job) => job.name !== payload.name)
+    state.definitions.jobs = state.definitions.jobs?.filter((job) => job.name === payload.name)
   }),
 
   defineCommand: action((state, payload) => {
@@ -107,7 +142,13 @@ const Actions: StoreActions = {
   }),
 
   defineExecutor: action((state, payload) => {
-    state.definitions.executors?.push(payload);
+    state.definitions.executors = state.definitions.executors?.concat(payload);
+  }),
+  updateExecutor: action((state, payload) => {
+    if (state.definitions.executors) {
+      // const index = state.definitions.executors.findIndex((executor) => executor.name === payload.name)
+      // state.definitions.executors[index] = payload;
+    }
   }),
   undefineExecutor: action((state, payload) => {
     state.definitions.jobs?.filter((executor) => executor.name !== payload.name)
@@ -117,23 +158,42 @@ const Actions: StoreActions = {
 
   }),
   undefineParameter: action((state, payload) => {
+  }),
 
+  error: action((state, payload) => {
+    console.error('An action was not found! ', payload)
+  }),
+
+  generateConfig: action((state, payload) => {
+    // const defs = state.definitions;
+
+    console.log(state)
+
+    const config = new Config(false, state.jobs, state.workflows, state.executors);
+
+    console.log(config)
+
+    //     console.log(state.config)
+    // console.log(state.config.stringify())
   }),
 }
 
+const defaultExecutor = new Executor.DockerExecutor('default', 'cimg/base:stable')
+
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
-  config: new Config(),
+  selectedWorkflow: 0,
+  config: undefined,
   definitions: {
     version: 2.1,
     commands: [],
-    executors: [],
-    jobs: [],
+    executors: [defaultExecutor],
+    jobs: [new Job('build', defaultExecutor), new Job('test', defaultExecutor), new Job('deploy', defaultExecutor)],
     workflows: [],
     orbs: [],
     parameters: []
   },
-  workflows: [],
+  workflows: [{ name: 'build-and-test', elements: [], id: v4() }],
   ...Actions
 }
 
