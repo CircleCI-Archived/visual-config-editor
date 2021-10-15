@@ -1,4 +1,4 @@
-import ConfigData, { componentToType } from '../../data/ConfigData';
+import ConfigData from '../../data/ConfigData';
 import { useStoreActions } from '../../state/Hooks';
 
 const Definition = (props: { data: any, type: ConfigData }) => {
@@ -6,7 +6,7 @@ const Definition = (props: { data: any, type: ConfigData }) => {
   const inspector = useStoreActions((actions) => actions.inspect);
 
   return (
-    <button className="w-full p-2 cursor-pointer text-white font-semibold bg-circle-blue rounded-md" draggable="true"
+    <button className="w-full p-3 cursor-pointer text-left pl-10 text-circle-black bg-white border border-circle-gray-300 rounded-md" draggable="true"
       onDragStart={(e) => {
         const type = props.type;
 

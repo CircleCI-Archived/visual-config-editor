@@ -1,6 +1,5 @@
 import { Job } from "@circleci/circleci-config-sdk";
 import { FormikValues } from "formik";
-import { useStoreState } from "../../../state/Hooks";
 import { DefinitionModel } from "../../../state/Store";
 
 const JobInspector = (definitions: DefinitionModel) => ({

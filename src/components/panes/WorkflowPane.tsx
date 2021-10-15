@@ -1,12 +1,9 @@
-import { Job } from '@circleci/circleci-config-sdk';
-import React, { useState } from 'react';
-import ReactFlow, { Background, BackgroundVariant, Elements, Node, NodeTypesType } from 'react-flow-renderer';
+import React from 'react';
+import ReactFlow, { Background, BackgroundVariant, Node, NodeTypesType } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import dataTypes, { componentToType, dataMappings } from '../../data/ConfigData';
-import JobData from '../../data/JobData';
+import { dataMappings } from '../../data/ConfigData';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import Store, { WorkflowModel } from '../../state/Store';
-import JobNode from '../containers/nodes/JobNode';
+import { WorkflowModel } from '../../state/Store';
 
 export interface ElementProps {
   className?: string;
@@ -40,12 +37,13 @@ const WorkflowPane = (props: ElementProps) => {
         console.log(transfer)
 
         if (transfer) {
+          console.log(Math.floor(e.clientX / 10) * 10, Math.floor(e.clientY / 10) * 10)
           const workflowNode: Node<any> = {
             data: transfer.data,
             connectable: true,
             type: transfer.type,
             id: v4(),
-            position: { x: e.clientX, y: e.clientY },
+            position: { x: Math.floor(e.clientX / 15) * 15, y: Math.floor(e.clientY / 15) * 15 },
           }
 
           addWorkflowElement(workflowNode);
@@ -54,7 +52,7 @@ const WorkflowPane = (props: ElementProps) => {
     }}>
       <ReactFlow elements={elements} className={props.className} selectNodesOnDrag={false} nodeTypes={getTypes()} snapToGrid={true}
       >
-        <Background variant={BackgroundVariant.Lines} gap={150} color="#000000" className={props.bgClassName} size={1}
+        <Background variant={BackgroundVariant.Dots} gap={15} color="#A3A3A3" className={props.bgClassName} size={1}
         />
       </ReactFlow >
     </div>

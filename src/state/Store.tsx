@@ -1,15 +1,12 @@
-import { Config, Executor, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { Config, Executor, Job } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
-import { DockerExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
-import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob';
 import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Edge, Elements, FlowElement, getIncomers, getOutgoers, isEdge, isNode, Node, updateEdge } from 'react-flow-renderer';
+import { Elements, FlowElement, isNode } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import JobNode from '../components/containers/nodes/JobNode'
 import ConfigData from '../data/ConfigData';
 
 export interface WorkflowModel {
@@ -71,7 +68,7 @@ export interface StoreActions {
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
 
-  generateConfig: Action<DefinitionModel>;
+  generateConfig: Action<StoreModel, Config>;
   error: Action<StoreModel, any>;
 }
 
@@ -165,16 +162,7 @@ const Actions: StoreActions = {
   }),
 
   generateConfig: action((state, payload) => {
-    // const defs = state.definitions;
-
-    console.log(state)
-
-    const config = new Config(false, state.jobs, state.workflows, state.executors);
-
-    console.log(config)
-
-    //     console.log(state.config)
-    // console.log(state.config.stringify())
+    state.config = payload;
   }),
 }
 

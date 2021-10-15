@@ -1,8 +1,7 @@
-import { Command, Job, Executor, Pipeline } from "@circleci/circleci-config-sdk";
-import { Action, ActionCreator, Actions, State, StateMapper } from "easy-peasy";
-import { FormikConfig, FormikProps, FormikValues } from "formik";
-import { Elements, FlowElement, NodeProps } from "react-flow-renderer";
-import { ReactElement } from "react-redux/node_modules/@types/react";
+import { Executor, Job } from "@circleci/circleci-config-sdk";
+import { ActionCreator, Actions, State } from "easy-peasy";
+import { FormikValues } from "formik";
+import { NodeProps } from "react-flow-renderer";
 import Store, { DefinitionModel, UpdateType } from "../state/Store";
 import ExecutorData from "./ExecutorData";
 import JobData from "./JobData";

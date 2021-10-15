@@ -1,11 +1,11 @@
 import { Job } from "@circleci/circleci-config-sdk";
-import ConfigData from "./ConfigData";
+import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow";
 import JobInspector from "../components/containers/inspector/JobInspector";
+import JobNode from "../components/containers/nodes/JobNode";
+import JobSummary from "../components/containers/summaries/JobSummary";
 // import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
-import JobSummary from "../components/containers/summaries/JobSummary";
-import JobNode from "../components/containers/nodes/JobNode";
-import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow";
+import ConfigData from "./ConfigData";
 
 export interface WorkflowJob {
   job: Job,

@@ -1,9 +1,9 @@
-import ConfigData from "./ConfigData";
-import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
-import ExecutorSummary from "../components/containers/summaries/ExecutorSummary";
-import ExecutorInspector from "../components/containers/inspector/ExecutorInspector";
-import ExecutorIcon from "../icons/ExecutorIcon";
 import { Executor, Job } from "@circleci/circleci-config-sdk";
+import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
+import ExecutorInspector from "../components/containers/inspector/ExecutorInspector";
+import ExecutorSummary from "../components/containers/summaries/ExecutorSummary";
+import ExecutorIcon from "../icons/ExecutorIcon";
+import ConfigData from "./ConfigData";
 import { WorkflowJob } from "./JobData";
 
 export type anyExecutor = Executor.DockerExecutor | Executor.MacOSExecutor | Executor.MachineExecutor | Executor.WindowsExecutor | AbstractExecutor
