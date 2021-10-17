@@ -1,5 +1,5 @@
-import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
 import { FormikValues } from "formik";
+import { ReusableExecutor } from "../../../mappings/ExecutorData";
 import { DefinitionModel } from "../../../state/Store";
 
 const ExecutorInspector = (definitions: DefinitionModel) => ({
@@ -7,7 +7,7 @@ const ExecutorInspector = (definitions: DefinitionModel) => ({
   handleChange,
   handleBlur,
   handleSubmit
-}: FormikValues & { data: AbstractExecutor}) => {
+}: FormikValues & { data: ReusableExecutor}) => {
   return (
     <form onSubmit={handleSubmit}>
       <input

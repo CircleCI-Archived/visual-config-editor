@@ -1,14 +1,16 @@
-import { Executor, Job } from "@circleci/circleci-config-sdk";
-import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
+import { executor, Job } from "@circleci/circleci-config-sdk";
+import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor";
 import ExecutorInspector from "../components/containers/inspector/ExecutorInspector";
 import ExecutorSummary from "../components/containers/summaries/ExecutorSummary";
 import ExecutorIcon from "../icons/ExecutorIcon";
-import ConfigData from "./ConfigData";
+import ComponentMapping from "./ConfigData";
 import { WorkflowJob } from "./JobData";
 
-export type anyExecutor = Executor.DockerExecutor | Executor.MacOSExecutor | Executor.MachineExecutor | Executor.WindowsExecutor | AbstractExecutor
+export type AnyExecutor = executor.DockerExecutor | executor.MacOSExecutor | executor.MachineExecutor | executor.WindowsExecutor | AbstractExecutor
 
-const ExecutorData = (): ConfigData<anyExecutor, WorkflowJob> => {
+export type ReusableExecutor = { name: string, executor: AnyExecutor }
+
+const ExecutorMapping = (): ComponentMapping<ReusableExecutor, WorkflowJob> => {
   return {
     type: 'executor',
     name: {
@@ -17,9 +19,11 @@ const ExecutorData = (): ConfigData<anyExecutor, WorkflowJob> => {
     },
     defaults: {
       name: 'New Executor',
-      image: 'cimg/base:latest'
+      executor: {
+        image: 'cimg/base:latest'
+      }
     },
-    transform: (values) => new Executor.DockerExecutor(values.name, values.image.name || 'cimg/base:latest'),
+    transform: (values) => { return { name: values.name, executor: new executor.DockerExecutor(values.executor.image.name || 'cimg/base:latest') } },
     store: {
       get: (state) => state.definitions.executors,
       add: (actions) => actions.defineExecutor,
@@ -30,7 +34,7 @@ const ExecutorData = (): ConfigData<anyExecutor, WorkflowJob> => {
     applyToNode: (data, nodeData) => {
       const oldJob = nodeData.job;
 
-      return { job: new Job(oldJob.name, data, oldJob.steps) }
+      return { job: new Job(oldJob.name, data.executor, oldJob.steps) }
     },
     components: {
       icon: ExecutorIcon,
@@ -40,4 +44,4 @@ const ExecutorData = (): ConfigData<anyExecutor, WorkflowJob> => {
   }
 }
 
-export default ExecutorData();
+export default ExecutorMapping();

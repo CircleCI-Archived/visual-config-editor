@@ -1,11 +1,11 @@
 
 import Collapsible from 'react-collapsible';
-import ConfigData from '../../data/ConfigData';
+import ComponentMapping from '../../mappings/ConfigData';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import Definition from '../atoms/Definition';
 
 export interface DefintionsProps {
-  type: ConfigData;
+  type: ComponentMapping;
 }
 
 const Defintions = (props: DefintionsProps) => {

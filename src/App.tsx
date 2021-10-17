@@ -1,12 +1,8 @@
-import Editor from "@monaco-editor/react";
 import { createStore, StoreProvider } from 'easy-peasy';
-import { config } from "process";
 import SplitPane from 'react-split-pane';
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import CreateNew from './components/containers/CreateNew';
 import DefinitionsPane from './components/panes/DefinitionsPane';
 import EditorPane from "./components/panes/EditorPane";
-import InspectorPane from './components/panes/InspectorPane';
 import WorkflowsTabbed from './components/panes/WorkflowsTabbed';
 import Store from './state/Store';
 

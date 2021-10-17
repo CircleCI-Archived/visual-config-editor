@@ -1201,10 +1201,8 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@circleci/circleci-config-sdk@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.2.4.tgz#ce63b39f6e5a9273a5678fc036dfde2cf2275f13"
-  integrity sha512-TFdeMzD3OJwIKTSKz+WIKOn7zZWOVsSs11qc6yICIpn5j9Llvv9auIzfBYSEHjVouX6O50mXb3u2UZVPdRFVag==
+"@circleci/circleci-config-sdk@../circleci-config-sdk-ts":
+  version "0.0.0-development"
   dependencies:
     yaml "^1.10.2"
 

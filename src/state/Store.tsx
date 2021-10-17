@@ -1,13 +1,14 @@
-import { Config, Executor, Job } from '@circleci/circleci-config-sdk';
-import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
-import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
-import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
-import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
+import { Config, executor, Job } from '@circleci/circleci-config-sdk';
+import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
+import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
+import { CircleCIConfigObject } from '@circleci/circleci-config-sdk/dist/src/lib/Config';
+import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
+import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
 import { Elements, FlowElement, isNode } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import ConfigData from '../data/ConfigData';
+import ComponentMapping from '../mappings/ConfigData';
+import { AnyExecutor, ReusableExecutor } from '../mappings/ExecutorData';
 
 export interface WorkflowModel {
   name: string
@@ -16,13 +17,13 @@ export interface WorkflowModel {
 }
 
 export interface DefinitionModel extends CircleCIConfigObject {
-  orbs: ConfigOrbImport[];
   parameters: PipelineParameter<ParameterTypes>[];
+  executors: ReusableExecutor[];
 }
 
 export interface InspectModel {
   data?: any;
-  dataType?: ConfigData | undefined;
+  dataType?: ComponentMapping | undefined;
   mode: 'creating' | 'editing' | 'none';
 }
 
@@ -51,8 +52,8 @@ export interface StoreActions {
   setWorkflowElements: Action<StoreModel, Elements<any>>
 
   // config/declarations
-  importOrb: Action<StoreModel, ConfigOrbImport>;
-  unimportOrb: Action<StoreModel, ConfigOrbImport>;
+  // importOrb: Action<StoreModel, ConfigOrbImport>;
+  // unimportOrb: Action<StoreModel, ConfigOrbImport>;
 
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
@@ -61,9 +62,9 @@ export interface StoreActions {
   defineCommand: Action<StoreModel, Command>;
   undefineCommand: Action<StoreModel, Command>;
 
-  defineExecutor: Action<StoreModel, AbstractExecutor>;
-  updateExecutor: Action<StoreModel, UpdateType<AbstractExecutor>>;
-  undefineExecutor: Action<StoreModel, AbstractExecutor>;
+  defineExecutor: Action<StoreModel, ReusableExecutor>;
+  updateExecutor: Action<StoreModel, UpdateType<ReusableExecutor>>;
+  undefineExecutor: Action<StoreModel, ReusableExecutor>;
 
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
@@ -105,12 +106,12 @@ const Actions: StoreActions = {
   }),
   // config/declarations
 
-  importOrb: action((state, payload) => {
+  // importOrb: action((state, payload) => {
 
-  }),
-  unimportOrb: action((state, payload) => {
+  // }),
+  // unimportOrb: action((state, payload) => {
 
-  }),
+  // }),
 
   defineJob: action((state, payload) => {
     state.definitions.jobs?.push(payload);
@@ -166,7 +167,7 @@ const Actions: StoreActions = {
   }),
 }
 
-const defaultExecutor = new Executor.DockerExecutor('default', 'cimg/base:stable')
+const defaultExecutor = { name: 'Default', executor: new executor.DockerExecutor('cimg/base:stable') }
 
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
@@ -176,9 +177,8 @@ const Store: StoreModel & StoreActions = {
     version: 2.1,
     commands: [],
     executors: [defaultExecutor],
-    jobs: [new Job('build', defaultExecutor), new Job('test', defaultExecutor), new Job('deploy', defaultExecutor)],
+    jobs: [new Job('build', defaultExecutor.executor), new Job('test', defaultExecutor.executor), new Job('deploy', defaultExecutor.executor)],
     workflows: [],
-    orbs: [],
     parameters: []
   },
   workflows: [{ name: 'build-and-test', elements: [], id: v4() }],

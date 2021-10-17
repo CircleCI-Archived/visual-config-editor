@@ -3,14 +3,15 @@ import { useStoreActions, useStoreState } from "../../state/Hooks";
 
 const InspectorPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
-  const inspect = useStoreActions((actions) => actions.inspect);
+  // const inspect = useStoreActions((actions) => actions.inspect);
   const configData = inspecting.dataType;
   const update = useStoreActions((actions) => configData?.store.update(actions) || actions.error);
   const definitions = useStoreState((state) => state.definitions)
 
+
   const getInspector = () => {
     if (configData) {
-      let data = {}
+      let data: any = {}
 
       Object.assign(data, ...Object.keys(inspecting.data).map((key) => {
         const value = inspecting.data[key];
@@ -18,7 +19,7 @@ const InspectorPane = () => {
         return { [key]: typeof value == 'object' ? JSON.stringify(value) : value }
       }));
 
-      return <Formik initialValues={data}
+      return <Formik initialValues={data} enableReinitialize
         onSubmit={(values) => {
           update({ old: inspecting.data, new: configData.transform(values) })
         }}>
@@ -27,7 +28,9 @@ const InspectorPane = () => {
     }
   }
 
-  if (inspecting && inspecting.dataType && inspecting.mode == 'editing') {
+  
+  if (inspecting && inspecting.dataType && inspecting.mode === 'editing') {
+    console.log(inspecting && inspecting.dataType && inspecting.mode  === 'editing')
     return <div className="p-5">
       {getInspector()}
     </div>

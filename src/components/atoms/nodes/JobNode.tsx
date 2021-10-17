@@ -1,8 +1,8 @@
 import { Job } from '@circleci/circleci-config-sdk';
-import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow';
+import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow';
 import { addEdge, Connection, Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
-import { componentToType } from '../../../data/ConfigData';
-import { WorkflowJob } from '../../../data/JobData';
+import { componentToType } from '../../../mappings/ConfigData';
+import { WorkflowJob } from '../../../mappings/JobData';
 import JobIcon from '../../../icons/JobIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
@@ -13,7 +13,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (pro
 
   const updateWorkflowJob = (workflowJob: WorkflowJob, applyToData: { job?: Job, parameters?: WorkflowJobParameters }) =>
     elements.map((element) =>
-      isNode(element) && element.data.job.name == workflowJob.job.name ?
+      isNode(element) && element.data.job.name === workflowJob.job.name ?
         { ...element, data: { ...workflowJob, ...applyToData } }
         : element
     );

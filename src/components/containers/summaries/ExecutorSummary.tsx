@@ -1,9 +1,9 @@
-import { AbstractExecutor } from "@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor";
+import { ReusableExecutor } from "../../../mappings/ExecutorData";
 
-const ExecutorSummary: React.FunctionComponent<{ data: AbstractExecutor}> = (props) => {
+const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor}> = (props) => {
   return (
     <div>
-      {props.data.name} {props.data.resourceClass}
+      {props.data.name} {props.data.executor.resourceClass}
     </div>
   )
 }

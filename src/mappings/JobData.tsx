@@ -1,18 +1,18 @@
 import { Job } from "@circleci/circleci-config-sdk";
-import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow";
+import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow";
 import JobInspector from "../components/containers/inspector/JobInspector";
-import JobNode from "../components/containers/nodes/JobNode";
+import JobNode from "../components/atoms/nodes/JobNode";
 import JobSummary from "../components/containers/summaries/JobSummary";
 // import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
-import ConfigData from "./ConfigData";
+import ComponentMapping from "./ConfigData";
 
 export interface WorkflowJob {
   job: Job,
   parameters?: WorkflowJobParameters
 }
 
-const JobData = (): ConfigData<Job, WorkflowJob> => {
+const JobMapping = (): ComponentMapping<Job, WorkflowJob> => {
   return {
     type: 'job',
     name: {
@@ -62,4 +62,4 @@ const JobData = (): ConfigData<Job, WorkflowJob> => {
   }
 }
 
-export default JobData();
+export default JobMapping();

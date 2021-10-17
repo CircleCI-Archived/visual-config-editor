@@ -1,7 +1,8 @@
 import { Config, Workflow } from "@circleci/circleci-config-sdk";
-import { dataMappings } from "../../data/ConfigData";
+import { dataMappings } from "../../mappings/ConfigData";
 import { useStoreActions, useStoreState } from "../../state/Hooks";
 import Definitions from "../containers/DefinitionsContainer";
+import InspectorPane from "./InspectorPane";
 
 const DefintionsPane = () => {
   /* TODO: DETERMINE PARAMETERS
@@ -13,7 +14,7 @@ const DefintionsPane = () => {
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
 
   const generateConfig = () => {
-    const config = new Config(false, [], defs.workflows, defs.executors, defs.commands)
+    const config = new Config(false, [], defs.workflows, defs.commands)
 
     defs.jobs?.forEach(job => {
       config.addJob(job);
@@ -51,6 +52,8 @@ const DefintionsPane = () => {
           })}
         </div>
       </div>
+
+      <InspectorPane/>
 
       <button className="text-gray-100 text-2xl p-2 m-6 bg-circle-blue duration:50 transition-all rounded-lg"
         onClick={e => generateConfig()}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactFlow, { Background, BackgroundVariant, Node, NodeTypesType } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { dataMappings } from '../../data/ConfigData';
+import { dataMappings } from '../../mappings/ConfigData';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { WorkflowModel } from '../../state/Store';
 

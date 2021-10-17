@@ -1,7 +1,7 @@
-import ConfigData from '../../data/ConfigData';
+import ComponentMapping from '../../mappings/ConfigData';
 import { useStoreActions } from '../../state/Hooks';
 
-const Definition = (props: { data: any, type: ConfigData }) => {
+const Definition = (props: { data: any, type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
   const inspector = useStoreActions((actions) => actions.inspect);
 

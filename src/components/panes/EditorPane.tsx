@@ -11,11 +11,10 @@ const EditorPane = () => {
       </div>
     </div>
     <Editor
-      theme="vs-dark"
-      className="flex-grow"
-      defaultLanguage="yaml"
-      defaultValue=""
-      value={config?.stringify()}
+      // theme="vs-dark"
+      // defaultLanguage="yaml"
+      // defaultValue=""
+      // value={config?.stringify() || ''}
     />
   </div>)
 };
