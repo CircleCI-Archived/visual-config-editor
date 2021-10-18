@@ -1,16 +1,14 @@
-import { Config, Executor, Job, Workflow } from '@circleci/circleci-config-sdk';
-import { Command } from '@circleci/circleci-config-sdk/dist/lib/Components/Commands/Command';
-import { DockerExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/lib/Components/Executor/Executor';
-import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/lib/Components/Workflow/WorkflowJob';
-import { CircleCIConfigObject, ConfigOrbImport } from '@circleci/circleci-config-sdk/dist/lib/Config';
-import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/lib/Config/Parameters';
-import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/lib/Config/Pipeline';
+import { Config, executor, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
+import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
+// import { CircleCIConfigObject } from '@circleci/circleci-config-sdk/dist/src/lib/Config';
+import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
+import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Edge, Elements, FlowElement, getIncomers, getOutgoers, isEdge, isNode, Node, updateEdge } from 'react-flow-renderer';
+import { Elements, FlowElement, isNode } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import JobNode from '../components/containers/nodes/JobNode'
-import ConfigData from '../data/ConfigData';
+import ComponentMapping from '../mappings/ComponentMapping';
+import { AnyExecutor, ReusableExecutor } from '../mappings/ExecutorMapping';
 
 export interface WorkflowModel {
   name: string
@@ -18,14 +16,18 @@ export interface WorkflowModel {
   elements: Elements<any>
 }
 
-export interface DefinitionModel extends CircleCIConfigObject {
-  orbs: ConfigOrbImport[];
+export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   parameters: PipelineParameter<ParameterTypes>[];
+  executors: ReusableExecutor[];
+  jobs?: Job[];
+  commands?: Command[];
+  workflows?: Workflow[];
 }
 
 export interface InspectModel {
   data?: any;
-  dataType?: ConfigData | undefined;
+  dataType?: ComponentMapping | undefined;
+  values?: any;
   mode: 'creating' | 'editing' | 'none';
 }
 
@@ -54,8 +56,8 @@ export interface StoreActions {
   setWorkflowElements: Action<StoreModel, Elements<any>>
 
   // config/declarations
-  importOrb: Action<StoreModel, ConfigOrbImport>;
-  unimportOrb: Action<StoreModel, ConfigOrbImport>;
+  // importOrb: Action<StoreModel, ConfigOrbImport>;
+  // unimportOrb: Action<StoreModel, ConfigOrbImport>;
 
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
@@ -64,14 +66,14 @@ export interface StoreActions {
   defineCommand: Action<StoreModel, Command>;
   undefineCommand: Action<StoreModel, Command>;
 
-  defineExecutor: Action<StoreModel, AbstractExecutor>;
-  updateExecutor: Action<StoreModel, UpdateType<AbstractExecutor>>;
-  undefineExecutor: Action<StoreModel, AbstractExecutor>;
+  defineExecutor: Action<StoreModel, ReusableExecutor>;
+  updateExecutor: Action<StoreModel, UpdateType<ReusableExecutor>>;
+  undefineExecutor: Action<StoreModel, ReusableExecutor>;
 
   defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
   undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
 
-  generateConfig: Action<DefinitionModel>;
+  generateConfig: Action<StoreModel, Config>;
   error: Action<StoreModel, any>;
 }
 
@@ -108,12 +110,12 @@ const Actions: StoreActions = {
   }),
   // config/declarations
 
-  importOrb: action((state, payload) => {
+  // importOrb: action((state, payload) => {
 
-  }),
-  unimportOrb: action((state, payload) => {
+  // }),
+  // unimportOrb: action((state, payload) => {
 
-  }),
+  // }),
 
   defineJob: action((state, payload) => {
     state.definitions.jobs?.push(payload);
@@ -165,32 +167,19 @@ const Actions: StoreActions = {
   }),
 
   generateConfig: action((state, payload) => {
-    // const defs = state.definitions;
-
-    console.log(state)
-
-    const config = new Config(false, state.jobs, state.workflows, state.executors);
-
-    console.log(config)
-
-    //     console.log(state.config)
-    // console.log(state.config.stringify())
+    state.config = payload;
   }),
 }
-
-const defaultExecutor = new Executor.DockerExecutor('default', 'cimg/base:stable')
 
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
   selectedWorkflow: 0,
   config: undefined,
   definitions: {
-    version: 2.1,
     commands: [],
-    executors: [defaultExecutor],
-    jobs: [new Job('build', defaultExecutor), new Job('test', defaultExecutor), new Job('deploy', defaultExecutor)],
+    executors: [],
+    jobs: [],
     workflows: [],
-    orbs: [],
     parameters: []
   },
   workflows: [{ name: 'build-and-test', elements: [], id: v4() }],

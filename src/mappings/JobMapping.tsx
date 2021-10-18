@@ -1,18 +1,19 @@
-import { Job } from "@circleci/circleci-config-sdk";
-import ConfigData from "./ConfigData";
+import { commands, Job } from "@circleci/circleci-config-sdk";
+import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow";
 import JobInspector from "../components/containers/inspector/JobInspector";
+import JobNode from "../components/atoms/nodes/JobNode";
+import JobSummary from "../components/atoms/summaries/JobSummary";
 // import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
-import JobSummary from "../components/containers/summaries/JobSummary";
-import JobNode from "../components/containers/nodes/JobNode";
-import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/lib/Components/Workflow/Workflow";
+import ComponentMapping from "./ComponentMapping";
+import ExecutorMapping from "./ExecutorMapping";
 
 export interface WorkflowJob {
   job: Job,
   parameters?: WorkflowJobParameters
 }
 
-const JobData = (): ConfigData<Job, WorkflowJob> => {
+const JobMapping = (): ComponentMapping<Job, WorkflowJob> => {
   return {
     type: 'job',
     name: {
@@ -21,10 +22,12 @@ const JobData = (): ConfigData<Job, WorkflowJob> => {
     },
     defaults: {
       name: 'New Job',
-      executor: undefined
+      executor: undefined,
+      steps: [],
+      step: { parameters: {} }
     },
     transform: (values) => {
-      return new Job(values.name, JSON.parse(values.executor), values.steps);
+      return new Job(values.name, ExecutorMapping.transform({ ...JSON.parse(values.executor) }).executor, values.steps);
     },
     store: {
       get: (state) => {
@@ -40,18 +43,6 @@ const JobData = (): ConfigData<Job, WorkflowJob> => {
       transform: (data) => {
         return { job: data }
       },
-      store: {
-        // get: (state, workflowName) => {
-        //   return ;
-        // },
-        // add: (actions) => actions.workflow
-        // update: (actions, job) => {
-
-        // },
-        // remove: (actions, job) => {
-
-        // }
-      },
       component: JobNode,
     },
     components: {
@@ -62,4 +53,4 @@ const JobData = (): ConfigData<Job, WorkflowJob> => {
   }
 }
 
-export default JobData();
+export default JobMapping();

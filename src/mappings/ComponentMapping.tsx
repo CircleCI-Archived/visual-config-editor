@@ -1,36 +1,38 @@
-import { Command, Job, Executor, Pipeline } from "@circleci/circleci-config-sdk";
-import { Action, ActionCreator, Actions, State, StateMapper } from "easy-peasy";
-import { FormikConfig, FormikProps, FormikValues } from "formik";
-import { Elements, FlowElement, NodeProps } from "react-flow-renderer";
-import { ReactElement } from "react-redux/node_modules/@types/react";
+import { executor, Job } from "@circleci/circleci-config-sdk";
+import { ActionCreator, Actions, State } from "easy-peasy";
+import { FormikValues } from "formik";
+import { NodeProps } from "react-flow-renderer";
 import Store, { DefinitionModel, UpdateType } from "../state/Store";
-import ExecutorData from "./ExecutorData";
-import JobData from "./JobData";
+import ExecutorMapping from "./ExecutorMapping";
+import JobMapping from "./JobMapping";
 
 export interface DataMapping {
   type: string;
   component: any[];
-  dataType: ConfigData;
+  dataType: ComponentMapping;
 }
 
 const dataMappings: DataMapping[] = [
   {
     type: 'executor',
-    component: [Executor.DockerExecutor, Executor.MacOSExecutor, Executor.MachineExecutor, Executor.WindowsExecutor],
-    dataType: ExecutorData
+    component: [executor.DockerExecutor, executor.MacOSExecutor, executor.MachineExecutor, executor.WindowsExecutor],
+    dataType: ExecutorMapping
   },
   {
     type: 'job',
     component: [Job],
-    dataType: JobData
+    dataType: JobMapping
   },
 ];
 
-const componentToType = (data: any): ConfigData | undefined => {
+/*
+* @see
+*/
+const componentToType = (data: any): ComponentMapping | undefined => {
   let foundType = undefined;
 
   dataMappings.forEach((mapping) => {
-    if (typeof data === 'string' && mapping.type == data) {
+    if (typeof data === 'string' && mapping.type === data) {
       foundType = mapping.dataType;
       return;
     } else {
@@ -51,18 +53,18 @@ export { componentToType, dataMappings };
 type storeType = typeof Store;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type ToNode<T> = { [K in KeysOfUnion<T>]: keyof T }
 
-export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any> {
+export default interface ComponentMapping<ConfigDataType = any, ConfigNodeProps = any, InspectorDefaults = any> {
   type: string,
   name: {
     singular: string;
     plural: string;
   },
-  defaults: {
-    [K in KeysOfUnion<ConfigDataType>]?: any;
+  defaults: { // used in inspectors
+    [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
   },
-  transform: (values: { [K in KeysOfUnion<ConfigDataType>]: any }) => ConfigDataType;
+  // Transform field values into an instance of ConfigDataType
+  transform: (values: { [K: string]: any }) => ConfigDataType;
   store: {
     get: (state: State<storeType>) => ConfigDataType[] | undefined;
     add: (state: Actions<storeType>) => ActionCreator<ConfigDataType>;
@@ -73,19 +75,14 @@ export default interface ConfigData<ConfigDataType = any, ConfigNodeProps = any>
   applyToNode?: (data: ConfigDataType, nodeData: ConfigNodeProps) => { [K in KeysOfUnion<ConfigNodeProps>]?: any }
   node?: {
     type: string,
+    // Transform definition data 
     transform?: (data: ConfigDataType) => ConfigNodeProps
-    store: {
-      // get: (state: State<storeType>, workflowName: string) => FlowElement<ConfigNodeProps> | undefined;
-      // add: (state: Actions<storeType>) => ActionCreator<ConfigNodeProps>;
-      // update: (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
-      // remove:  (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
-    },
+    // TODO: Add store functionality to better support updating defintions and their corresponding workflow nodes
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>
   }
   components: {
     icon?: React.FunctionComponent<any>;
     summary: React.FunctionComponent<{ data: ConfigDataType }>;
-
     inspector: (definitions: DefinitionModel) => (props: FormikValues & { data: ConfigDataType }) => JSX.Element;
   }
 }

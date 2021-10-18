@@ -1,15 +1,14 @@
 
 import Collapsible from 'react-collapsible';
-import ConfigData from '../../data/ConfigData';
+import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import Definition from '../atoms/Definition';
-import CreateNew from './CreateNew';
 
 export interface DefintionsProps {
-  type: ConfigData;
+  type: ComponentMapping;
 }
 
-const Defintions = (props: DefintionsProps) => {
+const DefintionsContainer = (props: DefintionsProps) => {
   const getIcon = () => {
     let iconComponent = props.type.components.icon;
 
@@ -24,9 +23,9 @@ const Defintions = (props: DefintionsProps) => {
   const inspect = useStoreActions((actions) => actions.inspect)
 
   return (
-    <div className="mb-6">
-      <Collapsible triggerClassName="text-gray-100 text-2xl hover:bg-circle-gray-600 p-2 block bg-circle-gray-800 duration:50 transition-all w-full rounded-lg"
-        triggerOpenedClassName="block text-2xl p-2 text-gray-100 bg-circle-green w-full transition rounded-t-lg" transitionTime={50} trigger={
+    <div className="mb-4">
+      <Collapsible triggerClassName="text-circle-black shadow-md text-2xl hover:bg-circle-gray-100 p-2 block border border-circle-gray-300 bg-white duration:50 transition-all w-full rounded-md"
+        triggerOpenedClassName="block border border-circle-gray-300 text-2xl p-2 shadow-md text-circle-black bg-white w-full transition rounded-t-md" transitionTime={50} trigger={
           <div className="flex ">
             {getIcon()}
             <p className="self-center">
@@ -41,9 +40,9 @@ const Defintions = (props: DefintionsProps) => {
               <Definition data={item} type={props.type} />
             </div>)
         }
-        <div className="w-full flex-inline h-15 p-2 rounded-b-lg bg-circle-gray-200 float-left">
-          <button onClick={() => inspect({ dataType: props.type, mode: 'creating' })} className="pl-2 pr-2 rounded-full float-right text-white font-semibold text-xl transition-colors hover:bg-circle-blue-light bg-circle-blue">
-            +
+        <div className="w-full p-2">
+          <button onClick={() => inspect({ dataType: props.type, mode: 'creating' })} className="p-1 w-full rounded-md text-white text-xl transition-colors hover:bg-circle-blue-light bg-circle-blue">
+            Create {props.type.name.singular}
           </button>
         </div>
       </Collapsible>
@@ -51,4 +50,4 @@ const Defintions = (props: DefintionsProps) => {
   );
 };
 
-export default Defintions;
+export default DefintionsContainer;

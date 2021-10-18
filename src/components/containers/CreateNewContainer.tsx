@@ -15,6 +15,7 @@ const CreateNew = () => {
   const getInspector = () => {
     if (configData) {
       return <Formik initialValues={configData.defaults}
+        enableReinitialize={true}
         onSubmit={(values) => {
           add(configData.transform(values))
           inspect({ mode: 'none', data: undefined, dataType: undefined })
@@ -25,7 +26,7 @@ const CreateNew = () => {
   }
 
   return (
-    <div className={inspecting?.mode != 'creating' ? 'hidden' : ''
+    <div className={inspecting?.mode !== 'creating' ? 'hidden' : ''
       + 'absolute w-full h-full flex items-center justify-center bg-opacity-75 bg-black z-50 transition-all'}>
       <div className="bg-circle-gray-100 rounded-lg w-max ">
         <div className="w-full h-14 bg-circle-green rounded-t-lg float-left p-2 mb-2">

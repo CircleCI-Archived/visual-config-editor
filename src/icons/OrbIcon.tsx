@@ -1,4 +1,4 @@
-import { IconProps } from "./IconProps"
+import { IconProps } from "./IconProps";
 
 const OrbIcon = (props: IconProps) => (
     <svg viewBox="0 0 20 20" className={props.className}>

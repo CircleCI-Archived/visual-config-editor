@@ -1,6 +1,6 @@
-import { useStoreActions, useStoreState } from "../../state/Hooks";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import WorkflowPane from "./WorkflowPane";
+import { useStoreActions, useStoreState } from "../../state/Hooks";
+import WorkflowPane from "../containers/WorkflowContainer";
 
 
 const WorkflowsTabbed = () => {
@@ -30,7 +30,7 @@ const WorkflowsTabbed = () => {
 
     {workflows?.map((workflow) =>
       <TabPanel key={workflow.id} selectedClassName="flex-grow mr-4">
-        <WorkflowPane workflow={workflow} bgClassName="bg-circle-gray-800" className="ml-2 border-2 border-b-0 border-circle-gray-400" />
+        <WorkflowPane workflow={workflow} bgClassName="bg-circle-gray-200" className="ml-2 border-2 border-b-0 border-circle-gray-300" />
       </TabPanel>
     )}
   </Tabs>)

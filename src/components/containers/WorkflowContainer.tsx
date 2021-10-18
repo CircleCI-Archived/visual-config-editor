@@ -1,12 +1,9 @@
-import { Job } from '@circleci/circleci-config-sdk';
-import React, { useState } from 'react';
-import ReactFlow, { Background, BackgroundVariant, Elements, Node, NodeTypesType } from 'react-flow-renderer';
+import React from 'react';
+import ReactFlow, { Background, BackgroundVariant, FlowTransform, Node, NodeTypesType, useStore } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import dataTypes, { componentToType, dataMappings } from '../../data/ConfigData';
-import JobData from '../../data/JobData';
+import { dataMappings } from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import Store, { WorkflowModel } from '../../state/Store';
-import JobNode from '../containers/nodes/JobNode';
+import { WorkflowModel } from '../../state/Store';
 
 export interface ElementProps {
   className?: string;
@@ -26,6 +23,15 @@ const getTypes = (): NodeTypesType => Object.assign({}, ...dataMappings.map((com
 const WorkflowPane = (props: ElementProps) => {
   const elements = useStoreState((state) => state.workflows[state.selectedWorkflow].elements);
   const addWorkflowElement = useStoreActions((actions) => actions.addWorkflowElement);
+  let curTransform: FlowTransform = { x: 0, y: 0, zoom: 1 }
+
+  const updateLocation = (transform?: FlowTransform) => {
+    if (transform) {
+      curTransform = transform;
+    }
+  }
+
+  const gap = 15;
 
   return (
     <div className="w-full h-full" onDragOver={(e) => {
@@ -36,8 +42,8 @@ const WorkflowPane = (props: ElementProps) => {
 
       if (e.dataTransfer.types.includes('workflow')) {
         const transfer = JSON.parse(e.dataTransfer.getData('workflow'));
-
-        console.log(transfer)
+        const pos = { x: e.clientX - gap - curTransform.x, y: e.clientY - gap * 3 - curTransform.y}
+        const round = (val: number) => (Math.floor(val / gap) * gap) / curTransform.zoom;
 
         if (transfer) {
           const workflowNode: Node<any> = {
@@ -45,16 +51,16 @@ const WorkflowPane = (props: ElementProps) => {
             connectable: true,
             type: transfer.type,
             id: v4(),
-            position: { x: e.clientX, y: e.clientY },
+            position: { x: round(pos.x), y: round(pos.y) },
           }
 
           addWorkflowElement(workflowNode);
         }
       }
     }}>
-      <ReactFlow elements={elements} className={props.className} selectNodesOnDrag={false} nodeTypes={getTypes()} snapToGrid={true}
+      <ReactFlow elements={elements} className={props.className} onMove={updateLocation} selectNodesOnDrag={false} nodeTypes={getTypes()} snapToGrid={true}
       >
-        <Background variant={BackgroundVariant.Lines} gap={150} color="#000000" className={props.bgClassName} size={1}
+        <Background variant={BackgroundVariant.Dots} gap={gap} color="#A3A3A3" className={props.bgClassName} size={1}
         />
       </ReactFlow >
     </div>

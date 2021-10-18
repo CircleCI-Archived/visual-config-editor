@@ -3,38 +3,37 @@ import { useStoreActions, useStoreState } from "../../state/Hooks";
 
 const InspectorPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
-  const inspect = useStoreActions((actions) => actions.inspect);
   const configData = inspecting.dataType;
   const update = useStoreActions((actions) => configData?.store.update(actions) || actions.error);
   const definitions = useStoreState((state) => state.definitions)
 
   const getInspector = () => {
     if (configData) {
-      let data = {}
-
-      Object.assign(data, ...Object.keys(inspecting.data).map((key) => {
-        const value = inspecting.data[key];
-
-        return { [key]: typeof value == 'object' ? JSON.stringify(value) : value }
-      }));
-
-      return <Formik initialValues={data}
+      return <Formik initialValues={{ ...configData.defaults, ...inspecting.data }} enableReinitialize
         onSubmit={(values) => {
           update({ old: inspecting.data, new: configData.transform(values) })
-        }}>
+        }}
+
+      >
         {configData.components.inspector(definitions)}
       </Formik>
     }
   }
 
-  if (inspecting && inspecting.dataType && inspecting.mode == 'editing') {
-    return <div className="p-5">
-      {getInspector()}
+  if (inspecting && inspecting.dataType && inspecting.mode === 'editing') {
+
+    return <div>
+      <div className="flex border-b border-circle-gray-300 m-2 mb-0">
+        <h1 className="border-b-4 text-xl pb-2 pl-2 pr-2 w-max font-bold text-circle-black text-center border-circle-gray-500">
+          INSPECTOR
+        </h1>
+      </div>
+      <div className="p-5 overflow-y-scroll">
+        {getInspector()}
+      </div>
     </div>
   }
-  return (<p className="text-circle-green-light font-semibold p-5">
-    Select a defintion or node to view and edit properties
-  </p>)
+  return (<div hidden />)
 }
 
 export default InspectorPane;
