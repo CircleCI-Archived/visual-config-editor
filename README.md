@@ -1,6 +1,6 @@
 # CircleCI Visual Configuration Editor
 
-[![GitHub](https://img.shields.io/github/license/CircleCI-Public/visual-config-editor)](https://github.com/CircleCI-Public/visual-config-editor/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/CircleCI-Public/visual-config-editor)](https://github.com/CircleCI-Public/visual-config-editor/blob/main/LICENSE)
 [![CircleCI](https://img.shields.io/circleci/build/gh/CircleCI-Public/visual-config-editor/main?logo=circleci)](https://app.circleci.com/pipelines/github/CircleCI-Public/visual-config-editor)
 
 Generate your CircleCI configuration files by building a visual map of your
