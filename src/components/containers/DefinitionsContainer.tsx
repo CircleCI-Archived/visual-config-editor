@@ -1,6 +1,6 @@
 
 import Collapsible from 'react-collapsible';
-import ComponentMapping from '../../mappings/ConfigData';
+import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import Definition from '../atoms/Definition';
 
@@ -8,7 +8,7 @@ export interface DefintionsProps {
   type: ComponentMapping;
 }
 
-const Defintions = (props: DefintionsProps) => {
+const DefintionsContainer = (props: DefintionsProps) => {
   const getIcon = () => {
     let iconComponent = props.type.components.icon;
 
@@ -50,4 +50,4 @@ const Defintions = (props: DefintionsProps) => {
   );
 };
 
-export default Defintions;
+export default DefintionsContainer;

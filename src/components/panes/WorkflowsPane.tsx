@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useStoreActions, useStoreState } from "../../state/Hooks";
-import WorkflowPane from "./WorkflowPane";
+import WorkflowPane from "../containers/WorkflowContainer";
 
 
 const WorkflowsTabbed = () => {

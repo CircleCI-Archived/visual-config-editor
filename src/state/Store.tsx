@@ -1,14 +1,14 @@
-import { Config, executor, Job } from '@circleci/circleci-config-sdk';
+import { Config, executor, Job, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
-import { CircleCIConfigObject } from '@circleci/circleci-config-sdk/dist/src/lib/Config';
+// import { CircleCIConfigObject } from '@circleci/circleci-config-sdk/dist/src/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
 import { Elements, FlowElement, isNode } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import ComponentMapping from '../mappings/ConfigData';
-import { AnyExecutor, ReusableExecutor } from '../mappings/ExecutorData';
+import ComponentMapping from '../mappings/ComponentMapping';
+import { AnyExecutor, ReusableExecutor } from '../mappings/ExecutorMapping';
 
 export interface WorkflowModel {
   name: string
@@ -16,14 +16,18 @@ export interface WorkflowModel {
   elements: Elements<any>
 }
 
-export interface DefinitionModel extends CircleCIConfigObject {
+export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   parameters: PipelineParameter<ParameterTypes>[];
   executors: ReusableExecutor[];
+  jobs?: Job[];
+  commands?: Command[];
+  workflows?: Workflow[];
 }
 
 export interface InspectModel {
   data?: any;
   dataType?: ComponentMapping | undefined;
+  values?: any;
   mode: 'creating' | 'editing' | 'none';
 }
 
@@ -167,17 +171,14 @@ const Actions: StoreActions = {
   }),
 }
 
-const defaultExecutor = { name: 'Default', executor: new executor.DockerExecutor('cimg/base:stable') }
-
 const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
   selectedWorkflow: 0,
   config: undefined,
   definitions: {
-    version: 2.1,
     commands: [],
-    executors: [defaultExecutor],
-    jobs: [new Job('build', defaultExecutor.executor), new Job('test', defaultExecutor.executor), new Job('deploy', defaultExecutor.executor)],
+    executors: [],
+    jobs: [],
     workflows: [],
     parameters: []
   },

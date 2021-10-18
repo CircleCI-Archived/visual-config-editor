@@ -1,4 +1,4 @@
-import ComponentMapping from '../../mappings/ConfigData';
+import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
 
 const Definition = (props: { data: any, type: ComponentMapping }) => {

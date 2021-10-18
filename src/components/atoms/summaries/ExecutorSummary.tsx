@@ -1,4 +1,4 @@
-import { ReusableExecutor } from "../../../mappings/ExecutorData";
+import { ReusableExecutor } from "../../../mappings/ExecutorMapping";
 
 const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor}> = (props) => {
   return (

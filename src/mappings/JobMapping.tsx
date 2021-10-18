@@ -1,11 +1,12 @@
-import { Job } from "@circleci/circleci-config-sdk";
+import { commands, Job } from "@circleci/circleci-config-sdk";
 import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow";
 import JobInspector from "../components/containers/inspector/JobInspector";
 import JobNode from "../components/atoms/nodes/JobNode";
-import JobSummary from "../components/containers/summaries/JobSummary";
+import JobSummary from "../components/atoms/summaries/JobSummary";
 // import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
-import ComponentMapping from "./ConfigData";
+import ComponentMapping from "./ComponentMapping";
+import ExecutorMapping from "./ExecutorMapping";
 
 export interface WorkflowJob {
   job: Job,
@@ -21,10 +22,12 @@ const JobMapping = (): ComponentMapping<Job, WorkflowJob> => {
     },
     defaults: {
       name: 'New Job',
-      executor: undefined
+      executor: undefined,
+      steps: [],
+      step: { parameters: {} }
     },
     transform: (values) => {
-      return new Job(values.name, JSON.parse(values.executor), values.steps);
+      return new Job(values.name, ExecutorMapping.transform({ ...JSON.parse(values.executor) }).executor, values.steps);
     },
     store: {
       get: (state) => {
@@ -39,18 +42,6 @@ const JobMapping = (): ComponentMapping<Job, WorkflowJob> => {
       type: 'job',
       transform: (data) => {
         return { job: data }
-      },
-      store: {
-        // get: (state, workflowName) => {
-        //   return ;
-        // },
-        // add: (actions) => actions.workflow
-        // update: (actions, job) => {
-
-        // },
-        // remove: (actions, job) => {
-
-        // }
       },
       component: JobNode,
     },

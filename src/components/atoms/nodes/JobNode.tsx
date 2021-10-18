@@ -1,8 +1,8 @@
 import { Job } from '@circleci/circleci-config-sdk';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow';
 import { addEdge, Connection, Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
-import { componentToType } from '../../../mappings/ConfigData';
-import { WorkflowJob } from '../../../mappings/JobData';
+import { componentToType } from '../../../mappings/ComponentMapping';
+import { WorkflowJob } from '../../../mappings/JobMapping';
 import JobIcon from '../../../icons/JobIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
@@ -37,7 +37,6 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (pro
         }
       }} onDrop={(e) => {
         if (e.dataTransfer.types.includes('job')) {
-
           const transfer: { type: string, data: any } = JSON.parse(e.dataTransfer.getData('job'));
           const type = componentToType(transfer.type)
 
@@ -61,14 +60,6 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (pro
       <div className="flex w-40">
         <JobIcon className="w-6 h-6 mr-2" />
         {props.data.parameters?.name || props.data.job.name}
-        {/* <p className="text-gray-200">
-          Executor: {props.data.job.executor.name}
-          <br />
-          Parameters: {JSON.stringify(props.data.parameters) || 'None'}
-        </p> */}
-        {/* <p className="font-thin text-sm text-gray-600">
-          Close
-        </p> */}
       </div>
       <Handle
         type="source"

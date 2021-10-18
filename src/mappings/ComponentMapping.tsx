@@ -3,8 +3,8 @@ import { ActionCreator, Actions, State } from "easy-peasy";
 import { FormikValues } from "formik";
 import { NodeProps } from "react-flow-renderer";
 import Store, { DefinitionModel, UpdateType } from "../state/Store";
-import ExecutorMapping from "./ExecutorData";
-import JobMapping from "./JobData";
+import ExecutorMapping from "./ExecutorMapping";
+import JobMapping from "./JobMapping";
 
 export interface DataMapping {
   type: string;
@@ -26,7 +26,7 @@ const dataMappings: DataMapping[] = [
 ];
 
 /*
-* @arg
+* @see
 */
 const componentToType = (data: any): ComponentMapping | undefined => {
   let foundType = undefined;
@@ -54,17 +54,17 @@ type storeType = typeof Store;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 
-export default interface ComponentMapping<ConfigDataType = any, ConfigNodeProps = any> {
+export default interface ComponentMapping<ConfigDataType = any, ConfigNodeProps = any, InspectorDefaults = any> {
   type: string,
   name: {
     singular: string;
     plural: string;
   },
-  defaults: {
-    [K in KeysOfUnion<ConfigDataType>]?: any;
+  defaults: { // used in inspectors
+    [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
   },
   // Transform field values into an instance of ConfigDataType
-  transform: (values: { [K in KeysOfUnion<ConfigDataType>]: any }) => ConfigDataType;
+  transform: (values: { [K: string]: any }) => ConfigDataType;
   store: {
     get: (state: State<storeType>) => ConfigDataType[] | undefined;
     add: (state: Actions<storeType>) => ActionCreator<ConfigDataType>;
@@ -75,13 +75,9 @@ export default interface ComponentMapping<ConfigDataType = any, ConfigNodeProps 
   applyToNode?: (data: ConfigDataType, nodeData: ConfigNodeProps) => { [K in KeysOfUnion<ConfigNodeProps>]?: any }
   node?: {
     type: string,
+    // Transform definition data 
     transform?: (data: ConfigDataType) => ConfigNodeProps
-    store: {
-      // get: (state: State<storeType>, workflowName: string) => FlowElement<ConfigNodeProps> | undefined;
-      // add: (state: Actions<storeType>) => ActionCreator<ConfigNodeProps>;
-      // update: (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
-      // remove:  (state: Actions<storeType>) => (data: ConfigNodeProps) => void;
-    },
+    // TODO: Add store functionality to better support updating defintions and their corresponding workflow nodes
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>
   }
   components: {
