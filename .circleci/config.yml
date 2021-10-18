@@ -1,0 +1,39 @@
+version: 2.1
+orbs:
+  node: circleci/node@4.7.0
+
+jobs:
+  deploy-page:
+    executor: 
+      name: node/default
+      tag: 14.15.0
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - 'ee:27:9d:5f:61:1b:e7:83:ac:80:fb:ce:c5:4f:37:f1'
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          name: Build Page
+          command: yarn build
+      - run:
+          name: Deploy Pages
+          command: |
+            cd build
+            git config --global user.email "community-partner@circleci.com"
+            git config --global user.name "orb-publisher"
+            git init
+            git add -A
+            git commit -m "Deploy-<<pipeline.git.branch>>-<<pipeline.number>> [ci skip]"
+            git push -f git@github.com:CircleCI-Public/visual-config-editor.git master:gh-pages
+
+workflows:
+  deploy:
+    jobs:
+      - deploy-page:
+          context: cci-config-sdk-publishing
+          filters:
+            branches:
+              only: 
+                - main

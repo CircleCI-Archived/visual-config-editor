@@ -1,0 +1,60 @@
+{
+  "name": "visual-config-editor",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@circleci/circleci-config-sdk": "^0.4.0",
+    "@craco/craco": "^6.3.0",
+    "@monaco-editor/react": "^4.3.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.10.1",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-tabs": "^2.3.3",
+    "@types/uuid": "^8.3.1",
+    "autoprefixer": "^9",
+    "easy-peasy": "^5.0.3",
+    "formik": "^2.2.9",
+    "monaco-editor": "^0.29.1",
+    "monaco-editor-webpack-plugin": "^5.0.0",
+    "postcss": "^8",
+    "react": "^17.0.2",
+    "react-collapsible": "^2.8.4",
+    "react-dom": "^17.0.2",
+    "react-flow-renderer": "^9.6.7",
+    "react-scripts": "4.0.3",
+    "react-split-pane": "^0.1.92",
+    "react-tabs": "^3.2.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "typescript": "^4.4.3",
+    "uuid": "^8.3.2",
+    "web-vitals": "^2.1.2"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
