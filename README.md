@@ -1,5 +1,7 @@
 # CircleCI Visual Configuration Editor
 
+[![GitHub](https://img.shields.io/github/license/CircleCI-Public/visual-config-editor)](https://github.com/CircleCI-Public/visual-config-editor/blob/main/LICENSE)
+
 Generate your CircleCI configuration files by building a visual map of your project's workflows.
 
 This project is currently early access. Features are subject to cahnges. 
