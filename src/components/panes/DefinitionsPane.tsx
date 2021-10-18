@@ -59,6 +59,11 @@ const DefintionsPane = () => {
 
       <InspectorPane />
 
+      <header className="bg-circle-blue p-2 text-center m-auto text-white w-full rounded-lg">
+        <h1>Visual Config Editor alpha preview 0.1.0 - Features are subject to changes</h1>
+        <h1>Find a bug or have any feedback? Please submit an <i><a href="https://github.com/CircleCI-Public/visual-config-editor/issues">issue</a></i> on our GitHub repository.</h1>
+      </header>
+
       <div className="flex border-b border-circle-gray-300 mt-0 m-2" />
       <button className="text-gray-100 text-2xl p-2 m-6 bg-circle-blue duration:50 transition-all rounded-lg"
         onClick={e => generateConfig()}>

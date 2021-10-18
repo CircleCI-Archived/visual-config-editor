@@ -1,14 +1,12 @@
-import { Config, executor, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { Config, Job, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
-// import { CircleCIConfigObject } from '@circleci/circleci-config-sdk/dist/src/lib/Config';
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
 import { Elements, FlowElement, isNode } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import ComponentMapping from '../mappings/ComponentMapping';
-import { AnyExecutor, ReusableExecutor } from '../mappings/ExecutorMapping';
+import { ReusableExecutor } from '../mappings/ExecutorMapping';
 
 export interface WorkflowModel {
   name: string

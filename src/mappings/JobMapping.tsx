@@ -1,9 +1,8 @@
-import { commands, Job } from "@circleci/circleci-config-sdk";
+import { Job } from "@circleci/circleci-config-sdk";
 import { WorkflowJobParameters } from "@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow";
 import JobInspector from "../components/containers/inspector/JobInspector";
 import JobNode from "../components/atoms/nodes/JobNode";
 import JobSummary from "../components/atoms/summaries/JobSummary";
-// import JobNode, { JobNodeProps } from "../components/containers/nodes/JobNode";
 import JobIcon from "../icons/JobIcon";
 import ComponentMapping from "./ComponentMapping";
 import ExecutorMapping from "./ExecutorMapping";

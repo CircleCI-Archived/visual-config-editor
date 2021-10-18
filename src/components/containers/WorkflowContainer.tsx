@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactFlow, { Background, BackgroundVariant, FlowTransform, Node, NodeTypesType, useStore } from 'react-flow-renderer';
+import ReactFlow, { Background, BackgroundVariant, FlowTransform, Node, NodeTypesType } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
@@ -18,6 +17,8 @@ const getTypes = (): NodeTypesType => Object.assign({}, ...dataMappings.map((com
   if (node) {
     return { [node.type]: node.component }
   }
+
+  return null;
 }))
 
 const WorkflowPane = (props: ElementProps) => {
