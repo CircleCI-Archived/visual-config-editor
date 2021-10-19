@@ -6,7 +6,7 @@
 Generate your CircleCI configuration files by building a visual map of your
 project's workflows.
 
-This project is currently early access. Features are subject to cahnges.
+This project is currently early access. Features are subject to changes.
 
 ### Installing
 
