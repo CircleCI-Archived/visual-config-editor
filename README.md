@@ -24,6 +24,8 @@ $ yarn install
 
 ### Building
 
+Using npm:
+
 ```shell
 $ npm run build
 ```
