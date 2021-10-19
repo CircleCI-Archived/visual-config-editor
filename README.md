@@ -103,6 +103,9 @@ workflows:
             - test
 ```
 
+## Contributing
+For more information as to how to contribute to this Open Source project, visit our [Contributing](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md) guide.  
+
 ## Built with
 
 [CircleCI Config SDK](https://github.com/CircleCI-Public/circleci-config-sdk-ts)
