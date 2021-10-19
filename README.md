@@ -103,6 +103,9 @@ workflows:
             - test
 ```
 
+## Contributing
+This repository welcomes community contributions! See our CONTRIBUTING.md for guidance on configuring your development environment and how to submit quality pull requests.
+
 ## Built with
 
 [CircleCI Config SDK](https://github.com/CircleCI-Public/circleci-config-sdk-ts)
