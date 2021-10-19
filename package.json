@@ -1,7 +1,7 @@
 {
   "name": "visual-config-editor",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
     "@circleci/circleci-config-sdk": "^0.4.0",
     "@craco/craco": "^6.3.0",
