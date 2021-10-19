@@ -36,5 +36,6 @@ workflows:
           context: cci-config-sdk-publishing
           filters:
             branches:
-              only: 
-                - main
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
