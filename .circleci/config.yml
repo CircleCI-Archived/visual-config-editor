@@ -14,6 +14,7 @@ jobs:
             - 'ee:27:9d:5f:61:1b:e7:83:ac:80:fb:ce:c5:4f:37:f1'
       - node/install-packages:
           pkg-manager: yarn
+          cache-version: v2
       - run:
           name: Build Page
           command: yarn build
