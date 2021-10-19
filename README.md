@@ -104,7 +104,7 @@ workflows:
 ```
 
 ## Contributing
-For more information as to how to contribute to this Open Source project, visit our [Contributing](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md) guide.  
+This repository welcomes community contributions! See our CONTRIBUTING.md for guidance on configuring your development environment and how to submit quality pull requests.
 
 ## Built with
 
