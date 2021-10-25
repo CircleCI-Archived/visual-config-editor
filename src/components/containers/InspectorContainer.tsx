@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 
-const InspectorPane = () => {
+const InspectorContainer = () => {
   const inspecting = useStoreState((state) => state.inspecting);
   const configData = inspecting.dataType;
   const update = useStoreActions(
@@ -40,4 +40,4 @@ const InspectorPane = () => {
   return <div hidden />;
 };
 
-export default InspectorPane;
+export default InspectorContainer;

@@ -2,7 +2,7 @@ import { Config, Workflow } from '@circleci/circleci-config-sdk';
 import { dataMappings } from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import DefinitionsContainer from '../containers/DefinitionsContainer';
-import InspectorPane from '../containers/InspectorContainer';
+import InspectorContainer from '../containers/InspectorContainer';
 
 /**
  * @see
@@ -50,7 +50,7 @@ const DefintionsPane = () => {
       <div className="flex-1 h-full flex-col p-5 ">
         <div className="overflow-y-auto h-full mb-6 rounded-lg">
           {dataMappings.map((mapping) => {
-            const dataType = mapping.dataType;
+            const dataType = mapping.mapping;
 
             return (
               <DefinitionsContainer
@@ -62,7 +62,7 @@ const DefintionsPane = () => {
         </div>
       </div>
 
-      <InspectorPane />
+      <InspectorContainer />
 
       <header className="bg-circle-blue p-2 text-center m-auto text-white w-full rounded-lg">
         <h1>

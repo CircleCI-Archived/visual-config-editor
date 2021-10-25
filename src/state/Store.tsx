@@ -3,7 +3,12 @@ import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/C
 import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
 import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
 import { Action, action } from 'easy-peasy';
-import { Elements, FlowElement, isNode } from 'react-flow-renderer';
+import {
+  Elements,
+  FlowElement,
+  FlowTransform,
+  isNode,
+} from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import ComponentMapping from '../mappings/ComponentMapping';
 import { ReusableExecutor } from '../mappings/ExecutorMapping';
@@ -11,6 +16,7 @@ import { ReusableExecutor } from '../mappings/ExecutorMapping';
 export interface WorkflowModel {
   name: string;
   id: string;
+  transform: FlowTransform;
   elements: Elements<any>;
 }
 
@@ -58,6 +64,7 @@ export interface StoreActions {
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
   removeWorkflowElement: Action<StoreModel, FlowElement<any>>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
+  setWorkflowTransform: Action<StoreModel, FlowTransform>;
 
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
@@ -92,7 +99,12 @@ const Actions: StoreActions = {
   }),
 
   addWorkflow: action((state, name) => {
-    state.workflows = state.workflows.concat({ name, id: v4(), elements: [] });
+    state.workflows = state.workflows.concat({
+      name,
+      id: v4(),
+      elements: [],
+      transform: { x: 0, y: 0, zoom: 1 },
+    });
   }),
   selectWorkflow: action((state, index) => {
     state.selectedWorkflow = index;
@@ -111,6 +123,9 @@ const Actions: StoreActions = {
   removeWorkflowElement: action((state, payload) => {}),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
+  }),
+  setWorkflowTransform: action((state, payload) => {
+    state.workflows[state.selectedWorkflow].transform = payload;
   }),
 
   defineJob: action((state, payload) => {
@@ -140,7 +155,7 @@ const Actions: StoreActions = {
   defineExecutor: action((state, payload) => {
     state.definitions.executors = state.definitions.executors?.concat(payload);
   }),
-  /** @todo fix updating executors since reusable executors have been removed.*/ 
+  /** @todo fix updating executors since reusable executors have been removed.*/
   updateExecutor: action((state, payload) => {
     if (state.definitions.executors) {
       // const index = state.definitions.executors.findIndex((executor) => executor.name === payload.name)
@@ -176,7 +191,14 @@ const Store: StoreModel & StoreActions = {
     workflows: [],
     parameters: [],
   },
-  workflows: [{ name: 'build-and-test', elements: [], id: v4() }],
+  workflows: [
+    {
+      name: 'build-and-test',
+      elements: [],
+      id: v4(),
+      transform: { x: 0, y: 0, zoom: 1 },
+    },
+  ],
   ...Actions,
 };
 

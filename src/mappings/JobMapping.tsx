@@ -12,48 +12,46 @@ export interface WorkflowJob {
   parameters?: WorkflowJobParameters;
 }
 
-const JobMapping = (): ComponentMapping<Job, WorkflowJob> => {
-  return {
+const JobMapping: ComponentMapping<Job, WorkflowJob> = {
+  type: 'job',
+  name: {
+    singular: 'Job',
+    plural: 'Jobs',
+  },
+  defaults: {
+    name: 'New Job',
+    executor: undefined,
+    steps: [],
+    step: { parameters: {} },
+  },
+  transform: (values) => {
+    return new Job(
+      values.name,
+      ExecutorMapping.transform({ ...JSON.parse(values.executor) }).executor,
+      values.steps,
+    );
+  },
+  store: {
+    get: (state) => {
+      return state.definitions.jobs;
+    },
+    add: (actions) => actions.defineJob,
+    update: (actions) => actions.updateJob,
+    remove: (actions) => actions.undefineJob,
+  },
+  dragTarget: 'workflow',
+  node: {
     type: 'job',
-    name: {
-      singular: 'Job',
-      plural: 'Jobs',
+    transform: (data) => {
+      return { job: data };
     },
-    defaults: {
-      name: 'New Job',
-      executor: undefined,
-      steps: [],
-      step: { parameters: {} },
-    },
-    transform: (values) => {
-      return new Job(
-        values.name,
-        ExecutorMapping.transform({ ...JSON.parse(values.executor) }).executor,
-        values.steps,
-      );
-    },
-    store: {
-      get: (state) => {
-        return state.definitions.jobs;
-      },
-      add: (actions) => actions.defineJob,
-      update: (actions) => actions.updateJob,
-      remove: (actions) => actions.undefineJob,
-    },
-    dragTarget: 'workflow',
-    node: {
-      type: 'job',
-      transform: (data) => {
-        return { job: data };
-      },
-      component: JobNode,
-    },
-    components: {
-      icon: JobIcon,
-      summary: JobSummary,
-      inspector: JobInspector,
-    },
-  };
+    component: JobNode,
+  },
+  components: {
+    icon: JobIcon,
+    summary: JobSummary,
+    inspector: JobInspector,
+  },
 };
 
-export default JobMapping();
+export default JobMapping;

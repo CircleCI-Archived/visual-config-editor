@@ -12,7 +12,7 @@ import JobMapping from './JobMapping';
 export interface DataMapping {
   type: string;
   component: any[];
-  dataType: ComponentMapping;
+  mapping: ComponentMapping;
 }
 
 /**
@@ -27,12 +27,12 @@ const dataMappings: DataMapping[] = [
       executor.MachineExecutor,
       executor.WindowsExecutor,
     ],
-    dataType: ExecutorMapping,
+    mapping: ExecutorMapping,
   },
   {
     type: 'job',
     component: [Job],
-    dataType: JobMapping,
+    mapping: JobMapping,
   },
 ];
 
@@ -46,12 +46,12 @@ const componentToType = (data: any): ComponentMapping | undefined => {
 
   dataMappings.forEach((mapping) => {
     if (typeof data === 'string' && mapping.type === data) {
-      foundType = mapping.dataType;
+      foundType = mapping.mapping;
       return;
     } else {
       mapping.component.forEach((type) => {
         if (data instanceof type) {
-          foundType = mapping.dataType;
+          foundType = mapping.mapping;
           return;
         }
       });

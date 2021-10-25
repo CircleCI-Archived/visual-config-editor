@@ -50,47 +50,41 @@ const transform = (values: any) => {
   };
 };
 
-const ExecutorMapping = (): ComponentMapping<ReusableExecutor, WorkflowJob> => {
-  return {
-    type: 'executor',
-    name: {
-      singular: 'Executor',
-      plural: 'Executors',
-    },
-    defaults: {
-      name: 'New Executor',
-      type: 'docker',
-      executor: {
-        image: {
-          image: 'cimg/base:stable',
-        },
+const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
+  type: 'executor',
+  name: {
+    singular: 'Executor',
+    plural: 'Executors',
+  },
+  defaults: {
+    name: 'New Executor',
+    type: 'docker',
+    executor: {
+      image: {
+        image: 'cimg/base:stable',
       },
     },
-    transform: transform,
-    store: {
-      get: (state) => state.definitions.executors,
-      add: (actions) => actions.defineExecutor,
-      update: (actions) => actions.updateExecutor,
-      remove: (actions) => actions.undefineExecutor,
-    },
-    dragTarget: 'job',
-    applyToNode: (data, nodeData) => {
-      const oldJob = nodeData.job;
+  },
+  transform: transform,
+  store: {
+    get: (state) => state.definitions.executors,
+    add: (actions) => actions.defineExecutor,
+    update: (actions) => actions.updateExecutor,
+    remove: (actions) => actions.undefineExecutor,
+  },
+  dragTarget: 'job',
+  applyToNode: (data, nodeData) => {
+    const oldJob = nodeData.job;
 
-      return {
-        job: new Job(
-          oldJob.name,
-          transform({ ...data }).executor,
-          oldJob.steps,
-        ),
-      };
-    },
-    components: {
-      icon: ExecutorIcon,
-      summary: ExecutorSummary,
-      inspector: ExecutorInspector,
-    },
-  };
+    return {
+      job: new Job(oldJob.name, transform({ ...data }).executor, oldJob.steps),
+    };
+  },
+  components: {
+    icon: ExecutorIcon,
+    summary: ExecutorSummary,
+    inspector: ExecutorInspector,
+  },
 };
 
-export default ExecutorMapping();
+export default ExecutorMapping;
