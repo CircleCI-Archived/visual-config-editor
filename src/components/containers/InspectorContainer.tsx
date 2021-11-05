@@ -16,7 +16,7 @@ const InspectorContainer = () => {
           initialValues={{ ...configData.defaults, ...inspecting.data }}
           enableReinitialize
           onSubmit={(values) => {
-            update({ old: inspecting.data, new: configData.transform(values) });
+            update({ old: inspecting.data, new: configData.transform(values, definitions) });
           }}
         >
           {configData.components.inspector(definitions)}

@@ -6,11 +6,10 @@ import {
   Handle,
   isNode,
   NodeProps,
-  Position,
+  Position
 } from 'react-flow-renderer';
-import { componentToType } from '../../../mappings/ComponentMapping';
-import { WorkflowJob } from '../../../mappings/JobMapping';
 import JobIcon from '../../../icons/JobIcon';
+import { WorkflowJob } from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
 const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
@@ -18,6 +17,9 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
 ) => {
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
+  );
+  const dragging = useStoreState(
+    (state) => state.dragging,
   );
   const setWorkflowElements = useStoreActions(
     (actions) => actions.setWorkflowElements,
@@ -59,27 +61,20 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
     <div
       className="p-3 bg-white text-black rounded-md border border-circle-gray-300"
       onDragOver={(e) => {
-        if (e.dataTransfer.types.includes('job')) {
+        if (dragging && dragging.dataType?.dragTarget === 'job') {
           e.preventDefault();
         }
       }}
       onDrop={(e) => {
-        if (e.dataTransfer.types.includes('job')) {
-          const transfer: { type: string; data: any } = JSON.parse(
-            e.dataTransfer.getData('job'),
-          );
-          const type = componentToType(transfer.type);
+        if (dragging && dragging.dataType?.dragTarget === 'job' && dragging.dataType.applyToNode) {
+          const applyToData = dragging.dataType.applyToNode(dragging.data, props.data);
 
-          if (transfer && type?.applyToNode) {
-            const applyToData = type.applyToNode(transfer.data, props.data);
+          if ('job' in applyToData) {
+            updateJob({ old: props.data.job, new: applyToData.job });
+          }
 
-            if ('job' in applyToData) {
-              updateJob({ old: props.data.job, new: applyToData.job });
-            }
-
-            if ('parameters' in applyToData) {
-              updateWorkflowJob(props.data, applyToData);
-            }
+          if ('parameters' in applyToData) {
+            updateWorkflowJob(props.data, applyToData);
           }
         }
       }}

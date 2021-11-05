@@ -7,7 +7,7 @@ export interface CreateNewProps {
 
 const CreateNew = () => {
   const inspecting = useStoreState((state) => state.inspecting);
-  const inspect = useStoreActions((actions) => actions.inspect);
+  const inspect = useStoreActions((actions) => actions.setInspecting);
   const configData = inspecting.dataType;
   const add = useStoreActions(
     (actions) => configData?.store.add(actions) || actions.error,
@@ -21,7 +21,7 @@ const CreateNew = () => {
           initialValues={configData.defaults}
           enableReinitialize={true}
           onSubmit={(values) => {
-            add(configData.transform(values));
+            add(configData.transform(values, definitions));
             inspect({ mode: 'none', data: undefined, dataType: undefined });
           }}
         >

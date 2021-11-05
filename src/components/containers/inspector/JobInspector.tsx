@@ -253,7 +253,7 @@ const JobInspector =
             Select Executor
           </option>
           {definitions.executors?.map((executor) => (
-            <option value={JSON.stringify(executor)} key={executor.name}>
+            <option value={executor.name} key={executor.name}>
               {executor.name}
             </option>
           ))}

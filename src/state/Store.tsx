@@ -1,7 +1,7 @@
-import { Config, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { Config, Job, parameters, Workflow } from '@circleci/circleci-config-sdk';
 import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
-import { ParameterTypes } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Parameters';
-import { PipelineParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Config/Pipeline';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
 import { Action, action } from 'easy-peasy';
 import {
   Elements,
@@ -11,7 +11,6 @@ import {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import ComponentMapping from '../mappings/ComponentMapping';
-import { ReusableExecutor } from '../mappings/ExecutorMapping';
 
 export interface WorkflowModel {
   name: string;
@@ -22,7 +21,7 @@ export interface WorkflowModel {
 
 /** Reusable defintions of CircleCIConfigObject */
 export interface DefinitionModel /*extends CircleCIConfigObject*/ {
-  parameters: PipelineParameter<ParameterTypes>[];
+  parameters: parameters.CustomParametersList<PrimitiveParameterLiteral>;
   executors: ReusableExecutor[];
   jobs?: Job[];
   commands?: Command[];
@@ -36,6 +35,11 @@ export interface InspectModel {
   mode: 'creating' | 'editing' | 'none';
 }
 
+export interface DraggingModel { 
+  data: any;
+  dataType: ComponentMapping | undefined;
+}
+
 export interface StoreModel {
   /** Last generated configuration */
   config: Config | undefined;
@@ -45,6 +49,8 @@ export interface StoreModel {
   workflows: WorkflowModel[];
   /** Instance of inspector */
   inspecting: InspectModel;
+  /**  */
+  dragging?: DraggingModel;
   /** Currently selected workflow pane index */
   selectedWorkflow: number;
 }
@@ -55,7 +61,8 @@ export interface UpdateType<T> {
 }
 
 export interface StoreActions {
-  inspect: Action<StoreModel, InspectModel | undefined>;
+  setInspecting: Action<StoreModel, InspectModel | undefined>;
+  setDragging: Action<StoreModel, DraggingModel | undefined>;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -89,13 +96,17 @@ export interface StoreActions {
 }
 
 const Actions: StoreActions = {
-  inspect: action((state, payload) => {
+  setInspecting: action((state, payload) => {
     state.inspecting = {
       mode: 'none',
       data: undefined,
       dataType: undefined,
       ...payload,
     };
+  }),
+
+  setDragging: action((state, payload) => {
+    state.dragging = payload;
   }),
 
   addWorkflow: action((state, name) => {
@@ -189,7 +200,7 @@ const Store: StoreModel & StoreActions = {
     executors: [],
     jobs: [],
     workflows: [],
-    parameters: [],
+    parameters: new parameters.CustomParametersList(),
   },
   workflows: [
     {

@@ -91,7 +91,7 @@ export default interface ComponentMapping<
     [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
   };
   /** Transform field values into an instance of ConfigDataType */
-  transform: (values: { [K: string]: any }) => ConfigDataType;
+  transform: (values: { [K: string]: any }, definitions: DefinitionModel) => ConfigDataType;
   store: {
     /** Returns easy-peasy state hook for component array */
     get: (state: State<storeType>) => ConfigDataType[] | undefined;

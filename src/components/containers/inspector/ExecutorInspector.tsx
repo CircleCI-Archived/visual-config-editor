@@ -1,6 +1,6 @@
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { Field, Form, FormikValues } from 'formik';
 import { ReactElement } from 'react'; 
-import { ReusableExecutor } from '../../../mappings/ExecutorMapping';
 import { DefinitionModel } from '../../../state/Store';
 
 const ExecutorInspector =

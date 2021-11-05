@@ -19,7 +19,7 @@ const DefintionsContainer = (props: DefintionsProps) => {
   };
 
   const items = useStoreState(props.type.store.get);
-  const inspect = useStoreActions((actions) => actions.inspect);
+  const inspect = useStoreActions((actions) => actions.setInspecting);
 
   return (
     <div className="mb-4">

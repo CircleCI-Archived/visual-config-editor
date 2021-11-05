@@ -43,37 +43,45 @@ const WorkflowPane = (props: ElementProps) => {
     (actions) => actions.setWorkflowTransform,
   );
 
+  const dragging = useStoreState(
+    (state) => state.dragging,
+  );
+
   const gap = 15;
 
   return (
     <div
       className="w-full h-full"
       onDragOver={(e) => {
-        if (e.dataTransfer.types.includes('workflow')) {
+        if (dragging?.dataType?.dragTarget === 'workflow') {
           e.preventDefault();
         }
       }}
       onDrop={(e) => {
-        if (e.dataTransfer.types.includes('workflow')) {
-          const transfer = JSON.parse(e.dataTransfer.getData('workflow'));
+        const nodeMapping = dragging?.dataType?.node;
+
+        if (dragging?.dataType?.dragTarget === 'workflow' && nodeMapping) {
           const pos = {
             x: e.clientX - gap - transform.x,
             y: e.clientY - gap * 3 - transform.y,
           };
           const round = (val: number) =>
             Math.floor(val / transform.zoom / gap) * gap;
+            let data = dragging.data;
 
-          if (transfer) {
+            if (nodeMapping.transform) {
+              data = nodeMapping.transform(data);
+            }
+
             const workflowNode: Node<any> = {
-              data: transfer.data,
+              data,
               connectable: true,
-              type: transfer.type,
+              type: dragging.dataType.type,
               id: v4(),
               position: { x: round(pos.x), y: round(pos.y) },
             };
 
             addWorkflowElement(workflowNode);
-          }
         }
       }}
     >

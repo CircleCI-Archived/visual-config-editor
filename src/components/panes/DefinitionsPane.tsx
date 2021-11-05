@@ -1,4 +1,4 @@
-import { Config, Workflow } from '@circleci/circleci-config-sdk';
+import { Config, Workflow, WorkflowJob } from '@circleci/circleci-config-sdk';
 import { dataMappings } from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import DefinitionsContainer from '../containers/DefinitionsContainer';
@@ -18,20 +18,25 @@ const DefintionsPane = () => {
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
 
   const generateConfig = () => {
-    const config = new Config(false, [], defs.workflows, defs.commands);
+    const config = new Config(false, defs.jobs, defs.workflows, defs.commands);
 
     defs.jobs?.forEach((job) => {
       config.addJob(job);
     });
 
-    workflows.forEach((flow) => {
-      const workflow = new Workflow(flow.name);
+    defs.executors?.forEach((executor) => {
+      config.addReusableExecutor(executor);
+    });
 
-      flow.elements.forEach((element) => {
-        if (element.type === 'job') {
-          workflow.addJob(element.data.job, element.data.parameters);
-        }
-      });
+    workflows.forEach((flow) => {
+      const jobs = flow.elements
+        .filter((element) => element.type === 'job')
+        .map(
+          (element) =>
+            new WorkflowJob(element.data.job, element.data.parameters),
+        );
+
+      const workflow = new Workflow(flow.name, jobs);
 
       config.addWorkflow(workflow);
     });

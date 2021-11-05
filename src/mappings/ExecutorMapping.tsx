@@ -1,10 +1,11 @@
 import { executor, Job } from '@circleci/circleci-config-sdk';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorIcon from '../icons/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
 import { WorkflowJob } from './JobMapping';
+import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 
 export type AnyExecutor =
   | executor.DockerExecutor
@@ -12,12 +13,6 @@ export type AnyExecutor =
   | executor.MachineExecutor
   | executor.WindowsExecutor
   | AbstractExecutor;
-
-export type ReusableExecutor = {
-  name: string;
-  executor: AnyExecutor;
-  type: string;
-};
 
 const transform = (values: any) => {
   const subtypes: { [type: string]: () => AnyExecutor } = {
@@ -43,11 +38,7 @@ const transform = (values: any) => {
       ),
   };
 
-  return {
-    name: values.name,
-    executor: subtypes[values.type](),
-    type: 'docker',
-  };
+  return new executor.ReusableExecutor(values.name, subtypes[values.type]());
 };
 
 const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
@@ -77,7 +68,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
     const oldJob = nodeData.job;
 
     return {
-      job: new Job(oldJob.name, transform({ ...data }).executor, oldJob.steps),
+      job: new Job(oldJob.name, data, oldJob.steps),
     };
   },
   components: {

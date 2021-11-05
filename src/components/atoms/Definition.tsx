@@ -3,7 +3,8 @@ import { useStoreActions } from '../../state/Hooks';
 
 const Definition = (props: { data: any; type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
-  const inspector = useStoreActions((actions) => actions.inspect);
+  const inspector = useStoreActions((actions) => actions.setInspecting);
+  const setDragging = useStoreActions((actions) => actions.setDragging);
 
   return (
     <button
@@ -13,19 +14,7 @@ const Definition = (props: { data: any; type: ComponentMapping }) => {
         const type = props.type;
 
         if (type?.dragTarget) {
-          let configData = props.data;
-
-          if (type.node?.transform) {
-            configData = type.node.transform(configData);
-          }
-
-          e.dataTransfer.setData(
-            type.dragTarget,
-            JSON.stringify({
-              type: type.node?.type || type.type,
-              data: configData,
-            }),
-          );
+          setDragging({ dataType: type, data: props.data });
         }
       }}
       onClick={(e) => {
