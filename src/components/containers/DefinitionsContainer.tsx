@@ -1,13 +1,13 @@
-import Collapsible from 'react-collapsible';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import CollapsibleList from '../atoms/CollapsibleList';
 import Definition from '../atoms/Definition';
 
-export interface DefintionsProps {
+export interface DefinitionsProps {
   type: ComponentMapping;
 }
 
-const DefintionsContainer = (props: DefintionsProps) => {
+const DefinitionsContainer = (props: DefinitionsProps) => {
   const getIcon = () => {
     let iconComponent = props.type.components.icon;
 
@@ -22,34 +22,30 @@ const DefintionsContainer = (props: DefintionsProps) => {
   const inspect = useStoreActions((actions) => actions.setInspecting);
 
   return (
-    <div className="mb-4">
-      <Collapsible
-        triggerClassName="text-circle-black shadow-md text-2xl hover:bg-circle-gray-100 p-2 block border border-circle-gray-300 bg-white duration:50 transition-all w-full rounded-md"
-        triggerOpenedClassName="block border border-circle-gray-300 text-2xl p-2 shadow-md text-circle-black bg-white w-full transition rounded-t-md"
-        transitionTime={50}
-        trigger={
-          <div className="flex ">
-            {getIcon()}
-            <p className="self-center">{props.type.name.plural}</p>
+    <div className="w-full p-4 pb-0">
+      <CollapsibleList
+        children={
+          <div className="w-full p-2">
+            {(items || []).length > 0 ? (
+              items?.map((item) => <Definition data={item} type={props.type} />)
+            ) : (
+              <div className="font-medium text-sm text-circle-gray-500">No {props.type.name.plural} found.</div>
+            )}
           </div>
         }
-      >
-        {items?.map((item) => (
-          <div className="w-full p-2 bg-circle-gray-200" key={item.name}>
-            <Definition data={item} type={props.type} />
-          </div>
-        ))}
-        <div className="w-full p-2">
+        title={props.type.name.plural}
+        titleExpanded={
           <button
             onClick={() => inspect({ dataType: props.type, mode: 'creating' })}
-            className="p-1 w-full rounded-md text-white text-xl transition-colors hover:bg-circle-blue-light bg-circle-blue"
+            className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium mr-2"
           >
-            Create {props.type.name.singular}
+            New
           </button>
-        </div>
-      </Collapsible>
+        }
+      ></CollapsibleList>
+      <div className="w-full p-2 border-b border-circle-gray-300"></div>
     </div>
   );
 };
 
-export default DefintionsContainer;
+export default DefinitionsContainer;

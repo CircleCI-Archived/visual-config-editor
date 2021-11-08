@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import { useStoreActions, useStoreState } from '../../state/Hooks';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
 const InspectorContainer = () => {
   const inspecting = useStoreState((state) => state.inspecting);

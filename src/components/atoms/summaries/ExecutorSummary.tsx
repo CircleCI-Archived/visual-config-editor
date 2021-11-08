@@ -5,7 +5,7 @@ const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor }> = (
 ) => {
   return (
     <div>
-      {props.data.name} {props.data.executor.resourceClass}
+      {props.data.name}
     </div>
   );
 };

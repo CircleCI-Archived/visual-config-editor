@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -30,22 +31,15 @@ const getTypes = (): NodeTypesType =>
   );
 
 const WorkflowPane = (props: ElementProps) => {
+  const [transform, setTransform] = useState({ x: 0, y: 0, zoom: 0 });
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
-  );
-  const transform = useStoreState(
-    (state) => state.workflows[state.selectedWorkflow].transform,
   );
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
   );
-  const setWorkflowTransform = useStoreActions(
-    (actions) => actions.setWorkflowTransform,
-  );
 
-  const dragging = useStoreState(
-    (state) => state.dragging,
-  );
+  const dragging = useStoreState((state) => state.dragging);
 
   const gap = 15;
 
@@ -67,28 +61,28 @@ const WorkflowPane = (props: ElementProps) => {
           };
           const round = (val: number) =>
             Math.floor(val / transform.zoom / gap) * gap;
-            let data = dragging.data;
+          let data = dragging.data;
 
-            if (nodeMapping.transform) {
-              data = nodeMapping.transform(data);
-            }
+          if (nodeMapping.transform) {
+            data = nodeMapping.transform(data);
+          }
 
-            const workflowNode: Node<any> = {
-              data,
-              connectable: true,
-              type: dragging.dataType.type,
-              id: v4(),
-              position: { x: round(pos.x), y: round(pos.y) },
-            };
+          const workflowNode: Node<any> = {
+            data,
+            connectable: true,
+            type: dragging.dataType.type,
+            id: v4(),
+            position: { x: round(pos.x), y: round(pos.y) },
+          };
 
-            addWorkflowElement(workflowNode);
+          addWorkflowElement(workflowNode);
         }
       }}
     >
       <ReactFlow
         elements={elements}
         className={props.className}
-        onMove={(e) => setWorkflowTransform(e || transform)}
+        onMove={(e) => setTransform(e || transform)}
         selectNodesOnDrag={false}
         nodeTypes={getTypes()}
         snapToGrid={true}

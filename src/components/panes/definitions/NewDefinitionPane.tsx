@@ -1,31 +1,31 @@
 import { Formik } from 'formik';
-import { useStoreActions, useStoreState } from '../../state/Hooks';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
 export interface CreateNewProps {
   inspector: React.FunctionComponent;
 }
 
-const CreateNew = () => {
+const CreateNewPane = () => {
   const inspecting = useStoreState((state) => state.inspecting);
   const inspect = useStoreActions((actions) => actions.setInspecting);
-  const configData = inspecting.dataType;
+  const dataMapping = inspecting.dataType;
   const add = useStoreActions(
-    (actions) => configData?.store.add(actions) || actions.error,
+    (actions) => dataMapping?.store.add(actions) || actions.error,
   );
   const definitions = useStoreState((state) => state.definitions);
 
   const getInspector = () => {
-    if (configData) {
+    if (dataMapping) {
       return (
         <Formik
-          initialValues={configData.defaults}
+          initialValues={dataMapping.defaults}
           enableReinitialize={true}
           onSubmit={(values) => {
-            add(configData.transform(values, definitions));
+            add(dataMapping.transform(values, definitions));
             inspect({ mode: 'none', data: undefined, dataType: undefined });
           }}
         >
-          {configData.components.inspector(definitions)}
+          {dataMapping.components.inspector(definitions)}
         </Formik>
       );
     }
@@ -59,4 +59,4 @@ const CreateNew = () => {
   );
 };
 
-export default CreateNew;
+export default CreateNewPane;

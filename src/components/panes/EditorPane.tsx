@@ -1,3 +1,4 @@
+import { Config } from '@circleci/circleci-config-sdk';
 import Editor from '@monaco-editor/react';
 import { useStoreState } from '../../state/Hooks';
 
@@ -23,19 +24,21 @@ const EditorPane = () => {
   };
 
   return (
-    <div className="bg-circle-gray-900 w-full h-full border-r-2 border-circle-green-light">
-      <div className="inline-flex border-b text-xl pt-4 pb-0 border-circle-gray-800 w-full font-bold">
-        <div className="border-b-4 pl-4 pr-4 pb-2 w-max text-white border-circle-green">
+    <div className="bg-circle-gray-900 h-2/5 flex flex-col border-r-2 border-circle-green-light">
+      <div className="border-b text-xl border-circle-gray-800 font-bold">
+        <div className="ml-4 border-b-4 px-3 py-3 w-max text-sm tracking-wide font-bold text-white border-white">
           CODE EDITOR
         </div>
       </div>
-      <Editor
-        theme="vs-dark"
-        className="h-96"
-        defaultLanguage="yaml"
-        defaultValue=""
-        value={configYAML()}
-      />
+      <div className="h-full overflow-hidden">
+        <Editor
+          theme="vs-dark"
+          defaultLanguage="yaml"
+
+          defaultValue={new Config().stringify()}
+          value={configYAML()}
+        />
+      </div>
     </div>
   );
 };

@@ -1,10 +1,12 @@
-import { executor, Job } from '@circleci/circleci-config-sdk';
+import { commands, executor, Job, parameters } from '@circleci/circleci-config-sdk';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { NodeProps } from 'react-flow-renderer';
 import Store, { DefinitionModel, UpdateType } from '../state/Store';
+import CommandMapping from './CommandMapping';
 import ExecutorMapping from './ExecutorMapping';
 import JobMapping from './JobMapping';
+import ParameterMapping from './ParameterMapping';
 
 /**
  * Interface to add a circleci-config-sdk component to a data mapping.
@@ -34,6 +36,16 @@ const dataMappings: DataMapping[] = [
     component: [Job],
     mapping: JobMapping,
   },
+  {
+    type: 'command',
+    component: [commands.reusable.CustomCommand],
+    mapping: CommandMapping
+  },
+  {
+    type: 'parameter',
+    component: [parameters.CustomParameter],
+    mapping: ParameterMapping
+  }
 ];
 
 /**

@@ -1,13 +1,14 @@
-import { Config, Job, parameters, Workflow } from '@circleci/circleci-config-sdk';
-import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Command';
+import { Config, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Reusable';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
 import { Action, action } from 'easy-peasy';
 import {
   Elements,
   FlowElement,
   FlowTransform,
-  isNode,
+  isNode
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import ComponentMapping from '../mappings/ComponentMapping';
@@ -19,13 +20,13 @@ export interface WorkflowModel {
   elements: Elements<any>;
 }
 
-/** Reusable defintions of CircleCIConfigObject */
+/** Reusable definitions of CircleCIConfigObject */
 export interface DefinitionModel /*extends CircleCIConfigObject*/ {
-  parameters: parameters.CustomParametersList<PrimitiveParameterLiteral>;
+  parameters: CustomParameter<PrimitiveParameterLiteral>[];
   executors: ReusableExecutor[];
-  jobs?: Job[];
-  commands?: Command[];
-  workflows?: Workflow[];
+  jobs: Job[];
+  commands: CustomCommand[];
+  workflows: Workflow[];
 }
 
 export interface InspectModel {
@@ -38,6 +39,10 @@ export interface InspectModel {
 export interface DraggingModel { 
   data: any;
   dataType: ComponentMapping | undefined;
+}
+
+export interface NavigationModel {
+  
 }
 
 export interface StoreModel {
@@ -80,16 +85,18 @@ export interface StoreActions {
   undefineJob: Action<StoreModel, Job>;
 
   /** @todo implement commands */
-  // defineCommand: Action<StoreModel, Command>;
-  // undefineCommand: Action<StoreModel, Command>;
+  defineCommand: Action<StoreModel, CustomCommand>;
+  updateCommand: Action<StoreModel, UpdateType<CustomCommand>>;
+  undefineCommand: Action<StoreModel, CustomCommand>;
 
   defineExecutor: Action<StoreModel, ReusableExecutor>;
   updateExecutor: Action<StoreModel, UpdateType<ReusableExecutor>>;
   undefineExecutor: Action<StoreModel, ReusableExecutor>;
 
   /** @todo implement parameters */
-  // defineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
-  // undefineParameter: Action<StoreModel, PipelineParameter<ParameterTypes>>;
+  defineParameter: Action<StoreModel, CustomParameter<PrimitiveParameterLiteral>>;
+  updateParameter: Action<StoreModel, UpdateType<CustomParameter<PrimitiveParameterLiteral>>>;
+  undefineParameter: Action<StoreModel, CustomParameter<PrimitiveParameterLiteral>>;
 
   generateConfig: Action<StoreModel, Config>;
   error: Action<StoreModel, any>;
@@ -179,8 +186,13 @@ const Actions: StoreActions = {
     );
   }),
 
-  // defineParameter: action((state, payload) => {}),
-  // undefineParameter: action((state, payload) => {}),
+  defineParameter: action((state, payload) => {}),
+  updateParameter: action((state, payload) => {}),
+  undefineParameter: action((state, payload) => {}),
+
+  defineCommand: action((state, payload) => {}),
+  updateCommand: action((state, payload) => {}),
+  undefineCommand: action((state, payload) => {}),
 
   error: action((state, payload) => {
     console.error('An action was not found! ', payload);
@@ -200,7 +212,7 @@ const Store: StoreModel & StoreActions = {
     executors: [],
     jobs: [],
     workflows: [],
-    parameters: new parameters.CustomParametersList(),
+    parameters: [],
   },
   workflows: [
     {

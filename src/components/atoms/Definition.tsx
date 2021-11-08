@@ -8,7 +8,8 @@ const Definition = (props: { data: any; type: ComponentMapping }) => {
 
   return (
     <button
-      className="w-full p-3 cursor-pointer text-left pl-10 text-circle-black bg-white border border-circle-gray-300 rounded-md"
+      className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+      bg-white border border-circle-gray-300 rounded-md2"
       draggable="true"
       onDragStart={(e) => {
         const type = props.type;

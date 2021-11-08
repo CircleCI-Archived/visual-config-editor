@@ -7,6 +7,13 @@ module.exports = {
         'ew-resize': 'ew-resize',
         'ns-resize': 'ns-resize',
       },
+      borderWidth: {
+        '5': '5px',
+        '6': '6px',
+      },
+      borderRadius: {
+        'md2': '4px'
+      },
       colors: {
         'circle-gray': {
           100: '#F7F7F7',
