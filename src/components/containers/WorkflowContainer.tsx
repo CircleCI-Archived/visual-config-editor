@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
+  FlowTransform,
   Node,
   NodeTypesType,
 } from 'react-flow-renderer';
@@ -31,7 +32,7 @@ const getTypes = (): NodeTypesType =>
   );
 
 const WorkflowPane = (props: ElementProps) => {
-  const [transform, setTransform] = useState({ x: 0, y: 0, zoom: 0 });
+  const [transform, setTransform] = useState<FlowTransform>({ x: 0, y: 0, zoom: 1 });
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
   );
