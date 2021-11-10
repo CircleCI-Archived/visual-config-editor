@@ -3,12 +3,16 @@ import { Field, Form, FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 
 const CommandInspector =
-  (definitions: DefinitionModel) =>
+  (
+    definitions: DefinitionModel,
+    bindSubmitForm: (submitForm: () => void) => void,
+  ) =>
   ({
     values,
     handleChange,
     handleSubmit,
   }: FormikValues & { data: CustomCommand }) => {
+    bindSubmitForm(handleSubmit);
     return (
       <Form onSubmit={handleSubmit}>
         Name:{' '}

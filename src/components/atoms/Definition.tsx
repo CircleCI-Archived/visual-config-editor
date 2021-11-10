@@ -1,9 +1,10 @@
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
+import EditDefinitionPane from '../panes/definitions/EditDefinitionPane';
 
 const Definition = (props: { data: any; type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
-  const inspector = useStoreActions((actions) => actions.setInspecting);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setDragging = useStoreActions((actions) => actions.setDragging);
 
   return (
@@ -19,7 +20,10 @@ const Definition = (props: { data: any; type: ComponentMapping }) => {
         }
       }}
       onClick={(e) => {
-        inspector({ mode: 'editing', data: props.data, dataType: props.type });
+        navigateTo({
+          component: EditDefinitionPane,
+          props: { data: props.data, dataType: props.type },
+        });
       }}
     >
       <Summary data={props.data} />

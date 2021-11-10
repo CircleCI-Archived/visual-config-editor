@@ -1,4 +1,9 @@
-import { commands, executor, Job, parameters } from '@circleci/circleci-config-sdk';
+import {
+  commands,
+  executor,
+  Job,
+  parameters,
+} from '@circleci/circleci-config-sdk';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { NodeProps } from 'react-flow-renderer';
@@ -39,18 +44,18 @@ const dataMappings: DataMapping[] = [
   {
     type: 'command',
     component: [commands.reusable.CustomCommand],
-    mapping: CommandMapping
+    mapping: CommandMapping,
   },
   {
     type: 'parameter',
     component: [parameters.CustomParameter],
-    mapping: ParameterMapping
-  }
+    mapping: ParameterMapping,
+  },
 ];
 
 /**
  * Utility function for converting a component into a mapping type.
- * @param {any} data:any 
+ * @param {any} data:any
  * @returns {any}
  */
 const componentToType = (data: any): ComponentMapping | undefined => {
@@ -81,14 +86,14 @@ type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 /**
  * circleci-config-sdk Component to Data Mapping
- * 
- * @interface 
+ *
+ * @interface
  */
 export default interface ComponentMapping<
   ConfigDataType = any,
   ConfigNodeProps = any,
   InspectorDefaults = any,
-  > {
+> {
   /**  String name type of component. Must be equal to index within registry. */
   type: string;
   /**  Language values of component. This should be used for UI display only. */
@@ -97,13 +102,16 @@ export default interface ComponentMapping<
     plural: string;
   };
   /** Default values to populate inspectors
-   *  @todo need to add support for subtype defaults  
+   *  @todo need to add support for subtype defaults
    */
   defaults: {
     [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
   };
   /** Transform field values into an instance of ConfigDataType */
-  transform: (values: { [K: string]: any }, definitions: DefinitionModel) => ConfigDataType;
+  transform: (
+    values: { [K: string]: any },
+    definitions: DefinitionModel,
+  ) => ConfigDataType;
   store: {
     /** Returns easy-peasy state hook for component array */
     get: (state: State<storeType>) => ConfigDataType[] | undefined;
@@ -117,13 +125,13 @@ export default interface ComponentMapping<
     remove: (state: Actions<storeType>) => (data: ConfigDataType) => void;
   };
   /**
-   * Name of target that a definition can be tragged to. 
+   * Name of target that a definition can be tragged to.
    * Currently only 'workflow' or 'job'
    */
   dragTarget?: string;
   /**
    * Called from a node to apply datatype to the applied node
-   * @todo Potentially support multiple node types. 
+   * @todo Potentially support multiple node types.
    * @returns Object populated with values of ConfigNodeProps */
   applyToNode?: (
     data: ConfigDataType,
@@ -141,11 +149,12 @@ export default interface ComponentMapping<
     icon?: React.FunctionComponent<any>;
     /** Component to render in definition */
     summary: React.FunctionComponent<{ data: ConfigDataType }>;
-    /** 
+    /**
      * Called by InspectorPane and CreateNew to generate form
      * @returns Function which returns a Formik Form object*/
     inspector: (
       definitions: DefinitionModel,
+      bindSubmitForm: (bindForm: () => void) => void,
     ) => (props: FormikValues & { data: ConfigDataType }) => JSX.Element;
   };
 }

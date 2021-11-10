@@ -24,13 +24,13 @@ const EditorPane = () => {
   };
 
   return (
-    <div className="bg-circle-gray-900 h-2/5 w-full flex-col border-r-2 border-circle-green-light">
+    <div className="bg-circle-gray-900 h-2/5 w-full flex flex-col border-r-2 border-circle-green-light">
       <div className="border-b text-xl border-circle-gray-800 font-bold">
         <div className="ml-4 border-b-4 px-3 py-3 w-max text-sm tracking-wide font-bold text-white border-white">
           CODE EDITOR
         </div>
       </div>
-      <div className="h-full overflow-hidden">
+      <div className="flex-1 overflow-hidden">
         <Editor
           theme="vs-dark"
           defaultLanguage="yaml"

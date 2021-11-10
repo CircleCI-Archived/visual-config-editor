@@ -1,4 +1,4 @@
-import { IconProps } from './IconProps';
+import { IconProps } from '../IconProps';
 
 const JobIcon = (props: IconProps) => (
   <svg viewBox="0 0 24 24" className={props.className}>

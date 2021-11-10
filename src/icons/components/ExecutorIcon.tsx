@@ -1,4 +1,4 @@
-import { IconProps } from './IconProps';
+import { IconProps } from '../IconProps';
 
 const ExecutorIcon = (props: IconProps) => (
   <svg viewBox="0 0 96 96" className={props.className}>

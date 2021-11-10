@@ -1,7 +1,7 @@
 import { executor, Job } from '@circleci/circleci-config-sdk';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
-import ExecutorIcon from '../icons/ExecutorIcon';
+import ExecutorIcon from '../icons/components/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
 import { WorkflowJob } from './JobMapping';
 import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';

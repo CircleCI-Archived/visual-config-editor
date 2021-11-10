@@ -4,12 +4,17 @@ import { Field, Form, FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 
 const ParameterInspector =
-  (definitions: DefinitionModel) =>
+  (
+    definitions: DefinitionModel,
+    bindSubmitForm: (submitForm: () => void) => void,
+  ) =>
   ({
     values,
     handleChange,
     handleSubmit,
   }: FormikValues & { data: CustomParameter<PrimitiveParameterLiteral> }) => {
+    bindSubmitForm(handleSubmit);
+
     return (
       <Form onSubmit={handleSubmit}>
         Name:{' '}

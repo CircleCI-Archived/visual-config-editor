@@ -2,7 +2,7 @@ import { commands } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Reusable';
 import CommandSummary from '../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../components/containers/inspector/CommandInspector';
-import CommandIcon from '../icons/CommandIcon';
+import CommandIcon from '../icons/components/CommandIcon';
 import ComponentMapping from './ComponentMapping';
 
 const CommandMapping: ComponentMapping<CustomCommand> = {

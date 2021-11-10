@@ -22,6 +22,7 @@
     "monaco-editor-webpack-plugin": "^5.0.0",
     "postcss": "^8",
     "react": "^17.0.2",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.7",
     "react-scripts": "4.0.3",
@@ -54,5 +55,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.2",
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

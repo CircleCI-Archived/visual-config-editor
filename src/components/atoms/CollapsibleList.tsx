@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import ExpandIcon from '../../icons/ExpandIcon';
+import ExpandIcon from '../../icons/ui/ExpandIcon';
 
 export interface CollapsibleListProps {
   title: string;
@@ -23,7 +23,8 @@ const CollapsibleList = (props: CollapsibleListProps) => {
           onClick={(e) => {
             setExpanded(!expanded);
           }}
-          className="flex flex-row"
+          type="button"
+          className="flex flex-row flex-1"
         >
           <ExpandIcon className="w-6 h-6 p-1" expanded={expanded} />
           <p className="font-bold leading-6 tracking-wide text-sm">

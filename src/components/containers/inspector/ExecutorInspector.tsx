@@ -4,12 +4,14 @@ import { ReactElement } from 'react';
 import { DefinitionModel } from '../../../state/Store';
 
 const ExecutorInspector =
-  (definitions: DefinitionModel) =>
+  (definitions: DefinitionModel, bindSubmitForm: (submitForm: () => void) => void) =>
   ({
     values,
     handleChange,
     handleSubmit,
   }: FormikValues & { data: ReusableExecutor }) => {
+    bindSubmitForm(handleSubmit);
+
     const subtypes: {
       [K: string]: {
         name: string;
@@ -30,7 +32,7 @@ const ExecutorInspector =
         ],
         fields: (
           <div>
-            Image:{' '}
+            Image
             <Field
               required
               name="executor.image.image"
@@ -44,7 +46,7 @@ const ExecutorInspector =
         resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
         fields: (
           <div>
-            Image:{' '}
+            Image
             <Field
               required
               name="executor.image"
@@ -58,7 +60,7 @@ const ExecutorInspector =
         resourceClasses: ['medium', 'large'],
         fields: (
           <div>
-            Xcode:{' '}
+            Xcode
             <Field
               required
               name="executor.xcode"
@@ -72,7 +74,7 @@ const ExecutorInspector =
         resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
         fields: (
           <div>
-            Image:{' '}
+            Image
             <Field
               required
               name="executor.image"
@@ -85,7 +87,7 @@ const ExecutorInspector =
 
     return (
       <Form onSubmit={handleSubmit}>
-        Name:{' '}
+        Name
         <Field
           name="name"
           required
@@ -93,7 +95,7 @@ const ExecutorInspector =
           value={values.name}
         />
         <br />
-        Executor Type:{' '}
+        Executor Type
         <Field
           name="type"
           required
@@ -107,7 +109,7 @@ const ExecutorInspector =
           ))}
         </Field>
         <br />
-        Resource Class:{' '}
+        Resource Class
         <Field
           as="select"
           name="executor.resourceClass"
@@ -123,12 +125,6 @@ const ExecutorInspector =
         <br />
         {subtypes[values.type]?.fields}
         <br />
-        <button
-          type="submit"
-          className="p-1 font-bold w-full text-white border-circle-gray-300 bg-circle-blue rounded-lg"
-        >
-          Save
-        </button>
       </Form>
     );
   };

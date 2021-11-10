@@ -1,11 +1,9 @@
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import WorkflowPane from '../containers/WorkflowContainer';
-import EditorPane from './EditorPane';
 
-const WorkflowsTabbed = () => {
+const WorkflowsPane = () => {
   const workflows = useStoreState((state) => state.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
-  const addWorkflow = useStoreActions((actions) => actions.addWorkflow);
   const selectWorkflow = useStoreActions((actions) => actions.selectWorkflow);
 
   return (
@@ -13,7 +11,7 @@ const WorkflowsTabbed = () => {
       <div className="w-full bg-white h-16 p-5">
         <select className="rounded border border-circle-gray-400 p-2">
           {workflows.map((workflow, num) => (
-            <option value={workflow.id} onChange={() => selectWorkflow(num)}>
+            <option value={workflow.id} key={workflow.id}  onChange={() => selectWorkflow(num)}>
               {workflow.name}
             </option>
           ))}
@@ -25,10 +23,8 @@ const WorkflowsTabbed = () => {
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
       />
-
-      <EditorPane />
     </div>
   );
 };
 
-export default WorkflowsTabbed;
+export default WorkflowsPane;

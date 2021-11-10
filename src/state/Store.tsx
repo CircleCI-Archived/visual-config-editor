@@ -8,9 +8,10 @@ import {
   Elements,
   FlowElement,
   FlowTransform,
-  isNode
+  isNode,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
+import DefinitionsPane from '../components/panes/definitions/DefinitionsPane';
 import ComponentMapping from '../mappings/ComponentMapping';
 
 export interface WorkflowModel {
@@ -29,20 +30,26 @@ export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   workflows: Workflow[];
 }
 
-export interface InspectModel {
+export interface DataModel {
   data?: any;
-  dataType?: ComponentMapping | undefined;
+  dataType?: ComponentMapping;
+}
+
+export interface InspectModel extends DataModel {
   values?: any;
   mode: 'creating' | 'editing' | 'none';
 }
 
-export interface DraggingModel { 
-  data: any;
-  dataType: ComponentMapping | undefined;
+export type OptionalDataModel = DataModel | undefined;
+
+export interface NavigationStop {
+  component: React.FunctionComponent<OptionalDataModel>;
+  props: DataModel;
 }
 
 export interface NavigationModel {
-  
+  path: NavigationStop[];
+  previous?: NavigationStop;
 }
 
 export interface StoreModel {
@@ -54,8 +61,10 @@ export interface StoreModel {
   workflows: WorkflowModel[];
   /** Instance of inspector */
   inspecting: InspectModel;
+  /** Order of components and the  */
+  navigation: NavigationModel;
   /**  */
-  dragging?: DraggingModel;
+  dragging?: DataModel;
   /** Currently selected workflow pane index */
   selectedWorkflow: number;
 }
@@ -66,8 +75,10 @@ export interface UpdateType<T> {
 }
 
 export interface StoreActions {
-  setInspecting: Action<StoreModel, InspectModel | undefined>;
-  setDragging: Action<StoreModel, DraggingModel | undefined>;
+  setDragging: Action<StoreModel, DataModel | undefined>;
+
+  navigateTo: Action<StoreModel, NavigationStop>;
+  navigateBack: Action<StoreModel, number | void>;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -94,21 +105,40 @@ export interface StoreActions {
   undefineExecutor: Action<StoreModel, ReusableExecutor>;
 
   /** @todo implement parameters */
-  defineParameter: Action<StoreModel, CustomParameter<PrimitiveParameterLiteral>>;
-  updateParameter: Action<StoreModel, UpdateType<CustomParameter<PrimitiveParameterLiteral>>>;
-  undefineParameter: Action<StoreModel, CustomParameter<PrimitiveParameterLiteral>>;
+  defineParameter: Action<
+    StoreModel,
+    CustomParameter<PrimitiveParameterLiteral>
+  >;
+  updateParameter: Action<
+    StoreModel,
+    UpdateType<CustomParameter<PrimitiveParameterLiteral>>
+  >;
+  undefineParameter: Action<
+    StoreModel,
+    CustomParameter<PrimitiveParameterLiteral>
+  >;
 
   generateConfig: Action<StoreModel, Config>;
   error: Action<StoreModel, any>;
 }
 
 const Actions: StoreActions = {
-  setInspecting: action((state, payload) => {
-    state.inspecting = {
-      mode: 'none',
-      data: undefined,
-      dataType: undefined,
-      ...payload,
+  navigateTo: action((state, payload) => {
+    const lastPath = state.navigation.path;
+
+    state.navigation = {
+      previous: lastPath[lastPath.length - 1],
+      path: [...lastPath, payload],
+    };
+  }),
+
+  navigateBack: action((state, payload) => {
+    const distance = payload || 1;
+    const path = state.navigation.path;
+
+    state.navigation = {
+      previous: path[path.length - distance],
+      path: path.slice(0, -distance),
     };
   }),
 
@@ -207,6 +237,7 @@ const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
   selectedWorkflow: 0,
   config: undefined,
+  navigation: { path: [{ component: DefinitionsPane, props: {} }] },
   definitions: {
     commands: [],
     executors: [],

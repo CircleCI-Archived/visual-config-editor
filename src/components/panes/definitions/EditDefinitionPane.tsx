@@ -1,43 +1,59 @@
 import { Formik } from 'formik';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import { DataModel } from '../../../state/Store';
+import TabbedPane from '../TabbedPane';
 
-const InspectorContainer = () => {
-  const inspecting = useStoreState((state) => state.inspecting);
-  const configData = inspecting.dataType;
+const EditDefinitionPane = (props: DataModel) => {
+  const dataMapping = props.dataType;
   const update = useStoreActions(
-    (actions) => configData?.store.update(actions) || actions.error,
+    (actions) => dataMapping?.store.update(actions) || actions.error,
   );
+  const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const definitions = useStoreState((state) => state.definitions);
 
+  let submitForm: () => void;
+
   const getInspector = () => {
-    if (configData) {
+    if (dataMapping) {
       return (
         <Formik
-          initialValues={{ ...configData.defaults, ...inspecting.data }}
+          initialValues={{ ...dataMapping.defaults, ...props.data }}
           enableReinitialize
           onSubmit={(values) => {
-            update({ old: inspecting.data, new: configData.transform(values, definitions) });
+            update({
+              old: props.data,
+              new: dataMapping.transform(values, definitions),
+            });
+            navigateBack();
           }}
         >
-          {configData.components.inspector(definitions)}
+          {dataMapping.components.inspector(definitions, (bindForm) => {
+            submitForm = bindForm;
+          })}
         </Formik>
       );
     }
   };
 
-  if (inspecting && inspecting.dataType && inspecting.mode === 'editing') {
-    return (
-      <div>
-        <div className="flex border-b border-circle-gray-300 m-2 mb-0">
-          <h1 className="border-b-4 text-xl pb-2 pl-2 pr-2 w-max font-bold text-circle-black text-center border-circle-gray-500">
-            INSPECTOR
-          </h1>
-        </div>
+  return (
+    <div className="h-full flex flex-col">
+      <TabbedPane tabs={['PROPERTIES', 'PARAMETERS']}>
         <div className="p-5 overflow-y-scroll">{getInspector()}</div>
-      </div>
-    );
-  }
-  return <div hidden />;
+        <div>parameters will go here!</div>
+      </TabbedPane>
+
+      <span className="border border-circle-gray-300 mt-auto" />
+      <button
+        type="submit"
+        onClick={() => {
+          submitForm();
+        }}
+        className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+      >
+        Save {dataMapping?.name.singular}
+      </button>
+    </div>
+  );
 };
 
-export default InspectorContainer;
+export default EditDefinitionPane;

@@ -3,15 +3,16 @@ import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/C
 import { ArrayHelpers, Field, FieldArray, Form, FormikValues } from 'formik';
 import { ReactElement } from 'react';
 import { DefinitionModel } from '../../../state/Store';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import CollapsibleList from '../../atoms/CollapsibleList';
+import DragListIcon from '../../../icons/ui/DragItemIcon';
+import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 
 const JobInspector =
-  (definitions: DefinitionModel) =>
-  ({
-    values,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-  }: FormikValues & { data: Job }) => {
+  (definitions: DefinitionModel, bindSubmitForm: (submitForm: () => void) => void) =>
+  ({ values, handleSubmit }: FormikValues & { data: Job }) => {
+    bindSubmitForm(handleSubmit);
+
     const commandProps: {
       [command: string]: {
         text: string;
@@ -32,39 +33,39 @@ const JobInspector =
         ),
         fields: (
           <div>
-            Command{' '}
+            Command
             <Field
               required
               name="step.parameters.command"
               className="p-1 w-full border-circle-light-blue border-2 rounded"
             ></Field>
             <br />
-            Shell{' '}
+            Shell
             <Field
               name="step.parameters.shell"
               className="p-1 w-full border-circle-gray-300 border-2 rounded"
             ></Field>
             <br />
-            Background{' '}
+            Background
             <Field
               type="checkbox"
               name="step.parameters.background"
               className="p-1 border-circle-gray-300 border-2 rounded"
             ></Field>
             <br />
-            Working Directory{' '}
+            Working Directory
             <Field
               name="step.parameters.working_directory"
               className="p-1 w-full border-circle-gray-300 border-2 rounded"
             ></Field>
             <br />
-            No Output Timeout:{' '}
+            No Output Timeout
             <Field
               name="step.parameters.no_output_timeout"
               className="p-1 w-full border-circle-gray-300 border-2 rounded"
             ></Field>
             <br />
-            When{' '}
+            When
             <Field
               as="select"
               name="step.parameters.when"
@@ -82,7 +83,7 @@ const JobInspector =
         text: 'Checkout',
         fields: (
           <div>
-            Path:{' '}
+            Path
             <Field
               name="step.parameters.path"
               className="p-1 w-full border-circle-gray-300 border-2 rounded"
@@ -95,14 +96,14 @@ const JobInspector =
         text: 'Persist To Workspace',
         fields: (
           <div>
-            Root:{' '}
+            Root
             <Field
               required
               name="step.parameters.root"
               className="p-1 w-full border-circle-light-blue border-2 rounded"
             ></Field>
             <br />
-            Path:{' '}
+            Path
             <Field
               required
               name="step.parameters.path"
@@ -120,7 +121,7 @@ const JobInspector =
         text: 'Attach Workspace',
         fields: (
           <div>
-            At:{' '}
+            At
             <Field
               required
               name="step.parameters.at"
@@ -135,14 +136,14 @@ const JobInspector =
         text: 'Store Artifacts',
         fields: (
           <div>
-            Path:{' '}
+            Path
             <Field
               required
               name="step.parameters.path"
               className="p-1 w-full border-circle-light-blue border-2 rounded"
             ></Field>
             <br />
-            Destination:{' '}
+            Destination
             <Field
               name="step.parameters.destination"
               className="p-1 w-full border-circle-gray-300 border-2 rounded"
@@ -156,7 +157,7 @@ const JobInspector =
         text: 'Store Test Results',
         fields: (
           <div>
-            Path{' '}
+            Path
             <Field
               required
               name="step.parameters.path"
@@ -171,21 +172,21 @@ const JobInspector =
         text: 'Save Cache',
         fields: (
           <div>
-            Path{' '}
+            Path
             <Field
               required
               name="step.parameters.path"
               className="p-1 w-full border-circle-light-blue border-2 rounded"
             ></Field>
             <br />
-            Key{' '}
+            Key
             <Field
               required
               name="step.parameters.key"
               className="p-1 w-full border-circle-light-blue border-2 rounded"
             ></Field>
             <br />
-            When{' '}
+            When
             <Field as="select" name="step.parameters.when">
               <option value="always">Always</option>
               <option value="on_success">On Success</option>
@@ -236,16 +237,16 @@ const JobInspector =
 
     return (
       <Form onSubmit={handleSubmit}>
-        Name{' '}
+        Name
         <Field
           className="p-1 w-full border-circle-blue-light border-2 rounded"
           name="name"
           value={values.name}
         />
         <br />
-        Executor{' '}
+        Executor
         <Field
-          name="executor"
+          name="executor.name"
           className="p-1 w-full border-circle-blue-light border-2 rounded"
           as="select"
         >
@@ -258,46 +259,102 @@ const JobInspector =
             </option>
           ))}
         </Field>
-        <FieldArray
-          name="steps"
-          render={(arrayHelper) => (
-            <div>
-              {values.steps?.map((cmd: Command) => {
-                const summary = commandProps[cmd.name].summary;
-
-                if (summary) {
-                  return (
-                    <div>
-                      {cmd.name}: {summary(cmd)}
-                    </div>
-                  );
-                } else {
-                  return <div>{cmd.name}</div>;
-                }
-              })}
-              Add Step{' '}
-              <Field
-                as="select"
-                name="newCommandType"
-                className="p-1 w-full border-circle-gray-300 border-2 rounded"
-              >
-                {Object.keys(commandProps).map((cmd) => (
-                  <option value={cmd} key={cmd}>
-                    {commandProps[cmd].text}
-                  </option>
-                ))}
-              </Field>
-              {addCommand(arrayHelper)}
-            </div>
-          )}
-        />
-        <br />
-        <button
-          type="submit"
-          className="p-1 font-bold w-full text-white border-circle-gray-300 bg-circle-blue rounded-lg"
+        <CollapsibleList
+          title="Steps"
+          titleExpanded={
+            <button
+              // onClick={() =>
+              //   navigateTo({
+              //     component: CreateDefinitionPane,
+              //     props: { dataType: props.type },
+              //   })
+              // }
+              className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium mr-2"
+            >
+              New
+            </button>
+          }
         >
-          Save
-        </button>
+          <FieldArray
+            name="steps"
+            render={(arrayHelper) => (
+              <DragDropContext
+                onDragEnd={(result) => {
+                  console.log(result);
+                  if (result.destination) {
+                    arrayHelper.move(
+                      result.source.index,
+                      result.destination.index,
+                    );
+                  }
+                }}
+              >
+                <Droppable droppableId="droppable">
+                  {(provided, snapshot) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className="p-2"
+                    >
+                      {values.steps?.map((cmd: Command, index: number) => (
+                        <Draggable
+                          key={index}
+                          draggableId={`${index}_${cmd.name}`}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <button
+                              className="w-full mb-2 p-1 px-3 text-sm cursor-pointer text-left text-circle-black 
+                              bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                            >
+                              <p className="leading-6">{cmd.name}</p>
+                              <div
+                                className="ml-auto mr-3"
+                                {...provided.dragHandleProps}
+                              >
+                                <DragListIcon
+                                  className="w-4 h-6 py-1"
+                                  color="#AAAAAA"
+                                />
+                              </div>
+                              <button
+                                onClick={() => {
+                                  arrayHelper.remove(index);
+                                }}
+                              >
+                                <DeleteItemIcon
+                                  className="w-3 h-3"
+                                  color="#AAAAAA"
+                                />
+                              </button>
+                            </button>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+                Steps
+                <Field
+                  as="select"
+                  name="newCommandType"
+                  className="p-1 w-full border-circle-gray-300 border-2 rounded"
+                >
+                  {Object.keys(commandProps).map((cmd) => (
+                    <option value={cmd} key={cmd}>
+                      {commandProps[cmd].text}
+                    </option>
+                  ))}
+                </Field>
+                {addCommand(arrayHelper)}
+              </DragDropContext>
+            )}
+          />
+        </CollapsibleList>
+        <br />
       </Form>
     );
   };

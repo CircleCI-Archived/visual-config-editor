@@ -8,7 +8,7 @@ import {
   NodeProps,
   Position
 } from 'react-flow-renderer';
-import JobIcon from '../../../icons/JobIcon';
+import JobIcon from '../../../icons/components/JobIcon';
 import { WorkflowJob } from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 

@@ -1,4 +1,4 @@
-import { IconProps } from './IconProps';
+import { IconProps } from '../IconProps';
 
 const ParameterIcon = (props: IconProps) => (
   <svg viewBox="0 0 18 18" className={props.className}>

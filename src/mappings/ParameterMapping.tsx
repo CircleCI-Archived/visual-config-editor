@@ -3,7 +3,7 @@ import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Comp
 import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
 import ParameterInspector from '../components/containers/inspector/ParameterInspector';
-import ParameterIcon from '../icons/ParameterIcon';
+import ParameterIcon from '../icons/components/ParameterIcon';
 import ComponentMapping from './ComponentMapping';
 
 const ParameterMapping: ComponentMapping<
