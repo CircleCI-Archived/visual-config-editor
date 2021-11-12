@@ -1,7 +1,7 @@
 import { IconProps } from '../IconProps';
 
 const ExpandIcon = (props: IconProps & { expanded: boolean }) => (
-  <svg viewBox="0 0 16 16" className={props.className}>
+  <svg viewBox="0 0 14 14" className={props.className}>
     <path
       d={
         props.expanded

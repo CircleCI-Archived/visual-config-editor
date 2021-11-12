@@ -5,7 +5,7 @@ export interface TabbedPaneProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const TabbedPane = (props: TabbedPaneProps) => {
+const TabbedMenu = (props: TabbedPaneProps) => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
@@ -30,4 +30,4 @@ const TabbedPane = (props: TabbedPaneProps) => {
   );
 };
 
-export default TabbedPane;
+export default TabbedMenu;

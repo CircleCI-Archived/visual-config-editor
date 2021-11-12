@@ -11,7 +11,7 @@ import {
   isNode,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import DefinitionsPane from '../components/panes/definitions/DefinitionsPane';
+import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import ComponentMapping from '../mappings/ComponentMapping';
 
 export interface WorkflowModel {
@@ -40,16 +40,14 @@ export interface InspectModel extends DataModel {
   mode: 'creating' | 'editing' | 'none';
 }
 
-export type OptionalDataModel = DataModel | undefined;
-
-export interface NavigationStop {
-  component: React.FunctionComponent<OptionalDataModel>;
-  props: DataModel;
+export interface NavigationModel extends NavigationStop {
+  from?: NavigationModel;
+  jumpedFrom?: NavigationStop;
 }
 
-export interface NavigationModel {
-  path: NavigationStop[];
-  previous?: NavigationStop;
+export interface NavigationStop {
+  component: React.FunctionComponent<any>;
+  props: any;
 }
 
 export interface StoreModel {
@@ -77,8 +75,8 @@ export interface UpdateType<T> {
 export interface StoreActions {
   setDragging: Action<StoreModel, DataModel | undefined>;
 
-  navigateTo: Action<StoreModel, NavigationStop>;
-  navigateBack: Action<StoreModel, number | void>;
+  navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
+  navigateBack: Action<StoreModel, { distance?: number; apply?: (values: any) => any } | void>;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -124,22 +122,39 @@ export interface StoreActions {
 
 const Actions: StoreActions = {
   navigateTo: action((state, payload) => {
-    const lastPath = state.navigation.path;
-
+    console.log(payload.values);
     state.navigation = {
-      previous: lastPath[lastPath.length - 1],
-      path: [...lastPath, payload],
+      ...payload,
+      from: {
+        ...state.navigation,
+        props: { ...state.navigation.props, values: payload.values },
+      },
     };
   }),
 
   navigateBack: action((state, payload) => {
-    const distance = payload || 1;
-    const path = state.navigation.path;
+    const distance = payload?.distance || 1;
 
-    state.navigation = {
-      previous: path[path.length - distance],
-      path: path.slice(0, -distance),
-    };
+    if (state.navigation.from) {
+      let travelTo = state.navigation;
+
+      for (let i = 0; i < distance; i++) {
+        if (travelTo.from) {
+          travelTo = travelTo.from;
+        } else {
+          console.error('Tried to navigate back to a undefined component!');
+          break;
+        }
+      }
+
+      state.navigation = {
+        ...travelTo,
+        props: { ...travelTo.props, values: payload?.apply?.(travelTo.props.values) },
+        jumpedFrom: state.navigation,
+      };
+    } else {
+      state.navigation = { component: DefinitionsMenu, props: {} };
+    }
   }),
 
   setDragging: action((state, payload) => {
@@ -237,7 +252,10 @@ const Store: StoreModel & StoreActions = {
   inspecting: { mode: 'none' },
   selectedWorkflow: 0,
   config: undefined,
-  navigation: { path: [{ component: DefinitionsPane, props: {} }] },
+  navigation: {
+    component: DefinitionsMenu,
+    props: {},
+  },
   definitions: {
     commands: [],
     executors: [],

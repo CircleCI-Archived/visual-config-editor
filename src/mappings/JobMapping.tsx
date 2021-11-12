@@ -21,7 +21,6 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
     name: 'New Job',
     executor: undefined,
     steps: [],
-    step: { parameters: {} },
   },
   transform: (values, definitions) => {
     const executor = definitions.executors.find(executor => executor.name === values.executor.name);

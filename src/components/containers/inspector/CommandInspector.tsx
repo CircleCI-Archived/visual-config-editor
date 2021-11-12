@@ -2,28 +2,18 @@ import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Compon
 import { Field, Form, FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 
-const CommandInspector =
-  (
-    definitions: DefinitionModel,
-    bindSubmitForm: (submitForm: () => void) => void,
-  ) =>
-  ({
-    values,
-    handleChange,
-    handleSubmit,
-  }: FormikValues & { data: CustomCommand }) => {
-    bindSubmitForm(handleSubmit);
-    return (
-      <Form onSubmit={handleSubmit}>
-        Name:{' '}
-        <Field
-          name="name"
-          required
-          className="p-1 w-full border-circle-light-blue border-2 rounded"
-          value={values.name}
-        />
-      </Form>
-    );
-  };
+const CommandInspector = (props: FormikValues & { definitions: DefinitionModel }) => {
+  return (
+    <Form onSubmit={props.handleSubmit}>
+      Name:{' '}
+      <Field
+        name="name"
+        required
+        className="p-1 w-full border-circle-light-blue border-2 rounded"
+        value={props.values.name}
+      />
+    </Form>
+  );
+};
 
 export default CommandInspector;

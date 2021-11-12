@@ -153,8 +153,10 @@ export default interface ComponentMapping<
      * Called by InspectorPane and CreateNew to generate form
      * @returns Function which returns a Formik Form object*/
     inspector: (
-      definitions: DefinitionModel,
-      bindSubmitForm: (bindForm: () => void) => void,
-    ) => (props: FormikValues & { data: ConfigDataType }) => JSX.Element;
+      props: FormikValues & {
+        definitions: DefinitionModel;
+      },
+      // data: ConfigDataType;
+    ) => JSX.Element;
   };
 }

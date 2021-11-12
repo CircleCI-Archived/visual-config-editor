@@ -9,13 +9,13 @@ import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
-import TabbedPane from '../TabbedPane';
+import TabbedMenu from '../TabbedMenu';
 
 /**
  * @see
  * @returns
  */
-const DefinitionsPane = () => {
+const DefinitionsMenu = () => {
   /* TODO: DETERMINE PARAMETERS
   const parameters = useStoreState((state) => state.parameters); 
   const defineParameter = useStoreActions((actions) => actions.defineParameter); */
@@ -44,9 +44,11 @@ const DefinitionsPane = () => {
       workflows,
       defs.executors,
       defs.commands,
-      new parameters.CustomParametersList<PrimitiveParameterLiteral>(
-        ...defs.parameters,
-      ),
+      defs.parameters.length > 0
+        ? new parameters.CustomParametersList<PrimitiveParameterLiteral>(
+            defs.parameters,
+          )
+        : undefined,
     );
 
     updateConfig(config);
@@ -59,7 +61,7 @@ const DefinitionsPane = () => {
         <h1 className="text-2xl font-bold">{workflow.name}</h1>
       </header>
 
-      <TabbedPane tabs={['DEFINITIONS', 'PROPERTIES']}>
+      <TabbedMenu tabs={['DEFINITIONS', 'PROPERTIES']}>
         <div className="p-2 flex-1 h-full w-full flex-col">
           {dataMappings.map((mapping) => {
             const dataType = mapping.mapping;
@@ -73,9 +75,9 @@ const DefinitionsPane = () => {
           })}
         </div>
         <div>properties will go here!</div>
-      </TabbedPane>
+      </TabbedMenu>
 
-      <span className="border border-circle-gray-300" />
+      <span className="border-b border-circle-gray-300" />
       <button
         className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
         onClick={(e) => generateConfig()}
@@ -86,4 +88,4 @@ const DefinitionsPane = () => {
   );
 };
 
-export default DefinitionsPane;
+export default DefinitionsMenu;

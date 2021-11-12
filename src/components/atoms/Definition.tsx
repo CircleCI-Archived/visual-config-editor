@@ -1,6 +1,6 @@
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
-import EditDefinitionPane from '../panes/definitions/EditDefinitionPane';
+import EditDefinitionMenu from '../menus/definitions/EditDefinitionMenu';
 
 const Definition = (props: { data: any; type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
@@ -21,7 +21,7 @@ const Definition = (props: { data: any; type: ComponentMapping }) => {
       }}
       onClick={(e) => {
         navigateTo({
-          component: EditDefinitionPane,
+          component: EditDefinitionMenu,
           props: { data: props.data, dataType: props.type },
         });
       }}

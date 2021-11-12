@@ -1,8 +1,8 @@
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import CollapsibleList from '../atoms/CollapsibleList';
+import CollapsibleList from './CollapsibleList';
 import Definition from '../atoms/Definition';
-import CreateDefinitionPane from '../panes/definitions/CreateDefinitionPane';
+import CreateDefinitionMenu from '../menus/definitions/CreateDefinitionMenu';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
@@ -20,11 +20,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
           <button
             onClick={() =>
               navigateTo({
-                component: CreateDefinitionPane,
+                component: CreateDefinitionMenu,
                 props: { dataType: props.type },
               })
             }
-            className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium mr-2"
+            className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium"
           >
             New
           </button>

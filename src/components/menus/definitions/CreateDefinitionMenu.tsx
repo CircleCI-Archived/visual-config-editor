@@ -1,16 +1,18 @@
-import { Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import BreadCrumbArrowIcon from '../../../icons/ui/BreadCrumbArrowIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel } from '../../../state/Store';
-import TabbedPane from '../TabbedPane';
+import TabbedMenu from '../TabbedMenu';
 
-const CreateDefinitionPane = (props: DataModel) => {
+const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
   const definitions = useStoreState((state) => state.definitions);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const dataMapping = props.dataType;
   const add = useStoreActions(
     (actions) => dataMapping?.store.add(actions) || actions.error,
   );
+
+    console.log(props)
 
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
@@ -19,29 +21,6 @@ const CreateDefinitionPane = (props: DataModel) => {
       let Icon = iconComponent;
 
       return <Icon className={className} />;
-    }
-  };
-
-  let submitForm: () => void;
-
-  const getInspector = () => {
-    if (dataMapping) {
-      return (
-        <Formik
-          initialValues={dataMapping.defaults}
-          enableReinitialize={true}
-          onSubmit={(values) => {
-            add(dataMapping.transform(values, definitions));
-            navigateBack();
-          }}
-          // pass the save button to the form
-        >
-          {dataMapping.components.inspector(
-            definitions,
-            (bindForm) => { submitForm = bindForm },
-          )}
-        </Formik>
-      );
     }
   };
 
@@ -71,17 +50,44 @@ const CreateDefinitionPane = (props: DataModel) => {
           </h1>
         </div>
       </header>
-      <TabbedPane tabs={['PROPERTIES', 'PARAMETERS']}>
-        <div className="p-6">{getInspector()}</div>
-        <div>params</div>
-      </TabbedPane>
+      {dataMapping && (
+        <Formik
+          initialValues={ props.values || dataMapping.defaults}
+          enableReinitialize={true}
+          onSubmit={(values) => {
+            add(dataMapping.transform(values, definitions));
+            navigateBack();
+          }}
+          // pass the save button to the form
+        >
+          {(formikProps) => (
+            <Form className="flex flex-col flex-1">
+              <TabbedMenu tabs={['PROPERTIES', 'PARAMETERS']}>
+                <div className="p-6">
+                  {dataMapping.components.inspector({
+                    ...formikProps,
+                    definitions,
+                  })}
+                </div>
+                <div>params</div>
+              </TabbedMenu>
 
-      <span className="border border-circle-gray-300 mt-auto" />
-      <button type="submit" onClick={() => { submitForm()}} className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2">
-        Save {dataMapping?.name.singular}
-      </button>
+              <span className="border border-circle-gray-300 mt-auto" />
+              <button
+                type="submit"
+                onClick={() => {
+                  formikProps.handleSubmit();
+                }}
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+              >
+                Save {dataMapping?.name.singular}
+              </button>
+            </Form>
+          )}
+        </Formik>
+      )}
     </div>
   );
 };
 
-export default CreateDefinitionPane;
+export default CreateDefinitionMenu;
