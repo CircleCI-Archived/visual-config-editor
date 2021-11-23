@@ -6,6 +6,8 @@ import CreateDefinitionMenu from '../menus/definitions/CreateDefinitionMenu';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
+  expanded?: boolean;
+  onChange?: (expanded: boolean) => void;
 }
 
 const DefinitionsContainer = (props: DefinitionsProps) => {
@@ -16,6 +18,8 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
     <div className="w-full p-4 pb-0">
       <CollapsibleList
         title={props.type.name.plural}
+        expanded={props.expanded}
+        onChange={props.onChange}
         titleExpanded={
           <button
             onClick={() =>
@@ -30,9 +34,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
           </button>
         }
       >
-        <div className="w-full p-2 pb-0">
+        <div className="w-full pl-2 pt-2">
           {(items || []).length > 0 ? (
-            items?.map((item) => <Definition data={item} type={props.type} />)
+            items?.map((item) => (
+              <Definition data={item} key={props.type.type} type={props.type} />
+            ))
           ) : (
             <div className="font-medium text-sm text-circle-gray-500">
               No {props.type.name.plural} found.

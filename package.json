@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
-    "@circleci/circleci-config-sdk": "0.5.0-alpha.5",
+    "@circleci/circleci-config-sdk": "0.5.0-alpha.6",
     "@craco/craco": "^6.3.0",
     "@monaco-editor/react": "^4.3.1",
     "@testing-library/jest-dom": "^5.11.4",
@@ -25,6 +25,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.7",
+    "react-redux": "^7.2.6",
     "react-scripts": "4.0.3",
     "react-tabs": "^3.2.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",

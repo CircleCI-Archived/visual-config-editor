@@ -1,49 +1,40 @@
-import { ArrayHelpers, Field, FormikValues } from 'formik';
+import { FormikValues } from 'formik';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
+import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepTypeMenu from '../../menus/StepTypeMenu';
-import { commandSubtypes } from './subtypes/CommandSubtypes';
 
 const JobInspector = (
   props: FormikValues & { definitions: DefinitionModel },
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
-  console.log(props)
-
   return (
     <div>
-      Name
-      <Field
-        className="p-1 w-full border-circle-blue-light border-2 rounded"
-        name="name"
-        value={props.values.name}
-      />
-      <br />
-      Executor
-      <Field
-        name="executor.name"
-        className="p-1 w-full border-circle-blue-light border-2 rounded"
+      <InspectorProperty label="Name" name="name" required />
+      <InspectorProperty
+        label="Executor"
         as="select"
+        name="executor.name"
+        required
       >
-        <option value="undefined" key="undefined">
-          Select Executor
-        </option>
         {props.definitions.executors?.map((executor) => (
           <option value={executor.name} key={executor.name}>
             {executor.name}
           </option>
         ))}
-      </Field>
+      </InspectorProperty>
       <ListProperty
         label="Steps"
         name="steps"
         values={props.values.steps}
+        expanded
         emptyText="No steps defined yet."
         titleExpanded={
           <button
+            type="button"
             onClick={() => {
               navigateTo({
                 component: StepTypeMenu,
@@ -57,7 +48,6 @@ const JobInspector = (
           </button>
         }
       ></ListProperty>
-      <br />
     </div>
   );
 };

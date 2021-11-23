@@ -1,14 +1,17 @@
 import { Config, Job, Workflow } from '@circleci/circleci-config-sdk';
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Reusable';
+import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
-import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
+import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Action, action } from 'easy-peasy';
+import { MutableRefObject } from 'react';
 import {
   Elements,
   FlowElement,
-  FlowTransform,
   isNode,
+  Node,
+  SetConnectionId,
+  XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
@@ -17,13 +20,12 @@ import ComponentMapping from '../mappings/ComponentMapping';
 export interface WorkflowModel {
   name: string;
   id: string;
-  transform: FlowTransform;
   elements: Elements<any>;
 }
 
 /** Reusable definitions of CircleCIConfigObject */
 export interface DefinitionModel /*extends CircleCIConfigObject*/ {
-  parameters: CustomParameter<PrimitiveParameterLiteral>[];
+  parameters: CustomParameter<PipelineParameterLiteral>[];
   executors: ReusableExecutor[];
   jobs: Job[];
   commands: CustomCommand[];
@@ -35,18 +37,14 @@ export interface DataModel {
   dataType?: ComponentMapping;
 }
 
-export interface InspectModel extends DataModel {
-  values?: any;
-  mode: 'creating' | 'editing' | 'none';
-}
-
 export interface NavigationModel extends NavigationStop {
-  from?: NavigationModel;
   jumpedFrom?: NavigationStop;
+  from?: NavigationModel;
 }
 
 export interface NavigationStop {
   component: React.FunctionComponent<any>;
+  icon?: React.FunctionComponent<any>;
   props: any;
 }
 
@@ -55,14 +53,25 @@ export interface StoreModel {
   config: Config | undefined;
   /** Last generated configuration */
   definitions: DefinitionModel;
+
+  placeholder?: { index: number; id: string };
   /** Array of workflow panes */
   workflows: WorkflowModel[];
-  /** Instance of inspector */
-  inspecting: InspectModel;
   /** Order of components and the  */
   navigation: NavigationModel;
   /**  */
   dragging?: DataModel;
+  connecting?: {
+    start?: {
+      ref?: MutableRefObject<any>;
+      id: SetConnectionId;
+    };
+    end?: {
+      id: SetConnectionId;
+      pos?: XYPosition;
+      ref?: MutableRefObject<any>;
+    };
+  };
   /** Currently selected workflow pane index */
   selectedWorkflow: number;
 }
@@ -73,10 +82,32 @@ export interface UpdateType<T> {
 }
 
 export interface StoreActions {
+  persistProps: Action<StoreModel, unknown>;
   setDragging: Action<StoreModel, DataModel | undefined>;
+  setConnecting: Action<
+    StoreModel,
+    {
+      ref?: MutableRefObject<any>;
+      id: SetConnectionId;
+    }
+  >;
+  updateConnecting: Action<
+    StoreModel,
+    | {
+        ref?: MutableRefObject<any>;
+        id: SetConnectionId;
+        pos?: XYPosition;
+      }
+    | undefined
+  >;
+
+  setPlaceholder: Action<StoreModel, Node<any>>;
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
-  navigateBack: Action<StoreModel, { distance?: number; apply?: (values: any) => any } | void>;
+  navigateBack: Action<
+    StoreModel,
+    { distance?: number; apply?: (values: any) => any } | void
+  >;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -85,7 +116,6 @@ export interface StoreActions {
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
   removeWorkflowElement: Action<StoreModel, FlowElement<any>>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
-  setWorkflowTransform: Action<StoreModel, FlowTransform>;
 
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
@@ -105,15 +135,15 @@ export interface StoreActions {
   /** @todo implement parameters */
   defineParameter: Action<
     StoreModel,
-    CustomParameter<PrimitiveParameterLiteral>
+    CustomParameter<PipelineParameterLiteral>
   >;
   updateParameter: Action<
     StoreModel,
-    UpdateType<CustomParameter<PrimitiveParameterLiteral>>
+    UpdateType<CustomParameter<PipelineParameterLiteral>>
   >;
   undefineParameter: Action<
     StoreModel,
-    CustomParameter<PrimitiveParameterLiteral>
+    CustomParameter<PipelineParameterLiteral>
   >;
 
   generateConfig: Action<StoreModel, Config>;
@@ -121,13 +151,57 @@ export interface StoreActions {
 }
 
 const Actions: StoreActions = {
+  persistProps: action((state, payload) => {
+    state.navigation = { ...state.navigation, props: payload };
+  }),
+  setConnecting: action((state, payload) => {
+    if (payload.ref) {
+      state.connecting = {
+        start: payload,
+      };
+    } else {
+      state.connecting = undefined;
+    }
+  }),
+  updateConnecting: action((state, payload) => {
+    if (state.connecting?.start) {
+      state.connecting = {
+        start: state.connecting.start,
+        end: payload,
+      };
+    }
+  }),
+  setPlaceholder: action((state, payload) => {
+    const workflow = state.workflows[state.selectedWorkflow];
+    if (state.placeholder /** && payload.overwrite */) {
+      state.workflows[state.selectedWorkflow] = {
+        ...workflow,
+        elements: workflow.elements.map((element) =>
+          element.id === state.placeholder?.id ? payload : element,
+        ),
+      };
+    } else {
+      workflow.elements.push(payload);
+    }
+
+    state.placeholder = {
+      index: workflow.elements.length - 1,
+      id: workflow.id,
+    };
+  }),
+
   navigateTo: action((state, payload) => {
-    console.log(payload.values);
+    const curNav = state.navigation;
+
+    if (curNav.jumpedFrom) {
+      state.navigation.jumpedFrom = undefined;
+    }
+
     state.navigation = {
       ...payload,
       from: {
-        ...state.navigation,
-        props: { ...state.navigation.props, values: payload.values },
+        ...curNav,
+        props: { ...curNav.props, values: payload.values },
       },
     };
   }),
@@ -142,15 +216,18 @@ const Actions: StoreActions = {
         if (travelTo.from) {
           travelTo = travelTo.from;
         } else {
-          console.error('Tried to navigate back to a undefined component!');
-          break;
+          throw new Error('Tried to navigate back to an undefined component!');
         }
       }
 
       state.navigation = {
         ...travelTo,
-        props: { ...travelTo.props, values: payload?.apply?.(travelTo.props.values) },
-        jumpedFrom: state.navigation,
+        props: {
+          ...travelTo.props,
+          values:
+            payload?.apply?.(travelTo.props.values) || travelTo.props.values,
+        },
+        jumpedFrom: distance > 1 ? state.navigation : undefined,
       };
     } else {
       state.navigation = { component: DefinitionsMenu, props: {} };
@@ -166,7 +243,6 @@ const Actions: StoreActions = {
       name,
       id: v4(),
       elements: [],
-      transform: { x: 0, y: 0, zoom: 1 },
     });
   }),
   selectWorkflow: action((state, index) => {
@@ -186,9 +262,6 @@ const Actions: StoreActions = {
   removeWorkflowElement: action((state, payload) => {}),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
-  }),
-  setWorkflowTransform: action((state, payload) => {
-    state.workflows[state.selectedWorkflow].transform = payload;
   }),
 
   defineJob: action((state, payload) => {
@@ -249,12 +322,11 @@ const Actions: StoreActions = {
 };
 
 const Store: StoreModel & StoreActions = {
-  inspecting: { mode: 'none' },
   selectedWorkflow: 0,
   config: undefined,
   navigation: {
     component: DefinitionsMenu,
-    props: {},
+    props: { expanded: [true, true, false, false] },
   },
   definitions: {
     commands: [],
@@ -268,7 +340,6 @@ const Store: StoreModel & StoreActions = {
       name: 'build-and-test',
       elements: [],
       id: v4(),
-      transform: { x: 0, y: 0, zoom: 1 },
     },
   ],
   ...Actions,

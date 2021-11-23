@@ -13,6 +13,7 @@ const TabbedMenu = (props: TabbedPaneProps) => {
       <div className="flex border-b border-circle-gray-300 pl-6">
         {props.tabs.map((tab, index) => (
           <button
+            type="button"
             key={index}
             className={`text-sm tracking-wide px-3 py-3 font-bold text-center ${
               index === activeTab
@@ -25,7 +26,9 @@ const TabbedMenu = (props: TabbedPaneProps) => {
           </button>
         ))}
       </div>
-      {Array.isArray(props.children) ?  props.children[activeTab] : props.children}
+      {Array.isArray(props.children)
+        ? props.children[activeTab]
+        : props.children}
     </div>
   );
 };

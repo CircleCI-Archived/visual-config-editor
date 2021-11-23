@@ -4,15 +4,15 @@ import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorIcon from '../icons/components/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
 import { WorkflowJob } from './JobMapping';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 
 export type AnyExecutor =
   | executor.DockerExecutor
   | executor.MacOSExecutor
   | executor.MachineExecutor
   | executor.WindowsExecutor
-  | AbstractExecutor;
+  | Executor;
 
 const transform = (values: any) => {
   const subtypes: { [type: string]: () => AnyExecutor } = {
@@ -48,7 +48,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
     plural: 'Executors',
   },
   defaults: {
-    name: 'New Executor',
+    name: 'default',
     type: 'docker',
     executor: {
       image: {

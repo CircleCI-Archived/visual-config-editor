@@ -1,5 +1,5 @@
 import { Job } from '@circleci/circleci-config-sdk';
-import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/Workflow';
+import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
@@ -19,18 +19,16 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   },
   defaults: {
     name: 'New Job',
-    executor: undefined,
+    executor: { name: 'default' },
     steps: [],
   },
   transform: (values, definitions) => {
-    const executor = definitions.executors.find(executor => executor.name === values.executor.name);
+    const executor = definitions.executors.find(
+      (executor) => executor.name === values.executor.name,
+    );
 
     if (executor) {
-      return new Job(
-        values.name,
-        executor,
-        values.steps,
-      );
+      return new Job(values.name, executor, values.steps);
     }
 
     throw new Error('Job could not be transformed: Invalid executor');

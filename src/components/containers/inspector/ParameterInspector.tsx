@@ -1,9 +1,9 @@
-import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
-import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
 import { Field, Form, FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 // data: CustomParameter<PrimitiveParameterLiteral>
-const ParameterInspector = (props : FormikValues & { definitions: DefinitionModel }) => {
+const ParameterInspector = (
+  props: FormikValues & { definitions: DefinitionModel },
+) => {
   return (
     <Form onSubmit={props.handleSubmit}>
       Name:{' '}

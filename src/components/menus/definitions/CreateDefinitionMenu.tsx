@@ -12,8 +12,6 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
     (actions) => dataMapping?.store.add(actions) || actions.error,
   );
 
-    console.log(props)
-
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
 
@@ -28,7 +26,6 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
     <div className="h-full flex flex-col">
       <header className="ml-6">
         <div className="flex items-center">
-          {/* <WorkflowIcon className="w-6 h-6 mr-1" color="#6A6A6A" /> */}
           <button
             className="text-base text-circle-gray-500"
             onClick={() => {
@@ -39,7 +36,7 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
           </button>
           <BreadCrumbArrowIcon className="pl-1 w-5 h-5" color="#6A6A6A" />
           {getIcon('w-6 h-8 py-2')}
-          <p className="ml-1 font-medium leading-8 tracking-tight">
+          <p className="ml-1 font-medium leading-6 tracking-tight">
             New {dataMapping?.name.singular}
           </p>
         </div>
@@ -53,12 +50,11 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
       {dataMapping && (
         <Formik
           initialValues={ props.values || dataMapping.defaults}
-          enableReinitialize={true}
+          enableReinitialize
           onSubmit={(values) => {
             add(dataMapping.transform(values, definitions));
             navigateBack();
           }}
-          // pass the save button to the form
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
@@ -72,12 +68,9 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
                 <div>params</div>
               </TabbedMenu>
 
-              <span className="border border-circle-gray-300 mt-auto" />
+              <span className="border-b border-circle-gray-300 mt-auto" />
               <button
                 type="submit"
-                onClick={() => {
-                  formikProps.handleSubmit();
-                }}
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
               >
                 Save {dataMapping?.name.singular}

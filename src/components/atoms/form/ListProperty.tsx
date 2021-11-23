@@ -1,29 +1,38 @@
-import { FieldArray } from 'formik';
+import { FieldArray, useField } from 'formik';
 import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
-import { InspectorPropertyProps } from './InspectorProperty';
+import { InspectorFieldProps } from './InspectorProperty';
 
-export type ListPropertyProps = InspectorPropertyProps & {
+export type ListPropertyProps = InspectorFieldProps & {
   titleExpanded?: ReactElement;
   values?: any;
   description?: string;
+  expanded?: boolean;
   emptyText?: string;
-}
+};
 
-const ListProperty = (props: ListPropertyProps) => {
+const ListProperty = ({
+  label,
+  values,
+  description,
+  emptyText,
+  ...props
+}: InspectorFieldProps & ListPropertyProps) => {
+  const [field] = useField(props);
   return (
     <CollapsibleList
-      title={props.label}
+      title={label}
       titleExpanded={props.titleExpanded}
+      expanded={props.expanded}
     >
-      {props.values?.length > 0 ? (
+      {values?.length > 0 ? (
         <FieldArray
-          name="steps"
-
+          {...field}
+          name={props.name}
           render={(arrayHelper) => (
             <DragDropContext
               onDragEnd={(result) => {
@@ -40,23 +49,27 @@ const ListProperty = (props: ListPropertyProps) => {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="p-2"
+                    className="p-2 pr-0"
                   >
-                    {props.values?.map((cmd: any, index: number) => (
+                    {values?.map((cmd: any, index: number) => (
                       <Draggable
                         key={index}
                         draggableId={`${index}`}
                         index={index}
                       >
                         {(provided, snapshot) => (
-                          <button
-                            className="w-full mb-2 p-1 px-3 text-sm cursor-pointer text-left text-circle-black 
+                          <div
+                            className="w-full mb-2 p-1 px-3 text-sm 
                       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            type="button"
                           >
-                            <p className="leading-6">{cmd.name}</p>
+                            <button
+                              className="flex-1 cursor-pointer text-left text-circle-black leading-6"
+                              type="button"
+                            >
+                              {cmd.name}
+                            </button>
                             <div
                               className="ml-auto mr-3"
                               {...provided.dragHandleProps}
@@ -78,7 +91,7 @@ const ListProperty = (props: ListPropertyProps) => {
                                 color="#AAAAAA"
                               />
                             </button>
-                          </button>
+                          </div>
                         )}
                       </Draggable>
                     ))}
@@ -91,7 +104,7 @@ const ListProperty = (props: ListPropertyProps) => {
         />
       ) : (
         <p className="ml-2 font-medium text-sm text-circle-gray-500">
-          {props.emptyText}
+          {emptyText}
         </p>
       )}
     </CollapsibleList>

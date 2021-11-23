@@ -1,21 +1,20 @@
 import { parameters } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
-import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
+import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
 import ParameterInspector from '../components/containers/inspector/ParameterInspector';
 import ParameterIcon from '../icons/components/ParameterIcon';
 import ComponentMapping from './ComponentMapping';
 
 const ParameterMapping: ComponentMapping<
-  CustomParameter<PrimitiveParameterLiteral>
+  CustomParameter<PipelineParameterLiteral>
 > = {
   type: 'parameter',
   name: {
     singular: 'Parameter',
     plural: 'Parameters',
   },
-  defaults: {
-  },
+  defaults: {},
   transform: (values: any) =>
     new parameters.CustomParameter(
       values.name,

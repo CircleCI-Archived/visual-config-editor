@@ -4,6 +4,7 @@ import NavigationPane from './components/panes/NavigationPane';
 import WorkflowsPane from './components/panes/WorkflowsPane';
 import Store from './state/Store';
 
+
 const App = () => {
   return (
     <StoreProvider store={createStore(Store)}>

@@ -1,8 +1,9 @@
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/Reusable';
 import { Field, Form, FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 
-const CommandInspector = (props: FormikValues & { definitions: DefinitionModel }) => {
+const CommandInspector = (
+  props: FormikValues & { definitions: DefinitionModel },
+) => {
   return (
     <Form onSubmit={props.handleSubmit}>
       Name:{' '}

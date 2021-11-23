@@ -1,123 +1,45 @@
-import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
-import { Field, Form, FormikValues } from 'formik';
-import { ReactElement } from 'react';
+import { FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
+import InspectorProperty from '../../atoms/form/InspectorProperty';
+import { executorSubtypes } from './subtypes/ExecutorSubtypes';
 
-const ExecutorInspector = (props: FormikValues & { definitions: DefinitionModel }) => {
-  const subtypes: {
-    [K: string]: {
-      name: string;
-      fields: ReactElement;
-      resourceClasses: string[];
-    };
-  } = {
-    docker: {
-      name: 'Docker',
-      resourceClasses: [
-        'small',
-        'medium',
-        'medium+',
-        'large',
-        'xlarge',
-        '2xlarge',
-        '2xlarge+',
-      ],
-      fields: (
-        <div>
-          Image
-          <Field
-            required
-            name="executor.image.image"
-            className="p-1 w-full border-circle-light-blue border-2 rounded"
-          ></Field>
-        </div>
-      ),
-    },
-    machine: {
-      name: 'Machine',
-      resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
-      fields: (
-        <div>
-          Image
-          <Field
-            required
-            name="executor.image"
-            className="p-1 w-full border-circle-light-blue border-2 rounded"
-          ></Field>
-        </div>
-      ),
-    },
-    macos: {
-      name: 'MacOS',
-      resourceClasses: ['medium', 'large'],
-      fields: (
-        <div>
-          Xcode
-          <Field
-            required
-            name="executor.xcode"
-            className="p-1 w-full border-circle-light-blue border-2 rounded"
-          ></Field>
-        </div>
-      ),
-    },
-    windows: {
-      name: 'Windows',
-      resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
-      fields: (
-        <div>
-          Image
-          <Field
-            required
-            name="executor.image"
-            className="p-1 w-full border-circle-light-blue border-2 rounded"
-          ></Field>
-        </div>
-      ),
-    },
-  };
-
+const ExecutorInspector = (
+  props: FormikValues & { definitions: DefinitionModel },
+) => {
   return (
-    <Form onSubmit={props.handleSubmit}>
-      Name
-      <Field
+    <div>
+      <InspectorProperty
+        label="Name"
         name="name"
         required
-        className="p-1 w-full border-circle-light-blue border-2 rounded"
-        value={props.values.name}
       />
-      <br />
-      Executor Type
-      <Field
+      <InspectorProperty
+        label="Type"
         name="type"
         required
-        className="p-1 w-full border-circle-light-blue border-2 rounded"
         as="select"
-      >
-        {Object.keys(subtypes).map((subtype) => (
-          <option value={subtype} key={subtype}>
-            {subtypes[subtype].name}
-          </option>
-        ))}
-      </Field>
-      <br />
-      Resource Class
-      <Field
-        as="select"
-        name="executor.resourceClass"
-        className="p-1 w-full border-circle-light-blue border-2 rounded"
         onChange={props.handleChange}
       >
-        {subtypes[props.values.type]?.resourceClasses?.map((resourceClass) => (
+        {Object.keys(executorSubtypes).map((subtype) => (
+          <option value={subtype} key={subtype}>
+            {executorSubtypes[subtype].name}
+          </option>
+        ))}
+      </InspectorProperty>
+      <InspectorProperty
+        label="Resource Class"
+        name="executor.resourceClass"
+        required
+        as="select"
+      >
+        {executorSubtypes[props.values.type]?.resourceClasses?.map((resourceClass) => (
           <option value={resourceClass} key={resourceClass}>
             {resourceClass}
           </option>
         ))}
-      </Field>
-      <br />
-      {subtypes[props.values.type]?.fields}
-      <br />
-    </Form>
+      </InspectorProperty>
+      {executorSubtypes[props.values.type]?.fields}
+    </div>
   );
 };
 

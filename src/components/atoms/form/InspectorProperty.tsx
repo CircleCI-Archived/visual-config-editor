@@ -1,32 +1,33 @@
-import { Field } from 'formik';
+import { Field, useField } from 'formik';
 import { type } from 'os';
 import { ReactElement } from 'react';
 
-export interface InspectorPropertyProps {
-  name: any;
+export interface InspectorFieldProps {
   label: string;
+  name: any;
   as?: string;
   type?: string;
+  value?: any;
   required?: boolean;
+  onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
 }
 
-const InspectorProperty = (props: InspectorPropertyProps) => {
+const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
+  const [field] = useField(props);
   return (
     <div className={`${props.type == 'checkbox' && `flex flex-row`} mb-3`}>
-      <div className="flex flex-row">
-        <p className="font-bold leading-5 tracking-wide">{props.label}</p>
+      <div className="flex flex-row mb-2">
+        <p className="font-bold leading-5 tracking-wide">{label}</p>
         {props.required && (
-          <span className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium">
+          <span className="ml-auto tracking-wide leading-6 text-sm text-circle-gray-400 font-medium">
             Required
           </span>
         )}
       </div>
       <Field
-        name={props.name}
-        as={props.as}
-        type={props.type}
-        required={props.required}
+        {...field}
+        {...props}
         className={`${props.type != 'checkbox' ? 'w-full' : 'ml-auto'} 
              border-circle-gray-300 border-2 rounded p-1 `}
       >

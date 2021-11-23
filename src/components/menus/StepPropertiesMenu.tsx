@@ -64,7 +64,6 @@ const StepPropertiesMenu = (props: { subtype: string }) => {
             },
           });
         }}
-        // pass the save button to the form
       >
         {(formikProps) => (
           <Form className="flex flex-col flex-1">
@@ -89,9 +88,6 @@ const StepPropertiesMenu = (props: { subtype: string }) => {
             <span className="border-b border-circle-gray-300 mt-auto" />
             <button
               type="submit"
-              onClick={() => {
-                formikProps.handleSubmit();
-              }}
               className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
             >
               Save Step
@@ -99,44 +95,6 @@ const StepPropertiesMenu = (props: { subtype: string }) => {
           </Form>
         )}
       </Formik>
-      {/* <TabbedMenu tabs={['PROPERTIES']}>
-        <Formik
-          initialValues={{}}
-          enableReinitialize={true}
-          onSubmit={(values) => {
-            navigateBack();
-          }}
-          // pass the save button to the form
-        >
-          {(formikProps) => (
-            <Form className="flex flex-1 flex-col">
-              <div className="p-6">
-                <button
-                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
-                  onClick={() => {
-                    navigateBack();
-                  }}
-                >
-                  <p className="font-bold">{subtype.text}</p>
-                  <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                    {subtype.description}
-                  </p>
-                </button>
-              </div>
-              <span className="border-b border-circle-gray-300 mt-auto" />
-              <button
-                type="submit"
-                onClick={() => {
-                  formikProps.handleSubmit();
-                }}
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-              >
-                Save Step
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </TabbedMenu> */}
     </div>
   );
 };

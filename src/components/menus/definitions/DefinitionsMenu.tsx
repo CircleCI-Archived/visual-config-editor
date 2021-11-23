@@ -4,10 +4,13 @@ import {
   Workflow,
   WorkflowJob,
 } from '@circleci/circleci-config-sdk';
-import { PrimitiveParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/Parameters.types';
+import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { Form, Formik } from 'formik';
+import React from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import InspectorProperty from '../../atoms/form/InspectorProperty';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import TabbedMenu from '../TabbedMenu';
 
@@ -15,7 +18,7 @@ import TabbedMenu from '../TabbedMenu';
  * @see
  * @returns
  */
-const DefinitionsMenu = () => {
+const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   /* TODO: DETERMINE PARAMETERS
   const parameters = useStoreState((state) => state.parameters); 
   const defineParameter = useStoreActions((actions) => actions.defineParameter); */
@@ -24,6 +27,7 @@ const DefinitionsMenu = () => {
   const workflowGraphs = useStoreState((state) => state.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
+  const persistProps = useStoreActions((actions) => actions.persistProps);
   const workflow = workflowGraphs[selectedWorkflow];
 
   const generateConfig = () => {
@@ -45,7 +49,7 @@ const DefinitionsMenu = () => {
       defs.executors,
       defs.commands,
       defs.parameters.length > 0
-        ? new parameters.CustomParametersList<PrimitiveParameterLiteral>(
+        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
             defs.parameters,
           )
         : undefined,
@@ -63,18 +67,39 @@ const DefinitionsMenu = () => {
 
       <TabbedMenu tabs={['DEFINITIONS', 'PROPERTIES']}>
         <div className="p-2 flex-1 h-full w-full flex-col">
-          {dataMappings.map((mapping) => {
+          {dataMappings.map((mapping, index) => {
             const dataType = mapping.mapping;
 
             return (
               <DefinitionsContainer
                 type={dataType}
+                expanded={props.expanded[index]}
+                onChange={(isExpanded) => {
+                  persistProps({
+                    ...props,
+                    expanded: props.expanded.map((expanded, i) =>
+                      i === index ? isExpanded : expanded,
+                    ),
+                  });
+                }}
                 key={dataType.name.plural}
               />
             );
           })}
         </div>
-        <div>properties will go here!</div>
+        <div className="p-6">
+          <Formik
+            initialValues={{ name: workflow.name }}
+            enableReinitialize
+            onSubmit={(values) => {}}
+          >
+            {(formikProps) => (
+              <Form className="flex flex-col flex-1">
+                <InspectorProperty label="Name" name="name" />
+              </Form>
+            )}
+          </Formik>
+        </div>
       </TabbedMenu>
 
       <span className="border-b border-circle-gray-300" />
