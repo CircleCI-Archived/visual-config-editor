@@ -2,7 +2,11 @@ import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import CollapsibleList from './CollapsibleList';
 import Definition from '../atoms/Definition';
-import CreateDefinitionMenu from '../menus/definitions/CreateDefinitionMenu';
+import {
+  CreateDefinitionMenu,
+  CreateDefinitionMenuNav,
+} from '../menus/definitions/CreateDefinitionMenu';
+import SubTypeMenuNav from '../menus/SubTypeMenu';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
@@ -23,12 +27,23 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
         titleExpanded={
           <button
             onClick={() =>
-              navigateTo({
-                component: CreateDefinitionMenu,
-                props: { dataType: props.type },
-              })
+              navigateTo(
+                props.type.subtypes?.component
+                  ? {
+                      component: SubTypeMenuNav,
+                      props: {
+                        typePage: props.type.subtypes?.component,
+                        menuPage: CreateDefinitionMenu,
+                        menuProps: { dataType: props.type },
+                      },
+                    }
+                  : {
+                      component: CreateDefinitionMenuNav,
+                      props: { dataType: props.type },
+                    },
+              )
             }
-            className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium"
+            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
           >
             New
           </button>

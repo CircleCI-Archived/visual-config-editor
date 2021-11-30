@@ -6,8 +6,19 @@ import {
 } from '@circleci/circleci-config-sdk';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
+import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
-import Store, { DefinitionModel, UpdateType } from '../state/Store';
+import {
+  ComponentParameterMapping,
+  ComponentParameterType,
+  ParameterTypes,
+} from '../components/containers/inspector/subtypes/ParameterSubtypes';
+import { SubTypeMenuPageProps } from '../components/menus/SubTypeMenu';
+import Store, {
+  DefinitionModel,
+  NavigationComponent,
+  UpdateType,
+} from '../state/Store';
 import CommandMapping from './CommandMapping';
 import ExecutorMapping from './ExecutorMapping';
 import JobMapping from './JobMapping';
@@ -84,6 +95,12 @@ type storeType = typeof Store;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 
+export interface SubTypeMapping {
+  text: string;
+  description?: string;
+  fields: ReactElement | React.FunctionComponent<any>;
+}
+
 /**
  * circleci-config-sdk Component to Data Mapping
  *
@@ -107,6 +124,10 @@ export default interface ComponentMapping<
   defaults: {
     [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
   };
+  /**
+   * Is true when the component can accept parameters.
+   */
+  parameters?: ComponentParameterType;
   /** Transform field values into an instance of ConfigDataType */
   transform: (
     values: { [K: string]: any },
@@ -144,6 +165,10 @@ export default interface ComponentMapping<
     /** @todo: Add store functionality to better support updating defintions and their corresponding workflow nodes */
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;
   };
+  subtypes?: {
+    component: NavigationComponent;
+    definitions: { [subtype: string]: SubTypeMapping };
+  };
   components: {
     /** Icon Component to render in definition */
     icon?: React.FunctionComponent<any>;
@@ -155,6 +180,7 @@ export default interface ComponentMapping<
     inspector: (
       props: FormikValues & {
         definitions: DefinitionModel;
+        subtype?: any;
       },
       // data: ConfigDataType;
     ) => JSX.Element;

@@ -1,11 +1,14 @@
 import { executor, Job } from '@circleci/circleci-config-sdk';
-import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
+import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
+import { executorSubtypes } from '../components/containers/inspector/subtypes/ExecutorSubtypes';
+import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
+import ExecutorTypePageNav from '../components/menus/definitions/subtypes/ExecutorTypePage';
 import ExecutorIcon from '../icons/components/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
 import { WorkflowJob } from './JobMapping';
-import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
-import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 
 export type AnyExecutor =
   | executor.DockerExecutor
@@ -38,7 +41,7 @@ const transform = (values: any) => {
       ),
   };
 
-  return new executor.ReusableExecutor(values.name, subtypes[values.type]());
+  return new executor.ReusableExecutor(values.name, subtypes[values.subtype]());
 };
 
 const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
@@ -48,14 +51,34 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
     plural: 'Executors',
   },
   defaults: {
-    name: 'default',
-    type: 'docker',
-    executor: {
-      image: {
-        image: 'cimg/base:stable',
+    docker: {
+      name: 'docker',
+      executor: {
+        image: {
+          image: 'cimg/base:stable',
+        },
+      },
+    },
+    machine: {
+      name: 'machine',
+      executor: {
+        image: 'ubuntu-2004:202111-01',
+      },
+    },
+    macos: {
+      name: 'macos',
+      executor: {
+        xcode: '13.2.0',
+      },
+    },
+    windows: {
+      name: 'windows_server',
+      executor: {
+        image: 'windows-server-2019-vs2019:stable',
       },
     },
   },
+  parameters: componentParametersSubtypes.executor,
   transform: transform,
   store: {
     get: (state) => state.definitions.executors,
@@ -71,6 +94,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
       job: new Job(oldJob.name, data, oldJob.steps),
     };
   },
+  subtypes: { component: ExecutorTypePageNav, definitions: executorSubtypes },
   components: {
     icon: ExecutorIcon,
     summary: ExecutorSummary,

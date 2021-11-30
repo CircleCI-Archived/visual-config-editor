@@ -3,6 +3,7 @@ import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/li
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
+import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import JobIcon from '../icons/components/JobIcon';
 import ComponentMapping from './ComponentMapping';
 
@@ -19,10 +20,12 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   },
   defaults: {
     name: 'New Job',
-    executor: { name: 'default' },
     steps: [],
   },
+  parameters: componentParametersSubtypes.job,
   transform: (values, definitions) => {
+    console.log(values)
+
     const executor = definitions.executors.find(
       (executor) => executor.name === values.executor.name,
     );

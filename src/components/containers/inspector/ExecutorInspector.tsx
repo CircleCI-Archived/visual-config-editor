@@ -8,12 +8,8 @@ const ExecutorInspector = (
 ) => {
   return (
     <div>
-      <InspectorProperty
-        label="Name"
-        name="name"
-        required
-      />
-      <InspectorProperty
+      <InspectorProperty label="Name" name="name" required />
+      {/* <InspectorProperty
         label="Type"
         name="type"
         required
@@ -25,20 +21,22 @@ const ExecutorInspector = (
             {executorSubtypes[subtype].name}
           </option>
         ))}
-      </InspectorProperty>
+      </InspectorProperty> */}
       <InspectorProperty
         label="Resource Class"
         name="executor.resourceClass"
         required
         as="select"
       >
-        {executorSubtypes[props.values.type]?.resourceClasses?.map((resourceClass) => (
-          <option value={resourceClass} key={resourceClass}>
-            {resourceClass}
-          </option>
-        ))}
+        {executorSubtypes[props.values.subtype]?.resourceClasses?.map(
+          (resourceClass) => (
+            <option value={resourceClass} key={resourceClass}>
+              {resourceClass}
+            </option>
+          ),
+        )}
       </InspectorProperty>
-      {executorSubtypes[props.values.type]?.fields}
+      {executorSubtypes[props.values.subtype]?.fields}
     </div>
   );
 };

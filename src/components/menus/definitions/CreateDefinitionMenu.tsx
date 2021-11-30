@@ -1,17 +1,21 @@
 import { Form, Formik } from 'formik';
-import BreadCrumbArrowIcon from '../../../icons/ui/BreadCrumbArrowIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { DataModel } from '../../../state/Store';
+import { DataModel, NavigationComponent } from '../../../state/Store';
+import BreadCrumbs from '../../containers/BreadCrumbs';
+import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
+type CreateDefinitionProps = DataModel & {
+  values: any;
+} & SubTypeMenuPageProps<any>;
+
+const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const dataMapping = props.dataType;
   const add = useStoreActions(
     (actions) => dataMapping?.store.add(actions) || actions.error,
   );
-
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
 
@@ -22,25 +26,17 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
     }
   };
 
+  const tabs = ['PROPERTIES'];
+
+  if (dataMapping?.parameters) {
+    tabs.push('PARAMETERS');
+  }
+
   return (
     <div className="h-full flex flex-col">
-      <header className="ml-6">
-        <div className="flex items-center">
-          <button
-            className="text-base text-circle-gray-500"
-            onClick={() => {
-              navigateBack();
-            }}
-          >
-            Definitions
-          </button>
-          <BreadCrumbArrowIcon className="pl-1 w-5 h-5" color="#6A6A6A" />
-          {getIcon('w-6 h-8 py-2')}
-          <p className="ml-1 font-medium leading-6 tracking-tight">
-            New {dataMapping?.name.singular}
-          </p>
-        </div>
-        <div className="py-3 flex">
+      <header>
+        <BreadCrumbs />
+        <div className="ml-6 py-3 flex">
           {getIcon('w-8 h-8 p-1 pl-0 mr-1')}
           <h1 className="text-2xl font-bold">
             New {dataMapping?.name.singular}
@@ -49,7 +45,13 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
       </header>
       {dataMapping && (
         <Formik
-          initialValues={ props.values || dataMapping.defaults}
+          initialValues={{
+            subtype: props.subtype,
+            ...(props.values ||
+              (props.subtype
+                ? dataMapping.defaults[props.subtype]
+                : dataMapping.defaults)),
+          }}
           enableReinitialize
           onSubmit={(values) => {
             add(dataMapping.transform(values, definitions));
@@ -58,14 +60,34 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu tabs={['PROPERTIES', 'PARAMETERS']}>
+              <TabbedMenu tabs={tabs}>
                 <div className="p-6">
+                  {dataMapping.subtypes && (
+                    <button
+                      className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                      type="button"
+                      onClick={() => {
+                        props.selectSubtype();
+                      }}
+                    >
+                      <p className="font-bold">
+                        {dataMapping.subtypes.definitions[props.subtype]?.text}
+                      </p>
+                      <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                        {
+                          dataMapping.subtypes.definitions[props.subtype]
+                            ?.description
+                        }
+                      </p>
+                    </button>
+                  )}
                   {dataMapping.components.inspector({
                     ...formikProps,
                     definitions,
+                    subtype: props.subtype,
                   })}
                 </div>
-                <div>params</div>
+                {dataMapping.parameters ? <div>params</div> : null}
               </TabbedMenu>
 
               <span className="border-b border-circle-gray-300 mt-auto" />
@@ -83,4 +105,22 @@ const CreateDefinitionMenu = (props: DataModel & { values: any }) => {
   );
 };
 
-export default CreateDefinitionMenu;
+const CreateDefinitionMenuNav: NavigationComponent = {
+  Component: CreateDefinitionMenu,
+  Label: (props: CreateDefinitionProps) => {
+    return <p>New {props.dataType?.name.singular}</p>;
+  },
+  Icon: (props: CreateDefinitionProps) => {
+    let iconComponent = props.dataType?.components.icon;
+
+    if (!iconComponent) {
+      return null;
+    }
+
+    let DefinitionIcon = iconComponent;
+
+    return <DefinitionIcon className="w-6 h-8 py-2" />;
+  },
+};
+
+export { CreateDefinitionMenuNav, CreateDefinitionMenu };

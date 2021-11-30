@@ -4,7 +4,9 @@ import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
-import StepTypeMenu from '../../menus/StepTypeMenu';
+import StepPropertiesMenu from '../../menus/definitions/StepDefinitionMenu';
+import StepTypePage from '../../menus/definitions/subtypes/StepTypePage';
+import SubTypeMenuNav from '../../menus/SubTypeMenu';
 
 const JobInspector = (
   props: FormikValues & { definitions: DefinitionModel },
@@ -20,11 +22,13 @@ const JobInspector = (
         name="executor.name"
         required
       >
-        {props.definitions.executors?.map((executor) => (
-          <option value={executor.name} key={executor.name}>
-            {executor.name}
-          </option>
-        ))}
+        {[{ name: 'Select Executor' }, ...props.definitions.executors].map(
+          (executor) => (
+            <option value={executor.name} key={executor.name}>
+              {executor.name}
+            </option>
+          ),
+        )}
       </InspectorProperty>
       <ListProperty
         label="Steps"
@@ -37,12 +41,16 @@ const JobInspector = (
             type="button"
             onClick={() => {
               navigateTo({
-                component: StepTypeMenu,
-                props: { dataType: JobMapping },
+                component: SubTypeMenuNav,
+                props: {
+                  typePage: StepTypePage,
+                  menuPage: StepPropertiesMenu,
+                  passThrough: { dataType: JobMapping },
+                },
                 values: props.values,
               });
             }}
-            className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium"
+            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
           >
             New
           </button>

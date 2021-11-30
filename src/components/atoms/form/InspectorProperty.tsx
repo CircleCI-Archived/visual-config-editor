@@ -1,5 +1,4 @@
 import { Field, useField } from 'formik';
-import { type } from 'os';
 import { ReactElement } from 'react';
 
 export interface InspectorFieldProps {
@@ -16,7 +15,7 @@ export interface InspectorFieldProps {
 const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
   const [field] = useField(props);
   return (
-    <div className={`${props.type == 'checkbox' && `flex flex-row`} mb-3`}>
+    <div className={`${props.type === 'checkbox' && `flex flex-row`} mb-3`}>
       <div className="flex flex-row mb-2">
         <p className="font-bold leading-5 tracking-wide">{label}</p>
         {props.required && (
@@ -28,7 +27,7 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
       <Field
         {...field}
         {...props}
-        className={`${props.type != 'checkbox' ? 'w-full' : 'ml-auto'} 
+        className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
              border-circle-gray-300 border-2 rounded p-1 `}
       >
         {props.children}

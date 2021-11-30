@@ -3,6 +3,8 @@ import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Comp
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
 import ParameterInspector from '../components/containers/inspector/ParameterInspector';
+import { parameterTypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
+import ParameterTypePageNav from '../components/menus/definitions/subtypes/ParameterTypePage';
 import ParameterIcon from '../icons/components/ParameterIcon';
 import ComponentMapping from './ComponentMapping';
 
@@ -28,6 +30,7 @@ const ParameterMapping: ComponentMapping<
     update: (actions) => actions.updateParameter,
     remove: (actions) => actions.undefineParameter,
   },
+  subtypes: { component: ParameterTypePageNav, definitions: parameterTypes },
   components: {
     icon: ParameterIcon,
     summary: ParameterSummary,

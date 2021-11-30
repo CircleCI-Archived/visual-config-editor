@@ -1,5 +1,5 @@
 import React from 'react';
-import { EdgeProps, getBezierPath, getMarkerEnd } from 'react-flow-renderer';
+import { EdgeProps } from 'react-flow-renderer';
 
 export default function Edge({
   id,
@@ -14,15 +14,6 @@ export default function Edge({
   arrowHeadType,
   markerEndId,
 }: EdgeProps) {
-  const edgePath = getBezierPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  });
-
   const gap = 45;
 
   return (

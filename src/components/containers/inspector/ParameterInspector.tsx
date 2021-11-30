@@ -1,19 +1,16 @@
-import { Field, Form, FormikValues } from 'formik';
+import { FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
+import InspectorProperty from '../../atoms/form/InspectorProperty';
 // data: CustomParameter<PrimitiveParameterLiteral>
 const ParameterInspector = (
-  props: FormikValues & { definitions: DefinitionModel },
+  props: FormikValues & {
+    definitions: DefinitionModel;
+  },
 ) => {
   return (
-    <Form onSubmit={props.handleSubmit}>
-      Name:{' '}
-      <Field
-        name="name"
-        required
-        className="p-1 w-full border-circle-light-blue border-2 rounded"
-        value={props.values.name}
-      />
-    </Form>
+    <div>
+      <InspectorProperty name="name" label="Name" required />
+    </div>
   );
 };
 

@@ -8,18 +8,15 @@ import ReactFlow, {
   FlowTransform,
   Node,
   NodeTypesType,
+  useStoreActions as flowActions,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import {
-  useStoreState as flowState,
-  useStoreActions as flowActions,
-} from 'react-flow-renderer';
 import { WorkflowModel } from '../../state/Store';
-import GhostNode from '../atoms/nodes/GhostNode';
 import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
+import GhostNode from '../atoms/nodes/GhostNode';
 
 export interface ElementProps {
   className?: string;
@@ -78,7 +75,6 @@ const WorkflowPane = (props: ElementProps) => {
   const handleMouseUp = () => {
     if (connecting?.start) {
       if (connecting?.end) {
-        console.log('conneting');
         setWorkflowElements(
           addEdge(
             {

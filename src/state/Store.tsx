@@ -42,9 +42,14 @@ export interface NavigationModel extends NavigationStop {
   from?: NavigationModel;
 }
 
+export interface NavigationComponent {
+  Icon?: React.FunctionComponent<any>;
+  Component: React.FunctionComponent<any>;
+  Label: React.FunctionComponent<any>;
+}
+
 export interface NavigationStop {
-  component: React.FunctionComponent<any>;
-  icon?: React.FunctionComponent<any>;
+  component: NavigationComponent;
   props: any;
 }
 
@@ -299,7 +304,7 @@ const Actions: StoreActions = {
     }
   }),
   undefineExecutor: action((state, payload) => {
-    state.definitions.jobs?.filter(
+    state.definitions.executors?.filter(
       (executor) => executor.name !== payload.name,
     );
   }),
@@ -308,9 +313,16 @@ const Actions: StoreActions = {
   updateParameter: action((state, payload) => {}),
   undefineParameter: action((state, payload) => {}),
 
-  defineCommand: action((state, payload) => {}),
+  defineCommand: action((state, payload) => {
+    state.definitions.commands = state.definitions.commands?.concat(payload);
+    console.log(state.definitions.commands)
+  }),
   updateCommand: action((state, payload) => {}),
-  undefineCommand: action((state, payload) => {}),
+  undefineCommand: action((state, payload) => {
+    state.definitions.commands?.filter(
+      (command) => command.name !== payload.name,
+    );
+  }),
 
   error: action((state, payload) => {
     console.error('An action was not found! ', payload);

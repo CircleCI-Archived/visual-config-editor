@@ -10,6 +10,7 @@ import React from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import { NavigationComponent } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import TabbedMenu from '../TabbedMenu';
@@ -41,6 +42,8 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
 
       return new Workflow(flow.name, jobs);
     });
+
+    console.log(defs.commands)
 
     const config = new Config(
       false,
@@ -113,4 +116,9 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   );
 };
 
-export default DefinitionsMenu;
+const DefinitionsMenuNav: NavigationComponent = {
+  Component: DefinitionsMenu,
+  Label: (props: { expanded: boolean[] }) => <p>Definitions</p>,
+};
+
+export default DefinitionsMenuNav;

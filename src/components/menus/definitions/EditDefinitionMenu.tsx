@@ -1,34 +1,18 @@
 import { Form, Formik } from 'formik';
 import BreadCrumbArrowIcon from '../../../icons/ui/BreadCrumbArrowIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { DataModel } from '../../../state/Store';
+import { DataModel, NavigationComponent } from '../../../state/Store';
 import TabbedMenu from '../TabbedMenu';
 
-const EditDefinitionMenu = (props: DataModel & { values: any }) => {
+export type EditDefinitionProps = DataModel & { values: any };
+
+const EditDefinitionMenu = (props: EditDefinitionProps) => {
   const dataMapping = props.dataType;
   const update = useStoreActions(
     (actions) => dataMapping?.store.update(actions) || actions.error,
   );
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const definitions = useStoreState((state) => state.definitions);
-
-  const getInspector = () => {
-    if (dataMapping) {
-      return (
-        <Formik
-          initialValues={{ ...dataMapping.defaults, ...props.data }}
-          enableReinitialize
-          onSubmit={(values) => {
-            update({
-              old: props.data,
-              new: dataMapping.transform(values, definitions),
-            });
-            navigateBack();
-          }}
-        ></Formik>
-      );
-    }
-  };
 
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
@@ -60,14 +44,14 @@ const EditDefinitionMenu = (props: DataModel & { values: any }) => {
         </div>
         <div className="py-3 flex">
           {getIcon('w-8 h-8 p-1 pl-0 mr-1')}
-          <h1 className="text-2xl font-bold">
-            {props.data.name}
-          </h1>
+          <h1 className="text-2xl font-bold">{props.data.name}</h1>
         </div>
       </header>
       {dataMapping && (
         <Formik
-          initialValues={props.values || { ...dataMapping.defaults, ...props.data }}
+          initialValues={
+            props.values || { ...dataMapping.defaults, ...props.data }
+          }
           enableReinitialize
           onSubmit={(values) => {
             update({
@@ -104,4 +88,11 @@ const EditDefinitionMenu = (props: DataModel & { values: any }) => {
   );
 };
 
-export default EditDefinitionMenu;
+const EditDefinitionMenuNav: NavigationComponent = {
+  Component: EditDefinitionMenu,
+  Label: (props: EditDefinitionProps) => (
+    <p>Edit {props.dataType?.name.singular}</p>
+  ),
+};
+
+export default EditDefinitionMenuNav;

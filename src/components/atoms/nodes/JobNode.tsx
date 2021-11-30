@@ -2,12 +2,10 @@ import { Job } from '@circleci/circleci-config-sdk';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import React, { useRef } from 'react';
 import {
-  addEdge,
-  Connection,
   Handle,
   isNode,
   NodeProps,
-  Position,
+  Position
 } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
 import DragItemIcon from '../../../icons/ui/DragItemIcon';
@@ -22,9 +20,9 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
     (state) => state.workflows[state.selectedWorkflow].elements,
   );
   const dragging = useStoreState((state) => state.dragging);
-  const setWorkflowElements = useStoreActions(
-    (actions) => actions.setWorkflowElements,
-  );
+  // const setWorkflowElements = useStoreActions(
+  //   (actions) => actions.setWorkflowElements,
+  // );
   const updateJob = useStoreActions((actions) => actions.updateJob);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const connecting = useStoreState((state) => state.connecting);
@@ -79,26 +77,26 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
 
   const nodeRef = useRef(null);
 
-  const onConnect = (params: Connection) => {
-    const targetJob = elements.find(
-      (element) => element.id === params.target,
-    )?.data;
+  // const onConnect = (params: Connection) => {
+  //   const targetJob = elements.find(
+  //     (element) => element.id === params.target,
+  //   )?.data;
 
-    setWorkflowElements(
-      addEdge(
-        {
-          ...params,
-          animated: false,
-          style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-        },
-        updateWorkflowJob(targetJob, {
-          parameters: {
-            requires: [props.data.job.name],
-          },
-        }),
-      ),
-    );
-  };
+  //   setWorkflowElements(
+  //     addEdge(
+  //       {
+  //         ...params,
+  //         animated: false,
+  //         style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+  //       },
+  //       updateWorkflowJob(targetJob, {
+  //         parameters: {
+  //           requires: [props.data.job.name],
+  //         },
+  //       }),
+  //     ),
+  //   );
+  // };
 
   return (
     <div

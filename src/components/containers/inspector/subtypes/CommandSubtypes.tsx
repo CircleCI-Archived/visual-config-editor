@@ -23,8 +23,13 @@ const commandSubtypes: CommandSubTypes = {
     ),
     fields: (
       <div>
-        <InspectorProperty label="Command" required name="parameters.command" />
-        <InspectorProperty label="Shell" required name="parameters.shell" />
+        <InspectorProperty
+          label="Command"
+          as="textarea"
+          required
+          name="parameters.command"
+        />
+        <InspectorProperty label="Shell" name="parameters.shell" />
         <InspectorProperty
           label="Background"
           type="checkbox"
