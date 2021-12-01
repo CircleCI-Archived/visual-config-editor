@@ -3,7 +3,7 @@ import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Comp
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
 import ParameterInspector from '../components/containers/inspector/ParameterInspector';
-import { parameterTypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
+import { parameterSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import ParameterTypePageNav from '../components/menus/definitions/subtypes/ParameterTypePage';
 import ParameterIcon from '../icons/components/ParameterIcon';
 import ComponentMapping from './ComponentMapping';
@@ -16,7 +16,20 @@ const ParameterMapping: ComponentMapping<
     singular: 'Parameter',
     plural: 'Parameters',
   },
-  defaults: {},
+  defaults: {
+    integer: {
+      name: 'new_integer_parameter'
+    },
+    boolean: {
+      name: 'new_boolean_parameter'
+    },
+    string: {
+      name: 'new_string_parameter'
+    },
+    enum: {
+      name: 'new_enum_parameter'
+    },
+  },
   transform: (values: any) =>
     new parameters.CustomParameter(
       values.name,
@@ -30,7 +43,7 @@ const ParameterMapping: ComponentMapping<
     update: (actions) => actions.updateParameter,
     remove: (actions) => actions.undefineParameter,
   },
-  subtypes: { component: ParameterTypePageNav, definitions: parameterTypes },
+  subtypes: { component: ParameterTypePageNav, definitions: parameterSubtypes },
   components: {
     icon: ParameterIcon,
     summary: ParameterSummary,

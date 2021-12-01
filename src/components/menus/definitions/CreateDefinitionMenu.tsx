@@ -2,11 +2,13 @@ import { Form, Formik } from 'formik';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
+import ParameterContainer from '../../containers/ParametersContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
 type CreateDefinitionProps = DataModel & {
   values: any;
+  passBackKey?: string;
 } & SubTypeMenuPageProps<any>;
 
 const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
@@ -46,7 +48,7 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
       {dataMapping && (
         <Formik
           initialValues={{
-            subtype: props.subtype,
+            type: props.subtype,
             ...(props.values ||
               (props.subtype
                 ? dataMapping.defaults[props.subtype]
@@ -54,13 +56,28 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
           }}
           enableReinitialize
           onSubmit={(values) => {
-            add(dataMapping.transform(values, definitions));
-            navigateBack();
+            const newDefinition = dataMapping.transform(values, definitions);
+
+            if (!props.passBackKey) {
+              add(newDefinition);
+            }
+            navigateBack({
+              distance: 1,
+              apply: (values) => {
+                if (props.passBackKey) {
+                  values[props.passBackKey] = [
+                    ...(values[props.passBackKey] || []),
+                    newDefinition,
+                  ];
+                }
+                return values;
+              },
+            });
           }}
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu tabs={tabs}>
+              <TabbedMenu tabs={tabs} activeTab={props.values?.activeTab || 0}>
                 <div className="p-6">
                   {dataMapping.subtypes && (
                     <button
@@ -87,7 +104,12 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
                     subtype: props.subtype,
                   })}
                 </div>
-                {dataMapping.parameters ? <div>params</div> : null}
+                {dataMapping.parameters ? (
+                  <ParameterContainer
+                    dataMapping={dataMapping}
+                    values={formikProps.values}
+                  />
+                ) : null}
               </TabbedMenu>
 
               <span className="border-b border-circle-gray-300 mt-auto" />

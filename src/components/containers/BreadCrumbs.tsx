@@ -14,7 +14,6 @@ const BreadCrumbs = () => {
   do {
     const curDepth = depth;
     if (depth > 0) {
-      
       components.push(
         <BreadCrumbArrowIcon
           className="pl-1 w-5 h-5"
@@ -28,8 +27,8 @@ const BreadCrumbs = () => {
       <button
         className={
           curDepth === 0
-            ? 'font-medium text-black ml-1 cursor-default'
-            : 'text-circle-gray-500 hover:underline hover:text-black '
+            ? 'font-medium text-black ml-1 cursor-default whitespace-nowrap'
+            : 'text-circle-gray-500 hover:underline hover:text-black overflow-ellipsis whitespace-nowrap'
         }
         key={`breadcrumb-${curDepth}-link`}
         onClick={() => {

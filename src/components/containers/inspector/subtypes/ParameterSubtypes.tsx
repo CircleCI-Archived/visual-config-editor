@@ -19,7 +19,7 @@ export interface ComponentParameterMapping {
   command: ComponentParameterType;
 }
 
-const parameterTypes: ParameterTypes = {
+const parameterSubtypes: ParameterTypes = {
   string: {
     text: 'String',
     description: 'Pass text data',
@@ -103,4 +103,4 @@ const componentParametersSubtypes: ComponentParameterMapping = {
   },
 };
 
-export { componentParametersSubtypes, parameterTypes };
+export { componentParametersSubtypes, parameterSubtypes };

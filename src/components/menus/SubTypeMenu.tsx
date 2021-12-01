@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { DefinitionModel, NavigationComponent } from '../../state/Store';
+import { NavigationComponent } from '../../state/Store';
 /** TODO: ISubType interface for component mappings? */
 
 export type SubTypeMenuProps<T> = {
   typePage: NavigationComponent;
+  typeProps?: unknown;
   menuPage: React.FunctionComponent<SubTypeMenuPageProps<T>>;
-  menuProps: unknown;
+  menuProps?: unknown;
 };
 export type SubTypeReference<T> = T;
 export type SubTypeSelectPageProps<T> = {
@@ -45,7 +46,7 @@ const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
           {...props.menuProps}
         />
       ) : (
-        <SubTypeSelectPage setSubtype={updateSubtype} />
+        <SubTypeSelectPage {...props.typeProps} setSubtype={updateSubtype} />
       )}
     </div>
   );

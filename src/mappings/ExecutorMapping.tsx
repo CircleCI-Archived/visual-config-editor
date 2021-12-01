@@ -18,30 +18,36 @@ export type AnyExecutor =
   | Executor;
 
 const transform = (values: any) => {
+  console.log(values.executor.parameters)
+  
   const subtypes: { [type: string]: () => AnyExecutor } = {
     docker: () =>
       new executor.DockerExecutor(
         values.executor.image.image || 'cimg/base:stable',
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters
       ),
     machine: () =>
       new executor.MachineExecutor(
-        values.executor.resourceClass,
+        values.executor.resource_class,
         values.executor.image || 'cimg/base:latest',
+        values.executor.parameters
       ),
     macos: () =>
       new executor.MacOSExecutor(
         values.executor.xcode,
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters
       ),
     windows: () =>
       new executor.WindowsExecutor(
         values.executor.image,
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters
       ),
   };
 
-  return new executor.ReusableExecutor(values.name, subtypes[values.subtype]());
+  return new executor.ReusableExecutor(values.name, subtypes[values.type]());
 };
 
 const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
@@ -57,25 +63,33 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
         image: {
           image: 'cimg/base:stable',
         },
+        parameters: {}
       },
+      resource_class: 'medium',
     },
     machine: {
       name: 'machine',
       executor: {
         image: 'ubuntu-2004:202111-01',
+        parameters: {}
       },
+      resource_class: 'medium',
     },
     macos: {
       name: 'macos',
       executor: {
         xcode: '13.2.0',
+        parameters: {}
       },
+      resource_class: 'medium',
     },
     windows: {
       name: 'windows_server',
       executor: {
         image: 'windows-server-2019-vs2019:stable',
+        parameters: {}
       },
+      resource_class: 'medium',
     },
   },
   parameters: componentParametersSubtypes.executor,

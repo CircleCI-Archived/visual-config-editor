@@ -2,11 +2,12 @@ import { useState } from 'react';
 
 export interface TabbedPaneProps {
   tabs: string[];
+  activeTab?: number;
   children: React.ReactNode | React.ReactNode[];
 }
 
 const TabbedMenu = (props: TabbedPaneProps) => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(props.activeTab || 0);
 
   return (
     <div className="h-full">

@@ -5,7 +5,7 @@ import { NavigationComponent } from '../../../../state/Store';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
 import {
   componentParametersSubtypes,
-  parameterTypes,
+  parameterSubtypes,
 } from '../../../containers/inspector/subtypes/ParameterSubtypes';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 
@@ -43,10 +43,10 @@ const ParameterTypePage = <ParameterType extends AnyParameterLiteral>(
                 props.setSubtype(subtype);
               }}
             >
-              {console.log(parameterTypes[subtype], subtype)}
-              <p className="font-bold">{parameterTypes[subtype]?.text}</p>
+              {console.log(parameterSubtypes[subtype], subtype)}
+              <p className="font-bold">{parameterSubtypes[subtype]?.text}</p>
               <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                {parameterTypes[subtype]?.description}
+                {parameterSubtypes[subtype]?.description}
               </p>
             </button>
             // <InspectorProperty name={command} label={commandProps[command].text} as="card" />

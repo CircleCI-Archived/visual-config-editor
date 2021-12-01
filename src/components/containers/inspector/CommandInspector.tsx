@@ -21,14 +21,11 @@ const CommandInspector = (
         required
         value={props.values.name}
       />
-      <InspectorProperty
-        name="description"
-        label="Description"
-        as="textarea"
-      />
+      <InspectorProperty name="description" label="Description" as="textarea" />
       <ListProperty
         label="Steps"
         name="steps"
+        values={props.values.steps}
         expanded
         required
         emptyText="No steps defined yet. At least one step is required."

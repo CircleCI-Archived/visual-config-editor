@@ -24,8 +24,6 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   },
   parameters: componentParametersSubtypes.job,
   transform: (values, definitions) => {
-    console.log(values)
-
     const executor = definitions.executors.find(
       (executor) => executor.name === values.executor.name,
     );

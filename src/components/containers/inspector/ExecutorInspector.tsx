@@ -9,26 +9,14 @@ const ExecutorInspector = (
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
-      {/* <InspectorProperty
-        label="Type"
-        name="type"
-        required
-        as="select"
-        onChange={props.handleChange}
-      >
-        {Object.keys(executorSubtypes).map((subtype) => (
-          <option value={subtype} key={subtype}>
-            {executorSubtypes[subtype].name}
-          </option>
-        ))}
-      </InspectorProperty> */}
+      <InspectorProperty label="Description" name="executor.parameters.description" as="textarea" />
       <InspectorProperty
         label="Resource Class"
-        name="executor.resourceClass"
+        name="resource_class"
         required
         as="select"
       >
-        {executorSubtypes[props.values.subtype]?.resourceClasses?.map(
+        {executorSubtypes[props.values.type]?.resourceClasses?.map(
           (resourceClass) => (
             <option value={resourceClass} key={resourceClass}>
               {resourceClass}
@@ -36,7 +24,9 @@ const ExecutorInspector = (
           ),
         )}
       </InspectorProperty>
-      {executorSubtypes[props.values.subtype]?.fields}
+      {executorSubtypes[props.values.type]?.fields}
+      <InspectorProperty label="Shell" name="executor.parameters.shell" />
+      <InspectorProperty label="Working Directory" name="executor.parameters.working_directory" />
     </div>
   );
 };

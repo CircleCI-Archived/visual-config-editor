@@ -132,7 +132,7 @@ export default interface ComponentMapping<
   transform: (
     values: { [K: string]: any },
     definitions: DefinitionModel,
-  ) => ConfigDataType;
+  ) => ConfigDataType | undefined;
   store: {
     /** Returns easy-peasy state hook for component array */
     get: (state: State<storeType>) => ConfigDataType[] | undefined;

@@ -309,13 +309,19 @@ const Actions: StoreActions = {
     );
   }),
 
-  defineParameter: action((state, payload) => {}),
+  defineParameter: action((state, payload) => {
+    state.definitions.parameters =
+      state.definitions.parameters?.concat(payload);
+  }),
   updateParameter: action((state, payload) => {}),
-  undefineParameter: action((state, payload) => {}),
+  undefineParameter: action((state, payload) => {
+    state.definitions.parameters?.filter(
+      (parameter) => parameter.name !== payload.name,
+    );
+  }),
 
   defineCommand: action((state, payload) => {
     state.definitions.commands = state.definitions.commands?.concat(payload);
-    console.log(state.definitions.commands)
   }),
   updateCommand: action((state, payload) => {}),
   undefineCommand: action((state, payload) => {
