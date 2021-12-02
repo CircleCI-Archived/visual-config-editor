@@ -31,35 +31,11 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const persistProps = useStoreActions((actions) => actions.persistProps);
   const workflow = workflowGraphs[selectedWorkflow];
 
-  const generateConfig = () => {
-    const workflows = workflowGraphs.map((flow) => {
-      const jobs = flow.elements
-        .filter((element) => element.type === 'job')
-        .map(
-          (element) =>
-            new WorkflowJob(element.data.job, element.data.parameters),
-        );
+  // const generateConfig = () => {
+    
 
-      return new Workflow(flow.name, jobs);
-    });
-
-    console.log(defs.commands)
-
-    const config = new Config(
-      false,
-      defs.jobs,
-      workflows,
-      defs.executors,
-      defs.commands,
-      defs.parameters.length > 0
-        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            defs.parameters,
-          )
-        : undefined,
-    );
-
-    updateConfig(config);
-  };
+  //   updateConfig(config);
+  // };
 
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
@@ -108,7 +84,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
       <span className="border-b border-circle-gray-300" />
       <button
         className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-        onClick={(e) => generateConfig()}
+        onClick={(e) => updateConfig()}
       >
         Generate Config
       </button>

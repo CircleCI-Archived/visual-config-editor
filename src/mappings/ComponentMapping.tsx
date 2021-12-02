@@ -38,7 +38,7 @@ export interface DataMapping {
  */
 const dataMappings: DataMapping[] = [
   {
-    type: 'executor',
+    type: 'executors',
     component: [
       executor.DockerExecutor,
       executor.MacOSExecutor,
@@ -48,17 +48,17 @@ const dataMappings: DataMapping[] = [
     mapping: ExecutorMapping,
   },
   {
-    type: 'job',
+    type: 'jobs',
     component: [Job],
     mapping: JobMapping,
   },
   {
-    type: 'command',
+    type: 'commands',
     component: [commands.reusable.CustomCommand],
     mapping: CommandMapping,
   },
   {
-    type: 'parameter',
+    type: 'parameters',
     component: [parameters.CustomParameter],
     mapping: ParameterMapping,
   },

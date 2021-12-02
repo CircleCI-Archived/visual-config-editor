@@ -1,12 +1,11 @@
-import { Config } from '@circleci/circleci-config-sdk';
-import Editor from '@monaco-editor/react';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 import { useStoreState } from '../../state/Hooks';
 
 const EditorPane = () => {
   const config = useStoreState((state) => state.config);
+  const editingConfig = useStoreState((state) => state.editingConfig);
 
-  const configYAML = () => {
-    const yml = config?.stringify();
+  const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
 
     if (yml && matchSDKComment && matchSDKComment.index) {
@@ -31,12 +30,22 @@ const EditorPane = () => {
         </div>
       </div>
       <div className="flex-1 overflow-hidden">
-        <Editor
-          theme="vs-dark"
-          defaultLanguage="yaml"
-          defaultValue={new Config().stringify()}
-          value={configYAML()}
-        />
+        {
+          editingConfig ?
+            (<DiffEditor
+              theme="vs-dark"
+              language="yaml"
+              original={config && configYAML(config)}
+              modified={editingConfig && configYAML(editingConfig)}
+            />)
+            :
+            (<Editor
+              theme="vs-dark"
+              language="yaml"
+              value={config && configYAML(config)}
+            />
+            )
+        }
       </div>
     </div>
   );

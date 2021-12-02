@@ -7,7 +7,7 @@ import CommandIcon from '../icons/components/CommandIcon';
 import ComponentMapping from './ComponentMapping';
 
 const CommandMapping: ComponentMapping<CustomCommand> = {
-  type: 'command',
+  type: 'commands',
   name: {
     singular: 'Command',
     plural: 'Commands',

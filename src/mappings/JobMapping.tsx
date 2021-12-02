@@ -13,7 +13,7 @@ export interface WorkflowJob {
 }
 
 const JobMapping: ComponentMapping<Job, WorkflowJob> = {
-  type: 'job',
+  type: 'jobs',
   name: {
     singular: 'Job',
     plural: 'Jobs',

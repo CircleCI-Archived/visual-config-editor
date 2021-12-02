@@ -11,7 +11,7 @@ import ComponentMapping from './ComponentMapping';
 const ParameterMapping: ComponentMapping<
   CustomParameter<PipelineParameterLiteral>
 > = {
-  type: 'parameter',
+  type: 'parameters',
   name: {
     singular: 'Parameter',
     plural: 'Parameters',

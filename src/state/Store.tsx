@@ -1,4 +1,4 @@
-import { Config, Job, Workflow } from '@circleci/circleci-config-sdk';
+import { Config, Job, parameters, Workflow, WorkflowJob } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -55,7 +55,8 @@ export interface NavigationStop {
 
 export interface StoreModel {
   /** Last generated configuration */
-  config: Config | undefined;
+  config: string | undefined;
+  editingConfig: string | undefined;
   /** Last generated configuration */
   definitions: DefinitionModel;
 
@@ -99,10 +100,10 @@ export interface StoreActions {
   updateConnecting: Action<
     StoreModel,
     | {
-        ref?: MutableRefObject<any>;
-        id: SetConnectionId;
-        pos?: XYPosition;
-      }
+      ref?: MutableRefObject<any>;
+      id: SetConnectionId;
+      pos?: XYPosition;
+    }
     | undefined
   >;
 
@@ -151,7 +152,7 @@ export interface StoreActions {
     CustomParameter<PipelineParameterLiteral>
   >;
 
-  generateConfig: Action<StoreModel, Config>;
+  generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
   error: Action<StoreModel, any>;
 }
 
@@ -264,7 +265,7 @@ const Actions: StoreActions = {
 
     workflow.elements.push(payload);
   }),
-  removeWorkflowElement: action((state, payload) => {}),
+  removeWorkflowElement: action((state, payload) => { }),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
@@ -313,7 +314,7 @@ const Actions: StoreActions = {
     state.definitions.parameters =
       state.definitions.parameters?.concat(payload);
   }),
-  updateParameter: action((state, payload) => {}),
+  updateParameter: action((state, payload) => { }),
   undefineParameter: action((state, payload) => {
     state.definitions.parameters?.filter(
       (parameter) => parameter.name !== payload.name,
@@ -323,7 +324,7 @@ const Actions: StoreActions = {
   defineCommand: action((state, payload) => {
     state.definitions.commands = state.definitions.commands?.concat(payload);
   }),
-  updateCommand: action((state, payload) => {}),
+  updateCommand: action((state, payload) => { }),
   undefineCommand: action((state, payload) => {
     state.definitions.commands?.filter(
       (command) => command.name !== payload.name,
@@ -335,12 +336,43 @@ const Actions: StoreActions = {
   }),
 
   generateConfig: action((state, payload) => {
-    state.config = payload;
+    const workflows = state.workflows.map((flow) => {
+      const jobs = flow.elements
+        .filter((element) => element.type === 'job')
+        .map(
+          (element) =>
+            new WorkflowJob(element.data.job, element.data.parameters),
+        );
+
+      return new Workflow(flow.name, jobs);
+    });
+
+    const defs = state.definitions;
+    const config = new Config(
+      false,
+      payload?.jobs ? [...defs.jobs, ...payload.jobs] : defs.jobs,
+      workflows,
+      payload?.executors ? [...defs.executors, ...payload.executors] : defs.executors,
+      payload?.commands ? [...defs.commands, ...payload.commands] : defs.commands,
+      (defs.parameters.length > 0
+        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
+          payload?.parameters ? [...defs.parameters, ...payload.parameters] : defs.parameters,
+        )
+        : undefined),
+    );
+
+    if (payload) {
+      state.editingConfig = config.stringify();
+    } else {
+      state.config = config.stringify();
+      state.editingConfig = undefined;
+    }
   }),
 };
 
 const Store: StoreModel & StoreActions = {
   selectedWorkflow: 0,
+  editingConfig: undefined,
   config: undefined,
   navigation: {
     component: DefinitionsMenu,

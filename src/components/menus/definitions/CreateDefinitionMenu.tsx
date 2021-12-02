@@ -13,6 +13,7 @@ type CreateDefinitionProps = DataModel & {
 
 const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
+  const generateConfig = useStoreActions((actions) => actions.generateConfig);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const dataMapping = props.dataType;
   const add = useStoreActions(
@@ -54,6 +55,12 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
                 ? dataMapping.defaults[props.subtype]
                 : dataMapping.defaults)),
           }}
+          validateOnBlur
+          validate={(values) => {
+            const newDefinition = dataMapping.transform(values, definitions);
+
+            generateConfig({ [dataMapping.type]: [newDefinition] });
+          }}
           enableReinitialize
           onSubmit={(values) => {
             const newDefinition = dataMapping.transform(values, definitions);
@@ -73,6 +80,7 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
                 return values;
               },
             });
+            generateConfig();
           }}
         >
           {(formikProps) => (

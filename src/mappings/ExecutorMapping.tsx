@@ -18,8 +18,6 @@ export type AnyExecutor =
   | Executor;
 
 const transform = (values: any) => {
-  console.log(values.executor.parameters)
-  
   const subtypes: { [type: string]: () => AnyExecutor } = {
     docker: () =>
       new executor.DockerExecutor(
@@ -51,7 +49,7 @@ const transform = (values: any) => {
 };
 
 const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
-  type: 'executor',
+  type: 'executors',
   name: {
     singular: 'Executor',
     plural: 'Executors',
