@@ -9,7 +9,7 @@ const EditorPane = () => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
 
     if (yml && matchSDKComment && matchSDKComment.index) {
-      const comment = `# VCE Version: 0.1.0\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
+      const comment = `# VCE Version: 0.2.0\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
       const endOfSDKComment = matchSDKComment.index + matchSDKComment[0].length;
 
       return (

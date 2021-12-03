@@ -1,10 +1,3 @@
-import {
-  Config,
-  parameters,
-  Workflow,
-  WorkflowJob,
-} from '@circleci/circleci-config-sdk';
-import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
@@ -24,18 +17,11 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const parameters = useStoreState((state) => state.parameters); 
   const defineParameter = useStoreActions((actions) => actions.defineParameter); */
   // const generateConfig = useStoreActions((actions) => actions.generateConfig);
-  const defs = useStoreState((state) => state.definitions);
   const workflowGraphs = useStoreState((state) => state.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);
   const workflow = workflowGraphs[selectedWorkflow];
-
-  // const generateConfig = () => {
-    
-
-  //   updateConfig(config);
-  // };
 
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
