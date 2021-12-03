@@ -1,6 +1,4 @@
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
-import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { ReactElement } from 'react';
 import { SubTypeMapping } from '../../../../mappings/ComponentMapping';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 
