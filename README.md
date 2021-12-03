@@ -6,7 +6,9 @@
 Generate your CircleCI configuration files by building a visual map of your
 project's workflows.
 
-This project is currently early access. Features are subject to changes.
+This project is currently early preview. Features are subject to changes. 
+
+**[Try it out](https://circleci-public.github.io/visual-config-editor/)** for yourself! Fork the repo and **[contribute](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md)** to help us make this amazing!
 
 ### Installing
 
@@ -104,8 +106,9 @@ workflows:
 ```
 
 ## Contributing
-This repository welcomes community contributions! See our CONTRIBUTING.md for guidance on configuring your development environment and how to submit quality pull requests.
+This repository welcomes community contributions! See our [CONTRIBUTING.md](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md) for guidance on configuring your development environment and how to submit quality pull requests.
 
 ## Built with
 
 [CircleCI Config SDK](https://github.com/CircleCI-Public/circleci-config-sdk-ts)
+****
