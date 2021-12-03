@@ -8,12 +8,7 @@ import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
-import {
-  ComponentParameterMapping,
-  ComponentParameterType,
-  ParameterTypes,
-} from '../components/containers/inspector/subtypes/ParameterSubtypes';
-import { SubTypeMenuPageProps } from '../components/menus/SubTypeMenu';
+import { ComponentParameterType } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import Store, {
   DefinitionModel,
   NavigationComponent,
@@ -159,9 +154,8 @@ export default interface ComponentMapping<
     nodeData: ConfigNodeProps,
   ) => { [K in KeysOfUnion<ConfigNodeProps>]?: any };
   node?: {
-    type: string;
     /** Transform definition data */
-    transform?: (data: ConfigDataType) => ConfigNodeProps;
+    transform?: (data: ConfigDataType, extras?: any) => ConfigNodeProps;
     /** @todo: Add store functionality to better support updating defintions and their corresponding workflow nodes */
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;
   };

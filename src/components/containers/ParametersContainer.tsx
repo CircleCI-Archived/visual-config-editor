@@ -1,4 +1,4 @@
-import { Field, FieldArray, useField } from 'formik';
+import { FieldArray, useField } from 'formik';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import ParameterMapping from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
@@ -34,7 +34,6 @@ const ParameterContainer = (props: {
                 },
                 values: {
                   ...props.values,
-                  activeTab: 1,
                 },
               });
             }}

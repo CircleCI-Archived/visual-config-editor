@@ -59,7 +59,9 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
           validate={(values) => {
             const newDefinition = dataMapping.transform(values, definitions);
 
-            generateConfig({ [dataMapping.type]: [newDefinition] });
+            if (newDefinition) {
+              generateConfig({ [dataMapping.type]: [newDefinition] });
+            }
           }}
           enableReinitialize
           onSubmit={(values) => {

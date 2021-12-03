@@ -1,4 +1,4 @@
-import { executor, Job } from '@circleci/circleci-config-sdk';
+import { executor, Job, WorkflowJob } from '@circleci/circleci-config-sdk';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
@@ -8,7 +8,7 @@ import { componentParametersSubtypes } from '../components/containers/inspector/
 import ExecutorTypePageNav from '../components/menus/definitions/subtypes/ExecutorTypePage';
 import ExecutorIcon from '../icons/components/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
-import { WorkflowJob } from './JobMapping';
+import JobMapping from './JobMapping';
 
 export type AnyExecutor =
   | executor.DockerExecutor
@@ -23,25 +23,25 @@ const transform = (values: any) => {
       new executor.DockerExecutor(
         values.executor.image.image || 'cimg/base:stable',
         values.executor.resource_class,
-        values.executor.parameters
+        values.executor.parameters,
       ),
     machine: () =>
       new executor.MachineExecutor(
         values.executor.resource_class,
         values.executor.image || 'cimg/base:latest',
-        values.executor.parameters
+        values.executor.parameters,
       ),
     macos: () =>
       new executor.MacOSExecutor(
         values.executor.xcode,
         values.executor.resource_class,
-        values.executor.parameters
+        values.executor.parameters,
       ),
     windows: () =>
       new executor.WindowsExecutor(
         values.executor.image,
         values.executor.resource_class,
-        values.executor.parameters
+        values.executor.parameters,
       ),
   };
 
@@ -61,7 +61,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
         image: {
           image: 'cimg/base:stable',
         },
-        parameters: {}
+        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -69,7 +69,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
       name: 'machine',
       executor: {
         image: 'ubuntu-2004:202111-01',
-        parameters: {}
+        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -77,7 +77,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
       name: 'macos',
       executor: {
         xcode: '13.2.0',
-        parameters: {}
+        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -85,7 +85,7 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
       name: 'windows_server',
       executor: {
         image: 'windows-server-2019-vs2019:stable',
-        parameters: {}
+        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -98,13 +98,14 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
     update: (actions) => actions.updateExecutor,
     remove: (actions) => actions.undefineExecutor,
   },
-  dragTarget: 'job',
+  dragTarget: JobMapping.type,
   applyToNode: (data, nodeData) => {
     const oldJob = nodeData.job;
 
-    return {
-      job: new Job(oldJob.name, data, oldJob.steps),
-    };
+    return new WorkflowJob(
+      new Job(oldJob.name, data, oldJob.steps),
+      nodeData.parameters,
+    );
   },
   subtypes: { component: ExecutorTypePageNav, definitions: executorSubtypes },
   components: {

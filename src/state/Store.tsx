@@ -1,4 +1,10 @@
-import { Config, Job, parameters, Workflow, WorkflowJob } from '@circleci/circleci-config-sdk';
+import {
+  Config,
+  Job,
+  parameters,
+  Workflow,
+  WorkflowJob,
+} from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -16,6 +22,7 @@ import {
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import ComponentMapping from '../mappings/ComponentMapping';
+import JobMapping from '../mappings/JobMapping';
 
 export interface WorkflowModel {
   name: string;
@@ -71,11 +78,13 @@ export interface StoreModel {
     start?: {
       ref?: MutableRefObject<any>;
       id: SetConnectionId;
+      name?: string;
     };
     end?: {
       id: SetConnectionId;
       pos?: XYPosition;
       ref?: MutableRefObject<any>;
+      name?: string;
     };
   };
   /** Currently selected workflow pane index */
@@ -95,15 +104,17 @@ export interface StoreActions {
     {
       ref?: MutableRefObject<any>;
       id: SetConnectionId;
+      name?: string;
     }
   >;
   updateConnecting: Action<
     StoreModel,
     | {
-      ref?: MutableRefObject<any>;
-      id: SetConnectionId;
-      pos?: XYPosition;
-    }
+        ref?: MutableRefObject<any>;
+        id: SetConnectionId;
+        pos?: XYPosition;
+        name?: string;
+      }
     | undefined
   >;
 
@@ -265,7 +276,7 @@ const Actions: StoreActions = {
 
     workflow.elements.push(payload);
   }),
-  removeWorkflowElement: action((state, payload) => { }),
+  removeWorkflowElement: action((state, payload) => {}),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
@@ -314,7 +325,7 @@ const Actions: StoreActions = {
     state.definitions.parameters =
       state.definitions.parameters?.concat(payload);
   }),
-  updateParameter: action((state, payload) => { }),
+  updateParameter: action((state, payload) => {}),
   undefineParameter: action((state, payload) => {
     state.definitions.parameters?.filter(
       (parameter) => parameter.name !== payload.name,
@@ -324,7 +335,7 @@ const Actions: StoreActions = {
   defineCommand: action((state, payload) => {
     state.definitions.commands = state.definitions.commands?.concat(payload);
   }),
-  updateCommand: action((state, payload) => { }),
+  updateCommand: action((state, payload) => {}),
   undefineCommand: action((state, payload) => {
     state.definitions.commands?.filter(
       (command) => command.name !== payload.name,
@@ -338,11 +349,8 @@ const Actions: StoreActions = {
   generateConfig: action((state, payload) => {
     const workflows = state.workflows.map((flow) => {
       const jobs = flow.elements
-        .filter((element) => element.type === 'job')
-        .map(
-          (element) =>
-            new WorkflowJob(element.data.job, element.data.parameters),
-        );
+        .filter((element) => element.type === JobMapping.type)
+        .map((element) => element.data);
 
       return new Workflow(flow.name, jobs);
     });
@@ -352,13 +360,19 @@ const Actions: StoreActions = {
       false,
       payload?.jobs ? [...defs.jobs, ...payload.jobs] : defs.jobs,
       workflows,
-      payload?.executors ? [...defs.executors, ...payload.executors] : defs.executors,
-      payload?.commands ? [...defs.commands, ...payload.commands] : defs.commands,
-      (defs.parameters.length > 0
+      payload?.executors
+        ? [...defs.executors, ...payload.executors]
+        : defs.executors,
+      payload?.commands
+        ? [...defs.commands, ...payload.commands]
+        : defs.commands,
+      defs.parameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-          payload?.parameters ? [...defs.parameters, ...payload.parameters] : defs.parameters,
-        )
-        : undefined),
+            payload?.parameters
+              ? [...defs.parameters, ...payload.parameters]
+              : defs.parameters,
+          )
+        : undefined,
     );
 
     if (payload) {

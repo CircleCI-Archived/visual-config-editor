@@ -1,16 +1,10 @@
-import { Job } from '@circleci/circleci-config-sdk';
-import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
+import { Job, WorkflowJob } from '@circleci/circleci-config-sdk';
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
 import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import JobIcon from '../icons/components/JobIcon';
 import ComponentMapping from './ComponentMapping';
-
-export interface WorkflowJob {
-  job: Job;
-  parameters?: WorkflowJobParameters;
-}
 
 const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   type: 'jobs',
@@ -25,14 +19,12 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   parameters: componentParametersSubtypes.job,
   transform: (values, definitions) => {
     const executor = definitions.executors.find(
-      (executor) => executor.name === values.executor.name,
+      (executor) => executor.name === values.executor?.name,
     );
 
     if (executor) {
       return new Job(values.name, executor, values.steps);
     }
-
-    throw new Error('Job could not be transformed: Invalid executor');
   },
   store: {
     get: (state) => {
@@ -44,9 +36,8 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
   },
   dragTarget: 'workflow',
   node: {
-    type: 'job',
-    transform: (data) => {
-      return { job: data };
+    transform: (data, params) => {
+      return new WorkflowJob(data, params);
     },
     component: JobNode,
   },

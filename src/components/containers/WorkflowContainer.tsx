@@ -1,3 +1,4 @@
+import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import { useEffect, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -6,17 +7,18 @@ import ReactFlow, {
   ConnectionLineComponentProps,
   ConnectionMode,
   FlowTransform,
+  isNode,
   Node,
   NodeTypesType,
   useStoreActions as flowActions,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/ComponentMapping';
+import JobMapping from '../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { WorkflowModel } from '../../state/Store';
 import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
-import GhostNode from '../atoms/nodes/GhostNode';
 
 export interface ElementProps {
   className?: string;
@@ -26,18 +28,12 @@ export interface ElementProps {
 
 const getTypes = (): NodeTypesType =>
   Object.assign(
-    {
-      ghost: GhostNode,
-    },
-    ...dataMappings.map((component) => {
-      const node = component.mapping.node;
-
-      if (node) {
-        return component.mapping.node && { [node.type]: node.component };
-      }
-
-      return null;
-    }),
+    {},
+    ...dataMappings.map((component) =>
+      component.mapping.node
+        ? { [component.mapping.type]: component.mapping.node.component }
+        : null,
+    ),
   );
 
 const WorkflowPane = (props: ElementProps) => {
@@ -62,19 +58,33 @@ const WorkflowPane = (props: ElementProps) => {
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const [connectingTo, setConnectingTo] = useState({ x: 0, y: 0 });
 
-  // const updateWorkflowJob = (
-  //   workflowJob: WorkflowJob,
-  //   applyToData: { job?: Job; parameters?: WorkflowJobParameters },
-  // ) =>
-  //   elements.map((element) =>
-  //     isNode(element) && element.data.job.name === workflowJob.job.name
-  //       ? { ...element, data: { ...workflowJob, ...applyToData } }
-  //       : element,
-  //   );
+  const updateWorkflowJob = (
+    targetJob: string,
+    applyToData: (parameters: WorkflowJobParameters) => WorkflowJobParameters,
+  ) =>
+    elements.map((element) => {
+      console.log(
+        (element.data.parameters?.name || element.data.job.name) === targetJob,
+      );
+
+      return isNode(element) &&
+        JobMapping.node?.transform &&
+        (element.data.parameters?.name || element.data.job.name) === targetJob
+        ? {
+            ...element,
+            data: JobMapping.node.transform(
+              element.data.job,
+              applyToData(element.data.parameters),
+            ),
+          }
+        : element;
+    });
 
   const handleMouseUp = () => {
-    if (connecting?.start) {
-      if (connecting?.end) {
+    if (connecting?.start?.name) {
+      const startName = connecting.start.name;
+
+      if (connecting?.end?.name) {
         setWorkflowElements(
           addEdge(
             {
@@ -86,12 +96,11 @@ const WorkflowPane = (props: ElementProps) => {
               animated: false,
               style: { stroke: '#A3A3A3', strokeWidth: '2px' },
             },
-            elements,
-            // updateWorkflowJob(targetJob, {
-            //   parameters: {
-            //     requires: [props.data.job.name],
-            //   },
-            // }),
+            updateWorkflowJob(connecting.end.name, (parameters) => ({
+              requires: parameters?.requires
+                ? [...parameters.requires, startName]
+                : [startName],
+            })),
           ),
         );
       }
@@ -174,8 +183,8 @@ const WorkflowPane = (props: ElementProps) => {
           const workflowNode: Node<any> = {
             id: v4(),
             data,
-            dragHandle: '.dragHandle',
             connectable: true,
+            dragHandle: '.node',
             type: dragging.dataType.type,
             position: { x: round(pos.x), y: round(pos.y) },
           };

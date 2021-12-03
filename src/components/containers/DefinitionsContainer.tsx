@@ -52,7 +52,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
         <div className="w-full pl-2 pt-2">
           {(items || []).length > 0 ? (
             items?.map((item) => (
-              <Definition data={item} key={props.type.type} type={props.type} />
+              <Definition data={item} key={item.name} type={props.type} />
             ))
           ) : (
             <div className="font-medium text-sm text-circle-gray-500">

@@ -1,16 +1,12 @@
-import { Job } from '@circleci/circleci-config-sdk';
+import { Job, WorkflowJob } from '@circleci/circleci-config-sdk';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import React, { useRef } from 'react';
-import {
-  Handle,
-  isNode,
-  NodeProps,
-  Position
-} from 'react-flow-renderer';
+import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
+import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragItemIcon from '../../../icons/ui/DragItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
-import { WorkflowJob } from '../../../mappings/JobMapping';
+import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
 const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
@@ -43,7 +39,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
     handles: false,
     node: false,
     requiredBy: false,
-    dragHandle: false,
+    remove: false,
     requires: false,
   });
 
@@ -112,6 +108,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
               connectionHandleType: 'target',
               connectionHandleId: `${props.id}_target`,
             },
+            name: props.data.parameters?.name || props.data.job.name,
           });
         },
         () => {
@@ -119,14 +116,14 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
         },
       )}
       onDragOver={(e) => {
-        if (dragging && dragging.dataType?.dragTarget === 'job') {
+        if (dragging && dragging.dataType?.dragTarget === JobMapping.type) {
           e.preventDefault();
         }
       }}
       onDrop={(e) => {
         if (
           dragging &&
-          dragging.dataType?.dragTarget === 'job' &&
+          dragging.dataType?.dragTarget === JobMapping.type &&
           dragging.dataType.applyToNode
         ) {
           const applyToData = dragging.dataType.applyToNode(
@@ -134,7 +131,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
             props.data,
           );
 
-          if ('job' in applyToData) {
+          if (JobMapping.type in applyToData) {
             updateJob({ old: props.data.job, new: applyToData.job });
           }
 
@@ -149,7 +146,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
           hovering['handles'] && !hovering['node'] && !connecting?.start
             ? 100
             : 0
-        } transition-opacity duration-300  w-4 h-4 my-auto mr-5`}
+        } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
         id={`${props.id}_source`}
         {...trackHovering(['requires', 'handles'], ['requires'])}
       >
@@ -161,9 +158,9 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
       </button>
 
       <button
-        className={`p-2 bg-white flex flex-row text-black rounded-md border cursor-pointer 
+        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer 
         ${
-          (hovering['node'] && !hovering['dragHandle']) ||
+          (hovering['node'] && !hovering['remove']) ||
           (hovering['handles'] && connecting?.start)
             ? 'border-circle-blue'
             : 'border-circle-gray-300'
@@ -176,12 +173,15 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
           {props.data.parameters?.name || props.data.job.name}
         </div>
         <div
-          className={`dragHandle cursor-grab my-auto
+          className={`my-auto
           opacity-${hovering['node'] ? 100 : 0} 
           transition-opacity duration-150 w-8 h-full flex`}
-          {...trackHovering(['dragHandle'], ['dragHandle'])}
+          {...trackHovering(['remove'], ['remove'])}
         >
-          <DragItemIcon className="w-4 m-auto" color="#AAAAAA" />
+          <DeleteItemIcon
+            className="w-3 cursor-pointer m-auto"
+            color={hovering['remove'] ? 'red' : '#AAAAAA'}
+          />
         </div>
       </button>
 
@@ -194,14 +194,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
         {...trackHovering(['requiredBy', 'handles'], ['requiredBy'])}
         id={`${props.id}_target`}
         // onClick={() => {
-        //   const workflowNode: Node<any> = {
-        //     id: v4(),
-        //     connectable: true,
-        //     type: 'ghost',
-        //     position: { x: 0, y: 0 },
-        //   };
-
-        //   setPlaceholder(workflowNode);
+        // TODO: Implement 'add job' menu functionality
         // }}
         draggable
         onDragStart={(e) => {
@@ -212,6 +205,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
               connectionHandleType: 'source',
               connectionHandleId: `${props.id}_source`,
             },
+            name: props.data.parameters?.name || props.data.job.name,
           });
           e.preventDefault();
         }}
