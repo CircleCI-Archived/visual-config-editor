@@ -1,41 +1,34 @@
 import { FormikValues } from 'formik';
-import JobMapping from '../../../mappings/JobMapping';
+import CommandMapping from '../../../mappings/CommandMapping';
 import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepPropertiesMenu from '../../menus/definitions/StepDefinitionMenu';
-import StepTypePage from '../../menus/definitions/subtypes/StepTypePage';
+import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import SubTypeMenuNav from '../../menus/SubTypeMenu';
 
-const JobInspector = (
+const CommandInspector = (
   props: FormikValues & { definitions: DefinitionModel },
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
     <div>
-      <InspectorProperty label="Name" name="name" required />
       <InspectorProperty
-        label="Executor"
-        as="select"
-        name="executor.name"
+        name="name"
+        label="Name"
         required
-      >
-        {[{ name: 'Select Executor' }, ...props.definitions.executors].map(
-          (executor) => (
-            <option value={executor.name} key={executor.name}>
-              {executor.name}
-            </option>
-          ),
-        )}
-      </InspectorProperty>
+        value={props.values.name}
+      />
+      <InspectorProperty name="description" label="Description" as="textarea" />
       <ListProperty
         label="Steps"
         name="steps"
         values={props.values.steps}
         expanded
-        emptyText="No steps defined yet."
+        required
+        emptyText="No steps defined yet. At least one step is required."
         titleExpanded={
           <button
             type="button"
@@ -43,9 +36,9 @@ const JobInspector = (
               navigateTo({
                 component: SubTypeMenuNav,
                 props: {
-                  typePage: StepTypePage,
+                  typePage: StepTypePageNav,
                   menuPage: StepPropertiesMenu,
-                  passThrough: { dataType: JobMapping },
+                  passThrough: { dataType: CommandMapping },
                 },
                 values: props.values,
               });
@@ -60,4 +53,4 @@ const JobInspector = (
   );
 };
 
-export default JobInspector;
+export default CommandInspector;

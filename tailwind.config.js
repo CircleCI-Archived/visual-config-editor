@@ -6,6 +6,14 @@ module.exports = {
       cursor: {
         'ew-resize': 'ew-resize',
         'ns-resize': 'ns-resize',
+        'grab': 'grab',
+      },
+      borderWidth: {
+        '5': '5px',
+        '6': '6px',
+      },
+      borderRadius: {
+        'md2': '4px'
       },
       colors: {
         'circle-gray': {

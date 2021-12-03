@@ -1,96 +1,118 @@
-import { executor, Job } from '@circleci/circleci-config-sdk';
-import { AbstractExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/Executor';
-import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
+import { executor, Job, WorkflowJob } from '@circleci/circleci-config-sdk';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
-import ExecutorIcon from '../icons/ExecutorIcon';
+import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
+import { executorSubtypes } from '../components/containers/inspector/subtypes/ExecutorSubtypes';
+import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
+import ExecutorTypePageNav from '../components/menus/definitions/subtypes/ExecutorTypePage';
+import ExecutorIcon from '../icons/components/ExecutorIcon';
 import ComponentMapping from './ComponentMapping';
-import { WorkflowJob } from './JobMapping';
+import JobMapping from './JobMapping';
 
 export type AnyExecutor =
   | executor.DockerExecutor
   | executor.MacOSExecutor
   | executor.MachineExecutor
   | executor.WindowsExecutor
-  | AbstractExecutor;
-
-export type ReusableExecutor = {
-  name: string;
-  executor: AnyExecutor;
-  type: string;
-};
+  | Executor;
 
 const transform = (values: any) => {
   const subtypes: { [type: string]: () => AnyExecutor } = {
     docker: () =>
       new executor.DockerExecutor(
         values.executor.image.image || 'cimg/base:stable',
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters,
       ),
     machine: () =>
       new executor.MachineExecutor(
-        values.executor.resourceClass,
+        values.executor.resource_class,
         values.executor.image || 'cimg/base:latest',
+        values.executor.parameters,
       ),
     macos: () =>
       new executor.MacOSExecutor(
         values.executor.xcode,
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters,
       ),
     windows: () =>
       new executor.WindowsExecutor(
         values.executor.image,
-        values.executor.resourceClass,
+        values.executor.resource_class,
+        values.executor.parameters,
       ),
   };
 
-  return {
-    name: values.name,
-    executor: subtypes[values.type](),
-    type: 'docker',
-  };
+  return new executor.ReusableExecutor(values.name, subtypes[values.type]());
 };
 
-const ExecutorMapping = (): ComponentMapping<ReusableExecutor, WorkflowJob> => {
-  return {
-    type: 'executor',
-    name: {
-      singular: 'Executor',
-      plural: 'Executors',
-    },
-    defaults: {
-      name: 'New Executor',
-      type: 'docker',
+const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
+  type: 'executors',
+  name: {
+    singular: 'Executor',
+    plural: 'Executors',
+  },
+  defaults: {
+    docker: {
+      name: 'docker',
       executor: {
         image: {
           image: 'cimg/base:stable',
         },
+        parameters: {},
       },
+      resource_class: 'medium',
     },
-    transform: transform,
-    store: {
-      get: (state) => state.definitions.executors,
-      add: (actions) => actions.defineExecutor,
-      update: (actions) => actions.updateExecutor,
-      remove: (actions) => actions.undefineExecutor,
+    machine: {
+      name: 'machine',
+      executor: {
+        image: 'ubuntu-2004:202111-01',
+        parameters: {},
+      },
+      resource_class: 'medium',
     },
-    dragTarget: 'job',
-    applyToNode: (data, nodeData) => {
-      const oldJob = nodeData.job;
+    macos: {
+      name: 'macos',
+      executor: {
+        xcode: '13.2.0',
+        parameters: {},
+      },
+      resource_class: 'medium',
+    },
+    windows: {
+      name: 'windows_server',
+      executor: {
+        image: 'windows-server-2019-vs2019:stable',
+        parameters: {},
+      },
+      resource_class: 'medium',
+    },
+  },
+  parameters: componentParametersSubtypes.executor,
+  transform: transform,
+  store: {
+    get: (state) => state.definitions.executors,
+    add: (actions) => actions.defineExecutor,
+    update: (actions) => actions.updateExecutor,
+    remove: (actions) => actions.undefineExecutor,
+  },
+  dragTarget: JobMapping.type,
+  applyToNode: (data, nodeData) => {
+    const oldJob = nodeData.job;
 
-      return {
-        job: new Job(
-          oldJob.name,
-          transform({ ...data }).executor,
-          oldJob.steps,
-        ),
-      };
-    },
-    components: {
-      icon: ExecutorIcon,
-      summary: ExecutorSummary,
-      inspector: ExecutorInspector,
-    },
-  };
+    return new WorkflowJob(
+      new Job(oldJob.name, data, oldJob.steps),
+      nodeData.parameters,
+    );
+  },
+  subtypes: { component: ExecutorTypePageNav, definitions: executorSubtypes },
+  components: {
+    icon: ExecutorIcon,
+    summary: ExecutorSummary,
+    inspector: ExecutorInspector,
+  },
 };
 
-export default ExecutorMapping();
+export default ExecutorMapping;

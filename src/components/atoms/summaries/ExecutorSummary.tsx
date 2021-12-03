@@ -1,11 +1,12 @@
-import { ReusableExecutor } from '../../../mappings/ExecutorMapping';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import ExecutorIcon from '../../../icons/components/ExecutorIcon';
 
 const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor }> = (
   props,
 ) => {
   return (
-    <div>
-      {props.data.name} {props.data.executor.resourceClass}
+    <div className="flex flex-row">
+      <ExecutorIcon className="ml-1 mr-2 w-5 h-5" /> {props.data.name}
     </div>
   );
 };

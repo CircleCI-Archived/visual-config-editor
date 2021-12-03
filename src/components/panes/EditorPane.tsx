@@ -1,15 +1,15 @@
-import Editor from '@monaco-editor/react';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 import { useStoreState } from '../../state/Hooks';
 
 const EditorPane = () => {
   const config = useStoreState((state) => state.config);
+  const editingConfig = useStoreState((state) => state.editingConfig);
 
-  const configYAML = () => {
-    const yml = config?.stringify();
+  const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
 
     if (yml && matchSDKComment && matchSDKComment.index) {
-      const comment = `# VCE Version: 0.1.0\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
+      const comment = `# VCE Version: 0.2.0\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
       const endOfSDKComment = matchSDKComment.index + matchSDKComment[0].length;
 
       return (
@@ -23,19 +23,30 @@ const EditorPane = () => {
   };
 
   return (
-    <div className="bg-circle-gray-900 w-full h-full border-r-2 border-circle-green-light">
-      <div className="inline-flex border-b text-xl pt-4 pb-0 border-circle-gray-800 w-full font-bold">
-        <div className="border-b-4 pl-4 pr-4 pb-2 w-max text-white border-circle-green">
-          CODE EDITOR
+    <div className="bg-circle-gray-900 h-2/5 w-full flex flex-col">
+      <div className="border-b text-xl border-circle-gray-800 font-bold">
+        <div className="ml-4 border-b-4 px-3 py-3 w-max text-sm tracking-wide font-bold text-white border-white">
+          CONFIG
         </div>
       </div>
-      <Editor
-        theme="vs-dark"
-        className="h-96"
-        defaultLanguage="yaml"
-        defaultValue=""
-        value={configYAML()}
-      />
+      <div className="flex-1 overflow-hidden">
+        {
+          editingConfig ?
+            (<DiffEditor
+              theme="vs-dark"
+              language="yaml"
+              original={config && configYAML(config)}
+              modified={editingConfig && configYAML(editingConfig)}
+            />)
+            :
+            (<Editor
+              theme="vs-dark"
+              language="yaml"
+              value={config && configYAML(config)}
+            />
+            )
+        }
+      </div>
     </div>
   );
 };

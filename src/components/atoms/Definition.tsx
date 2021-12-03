@@ -1,35 +1,29 @@
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
+import EditDefinitionMenu from '../menus/definitions/EditDefinitionMenu';
 
 const Definition = (props: { data: any; type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
-  const inspector = useStoreActions((actions) => actions.inspect);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  const setDragging = useStoreActions((actions) => actions.setDragging);
 
   return (
     <button
-      className="w-full p-3 cursor-pointer text-left pl-10 text-circle-black bg-white border border-circle-gray-300 rounded-md"
+      className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+      bg-white border border-circle-gray-300 rounded-md2"
       draggable="true"
       onDragStart={(e) => {
         const type = props.type;
 
         if (type?.dragTarget) {
-          let configData = props.data;
-
-          if (type.node?.transform) {
-            configData = type.node.transform(configData);
-          }
-
-          e.dataTransfer.setData(
-            type.dragTarget,
-            JSON.stringify({
-              type: type.node?.type || type.type,
-              data: configData,
-            }),
-          );
+          setDragging({ dataType: type, data: props.data });
         }
       }}
       onClick={(e) => {
-        inspector({ mode: 'editing', data: props.data, dataType: props.type });
+        navigateTo({
+          component: EditDefinitionMenu,
+          props: { data: props.data, dataType: props.type },
+        });
       }}
     >
       <Summary data={props.data} />

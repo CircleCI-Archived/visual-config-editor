@@ -1,55 +1,69 @@
-import Collapsible from 'react-collapsible';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import CollapsibleList from './CollapsibleList';
 import Definition from '../atoms/Definition';
+import {
+  CreateDefinitionMenu,
+  CreateDefinitionMenuNav,
+} from '../menus/definitions/CreateDefinitionMenu';
+import SubTypeMenuNav from '../menus/SubTypeMenu';
 
-export interface DefintionsProps {
+export interface DefinitionsProps {
   type: ComponentMapping;
+  expanded?: boolean;
+  onChange?: (expanded: boolean) => void;
 }
 
-const DefintionsContainer = (props: DefintionsProps) => {
-  const getIcon = () => {
-    let iconComponent = props.type.components.icon;
-
-    if (iconComponent) {
-      let Icon = iconComponent;
-
-      return <Icon className="ml-1 mr-3 w-8 h-8" />;
-    }
-  };
-
+const DefinitionsContainer = (props: DefinitionsProps) => {
   const items = useStoreState(props.type.store.get);
-  const inspect = useStoreActions((actions) => actions.inspect);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
-    <div className="mb-4">
-      <Collapsible
-        triggerClassName="text-circle-black shadow-md text-2xl hover:bg-circle-gray-100 p-2 block border border-circle-gray-300 bg-white duration:50 transition-all w-full rounded-md"
-        triggerOpenedClassName="block border border-circle-gray-300 text-2xl p-2 shadow-md text-circle-black bg-white w-full transition rounded-t-md"
-        transitionTime={50}
-        trigger={
-          <div className="flex ">
-            {getIcon()}
-            <p className="self-center">{props.type.name.plural}</p>
-          </div>
+    <div className="w-full p-4 pb-0">
+      <CollapsibleList
+        title={props.type.name.plural}
+        expanded={props.expanded}
+        onChange={props.onChange}
+        titleExpanded={
+          <button
+            onClick={() =>
+              navigateTo(
+                props.type.subtypes?.component
+                  ? {
+                      component: SubTypeMenuNav,
+                      props: {
+                        typePage: props.type.subtypes?.component,
+                        menuPage: CreateDefinitionMenu,
+                        menuProps: { dataType: props.type },
+                      },
+                    }
+                  : {
+                      component: CreateDefinitionMenuNav,
+                      props: { dataType: props.type },
+                    },
+              )
+            }
+            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+          >
+            New
+          </button>
         }
       >
-        {items?.map((item) => (
-          <div className="w-full p-2 bg-circle-gray-200" key={item.name}>
-            <Definition data={item} type={props.type} />
-          </div>
-        ))}
-        <div className="w-full p-2">
-          <button
-            onClick={() => inspect({ dataType: props.type, mode: 'creating' })}
-            className="p-1 w-full rounded-md text-white text-xl transition-colors hover:bg-circle-blue-light bg-circle-blue"
-          >
-            Create {props.type.name.singular}
-          </button>
+        <div className="w-full pl-2 pt-2">
+          {(items || []).length > 0 ? (
+            items?.map((item) => (
+              <Definition data={item} key={item.name} type={props.type} />
+            ))
+          ) : (
+            <div className="font-medium text-sm text-circle-gray-500">
+              No {props.type.name.plural} found.
+            </div>
+          )}
         </div>
-      </Collapsible>
+      </CollapsibleList>
+      <div className="w-full p-2 border-b border-circle-gray-300"></div>
     </div>
   );
 };
 
-export default DefintionsContainer;
+export default DefinitionsContainer;

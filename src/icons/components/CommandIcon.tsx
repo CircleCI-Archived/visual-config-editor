@@ -1,4 +1,4 @@
-import { IconProps } from './IconProps';
+import { IconProps } from '../IconProps';
 
 const CommandIcon = (props: IconProps) => (
   <svg
