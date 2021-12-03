@@ -1,4 +1,3 @@
-import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterIcon from '../../../../icons/components/ParameterIcon';
 import ComponentMapping from '../../../../mappings/ComponentMapping';
 import { NavigationComponent } from '../../../../state/Store';
@@ -9,7 +8,7 @@ import {
 } from '../../../containers/inspector/subtypes/ParameterSubtypes';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 
-const ParameterTypePage = <ParameterType extends AnyParameterLiteral>(
+const ParameterTypePage = (
   props: SubTypeSelectPageProps<string> & { component: ComponentMapping },
 ) => {
   const parameters =
