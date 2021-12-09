@@ -3,9 +3,9 @@ import { useStoreActions, useStoreState } from '../../state/Hooks';
 import CollapsibleList from './CollapsibleList';
 import Definition from '../atoms/Definition';
 import {
-  CreateDefinitionMenu,
-  CreateDefinitionMenuNav,
-} from '../menus/definitions/CreateDefinitionMenu';
+  InspectorDefinitionMenu,
+  InspectorDefinitionMenuNav,
+} from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
 
 export interface DefinitionsProps {
@@ -33,12 +33,12 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                       component: SubTypeMenuNav,
                       props: {
                         typePage: props.type.subtypes?.component,
-                        menuPage: CreateDefinitionMenu,
+                        menuPage: InspectorDefinitionMenu,
                         menuProps: { dataType: props.type },
                       },
                     }
                   : {
-                      component: CreateDefinitionMenuNav,
+                      component: InspectorDefinitionMenuNav,
                       props: { dataType: props.type },
                     },
               )

@@ -6,18 +6,22 @@ import ParameterContainer from '../../containers/ParametersContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-type CreateDefinitionProps = DataModel & {
+type InspectorDefinitionProps = DataModel & {
   values: any;
+  editing?: boolean;
   passBackKey?: string;
 } & SubTypeMenuPageProps<any>;
 
-const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
+const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
   const generateConfig = useStoreActions((actions) => actions.generateConfig);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const dataMapping = props.dataType;
-  const add = useStoreActions(
-    (actions) => dataMapping?.store.add(actions) || actions.error,
+  const submitToStore = useStoreActions(
+    (actions) =>
+      (props.editing
+        ? dataMapping?.store.update(actions)
+        : dataMapping?.store.add(actions)) || actions.error,
   );
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
@@ -42,7 +46,7 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
         <div className="ml-6 py-3 flex">
           {getIcon('w-8 h-8 p-1 pl-0 mr-1')}
           <h1 className="text-2xl font-bold">
-            New {dataMapping?.name.singular}
+            {props.editing ? 'Edit' : 'New'} {dataMapping?.name.singular}
           </h1>
         </div>
       </header>
@@ -68,8 +72,9 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
             const newDefinition = dataMapping.transform(values, definitions);
 
             if (!props.passBackKey) {
-              add(newDefinition);
+              submitToStore(newDefinition);
             }
+            
             navigateBack({
               distance: 1,
               apply: (values) => {
@@ -127,7 +132,7 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
                 type="submit"
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
               >
-                Save {dataMapping?.name.singular}
+                {props.editing ? 'Save' : 'Create'} {dataMapping?.name.singular}
               </button>
             </Form>
           )}
@@ -137,12 +142,12 @@ const CreateDefinitionMenu = (props: CreateDefinitionProps) => {
   );
 };
 
-const CreateDefinitionMenuNav: NavigationComponent = {
-  Component: CreateDefinitionMenu,
-  Label: (props: CreateDefinitionProps) => {
-    return <p>New {props.dataType?.name.singular}</p>;
+const InspectorDefinitionMenuNav: NavigationComponent = {
+  Component: InspectorDefinitionMenu,
+  Label: (props: InspectorDefinitionProps) => {
+    return <p>{props.editing ? 'Edit' : 'New'} {props.dataType?.name.singular}</p>;
   },
-  Icon: (props: CreateDefinitionProps) => {
+  Icon: (props: InspectorDefinitionProps) => {
     let iconComponent = props.dataType?.components.icon;
 
     if (!iconComponent) {
@@ -155,4 +160,4 @@ const CreateDefinitionMenuNav: NavigationComponent = {
   },
 };
 
-export { CreateDefinitionMenuNav, CreateDefinitionMenu };
+export { InspectorDefinitionMenuNav, InspectorDefinitionMenu };

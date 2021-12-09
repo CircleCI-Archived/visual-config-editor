@@ -1,6 +1,6 @@
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
-import EditDefinitionMenu from '../menus/definitions/EditDefinitionMenu';
+import { InspectorDefinitionMenuNav } from '../menus/definitions/InspectorDefinitionMenu';
 
 const Definition = (props: { data: any; type: ComponentMapping }) => {
   const Summary = props.type.components.summary;
@@ -21,8 +21,8 @@ const Definition = (props: { data: any; type: ComponentMapping }) => {
       }}
       onClick={(e) => {
         navigateTo({
-          component: EditDefinitionMenu,
-          props: { data: props.data, dataType: props.type },
+          component: InspectorDefinitionMenuNav,
+          props: { editing: true, values: props.data, dataType: props.type },
         });
       }}
     >

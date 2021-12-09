@@ -63,10 +63,6 @@ const WorkflowPane = (props: ElementProps) => {
     applyToData: (parameters: WorkflowJobParameters) => WorkflowJobParameters,
   ) =>
     elements.map((element) => {
-      console.log(
-        (element.data.parameters?.name || element.data.job.name) === targetJob,
-      );
-
       return isNode(element) &&
         JobMapping.node?.transform &&
         (element.data.parameters?.name || element.data.job.name) === targetJob

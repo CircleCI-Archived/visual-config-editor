@@ -42,7 +42,6 @@ const ParameterTypePage = (
                 props.setSubtype(subtype);
               }}
             >
-              {console.log(parameterSubtypes[subtype], subtype)}
               <p className="font-bold">{parameterSubtypes[subtype]?.text}</p>
               <p className="text-sm mt-1 leading-4 text-circle-gray-500">
                 {parameterSubtypes[subtype]?.description}

@@ -2,7 +2,7 @@ import { FieldArray, useField } from 'formik';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import ParameterMapping from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
-import { CreateDefinitionMenu } from '../menus/definitions/CreateDefinitionMenu';
+import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
 
 const ParameterContainer = (props: {
@@ -26,7 +26,7 @@ const ParameterContainer = (props: {
                 props: {
                   typePage: ParameterMapping.subtypes?.component,
                   typeProps: { component: props.dataMapping },
-                  menuPage: CreateDefinitionMenu,
+                  menuPage: InspectorDefinitionMenu,
                   menuProps: {
                     dataType: ParameterMapping,
                     passBackKey: 'parameters',
