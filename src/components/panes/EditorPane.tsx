@@ -5,10 +5,6 @@ const EditorPane = () => {
   const config = useStoreState((state) => state.config);
   const editingConfig = useStoreState((state) => state.editingConfig);
 
-  const handleEditorValidation = (markers: any) => {
-    markers.forEach((marker: any) => console.log("onValidate", marker.message))
-  }
-
   const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
 
@@ -47,7 +43,6 @@ const EditorPane = () => {
               theme="vs-dark"
               language="yaml"
               value={config && configYAML(config)}
-              onValidate={handleEditorValidation}
             />
             )
         }
