@@ -113,6 +113,10 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
     summary: ExecutorSummary,
     inspector: ExecutorInspector,
   },
+  docsInfo: {
+    description: "Technology/Environment to run with",
+    link: "https://circleci.com/docs/2.0/executor-types/"
+  }
 };
 
 export default ExecutorMapping;

@@ -46,6 +46,10 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
     summary: JobSummary,
     inspector: JobInspector,
   },
+  docsInfo: {
+    description: "Collection of steps to run your config",
+    link: "https://circleci.com/docs/2.0/concepts/#jobs",
+  }
 };
 
 export default JobMapping;
