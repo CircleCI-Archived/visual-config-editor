@@ -31,6 +31,8 @@ export interface DataMapping {
 /**
  * Registry of circleci-config-sdk component to data maps.
  */
+
+// thinking of adding a docs link to Executor and description as a key to each Mapping
 const dataMappings: DataMapping[] = [
   {
     type: 'executors',
@@ -93,7 +95,13 @@ type KeysOfUnion<T> = T extends T ? keyof T : never;
 export interface SubTypeMapping {
   text: string;
   description?: string;
+  docsLink?: string;
   fields: ReactElement | React.FunctionComponent<any>;
+}
+
+export interface ComponentInfoType {
+  description: string
+  link: string
 }
 
 /**
@@ -123,6 +131,7 @@ export default interface ComponentMapping<
    * Is true when the component can accept parameters.
    */
   parameters?: ComponentParameterType;
+  docsInfo: ComponentInfoType;
   /** Transform field values into an instance of ConfigDataType */
   transform: (
     values: { [K: string]: any },

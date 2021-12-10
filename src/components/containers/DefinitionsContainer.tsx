@@ -7,6 +7,7 @@ import {
   InspectorDefinitionMenuNav,
 } from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
+import ComponentInfo from '../atoms/ComponentInfo';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
@@ -18,6 +19,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
   const items = useStoreState(props.type.store.get);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
+  console.log(props, 'props')
   return (
     <div className="w-full p-4 pb-0">
       <CollapsibleList
@@ -50,6 +52,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
         }
       >
         <div className="w-full pl-2 pt-2">
+          <ComponentInfo type={props.type} />
           {(items || []).length > 0 ? (
             items?.map((item) => (
               <Definition data={item} key={item.name} type={props.type} />

@@ -49,6 +49,10 @@ const ParameterMapping: ComponentMapping<
     summary: ParameterSummary,
     inspector: ParameterInspector,
   },
+  docsInfo: {
+    description: "Options to help describe a job, command, or executor",
+    link: "https://circleci.com/docs/2.0/reusing-config/#using-the-parameters-declaration"
+  }
 };
 
 export default ParameterMapping;
