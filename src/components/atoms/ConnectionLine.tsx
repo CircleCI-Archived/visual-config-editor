@@ -15,7 +15,7 @@ const ConnectionLine = ({
   connectionLineStyle,
 }: ConnectionLineComponentProps) => {
   const connecting = useStoreState((state) => state.connecting);
-  const transform = flowState((state) => state.transform);
+  const transform = flowState((state: any) => state.transform);
   const handle = connecting?.start?.ref?.current as Element;
 
   if (!handle) {

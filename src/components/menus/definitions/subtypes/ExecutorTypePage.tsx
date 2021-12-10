@@ -32,7 +32,19 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
               props.setSubtype(subtype);
             }}
           >
-            <p className="font-bold">{executorSubtypes[subtype].text}</p>
+            
+            {/* TODO: break out into card components */}
+            <div className="flex flex-row">
+              <p className="font-bold">{executorSubtypes[subtype].text}</p>
+              {executorSubtypes[subtype].docsLink && (
+                <a
+                  className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                  href={executorSubtypes[subtype].docsLink}
+                >
+                  Learn More
+                </a>
+              )}
+            </div>
             <p className="text-sm mt-1 leading-4 text-circle-gray-500">
               {executorSubtypes[subtype].description}
             </p>
@@ -47,7 +59,9 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
 const ExecutorTypePageNav: NavigationComponent = {
   Component: ExecutorTypePage,
   Label: (props: SubTypeSelectPageProps<string>) => <p>New Executor</p>,
-  Icon: (props: SubTypeSelectPageProps<string>) => <ExecutorIcon className="w-6 h-8 py-2" />,
+  Icon: (props: SubTypeSelectPageProps<string>) => (
+    <ExecutorIcon className="w-6 h-8 py-2" />
+  ),
 };
 
 export default ExecutorTypePageNav;

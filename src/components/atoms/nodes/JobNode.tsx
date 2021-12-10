@@ -4,7 +4,6 @@ import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
-import DragItemIcon from '../../../icons/ui/DragItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
