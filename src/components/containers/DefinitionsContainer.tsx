@@ -8,6 +8,9 @@ import {
 } from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
 import ComponentInfo from '../atoms/ComponentInfo';
+import Guide from '../atoms/Tooltip';
+import { useRef } from 'react';
+import GuideContainer from './GuideContainer';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
@@ -18,10 +21,11 @@ export interface DefinitionsProps {
 const DefinitionsContainer = (props: DefinitionsProps) => {
   const items = useStoreState(props.type.store.get);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  const ref = useRef(null);
 
-  console.log(props, 'props')
   return (
-    <div className="w-full p-4 pb-0">
+    <div ref={ref} className="w-full p-4 pb-0">
+      {/*props.type.guide && <GuideContainer target={ref}>{props.type.guide}</GuideContainer>*/}
       <CollapsibleList
         title={props.type.name.plural}
         expanded={props.expanded}

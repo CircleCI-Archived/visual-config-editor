@@ -114,6 +114,7 @@ export default interface ComponentMapping<
   ConfigNodeProps = any,
   InspectorDefaults = any,
 > {
+  guide?: string;
   /**  String name type of component. Must be equal to index within registry. */
   type: string;
   /**  Language values of component. This should be used for UI display only. */
