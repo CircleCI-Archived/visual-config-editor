@@ -2,7 +2,7 @@ import ComponentMapping from '../../mappings/ComponentMapping';
 
 const ComponentInfo = (props: { type: ComponentMapping }) => {
   return (
-    <div className='pb-4'>
+    <div className="pb-4">
       <p className="font-medium text-sm text-circle-gray-500">
         {props.type.docsInfo.description}
       </p>

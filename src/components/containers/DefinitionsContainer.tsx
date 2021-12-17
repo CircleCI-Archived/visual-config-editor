@@ -25,7 +25,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
 
   return (
     <div ref={ref} className="w-full p-4 pb-0">
-      {/*props.type.guide && <GuideContainer target={ref}>{props.type.guide}</GuideContainer>*/}
+      {props.type.guide && <GuideContainer target={ref}>{props.type.guide}</GuideContainer>}
       <CollapsibleList
         title={props.type.name.plural}
         expanded={props.expanded}
