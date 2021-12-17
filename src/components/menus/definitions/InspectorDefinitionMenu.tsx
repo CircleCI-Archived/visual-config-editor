@@ -16,6 +16,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
   const generateConfig = useStoreActions((actions) => actions.generateConfig);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
+  const setGuideStep = useStoreActions((actions) => actions.setGuideStep);
+  const guideStep = useStoreState((state) => state.guideStep);
   const dataMapping = props.dataType;
   const submitToStore = useStoreActions(
     (actions) =>
@@ -34,6 +36,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   };
 
   const tabs = ['PROPERTIES'];
+  const subtype =
+    props.subtype || dataMapping?.subtypes?.getSubtype(props.values);
 
   if (dataMapping?.parameters) {
     tabs.push('PARAMETERS');
@@ -74,7 +78,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             if (!props.passBackKey) {
               submitToStore(newDefinition);
             }
-            
+
+            if (
+              !props.editing &&
+              guideStep &&
+              dataMapping.guide?.step === guideStep
+            ) {
+              setGuideStep(guideStep + 1);
+            }
+
             navigateBack({
               distance: 1,
               apply: (values) => {
@@ -94,25 +106,38 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             <Form className="flex flex-col flex-1">
               <TabbedMenu tabs={tabs} activeTab={props.values?.activeTab || 0}>
                 <div className="p-6">
-                  {dataMapping.subtypes && (
-                    <button
-                      className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
-                      type="button"
-                      onClick={() => {
-                        props.selectSubtype();
-                      }}
-                    >
-                      <p className="font-bold">
-                        {dataMapping.subtypes.definitions[props.subtype]?.text}
-                      </p>
-                      <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                        {
-                          dataMapping.subtypes.definitions[props.subtype]
-                            ?.description
-                        }
-                      </p>
-                    </button>
-                  )}
+                  {dataMapping.subtypes &&
+                    (props.editing ? (
+                      <div className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left">
+                        <p className="font-bold">
+                          {dataMapping.subtypes.definitions[subtype]?.text}
+                        </p>
+                        <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                          {
+                            dataMapping.subtypes.definitions[subtype]
+                              ?.description
+                          }
+                        </p>
+                      </div>
+                    ) : (
+                      <button
+                        className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                        type="button"
+                        onClick={() => {
+                          props.selectSubtype();
+                        }}
+                      >
+                        <p className="font-bold">
+                          {dataMapping.subtypes.definitions[subtype]?.text}
+                        </p>
+                        <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                          {
+                            dataMapping.subtypes.definitions[subtype]
+                              ?.description
+                          }
+                        </p>
+                      </button>
+                    ))}
                   {dataMapping.components.inspector({
                     ...formikProps,
                     definitions,
@@ -145,7 +170,11 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
 const InspectorDefinitionMenuNav: NavigationComponent = {
   Component: InspectorDefinitionMenu,
   Label: (props: InspectorDefinitionProps) => {
-    return <p>{props.editing ? 'Edit' : 'New'} {props.dataType?.name.singular}</p>;
+    return (
+      <p>
+        {props.editing ? 'Edit' : 'New'} {props.dataType?.name.singular}
+      </p>
+    );
   },
   Icon: (props: InspectorDefinitionProps) => {
     let iconComponent = props.dataType?.components.icon;

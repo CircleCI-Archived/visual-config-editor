@@ -4,6 +4,7 @@ import {
   Job,
   parameters,
 } from '@circleci/circleci-config-sdk';
+import { Component } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
@@ -96,12 +97,13 @@ export interface SubTypeMapping {
   text: string;
   description?: string;
   docsLink?: string;
+  component?: any;
   fields: ReactElement | React.FunctionComponent<any>;
 }
 
 export interface ComponentInfoType {
-  description: string
-  link: string
+  description: string;
+  link: string;
 }
 
 /**
@@ -114,7 +116,7 @@ export default interface ComponentMapping<
   ConfigNodeProps = any,
   InspectorDefaults = any,
 > {
-  guide?: string;
+  guide?: { info: string; step: number };
   /**  String name type of component. Must be equal to index within registry. */
   type: string;
   /**  Language values of component. This should be used for UI display only. */
@@ -171,6 +173,7 @@ export default interface ComponentMapping<
   };
   subtypes?: {
     component: NavigationComponent;
+    getSubtype: (data: ConfigDataType) => string | undefined;
     definitions: { [subtype: string]: SubTypeMapping };
   };
   components: {

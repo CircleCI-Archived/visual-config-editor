@@ -21,11 +21,14 @@ export interface DefinitionsProps {
 const DefinitionsContainer = (props: DefinitionsProps) => {
   const items = useStoreState(props.type.store.get);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
 
   return (
     <div ref={ref} className="w-full p-4 pb-0">
-      {props.type.guide && <GuideContainer target={ref}>{props.type.guide}</GuideContainer>}
+      {props.type.guide && guideStep === props.type.guide.step && (
+        <GuideContainer target={ref}>{props.type.guide.info}</GuideContainer>
+      )}
       <CollapsibleList
         title={props.type.name.plural}
         expanded={props.expanded}

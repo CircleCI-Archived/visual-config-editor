@@ -20,6 +20,8 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
   // );
   const updateJob = useStoreActions((actions) => actions.updateJob);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
+  const removeWorkflowElement = useStoreActions((actions) => actions.removeWorkflowElement);
+  
   const connecting = useStoreState((state) => state.connecting);
   const updateConnecting = useStoreActions(
     (actions) => actions.updateConnecting,
@@ -71,27 +73,6 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
   };
 
   const nodeRef = useRef(null);
-
-  // const onConnect = (params: Connection) => {
-  //   const targetJob = elements.find(
-  //     (element) => element.id === params.target,
-  //   )?.data;
-
-  //   setWorkflowElements(
-  //     addEdge(
-  //       {
-  //         ...params,
-  //         animated: false,
-  //         style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-  //       },
-  //       updateWorkflowJob(targetJob, {
-  //         parameters: {
-  //           requires: [props.data.job.name],
-  //         },
-  //       }),
-  //     ),
-  //   );
-  // };
 
   return (
     <div
@@ -171,17 +152,20 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
           <JobIcon className="w-5 mr-2" />
           {props.data.parameters?.name || props.data.job.name}
         </div>
-        <div
+        <button
           className={`my-auto
           opacity-${hovering['node'] ? 100 : 0} 
           transition-opacity duration-150 w-8 h-full flex`}
           {...trackHovering(['remove'], ['remove'])}
+          onClick={() => {
+            removeWorkflowElement(props.id);
+          }}
         >
           <DeleteItemIcon
             className="w-3 cursor-pointer m-auto"
             color={hovering['remove'] ? 'red' : '#AAAAAA'}
           />
-        </div>
+        </button>
       </button>
 
       <button
@@ -218,12 +202,12 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
 
       <Handle
         type="source"
-        className="opacity-0"
+        className="opacity-0 cursor-default"
         position={Position.Right}
         id={`${props.id}_source`}
       ></Handle>
       <Handle
-        className="opacity-0"
+        className="opacity-0 cursor-default"
         id={`${props.id}_target`}
         type="target"
         position={Position.Left}

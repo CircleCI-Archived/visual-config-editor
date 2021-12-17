@@ -62,16 +62,20 @@ export interface NavigationStop {
 export interface StoreModel {
   /** Last generated configuration */
   config: string | undefined;
+  /** The configuration with proposed changes */
   editingConfig: string | undefined;
-  /** Last generated configuration */
+  /** Component definitions which are used to generate the configuration*/
   definitions: DefinitionModel;
-
+  /** The current step of the guide */
+  guideStep?: number;
+  /** Node placeholder element info */
   placeholder?: { index: number; id: string };
   /** Array of workflow panes */
   workflows: WorkflowModel[];
-  /** Order of components and the  */
+  /** Allows for tracking of components and their props in NavigationPanel */
   navigation: NavigationModel;
-  /**  */
+
+  /** Data being dragged from definition */
   dragging?: DataModel;
   connecting?: {
     start?: {
@@ -118,6 +122,7 @@ export interface StoreActions {
   >;
 
   setPlaceholder: Action<StoreModel, Node<any>>;
+  setGuideStep: Action<StoreModel, number | undefined>;
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
   navigateBack: Action<
@@ -130,7 +135,7 @@ export interface StoreActions {
   removeWorkflow: Action<StoreModel, WorkflowModel>;
 
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
-  removeWorkflowElement: Action<StoreModel, FlowElement<any>>;
+  removeWorkflowElement: Action<StoreModel, string>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
 
   defineJob: Action<StoreModel, Job>;
@@ -205,6 +210,9 @@ const Actions: StoreActions = {
       id: workflow.id,
     };
   }),
+  setGuideStep: action((state, payload) => {
+    state.guideStep = payload;
+  }),
 
   navigateTo: action((state, payload) => {
     const curNav = state.navigation;
@@ -275,7 +283,13 @@ const Actions: StoreActions = {
 
     workflow.elements.push(payload);
   }),
-  removeWorkflowElement: action((state, payload) => {}),
+  removeWorkflowElement: action((state, payload) => {
+    const workflow = state.workflows[state.selectedWorkflow];
+
+    state.workflows[state.selectedWorkflow] = {...workflow, elements: workflow.elements.filter(
+      (element) => element.id !== payload,
+    )}
+  }),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
@@ -387,6 +401,7 @@ const Store: StoreModel & StoreActions = {
   selectedWorkflow: 0,
   editingConfig: undefined,
   config: undefined,
+  guideStep: 1,
   navigation: {
     component: DefinitionsMenu,
     props: { expanded: [true, true, false, false] },
