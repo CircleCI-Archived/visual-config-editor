@@ -1,9 +1,7 @@
-import ToolTipPointerIcon from '../../icons/ui/ToolTipPointerIcon';
-import { CSSProperties, MutableRefObject, useState } from 'react';
-import { useEffect } from 'react';
+import { MutableRefObject } from 'react';
 import InfoIcon from '../../icons/ui/InfoIcon';
-import ToolTip from '../atoms/Tooltip';
 import { useStoreState } from '../../state/Hooks';
+import ToolTip from '../atoms/Tooltip';
 
 export interface GuideContainerProps {
   target: MutableRefObject<any>;

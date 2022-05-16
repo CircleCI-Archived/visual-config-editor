@@ -1,15 +1,14 @@
+import { useRef } from 'react';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import CollapsibleList from './CollapsibleList';
+import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
 import {
   InspectorDefinitionMenu,
   InspectorDefinitionMenuNav,
 } from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
-import ComponentInfo from '../atoms/ComponentInfo';
-import Guide from '../atoms/Tooltip';
-import { useRef } from 'react';
+import CollapsibleList from './CollapsibleList';
 import GuideContainer from './GuideContainer';
 
 export interface DefinitionsProps {

@@ -4,12 +4,10 @@ import {
   Job,
   parameters,
 } from '@circleci/circleci-config-sdk';
-import { Component } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
-import { ComponentParameterType } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import Store, {
   DefinitionModel,
   NavigationComponent,
@@ -26,7 +24,7 @@ import ParameterMapping from './ParameterMapping';
 export interface DataMapping {
   type: string;
   component: any[];
-  mapping: ComponentMapping;
+  mapping: GenerableMapping;
 }
 
 /**
@@ -67,7 +65,7 @@ const dataMappings: DataMapping[] = [
  * @param {any} data:any
  * @returns {any}
  */
-const componentToType = (data: any): ComponentMapping | undefined => {
+const componentToType = (data: any): GenerableMapping | undefined => {
   let foundType = undefined;
 
   dataMappings.forEach((mapping) => {
@@ -101,17 +99,17 @@ export interface SubTypeMapping {
   fields: ReactElement | React.FunctionComponent<any>;
 }
 
-export interface ComponentInfoType {
+export interface GenerableInfoType {
   description: string;
   link: string;
 }
 
 /**
- * circleci-config-sdk Component to Data Mapping
+ * circleci-config-sdk Generable to Data Mapping
  *
  * @interface
  */
-export default interface ComponentMapping<
+export default interface GenerableMapping<
   ConfigDataType = any,
   ConfigNodeProps = any,
   InspectorDefaults = any,
@@ -133,8 +131,8 @@ export default interface ComponentMapping<
   /**
    * Is true when the component can accept parameters.
    */
-  parameters?: ComponentParameterType;
-  docsInfo: ComponentInfoType;
+  parameters?: any;
+  docsInfo: GenerableInfoType;
   /** Transform field values into an instance of ConfigDataType */
   transform: (
     values: { [K: string]: any },
@@ -177,9 +175,9 @@ export default interface ComponentMapping<
     definitions: { [subtype: string]: SubTypeMapping };
   };
   components: {
-    /** Icon Component to render in definition */
+    /** Icon Generable to render in definition */
     icon?: React.FunctionComponent<any>;
-    /** Component to render in definition */
+    /** Generable to render in definition */
     summary: React.FunctionComponent<{ data: ConfigDataType }>;
     /**
      * Called by InspectorPane and CreateNew to generate form

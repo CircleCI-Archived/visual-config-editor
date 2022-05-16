@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
-    "@circleci/circleci-config-sdk": "0.5.0-alpha.10",
+    "@circleci/circleci-config-sdk": "0.5.0-alpha.11",
     "@craco/craco": "^6.3.0",
     "@monaco-editor/react": "^4.3.1",
     "@testing-library/jest-dom": "^5.11.4",
@@ -32,6 +32,9 @@
     "typescript": "^4.4.3",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.2"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.38"
   },
   "scripts": {
     "start": "craco start",

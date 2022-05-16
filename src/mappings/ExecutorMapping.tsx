@@ -1,7 +1,6 @@
 import { executor, Job, WorkflowJob } from '@circleci/circleci-config-sdk';
 import {
-  DockerExecutor,
-  ReusableExecutor,
+  ReusableExecutor
 } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
@@ -53,10 +52,6 @@ const transform = (values: any) => {
 
 const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
   type: 'executors',
-  guide: {
-    info: `do thisz`,
-    step: 1,
-  },
   name: {
     singular: 'Executor',
     plural: 'Executors',

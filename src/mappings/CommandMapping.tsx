@@ -7,11 +7,6 @@ import CommandIcon from '../icons/components/CommandIcon';
 import ComponentMapping from './ComponentMapping';
 
 const CommandMapping: ComponentMapping<CustomCommand> = {
-  guide: {
-    info: `do this
-  then`,
-    step: 2,
-  },
   type: 'commands',
   name: {
     singular: 'Command',

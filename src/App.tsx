@@ -4,6 +4,8 @@ import NavigationPane from './components/panes/NavigationPane';
 import WorkflowsPane from './components/panes/WorkflowsPane';
 import Store from './state/Store';
 
+// Workaround for https://github.com/ctrlplusb/easy-peasy/issues/741 
+// const StoreProviderOverride = StoreProvider as any;
 
 const App = () => {
   return (

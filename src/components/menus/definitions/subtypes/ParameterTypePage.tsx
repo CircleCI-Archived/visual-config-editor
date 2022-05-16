@@ -33,7 +33,7 @@ const ParameterTypePage = (
       </header>
       <div className="p-6">
         {parameters?.types &&
-          parameters.types.map((subtype) => (
+          parameters.types.map((subtype: any) => (
             <button
               key={subtype}
               type="button"

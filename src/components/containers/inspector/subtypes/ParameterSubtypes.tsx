@@ -1,5 +1,4 @@
 import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
-import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { SubTypeMapping } from '../../../../mappings/ComponentMapping';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 
