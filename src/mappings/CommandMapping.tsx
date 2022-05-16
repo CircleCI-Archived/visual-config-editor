@@ -35,9 +35,9 @@ const CommandMapping: ComponentMapping<CustomCommand> = {
     inspector: CommandInspector,
   },
   docsInfo: {
-    description: "Sequenced steps to be executed",
-    link: "https://circleci.com/docs/2.0/reusing-config/#the-commands-key"
-  }
+    description: 'Sequenced steps to be executed',
+    link: 'https://circleci.com/docs/2.0/reusing-config/#the-commands-key',
+  },
 };
 
 export default CommandMapping;

@@ -18,16 +18,16 @@ const ParameterMapping: ComponentMapping<
   },
   defaults: {
     integer: {
-      name: 'new_integer_parameter'
+      name: 'new_integer_parameter',
     },
     boolean: {
-      name: 'new_boolean_parameter'
+      name: 'new_boolean_parameter',
     },
     string: {
-      name: 'new_string_parameter'
+      name: 'new_string_parameter',
     },
     enum: {
-      name: 'new_enum_parameter'
+      name: 'new_enum_parameter',
     },
   },
   transform: (values: any) =>
@@ -43,16 +43,20 @@ const ParameterMapping: ComponentMapping<
     update: (actions) => actions.updateParameter,
     remove: (actions) => actions.undefineParameter,
   },
-  subtypes: { component: ParameterTypePageNav, definitions: parameterSubtypes },
+  subtypes: {
+    component: ParameterTypePageNav,
+    getSubtype: (parameter) => parameter.type,
+    definitions: parameterSubtypes,
+  },
   components: {
     icon: ParameterIcon,
     summary: ParameterSummary,
     inspector: ParameterInspector,
   },
   docsInfo: {
-    description: "Options to help describe a job, command, or executor",
-    link: "https://circleci.com/docs/2.0/reusing-config/#using-the-parameters-declaration"
-  }
+    description: 'Options to help describe a job, command, or executor',
+    link: 'https://circleci.com/docs/2.0/reusing-config/#using-the-parameters-declaration',
+  },
 };
 
 export default ParameterMapping;

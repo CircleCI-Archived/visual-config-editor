@@ -1,5 +1,7 @@
 import { executor, Job, WorkflowJob } from '@circleci/circleci-config-sdk';
-import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import {
+  ReusableExecutor
+} from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { Executor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor/exports/Executor';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
@@ -107,16 +109,25 @@ const ExecutorMapping: ComponentMapping<ReusableExecutor, WorkflowJob> = {
       nodeData.parameters,
     );
   },
-  subtypes: { component: ExecutorTypePageNav, definitions: executorSubtypes },
+  subtypes: {
+    component: ExecutorTypePageNav,
+    getSubtype: (reusableExec: ReusableExecutor) => {
+      return Object.keys(executorSubtypes).find(
+        (subtype) =>
+          reusableExec.executor instanceof executorSubtypes[subtype].component,
+      );
+    },
+    definitions: executorSubtypes,
+  },
   components: {
     icon: ExecutorIcon,
     summary: ExecutorSummary,
     inspector: ExecutorInspector,
   },
   docsInfo: {
-    description: "Technology/Environment to run with",
-    link: "https://circleci.com/docs/2.0/executor-types/"
-  }
+    description: 'Technology/Environment to run with',
+    link: 'https://circleci.com/docs/2.0/executor-types/',
+  },
 };
 
 export default ExecutorMapping;

@@ -3,12 +3,12 @@ import { NavigationComponent } from '../../../../state/Store';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
 import { executorSubtypes } from '../../../containers/inspector/subtypes/ExecutorSubtypes';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
+import Card from '../../../atoms/Card';
 
 const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
   return (
     <div>
       <header>
-        {/* <WorkflowIcon className="w-6 h-6 mr-1" color="#6A6A6A" /> */}
         <BreadCrumbs />
         <div className="ml-6 flex py-3">
           <ExecutorIcon className="w-8 h-8 p-1 pl-0 mr-1"></ExecutorIcon>
@@ -24,32 +24,30 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
       </header>
       <div className="p-6">
         {Object.keys(executorSubtypes).map((subtype) => (
-          <button
+          <Card
             key={subtype}
-            type="button"
-            className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+            description={executorSubtypes[subtype].description}
+            title={executorSubtypes[subtype].text}
             onClick={() => {
               props.setSubtype(subtype);
             }}
-          >
-            
-            {/* TODO: break out into card components */}
-            <div className="flex flex-row">
-              <p className="font-bold">{executorSubtypes[subtype].text}</p>
-              {executorSubtypes[subtype].docsLink && (
-                <a
-                  className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-                  href={executorSubtypes[subtype].docsLink}
-                >
-                  Learn More
-                </a>
-              )}
-            </div>
-            <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-              {executorSubtypes[subtype].description}
-            </p>
-          </button>
-          // <InspectorProperty name={command} label={commandProps[command].text} as="card" />
+            pinned={
+              <div>
+                {executorSubtypes[subtype].docsLink && (
+                  <a
+                    className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                    href={executorSubtypes[subtype].docsLink}
+                    target="circleci_docs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    Learn More
+                  </a>
+                )}
+              </div>
+            }
+          />
         ))}
       </div>
     </div>

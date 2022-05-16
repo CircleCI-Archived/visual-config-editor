@@ -1,13 +1,15 @@
+import { useRef } from 'react';
 import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import CollapsibleList from './CollapsibleList';
+import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
 import {
-  CreateDefinitionMenu,
-  CreateDefinitionMenuNav,
-} from '../menus/definitions/CreateDefinitionMenu';
+  InspectorDefinitionMenu,
+  InspectorDefinitionMenuNav,
+} from '../menus/definitions/InspectorDefinitionMenu';
 import SubTypeMenuNav from '../menus/SubTypeMenu';
-import ComponentInfo from '../atoms/ComponentInfo';
+import CollapsibleList from './CollapsibleList';
+import GuideContainer from './GuideContainer';
 
 export interface DefinitionsProps {
   type: ComponentMapping;
@@ -18,10 +20,14 @@ export interface DefinitionsProps {
 const DefinitionsContainer = (props: DefinitionsProps) => {
   const items = useStoreState(props.type.store.get);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  const guideStep = useStoreState((state) => state.guideStep);
+  const ref = useRef(null);
 
-  console.log(props, 'props')
   return (
-    <div className="w-full p-4 pb-0">
+    <div ref={ref} className="w-full p-4 pb-0">
+      {props.type.guide && guideStep === props.type.guide.step && (
+        <GuideContainer target={ref}>{props.type.guide.info}</GuideContainer>
+      )}
       <CollapsibleList
         title={props.type.name.plural}
         expanded={props.expanded}
@@ -35,12 +41,12 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                       component: SubTypeMenuNav,
                       props: {
                         typePage: props.type.subtypes?.component,
-                        menuPage: CreateDefinitionMenu,
+                        menuPage: InspectorDefinitionMenu,
                         menuProps: { dataType: props.type },
                       },
                     }
                   : {
-                      component: CreateDefinitionMenuNav,
+                      component: InspectorDefinitionMenuNav,
                       props: { dataType: props.type },
                     },
               )
