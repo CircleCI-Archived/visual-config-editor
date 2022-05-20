@@ -1,8 +1,8 @@
 import {
-  commands,
-  executor,
+  executors,
   Job,
   parameters,
+  reusable,
 } from '@circleci/circleci-config-sdk';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
@@ -36,10 +36,10 @@ const dataMappings: DataMapping[] = [
   {
     type: 'executors',
     component: [
-      executor.DockerExecutor,
-      executor.MacOSExecutor,
-      executor.MachineExecutor,
-      executor.WindowsExecutor,
+      executors.DockerExecutor,
+      executors.MacOSExecutor,
+      executors.MachineExecutor,
+      executors.WindowsExecutor,
     ],
     mapping: ExecutorMapping,
   },
@@ -50,7 +50,7 @@ const dataMappings: DataMapping[] = [
   },
   {
     type: 'commands',
-    component: [commands.reusable.CustomCommand],
+    component: [reusable.CustomCommand],
     mapping: CommandMapping,
   },
   {

@@ -1,18 +1,17 @@
-import { executor } from '@circleci/circleci-config-sdk';
-import { DockerExecutor, MachineExecutor, MacOSExecutor, WindowsExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { executors } from '@circleci/circleci-config-sdk';
 import { SubTypeMapping } from '../../../../mappings/ComponentMapping';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 
 export interface ExecutorSubTypes {
   [type: string]: SubTypeMapping & {
     resourceClasses: string[];
-  };  
+  };
 }
 
 const executorSubtypes: ExecutorSubTypes = {
   docker: {
     text: 'Docker',
-    component: executor.DockerExecutor,
+    component: executors.DockerExecutor,
     resourceClasses: [
       'small',
       'medium',
@@ -30,7 +29,7 @@ const executorSubtypes: ExecutorSubTypes = {
   },
   machine: {
     text: 'Machine',
-    component: executor.MachineExecutor,
+    component: executors.MachineExecutor,
     resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
     fields: <InspectorProperty label="Image" name="executor.image" required />,
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-machine',
@@ -38,7 +37,7 @@ const executorSubtypes: ExecutorSubTypes = {
   },
   macos: {
     text: 'MacOS',
-    component: executor.MacOSExecutor,
+    component: executors.MacOSExecutor,
     resourceClasses: ['medium', 'large'],
     fields: <InspectorProperty label="Xcode" name="executor.xcode" required />,
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-macos',
@@ -47,10 +46,11 @@ const executorSubtypes: ExecutorSubTypes = {
   },
   windows: {
     text: 'Windows',
-    component: executor.WindowsExecutor,
+    component: executors.WindowsExecutor,
     resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
     fields: <InspectorProperty label="Image" name="executor.image" required />,
-    docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-the-windows-executor',
+    docsLink:
+      'https://circleci.com/docs/2.0/executor-types/#using-the-windows-executor',
     description: 'Steps run on Windows Virtual Machine',
   },
 };

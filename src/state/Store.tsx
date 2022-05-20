@@ -2,10 +2,10 @@ import {
   Config,
   Job,
   parameters,
+  reusable,
   Workflow,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
-import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Action, action } from 'easy-peasy';
@@ -32,7 +32,7 @@ export interface WorkflowModel {
 /** Reusable definitions of CircleCIConfigObject */
 export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   parameters: CustomParameter<PipelineParameterLiteral>[];
-  executors: ReusableExecutor[];
+  executors: reusable.ReusableExecutor[];
   jobs: Job[];
   commands: CustomCommand[];
   workflows: Workflow[];
@@ -149,9 +149,9 @@ export interface StoreActions {
   updateCommand: Action<StoreModel, UpdateType<CustomCommand>>;
   undefineCommand: Action<StoreModel, CustomCommand>;
 
-  defineExecutor: Action<StoreModel, ReusableExecutor>;
-  updateExecutor: Action<StoreModel, UpdateType<ReusableExecutor>>;
-  undefineExecutor: Action<StoreModel, ReusableExecutor>;
+  defineExecutor: Action<StoreModel, reusable.ReusableExecutor>;
+  updateExecutor: Action<StoreModel, UpdateType<reusable.ReusableExecutor>>;
+  undefineExecutor: Action<StoreModel, reusable.ReusableExecutor>;
 
   /** @todo implement parameters */
   defineParameter: Action<
@@ -286,9 +286,10 @@ const Actions: StoreActions = {
   removeWorkflowElement: action((state, payload) => {
     const workflow = state.workflows[state.selectedWorkflow];
 
-    state.workflows[state.selectedWorkflow] = {...workflow, elements: workflow.elements.filter(
-      (element) => element.id !== payload,
-    )}
+    state.workflows[state.selectedWorkflow] = {
+      ...workflow,
+      elements: workflow.elements.filter((element) => element.id !== payload),
+    };
   }),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;

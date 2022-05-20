@@ -1,4 +1,4 @@
-import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Executor';
+import { ReusableExecutor } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Reusable';
 import ExecutorIcon from '../../../icons/components/ExecutorIcon';
 
 const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor }> = (

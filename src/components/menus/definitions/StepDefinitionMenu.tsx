@@ -1,21 +1,22 @@
-import { commands } from '@circleci/circleci-config-sdk';
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
+import { reusable } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
 import { useStoreActions } from '../../../state/Hooks';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
-import TabbedMenu from '../TabbedMenu';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
+import TabbedMenu from '../TabbedMenu';
 
 const StepPropertiesMenu = (
-  props: SubTypeMenuPageProps<string | CustomCommand>,
+  props: SubTypeMenuPageProps<string | reusable.CustomCommand>,
 ) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const builtIn = typeof props.subtype === 'string';
   const builtInSubtype = builtIn
     ? commandSubtypes[props.subtype as string]
     : undefined;
-  const customCommand = !builtIn ? (props.subtype as CustomCommand) : undefined;
+  const customCommand = !builtIn
+    ? (props.subtype as reusable.CustomCommand)
+    : undefined;
 
   return (
     <div className="h-full flex flex-col">
@@ -34,8 +35,8 @@ const StepPropertiesMenu = (
                 ...values.steps,
                 builtInSubtype
                   ? builtInSubtype.generate(parameters)
-                  : new commands.reusable.ReusableCommand(
-                      props.subtype as CustomCommand,
+                  : new reusable.ReusableCommand(
+                      props.subtype as reusable.CustomCommand,
                       values.parameters,
                     ),
               ];
@@ -67,9 +68,7 @@ const StepPropertiesMenu = (
                       : customCommand?.description}
                   </p>
                 </button>
-                {builtInSubtype
-                  ? builtInSubtype?.fields
-                  : 'custom fields'}
+                {builtInSubtype ? builtInSubtype?.fields : 'custom fields'}
               </div>
             </TabbedMenu>
 
