@@ -1,4 +1,4 @@
-import { reusable } from '@circleci/circleci-config-sdk';
+import { parseCustomCommand } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import CommandSummary from '../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../components/containers/inspector/CommandInspector';
@@ -17,8 +17,10 @@ const CommandMapping: ComponentMapping<CustomCommand> = {
     steps: [],
   },
   parameters: componentParametersSubtypes.command,
-  transform: (values: any) =>
-    new reusable.CustomCommand(values.name, values.steps, values.parameters),
+  transform: ({ name, ...values }, definitions) => {
+    console.log(name, JSON.stringify(values, null, 2));
+    return parseCustomCommand(name, values, definitions.commands);
+  },
   store: {
     get: (state) => state.definitions.commands,
     add: (actions) => actions.defineCommand,

@@ -1,4 +1,10 @@
-import { executors, Job, reusable, WorkflowJob } from '@circleci/circleci-config-sdk';
+import {
+  executors,
+  Job,
+  parseExecutor,
+  reusable,
+  WorkflowJob,
+} from '@circleci/circleci-config-sdk';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
 import { executorSubtypes } from '../components/containers/inspector/subtypes/ExecutorSubtypes';
@@ -16,37 +22,18 @@ export type AnyExecutor =
   | executors.Executor;
 
 const transform = (values: any) => {
-  const subtypes: { [type: string]: () => AnyExecutor } = {
-    docker: () =>
-      new executors.DockerExecutor(
-        values.executor.image.image || 'cimg/base:stable',
-        values.executor.resource_class,
-        values.executor.parameters,
-      ),
-    machine: () =>
-      new executors.MachineExecutor(
-        values.executor.resource_class,
-        values.executor.image || 'cimg/base:latest',
-        values.executor.parameters,
-      ),
-    macos: () =>
-      new executors.MacOSExecutor(
-        values.executor.xcode,
-        values.executor.resource_class,
-        values.executor.parameters,
-      ),
-    windows: () =>
-      new executors.WindowsExecutor(
-        values.executor.image,
-        values.executor.resource_class,
-        values.executor.parameters,
-      ),
-  };
+  console.log(values);
 
-  return new reusable.ReusableExecutor(values.name, subtypes[values.type]());
+  return new reusable.ReusableExecutor(
+    values.name,
+    parseExecutor(values) as executors.Executor,
+  );
 };
 
-const ExecutorMapping: ComponentMapping<reusable.ReusableExecutor, WorkflowJob> = {
+const ExecutorMapping: ComponentMapping<
+  reusable.ReusableExecutor,
+  WorkflowJob
+> = {
   type: 'executors',
   name: {
     singular: 'Executor',
@@ -54,38 +41,38 @@ const ExecutorMapping: ComponentMapping<reusable.ReusableExecutor, WorkflowJob> 
   },
   defaults: {
     docker: {
-      name: 'docker',
-      executor: {
-        image: {
+      name: 'new-docker-executor',
+      docker: [
+        {
           image: 'cimg/base:stable',
+          parameters: {},
         },
-        parameters: {},
-      },
+      ],
       resource_class: 'medium',
     },
     machine: {
-      name: 'machine',
-      executor: {
+      name: 'new-machine-executor',
+      machine: {
         image: 'ubuntu-2004:202111-01',
         parameters: {},
       },
       resource_class: 'medium',
     },
     macos: {
-      name: 'macos',
-      executor: {
+      name: 'new-macos-executor',
+      macos: {
         xcode: '13.2.0',
         parameters: {},
       },
       resource_class: 'medium',
     },
     windows: {
-      name: 'windows_server',
-      executor: {
+      name: 'new-windows-executor',
+      machine: {
         image: 'windows-server-2019-vs2019:stable',
         parameters: {},
       },
-      resource_class: 'medium',
+      resource_class: 'windows.medium',
     },
   },
   parameters: componentParametersSubtypes.executor,

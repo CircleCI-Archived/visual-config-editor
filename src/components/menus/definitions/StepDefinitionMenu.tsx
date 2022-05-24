@@ -25,7 +25,7 @@ const StepPropertiesMenu = (
         <h1 className="ml-6 text-2xl py-2 font-bold">New Step</h1>
       </header>
       <Formik
-        initialValues={{ parameters: {} }}
+        initialValues={{}}
         enableReinitialize={true}
         onSubmit={(parameters) => {
           navigateBack({
@@ -33,12 +33,9 @@ const StepPropertiesMenu = (
             apply: (values: any) => {
               values.steps = [
                 ...values.steps,
-                builtInSubtype
-                  ? builtInSubtype.generate(parameters)
-                  : new reusable.ReusableCommand(
-                      props.subtype as reusable.CustomCommand,
-                      values.parameters,
-                    ),
+                {
+                  [props.subtype as string]: parameters,
+                },
               ];
 
               return values;

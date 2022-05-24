@@ -1,4 +1,4 @@
-import { Job, WorkflowJob } from '@circleci/circleci-config-sdk';
+import { Job, parseJob, WorkflowJob } from '@circleci/circleci-config-sdk';
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
@@ -17,14 +17,12 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
     steps: [],
   },
   parameters: componentParametersSubtypes.job,
-  transform: (values, definitions) => {
-    const executor = definitions.executors.find(
-      (executor) => executor.name === values.executor?.name,
-    );
-
-    if (executor) {
-      return new Job(values.name, executor, values.steps);
-    }
+  /**
+   TODO: Implement this to pass transform method to 
+   dependsOn: (definitions) => [definitions.commands, definitions.executors],
+   */
+  transform: ({ name, ...values }, definitions) => {
+    return parseJob(name, values, definitions.commands, definitions.executors);
   },
   store: {
     get: (state) => {
@@ -47,9 +45,9 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
     inspector: JobInspector,
   },
   docsInfo: {
-    description: "Collection of steps to run your config",
-    link: "https://circleci.com/docs/2.0/concepts/#jobs",
-  }
+    description: 'Collection of steps to run your config',
+    link: 'https://circleci.com/docs/2.0/concepts/#jobs',
+  },
 };
 
 export default JobMapping;

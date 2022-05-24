@@ -22,7 +22,7 @@ const executorSubtypes: ExecutorSubTypes = {
       '2xlarge+',
     ],
     fields: (
-      <InspectorProperty label="Image" name="executor.image.image" required />
+      <InspectorProperty label="Image" name="docker[0].image" required />
     ),
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-docker',
     description: 'Steps run in container with provided image',
@@ -31,7 +31,7 @@ const executorSubtypes: ExecutorSubTypes = {
     text: 'Machine',
     component: executors.MachineExecutor,
     resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
-    fields: <InspectorProperty label="Image" name="executor.image" required />,
+    fields: <InspectorProperty label="Image" name="machine.image" required />,
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-machine',
     description: 'Steps run on Linux Virtual Machine',
   },
@@ -39,7 +39,7 @@ const executorSubtypes: ExecutorSubTypes = {
     text: 'MacOS',
     component: executors.MacOSExecutor,
     resourceClasses: ['medium', 'large'],
-    fields: <InspectorProperty label="Xcode" name="executor.xcode" required />,
+    fields: <InspectorProperty label="Xcode" name="macos.xcode" required />,
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-macos',
     description:
       'Steps run on macOS Virtual Machine with specific Xcode version',
@@ -47,8 +47,8 @@ const executorSubtypes: ExecutorSubTypes = {
   windows: {
     text: 'Windows',
     component: executors.WindowsExecutor,
-    resourceClasses: ['medium', 'large', 'xlarge', '2xlarge'],
-    fields: <InspectorProperty label="Image" name="executor.image" required />,
+    resourceClasses: ['windows.medium', 'windows.large', 'windows.xlarge', 'windows.2xlarge'],
+    fields: <InspectorProperty label="Image" name="machine.image" required />,
     docsLink:
       'https://circleci.com/docs/2.0/executor-types/#using-the-windows-executor',
     description: 'Steps run on Windows Virtual Machine',

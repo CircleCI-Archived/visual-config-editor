@@ -9,7 +9,11 @@ const ExecutorInspector = (
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
-      <InspectorProperty label="Description" name="executor.parameters.description" as="textarea" />
+      <InspectorProperty
+        label="Description"
+        name={`${props.values.type}.parameters.description`}
+        as="textarea"
+      />
       <InspectorProperty
         label="Resource Class"
         name="resource_class"
@@ -25,8 +29,14 @@ const ExecutorInspector = (
         )}
       </InspectorProperty>
       {executorSubtypes[props.values.type]?.fields}
-      <InspectorProperty label="Shell" name="executor.parameters.shell" />
-      <InspectorProperty label="Working Directory" name="executor.parameters.working_directory" />
+      <InspectorProperty
+        label="Shell"
+        name={`${props.values.type}.parameters.shell`}
+      />
+      <InspectorProperty
+        label="Working Directory"
+        name={`${props.values.type}.parameters.working_directory`}
+      />
     </div>
   );
 };

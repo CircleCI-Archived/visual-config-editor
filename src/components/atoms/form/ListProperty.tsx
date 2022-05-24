@@ -14,6 +14,7 @@ export type ListPropertyProps = InspectorFieldProps & {
   emptyText?: string;
 };
 
+// TODO: Refactor
 const ListProperty = ({
   label,
   values,
