@@ -1,4 +1,4 @@
-import { FieldArray, useField } from 'formik';
+import { ArrayHelpers, FieldArray, useField } from 'formik';
 import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
@@ -12,6 +12,46 @@ export type ListPropertyProps = InspectorFieldProps & {
   description?: string;
   expanded?: boolean;
   emptyText?: string;
+};
+
+export type ListItemProps = {
+  index: number;
+  name: string;
+  arrayHelper: ArrayHelpers;
+};
+
+const ListItem = ({ index, name, arrayHelper }: ListItemProps) => {
+  return (
+    <Draggable key={index} draggableId={`${index}`} index={index}>
+      {(provided, snapshot) => (
+        <div
+          className="w-full mb-2 p-1 px-3 text-sm 
+bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
+          <button
+            className="flex-1 cursor-pointer text-left text-circle-black leading-6"
+            type="button"
+          >
+            {name}
+          </button>
+          <div className="ml-auto mr-3" {...provided.dragHandleProps}>
+            <DragListIcon className="w-4 h-6 py-1" color="#AAAAAA" />
+          </div>
+          <button
+            onClick={() => {
+              arrayHelper.remove(index);
+            }}
+            type="button"
+            className="my-auto"
+          >
+            <DeleteItemIcon className="w-3 h-3" color="#AAAAAA" />
+          </button>
+        </div>
+      )}
+    </Draggable>
+  );
 };
 
 // TODO: Refactor
@@ -52,48 +92,11 @@ const ListProperty = ({
                     className="p-2 pr-0"
                   >
                     {values?.map((cmd: any, index: number) => (
-                      <Draggable
-                        key={index}
-                        draggableId={`${index}`}
+                      <ListItem
+                        name={cmd.name}
                         index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            className="w-full mb-2 p-1 px-3 text-sm 
-                      bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                          >
-                            <button
-                              className="flex-1 cursor-pointer text-left text-circle-black leading-6"
-                              type="button"
-                            >
-                              {cmd.name}
-                            </button>
-                            <div
-                              className="ml-auto mr-3"
-                              {...provided.dragHandleProps}
-                            >
-                              <DragListIcon
-                                className="w-4 h-6 py-1"
-                                color="#AAAAAA"
-                              />
-                            </div>
-                            <button
-                              onClick={() => {
-                                arrayHelper.remove(index);
-                              }}
-                              type="button"
-                              className="my-auto"
-                            >
-                              <DeleteItemIcon
-                                className="w-3 h-3"
-                                color="#AAAAAA"
-                              />
-                            </button>
-                          </div>
-                        )}
-                      </Draggable>
+                        arrayHelper={arrayHelper}
+                      />
                     ))}
                     {provided.placeholder}
                   </div>

@@ -1,4 +1,4 @@
-import { parameters } from '@circleci/circleci-config-sdk';
+import { parseParameter } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
@@ -30,13 +30,12 @@ const ParameterMapping: ComponentMapping<
       name: 'new_enum_parameter',
     },
   },
-  transform: (values: any) =>
-    new parameters.CustomParameter(
-      values.name,
-      values.type,
-      values.defaultValue,
-      values.description,
-    ),
+  transform: ({ name, ...values }) => {
+    return parseParameter(
+      values,
+      name,
+    ) as CustomParameter<PipelineParameterLiteral>;
+  },
   store: {
     get: (state) => state.definitions.parameters,
     add: (actions) => actions.defineParameter,

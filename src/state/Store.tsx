@@ -56,7 +56,7 @@ export interface NavigationComponent {
 
 export interface NavigationStop {
   component: NavigationComponent;
-  props: any;
+  props: { [key: string]: any };
 }
 
 export interface StoreModel {
@@ -100,7 +100,7 @@ export interface UpdateType<T> {
 }
 
 export interface StoreActions {
-  persistProps: Action<StoreModel, unknown>;
+  persistProps: Action<StoreModel, { [key: string]: object }>;
   setDragging: Action<StoreModel, DataModel | undefined>;
   setConnecting: Action<
     StoreModel,
@@ -141,10 +141,9 @@ export interface StoreActions {
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
 
-  /** @todo implement job removal */
+  /** TODO: implement job removal */
   undefineJob: Action<StoreModel, Job>;
 
-  /** @todo implement commands */
   defineCommand: Action<StoreModel, CustomCommand>;
   updateCommand: Action<StoreModel, UpdateType<CustomCommand>>;
   undefineCommand: Action<StoreModel, CustomCommand>;
@@ -153,7 +152,6 @@ export interface StoreActions {
   updateExecutor: Action<StoreModel, UpdateType<reusable.ReusableExecutor>>;
   undefineExecutor: Action<StoreModel, reusable.ReusableExecutor>;
 
-  /** @todo implement parameters */
   defineParameter: Action<
     StoreModel,
     CustomParameter<PipelineParameterLiteral>
@@ -322,12 +320,10 @@ const Actions: StoreActions = {
   defineExecutor: action((state, payload) => {
     state.definitions.executors = state.definitions.executors?.concat(payload);
   }),
-  /** @todo fix updating executors since reusable executors have been removed.*/
   updateExecutor: action((state, payload) => {
-    if (state.definitions.executors) {
-      // const index = state.definitions.executors.findIndex((executor) => executor.name === payload.name)
-      // state.definitions.executors[index] = payload;
-    }
+    state.definitions.executors = state.definitions.executors?.map((executor) =>
+      executor.name === payload.old.name ? payload.new : executor,
+    );
   }),
   undefineExecutor: action((state, payload) => {
     state.definitions.executors?.filter(
@@ -370,6 +366,7 @@ const Actions: StoreActions = {
     });
 
     const defs = state.definitions;
+    // This is a merged config preview. TODO: Refactor merging process.
     const config = new Config(
       false,
       payload?.jobs ? [...defs.jobs, ...payload.jobs] : defs.jobs,

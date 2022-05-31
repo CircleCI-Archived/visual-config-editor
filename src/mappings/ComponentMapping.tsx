@@ -184,7 +184,7 @@ export default interface GenerableMapping<
     inspector: (
       props: FormikValues & {
         definitions: DefinitionModel;
-        subtype?: any;
+        subtype?: string;
       },
       // data: ConfigDataType;
     ) => JSX.Element;

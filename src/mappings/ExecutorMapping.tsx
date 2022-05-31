@@ -21,15 +21,6 @@ export type AnyExecutor =
   | executors.WindowsExecutor
   | executors.Executor;
 
-const transform = (values: any) => {
-  console.log(values);
-
-  return new reusable.ReusableExecutor(
-    values.name,
-    parseExecutor(values) as executors.Executor,
-  );
-};
-
 const ExecutorMapping: ComponentMapping<
   reusable.ReusableExecutor,
   WorkflowJob
@@ -76,7 +67,12 @@ const ExecutorMapping: ComponentMapping<
     },
   },
   parameters: componentParametersSubtypes.executor,
-  transform: transform,
+  transform: ({ name, ...values }) => {
+    return new reusable.ReusableExecutor(
+      name,
+      parseExecutor(values) as executors.Executor,
+    );
+  },
   store: {
     get: (state) => state.definitions.executors,
     add: (actions) => actions.defineExecutor,
@@ -94,10 +90,11 @@ const ExecutorMapping: ComponentMapping<
   },
   subtypes: {
     component: ExecutorTypePageNav,
-    getSubtype: (reusableExec: reusable.ReusableExecutor) => {
-      return Object.keys(executorSubtypes).find(
-        (subtype) =>
-          reusableExec.executor instanceof executorSubtypes[subtype].component,
+    getSubtype: (reusableExec) => {
+      const reusableExecsKeys = Object.keys(reusableExec);
+
+      return Object.keys(executorSubtypes).find((subtype) =>
+        reusableExecsKeys.includes(subtype),
       );
     },
     definitions: executorSubtypes,

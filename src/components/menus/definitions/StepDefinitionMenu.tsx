@@ -51,7 +51,7 @@ const StepPropertiesMenu = (
                   className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
                   type="button"
                   onClick={() => {
-                    props.selectSubtype();
+                    props.onSelectSubtype();
                   }}
                 >
                   <p className="font-bold">

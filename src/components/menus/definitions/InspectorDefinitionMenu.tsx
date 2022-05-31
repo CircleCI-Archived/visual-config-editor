@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import GenerableMapping from '../../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
@@ -7,9 +8,10 @@ import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
 type InspectorDefinitionProps = DataModel & {
-  values: any;
+  values: Record<string, object>;
   editing?: boolean;
   passBackKey?: string;
+  activeTab?: number;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -35,9 +37,17 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     }
   };
 
+  const getValues = () => {
+    if (props.values) {
+      return props.values;
+    }
+
+    return props.subtype ? dataMapping?.defaults[props.subtype] : dataMapping?.defaults;
+  }
+
   const tabs = ['PROPERTIES'];
-  const subtype =
-    props.subtype || dataMapping?.subtypes?.getSubtype(props.values);
+  const unpacked = getValues();
+  const subtype = props.subtype || dataMapping?.subtypes?.getSubtype(unpacked);
 
   if (dataMapping?.parameters) {
     tabs.push('PARAMETERS');
@@ -58,25 +68,25 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         <Formik
           initialValues={{
             type: props.subtype,
-            ...(props.values ||
-              (props.subtype
-                ? dataMapping.defaults[props.subtype]
-                : dataMapping.defaults)),
+            ...unpacked,
           }}
           validateOnBlur
           validate={(values) => {
-            const newDefinition = dataMapping.transform(values, definitions);
-
-            if (newDefinition) {
-              generateConfig({ [dataMapping.type]: [newDefinition] });
-            }
+            // TODO: handle error handling
+            // const newDefinition = dataMapping.transform(values, definitions);
+            // if (newDefinition) {
+            //   generateConfig({ [dataMapping.type]: [newDefinition] });
+            // }
           }}
           enableReinitialize
           onSubmit={(values) => {
             const newDefinition = dataMapping.transform(values, definitions);
+            const submitData = props.editing
+              ? { old: unpacked, new: newDefinition }
+              : newDefinition;
 
             if (!props.passBackKey) {
-              submitToStore(newDefinition);
+              submitToStore(submitData);
             }
 
             if (
@@ -104,7 +114,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu tabs={tabs} activeTab={props.values?.activeTab || 0}>
+              <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
@@ -124,7 +134,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                         className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
                         type="button"
                         onClick={() => {
-                          props.selectSubtype();
+                          props.onSelectSubtype();
                         }}
                       >
                         <p className="font-bold">
@@ -141,7 +151,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   {dataMapping.components.inspector({
                     ...formikProps,
                     definitions,
-                    subtype: props.subtype,
+                    subtype: subtype,
                   })}
                 </div>
                 {dataMapping.parameters ? (

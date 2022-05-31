@@ -8,11 +8,37 @@ import StepPropertiesMenu from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import SubTypeMenuNav from '../../menus/SubTypeMenu';
 
+const NewButton = (
+  props: FormikValues & {
+    definitions: DefinitionModel;
+  },
+) => {
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  return (
+    <button
+      type="button"
+      onClick={() => {
+
+        navigateTo({
+          component: SubTypeMenuNav,
+          props: {
+            typePage: StepTypePageNav,
+            menuPage: StepPropertiesMenu,
+            passThrough: { dataType: CommandMapping },
+          },
+          values: props.values,
+        });
+      }}
+      className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+    >
+      New
+    </button>
+  );
+};
+
 const CommandInspector = (
   props: FormikValues & { definitions: DefinitionModel },
 ) => {
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
   return (
     <div>
       <InspectorProperty
@@ -29,26 +55,8 @@ const CommandInspector = (
         expanded
         required
         emptyText="No steps defined yet. At least one step is required."
-        titleExpanded={
-          <button
-            type="button"
-            onClick={() => {
-              navigateTo({
-                component: SubTypeMenuNav,
-                props: {
-                  typePage: StepTypePageNav,
-                  menuPage: StepPropertiesMenu,
-                  passThrough: { dataType: CommandMapping },
-                },
-                values: props.values,
-              });
-            }}
-            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-          >
-            New
-          </button>
-        }
-      ></ListProperty>
+        titleExpanded={<NewButton values={props.values} definitions={props.definitions} />}
+      />
     </div>
   );
 };

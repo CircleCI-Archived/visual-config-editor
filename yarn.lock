@@ -1081,10 +1081,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@circleci/circleci-config-sdk@0.5.0-alpha.14":
-  version "0.5.0-alpha.14"
-  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.5.0-alpha.14.tgz#fa91961fd804b65e97c0928ca781b05b57ecc17a"
-  integrity sha512-N88pfNylhrcxtytihrx+N67Jq2R3lRqN2Dza8zRkvaTvswPBHWENr4gqhbcyGsYUBOhHY4uPOUj8gAVl55cclQ==
+"@circleci/circleci-config-sdk@0.6.0-alpha.2":
+  version "0.6.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.6.0-alpha.2.tgz#deb98f2e2e7a0d97b703c4c380dc4a3343d16523"
+  integrity sha512-DqT9/cYpLnz+HoIoQw/xK+1siBGN4DZ+MHPj7f2VhKl20ogvPt8b9Prb7+qDdX5nz2gAA9ADGnyNBXQWen018Q==
   dependencies:
     ajv "^8.8.2"
     ajv-merge-patch "^5.0.1"

@@ -4,8 +4,17 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { executorSubtypes } from './subtypes/ExecutorSubtypes';
 
 const ExecutorInspector = (
-  props: FormikValues & { definitions: DefinitionModel },
+  props: FormikValues & {
+    definitions: DefinitionModel;
+    subtype?: string;
+  },
 ) => {
+  if (!props.subtype) {
+    return <div>
+      Something went wrong!
+    </div>;
+  }
+
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
@@ -20,7 +29,7 @@ const ExecutorInspector = (
         required
         as="select"
       >
-        {executorSubtypes[props.values.type]?.resourceClasses?.map(
+        {executorSubtypes[props.subtype]?.resourceClasses?.map(
           (resourceClass) => (
             <option value={resourceClass} key={resourceClass}>
               {resourceClass}
@@ -28,7 +37,7 @@ const ExecutorInspector = (
           ),
         )}
       </InspectorProperty>
-      {executorSubtypes[props.values.type]?.fields}
+      {executorSubtypes[props.subtype]?.fields}
       <InspectorProperty
         label="Shell"
         name={`${props.values.type}.parameters.shell`}

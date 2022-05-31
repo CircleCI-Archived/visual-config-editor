@@ -18,7 +18,6 @@ const CommandMapping: ComponentMapping<CustomCommand> = {
   },
   parameters: componentParametersSubtypes.command,
   transform: ({ name, ...values }, definitions) => {
-    console.log(name, JSON.stringify(values, null, 2));
     return parseCustomCommand(name, values, definitions.commands);
   },
   store: {
