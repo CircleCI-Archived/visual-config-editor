@@ -14,7 +14,7 @@ export type SubTypeSelectPageProps<T> = {
 };
 export type SubTypeMenuPageProps<T> = {
   subtype: SubTypeReference<T>;
-  onSelectSubtype: () => void;
+  selectSubtype: () => void;
 };
 export interface SelectedSubType<T> {
   current?: SubTypeReference<T>;
@@ -42,7 +42,7 @@ const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
       {subtype?.current ? (
         <SubTypeMenuPage
           subtype={subtype.current}
-          onSelectSubtype={navBack}
+          selectSubtype={navBack}
           {...props.menuProps}
         />
       ) : (

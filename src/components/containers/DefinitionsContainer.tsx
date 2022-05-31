@@ -42,12 +42,12 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                       props: {
                         typePage: props.type.subtypes?.component,
                         menuPage: InspectorDefinitionMenu,
-                        menuProps: { dataType: props.type, flatten: true },
+                        menuProps: { dataType: props.type },
                       },
                     }
                   : {
                       component: InspectorDefinitionMenuNav,
-                      props: { dataType: props.type, flatten: true },
+                      props: { dataType: props.type },
                     },
               )
             }

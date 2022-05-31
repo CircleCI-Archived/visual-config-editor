@@ -1,5 +1,4 @@
 import { Form, Formik } from 'formik';
-import GenerableMapping from '../../../mappings/ComponentMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
@@ -42,8 +41,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
       return props.values;
     }
 
-    return props.subtype ? dataMapping?.defaults[props.subtype] : dataMapping?.defaults;
-  }
+    return props.subtype
+      ? dataMapping?.defaults[props.subtype]
+      : dataMapping?.defaults;
+  };
 
   const tabs = ['PROPERTIES'];
   const unpacked = getValues();
@@ -134,7 +135,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                         className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
                         type="button"
                         onClick={() => {
-                          props.onSelectSubtype();
+                          props.selectSubtype();
                         }}
                       >
                         <p className="font-bold">

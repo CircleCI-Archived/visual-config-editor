@@ -54,7 +54,6 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
   );
 };
 
-// TODO: Refactor
 const ListProperty = ({
   label,
   values,
@@ -63,6 +62,7 @@ const ListProperty = ({
   ...props
 }: InspectorFieldProps & ListPropertyProps) => {
   const [field] = useField(props);
+
   return (
     <CollapsibleList
       title={label}
@@ -91,9 +91,9 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {values?.map((cmd: any, index: number) => (
+                    {Object.keys(values[0])?.map((cmd: any, index: number) => (
                       <ListItem
-                        name={cmd.name}
+                        name={cmd}
                         index={index}
                         arrayHelper={arrayHelper}
                       />
