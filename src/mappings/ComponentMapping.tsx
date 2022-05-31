@@ -1,8 +1,8 @@
 import {
-  commands,
-  executor,
+  executors,
   Job,
   parameters,
+  reusable,
 } from '@circleci/circleci-config-sdk';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
@@ -31,15 +31,15 @@ export interface DataMapping {
  * Registry of circleci-config-sdk component to data maps.
  */
 
-// thinking of adding a docs link to Executor and description as a key to each Mapping
+// Maybe add docs link to Executor and description as a key to each Mapping
 const dataMappings: DataMapping[] = [
   {
     type: 'executors',
     component: [
-      executor.DockerExecutor,
-      executor.MacOSExecutor,
-      executor.MachineExecutor,
-      executor.WindowsExecutor,
+      executors.DockerExecutor,
+      executors.MacOSExecutor,
+      executors.MachineExecutor,
+      executors.WindowsExecutor,
     ],
     mapping: ExecutorMapping,
   },
@@ -50,7 +50,7 @@ const dataMappings: DataMapping[] = [
   },
   {
     type: 'commands',
-    component: [commands.reusable.CustomCommand],
+    component: [reusable.CustomCommand],
     mapping: CommandMapping,
   },
   {
@@ -87,8 +87,7 @@ const componentToType = (data: any): GenerableMapping | undefined => {
 
 export { componentToType, dataMappings };
 
-type storeType = typeof Store;
-
+type StoreType = typeof Store;
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 export interface SubTypeMapping {
@@ -140,15 +139,15 @@ export default interface GenerableMapping<
   ) => ConfigDataType | undefined;
   store: {
     /** Returns easy-peasy state hook for component array */
-    get: (state: State<storeType>) => ConfigDataType[] | undefined;
+    get: (state: State<StoreType>) => ConfigDataType[] | undefined;
     /** Returns easy-peasy add action hook for component array */
-    add: (state: Actions<storeType>) => ActionCreator<ConfigDataType>;
+    add: (state: Actions<StoreType>) => ActionCreator<ConfigDataType>;
     /** Returns easy-peasy update action hook for data type */
     update: (
-      state: Actions<storeType>,
+      state: Actions<StoreType>,
     ) => (data: UpdateType<ConfigDataType>) => void;
     /** Returns easy-peasy removal action hook for data type */
-    remove: (state: Actions<storeType>) => (data: ConfigDataType) => void;
+    remove: (state: Actions<StoreType>) => (data: ConfigDataType) => void;
   };
   /**
    * Name of target that a definition can be tragged to.
@@ -185,7 +184,7 @@ export default interface GenerableMapping<
     inspector: (
       props: FormikValues & {
         definitions: DefinitionModel;
-        subtype?: any;
+        subtype?: string;
       },
       // data: ConfigDataType;
     ) => JSX.Element;

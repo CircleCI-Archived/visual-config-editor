@@ -1,21 +1,22 @@
-import { commands } from '@circleci/circleci-config-sdk';
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
+import { reusable } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
 import { useStoreActions } from '../../../state/Hooks';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
-import TabbedMenu from '../TabbedMenu';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
+import TabbedMenu from '../TabbedMenu';
 
 const StepPropertiesMenu = (
-  props: SubTypeMenuPageProps<string | CustomCommand>,
+  props: SubTypeMenuPageProps<string | reusable.CustomCommand>,
 ) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const builtIn = typeof props.subtype === 'string';
   const builtInSubtype = builtIn
     ? commandSubtypes[props.subtype as string]
     : undefined;
-  const customCommand = !builtIn ? (props.subtype as CustomCommand) : undefined;
+  const customCommand = !builtIn
+    ? (props.subtype as reusable.CustomCommand)
+    : undefined;
 
   return (
     <div className="h-full flex flex-col">
@@ -24,7 +25,7 @@ const StepPropertiesMenu = (
         <h1 className="ml-6 text-2xl py-2 font-bold">New Step</h1>
       </header>
       <Formik
-        initialValues={{ parameters: {} }}
+        initialValues={{}}
         enableReinitialize={true}
         onSubmit={(parameters) => {
           navigateBack({
@@ -32,12 +33,9 @@ const StepPropertiesMenu = (
             apply: (values: any) => {
               values.steps = [
                 ...values.steps,
-                builtInSubtype
-                  ? builtInSubtype.generate(parameters)
-                  : new commands.reusable.ReusableCommand(
-                      props.subtype as CustomCommand,
-                      values.parameters,
-                    ),
+                {
+                  [props.subtype as string]: parameters,
+                },
               ];
 
               return values;
@@ -53,7 +51,7 @@ const StepPropertiesMenu = (
                   className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
                   type="button"
                   onClick={() => {
-                    props.selectSubtype();
+                    props.onSelectSubtype();
                   }}
                 >
                   <p className="font-bold">
@@ -67,9 +65,7 @@ const StepPropertiesMenu = (
                       : customCommand?.description}
                   </p>
                 </button>
-                {builtInSubtype
-                  ? builtInSubtype?.fields
-                  : 'custom fields'}
+                {builtInSubtype ? builtInSubtype?.fields : 'custom fields'}
               </div>
             </TabbedMenu>
 
