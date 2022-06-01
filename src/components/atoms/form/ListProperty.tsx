@@ -91,7 +91,7 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {Object.keys(values[0])?.map((cmd: any, index: number) => (
+                    {Object.keys(values[0]).map((cmd: any, index: number) => (
                       <ListItem
                         name={cmd}
                         index={index}
