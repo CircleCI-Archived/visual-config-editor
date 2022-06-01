@@ -1,22 +1,19 @@
-import { commands } from '@circleci/circleci-config-sdk';
-import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Command';
 import { Field } from 'formik';
 import { ReactElement } from 'react';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 
 export interface CommandSubTypes {
   [command: string]: {
-    text: string;
+    name: string;
     description?: string;
     summary?: (command: any) => ReactElement;
     fields: ReactElement;
-    generate: (values: any) => Command;
   };
 }
 
 const commandSubtypes: CommandSubTypes = {
   run: {
-    text: 'Run a command',
+    name: 'Run a command',
     description: 'Used for invoking all command-line programs',
     summary: (command) => (
       <p className="inline">{command.parameters.command}</p>
@@ -51,17 +48,15 @@ const commandSubtypes: CommandSubTypes = {
         </InspectorProperty>
       </div>
     ),
-    generate: (values) => new commands.Run({ ...values.parameters }),
   },
   checkout: {
-    text: 'Checkout',
+    name: 'Checkout',
     description:
       'A special step used to check out source code to the configured path',
     fields: <InspectorProperty label="Path" name="parameters.path" />,
-    generate: (values) => new commands.Checkout({ ...values.parameters }),
   },
   persist_to_workspace: {
-    text: 'Persist To Workspace',
+    name: 'Persist To Workspace',
     description:
       'Persist a temporary file to be used by another job in the workflow',
     fields: (
@@ -70,21 +65,14 @@ const commandSubtypes: CommandSubTypes = {
         <InspectorProperty label="Path" name="parameters.path" required />
       </div>
     ),
-    generate: (values) =>
-      new commands.workspace.Persist({
-        root: values.parameters.root,
-        paths: [values.parameters.path],
-      }),
   },
   attach_workspace: {
-    text: 'Attach Workspace',
+    name: 'Attach Workspace',
     description: 'Attach the workflow’s workspace to the current container',
     fields: <InspectorProperty label="At" name="parameters.at" required />,
-    generate: (values) =>
-      new commands.workspace.Attach({ ...values.parameters }),
   },
   store_artifacts: {
-    text: 'Store Artifacts',
+    name: 'Store Artifacts',
     description: 'Step to store artifacts such as logs and binaries',
     fields: (
       <div>
@@ -102,17 +90,14 @@ const commandSubtypes: CommandSubTypes = {
         ></Field>
       </div>
     ),
-    generate: (values) => new commands.StoreArtifacts({ ...values.parameters }),
   },
   store_test_results: {
-    text: 'Store Test Results',
+    name: 'Store Test Results',
     description: 'Upload and store test results for a build',
     fields: <InspectorProperty label="Path" name="parameters.path" required />,
-    generate: (values) =>
-      new commands.StoreTestResults({ ...values.parameters }),
   },
   save_cache: {
-    text: 'Save Cache',
+    name: 'Save Cache',
     description:
       'Generates and stores a cache of a file or directory in object storage',
     fields: (
@@ -127,12 +112,6 @@ const commandSubtypes: CommandSubTypes = {
         </InspectorProperty>
       </div>
     ),
-    generate: (values) =>
-      new commands.cache.Save({
-        paths: [values.parameters.path],
-        key: values.parameters.key,
-        when: values.parameters.when,
-      }),
   },
 };
 

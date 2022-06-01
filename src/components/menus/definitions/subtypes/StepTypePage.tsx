@@ -27,7 +27,7 @@ const StepTypePage = (props: SubTypeSelectPageProps<string | CustomCommand>) => 
                 props.setSubtype(subtype);
               }}
             >
-              <p className="font-bold">{commandSubtypes[subtype].text}</p>
+              <p className="font-bold">{commandSubtypes[subtype].name}</p>
               <p className="text-sm mt-1 leading-4 text-circle-gray-500">
                 {commandSubtypes[subtype].description}
               </p>

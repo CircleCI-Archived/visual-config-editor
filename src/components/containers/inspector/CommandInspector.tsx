@@ -18,7 +18,6 @@ const NewButton = (
     <button
       type="button"
       onClick={() => {
-
         navigateTo({
           component: SubTypeMenuNav,
           props: {

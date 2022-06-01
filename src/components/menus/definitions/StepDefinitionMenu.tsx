@@ -25,16 +25,19 @@ const StepPropertiesMenu = (
         <h1 className="ml-6 text-2xl py-2 font-bold">New Step</h1>
       </header>
       <Formik
-        initialValues={{}}
+        initialValues={{ parameters: undefined }}
         enableReinitialize={true}
-        onSubmit={(parameters) => {
+        onSubmit={(step) => {
+
           navigateBack({
             distance: 1,
             apply: (values: any) => {
+              const name = builtIn ? props.subtype: customCommand?.name;
+
               values.steps = [
                 ...values.steps,
                 {
-                  [props.subtype as string]: parameters,
+                  [name as string]: step.parameters,
                 },
               ];
 
@@ -51,12 +54,12 @@ const StepPropertiesMenu = (
                   className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
                   type="button"
                   onClick={() => {
-                    props.onSelectSubtype();
+                    props.selectSubtype();
                   }}
                 >
                   <p className="font-bold">
                     {builtInSubtype
-                      ? builtInSubtype?.text
+                      ? builtInSubtype?.name
                       : customCommand?.name}
                   </p>
                   <p className="text-sm mt-1 leading-4 text-circle-gray-500">
@@ -82,9 +85,5 @@ const StepPropertiesMenu = (
     </div>
   );
 };
-// const StepPropertiesMenuNav: NavigationComponent = {
-//   Component: StepPropertiesMenu,
-//   Label: () => <p>New Step</p>,
-// };
 
 export default StepPropertiesMenu;
