@@ -2,8 +2,9 @@ import {
   Config,
   Job,
   parameters,
+  parseConfig,
   reusable,
-  Workflow,
+  Workflow
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -16,7 +17,7 @@ import {
   isNode,
   Node,
   SetConnectionId,
-  XYPosition,
+  XYPosition
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
@@ -165,6 +166,7 @@ export interface StoreActions {
     CustomParameter<PipelineParameterLiteral>
   >;
 
+  loadConfig: Action<StoreModel, string>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
   error: Action<StoreModel, any>;
 }
@@ -356,6 +358,19 @@ const Actions: StoreActions = {
     console.error('An action was not found! ', payload);
   }),
 
+  loadConfig: action((state, payload) => {
+    const config = parseConfig(payload);
+
+    state.definitions = {
+      workflows: config.workflows,
+      jobs: config.jobs,
+      executors: config.executors || [],
+      parameters: config.parameters?.parameters || [],
+      commands: config.commands || [],
+    };
+
+    state.config = config.stringify();
+  }),
   generateConfig: action((state, payload) => {
     const workflows = state.workflows.map((flow) => {
       const jobs = flow.elements

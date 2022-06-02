@@ -23,6 +23,7 @@ const WorkflowsPane = () => {
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
       />
+      
     </div>
   );
 };
