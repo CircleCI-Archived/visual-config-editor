@@ -85,15 +85,16 @@ const ListProperty = ({
               }}
             >
               <Droppable droppableId="droppable">
-                {(provided, snapshot) => (
+                {(provided) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {Object.keys(values[0]).map((cmd: any, index: number) => (
+                    {values.map((cmd: any, index: number) => (
                       <ListItem
-                        name={cmd}
+                        name={Object.keys(cmd)[0]}
+                        key={index}
                         index={index}
                         arrayHelper={arrayHelper}
                       />
