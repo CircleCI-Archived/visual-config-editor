@@ -1844,10 +1844,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.32.tgz#51d59d7a90ef2d0ae961791e0900cad2393a0149"
   integrity sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==
 
-"@types/node@^16.10.1":
-  version "16.11.34"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.34.tgz#520224e4be4448c279ecad09639ab460cc441a50"
-  integrity sha512-UrWGDyLAlQ2Z8bNOGWTsqbP9ZcBeTYBVuTRNxXTztBy5KhWUFI3BaeDWoCP/CzV/EVGgO1NTYzv9ZytBI9GAEw==
+"@types/node@^16.11.35":
+  version "16.11.38"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.38.tgz#be0edd097b23eace6c471c525a74b3f98803017f"
+  integrity sha512-hjO/0K140An3GWDw2HJfq7gko3wWeznbjXgg+rzPdVzhe198hp4x2i1dgveAOEiFKd8sOilAxzoSJiVv5P/CUg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -12149,10 +12149,10 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yaml@*:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.1.0.tgz#96ba62ff4dd990c0eb16bd96c6254a085d288b80"
-  integrity sha512-OuAINfTsoJrY5H7CBWnKZhX6nZciXBydrMtTHr1dC4nP40X5jyTIVlogZHxSlVZM8zSgXRfgZGsaHF4+pV+JRw==
+yaml@2.0.0-9:
+  version "2.0.0-9"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.0.0-9.tgz#0099f0645d1ffa686a2c5141b6da340f545d3634"
+  integrity sha512-Bf2KowHjyVkIIiGMt7+fbhmlvKOaE8DWuD07bnL4+FQ9sPmEl/5IzGpBpoxPqOaHuyasBjJhyXDcISpJWfhCGw==
 
 yaml@^1.10.0, yaml@^1.10.2:
   version "1.10.2"
