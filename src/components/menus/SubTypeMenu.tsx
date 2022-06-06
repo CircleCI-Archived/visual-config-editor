@@ -4,9 +4,9 @@ import { NavigationComponent } from '../../state/Store';
 
 export type SubTypeMenuProps<T> = {
   typePage: NavigationComponent;
-  typeProps?: unknown;
+  typeProps?: object;
   menuPage: React.FunctionComponent<SubTypeMenuPageProps<T>>;
-  menuProps?: unknown;
+  menuProps?: object;
 };
 export type SubTypeReference<T> = T;
 export type SubTypeSelectPageProps<T> = {

@@ -1,4 +1,4 @@
-import { parseParameter } from '@circleci/circleci-config-sdk';
+import { parsers } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
@@ -31,7 +31,7 @@ const ParameterMapping: ComponentMapping<
     },
   },
   transform: ({ name, ...values }) => {
-    return parseParameter(
+    return parsers.parseParameter(
       values,
       name,
     ) as CustomParameter<PipelineParameterLiteral>;
