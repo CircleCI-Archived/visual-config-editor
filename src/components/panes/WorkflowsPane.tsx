@@ -8,14 +8,20 @@ const WorkflowsPane = () => {
 
   return (
     <div className="flex flex-col flex-nowrap flex-1">
-      <div className="w-full bg-white h-16 p-5">
-        <select className="rounded border border-circle-gray-400 p-2">
-          {workflows.map((workflow, num) => (
-            <option value={workflow.id} key={workflow.id}  onChange={() => selectWorkflow(num)}>
-              {workflow.name}
-            </option>
-          ))}
-        </select>
+      <div className="flex w-full bg-white h-16">
+        <div className="flex-col my-auto mx-4">
+          <select className="rounded border border-circle-gray-400 p-2">
+            {workflows.map((workflow, num) => (
+              <option
+                value={workflow.id}
+                key={workflow.id}
+                onChange={() => selectWorkflow(num)}
+              >
+                {workflow.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <WorkflowPane
@@ -23,7 +29,6 @@ const WorkflowsPane = () => {
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
       />
-      
     </div>
   );
 };
