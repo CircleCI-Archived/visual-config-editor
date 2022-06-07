@@ -2,9 +2,9 @@ import {
   Config,
   Job,
   parameters,
-  parseConfig,
+  parsers,
   reusable,
-  Workflow
+  Workflow,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -17,7 +17,7 @@ import {
   isNode,
   Node,
   SetConnectionId,
-  XYPosition
+  XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
@@ -93,6 +93,7 @@ export interface StoreModel {
   };
   /** Currently selected workflow pane index */
   selectedWorkflow: number;
+  errorMessage?: string;
 }
 
 export interface UpdateType<T> {
@@ -359,17 +360,53 @@ const Actions: StoreActions = {
   }),
 
   loadConfig: action((state, payload) => {
-    const config = parseConfig(payload);
+    try {
+      const config = parsers.parseConfig(payload);
 
-    state.definitions = {
-      workflows: config.workflows,
-      jobs: config.jobs,
-      executors: config.executors || [],
-      parameters: config.parameters?.parameters || [],
-      commands: config.commands || [],
-    };
+      state.definitions = {
+        workflows: config.workflows,
+        jobs: config.jobs,
+        executors: config.executors || [],
+        parameters: config.parameters?.parameters || [],
+        commands: config.commands || [],
+      };
 
-    state.config = config.stringify();
+      config.workflows.forEach(({ name, jobs }) => {
+        state.workflows = state.workflows.concat({
+          name,
+          id: v4(),
+          elements: [],
+        });
+        const workflow = state.workflows[state.selectedWorkflow];
+        const nodeWidth = 120; // Make this dynamic
+        const elements: Node<any>[] = [];
+
+        jobs.forEach((workflowJob, i) => {
+          elements.push({
+            id: v4(),
+            data: { job: workflowJob.job, parameters: workflowJob.parameters },
+            connectable: true,
+            dragHandle: '.node',
+            type: 'jobs',
+            position: { x: i * nodeWidth, y: 0 },
+          });
+        });
+
+        workflow.elements = elements;
+      });
+
+      state.config = config.generate();
+    } catch (exception) {
+      if (!(exception instanceof Error)) {
+        state.errorMessage = `Caught unhandled exception:\n ${exception}`;
+        return;
+      }
+
+      let error = exception as Error;
+      state.errorMessage = error.message;
+
+      console.log(error);
+    }
   }),
   generateConfig: action((state, payload) => {
     const workflows = state.workflows.map((flow) => {
@@ -402,9 +439,9 @@ const Actions: StoreActions = {
     );
 
     if (payload) {
-      state.editingConfig = config.stringify();
+      state.editingConfig = config.generate();
     } else {
-      state.config = config.stringify();
+      state.config = config.generate();
       state.editingConfig = undefined;
     }
   }),
