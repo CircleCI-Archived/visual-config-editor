@@ -1,7 +1,7 @@
 import {
   executors,
   Job,
-  parseExecutor,
+  parsers,
   reusable,
   WorkflowJob,
 } from '@circleci/circleci-config-sdk';
@@ -36,7 +36,6 @@ const ExecutorMapping: ComponentMapping<
       docker: [
         {
           image: 'cimg/base:stable',
-          parameters: {},
         },
       ],
       resource_class: 'medium',
@@ -68,10 +67,7 @@ const ExecutorMapping: ComponentMapping<
   },
   parameters: componentParametersSubtypes.executor,
   transform: ({ name, ...values }) => {
-    return new reusable.ReusableExecutor(
-      name,
-      parseExecutor(values) as executors.Executor,
-    );
+    return parsers.parseReusableExecutor(name, values);
   },
   store: {
     get: (state) => state.definitions.executors,

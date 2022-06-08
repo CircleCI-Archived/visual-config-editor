@@ -1,3 +1,4 @@
+import { Job } from '@circleci/circleci-config-sdk';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import { useEffect, useState } from 'react';
 import ReactFlow, {

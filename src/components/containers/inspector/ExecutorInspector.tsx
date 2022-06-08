@@ -20,7 +20,7 @@ const ExecutorInspector = (
       <InspectorProperty label="Name" name="name" required />
       <InspectorProperty
         label="Description"
-        name={`${props.values.type}.parameters.description`}
+        name={`description`}
         as="textarea"
       />
       <InspectorProperty
@@ -40,11 +40,11 @@ const ExecutorInspector = (
       {executorSubtypes[props.subtype]?.fields}
       <InspectorProperty
         label="Shell"
-        name={`${props.values.type}.parameters.shell`}
+        name={`shell`}
       />
       <InspectorProperty
         label="Working Directory"
-        name={`${props.values.type}.parameters.working_directory`}
+        name={`working_directory`}
       />
     </div>
   );

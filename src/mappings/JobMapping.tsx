@@ -1,4 +1,4 @@
-import { Job, parseJob, WorkflowJob } from '@circleci/circleci-config-sdk';
+import { Job, parsers, WorkflowJob } from '@circleci/circleci-config-sdk';
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
@@ -22,7 +22,12 @@ const JobMapping: ComponentMapping<Job, WorkflowJob> = {
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
    */
   transform: ({ name, ...values }, definitions) => {
-    return parseJob(name, values, definitions.commands, definitions.executors);
+    return parsers.parseJob(
+      name,
+      values,
+      definitions.commands,
+      definitions.executors,
+    );
   },
   store: {
     get: (state) => {
