@@ -12,6 +12,7 @@ import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src
 import { Action, action } from 'easy-peasy';
 import { MutableRefObject } from 'react';
 import {
+  ElementId,
   Elements,
   FlowElement,
   isNode,
@@ -371,28 +372,55 @@ const Actions: StoreActions = {
         commands: config.commands || [],
       };
 
-      config.workflows.forEach(({ name, jobs }) => {
-        state.workflows = state.workflows.concat({
-          name,
-          id: v4(),
-          elements: [],
-        });
-        const workflow = state.workflows[state.selectedWorkflow];
-        const nodeWidth = 120; // Make this dynamic
-        const elements: Node<any>[] = [];
+      state.workflows = config.workflows.map(({ name, jobs }) => {
+        const nodeWidth = 200; // Make this dynamic
+        const elements: Elements = [];
+        const requireTable: Record<ElementId, ElementId[]> = {};
 
+        // Build workflow and prep requirement connection generation
         jobs.forEach((workflowJob, i) => {
+          const jobName = workflowJob.job.name;
+
           elements.push({
-            id: v4(),
+            id: jobName,
             data: { job: workflowJob.job, parameters: workflowJob.parameters },
             connectable: true,
             dragHandle: '.node',
             type: 'jobs',
             position: { x: i * nodeWidth, y: 0 },
           });
+
+          workflowJob.parameters.requires?.forEach((requiredJob) => {
+            if (!requireTable[requiredJob]) {
+              requireTable[requiredJob] = [jobName];
+              return;
+            }
+
+            requireTable[requiredJob].push(jobName);
+          });
         });
 
-        workflow.elements = elements;
+        // Generate connections
+        Object.entries(requireTable).forEach(([jobName, requiredBy]) => {
+          requiredBy.forEach((requiredId) => {
+            elements.push({
+              id: v4(),
+              source: jobName,
+              target: requiredId,
+              type: 'requires',
+              sourceHandle: `${jobName}_source`,
+              targetHandle: `${requiredId}_target`,
+              animated: false,
+              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+            });
+          });
+        });
+
+        return {
+          name,
+          id: v4(),
+          elements,
+        };
       });
 
       state.config = config.generate();
