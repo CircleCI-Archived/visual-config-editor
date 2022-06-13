@@ -385,8 +385,7 @@ const Actions: StoreActions = {
         });
 
         const elements: Elements = [];
-        const requireTable: Record<ElementId, ElementId[]> = {};
-        const columns: Array<ElementId[]> = [];
+        const columns: Array<number> = [];
         const solved: Record<ElementId, number> = {};
 
         const solve = (workflowJob: WorkflowJob) => {
@@ -412,26 +411,31 @@ const Actions: StoreActions = {
 
               greatestColumn = Math.max(greatestColumn, requiredJobColumn);
 
-              if (!requireTable[requiredJob]) {
-                requireTable[requiredJob] = [jobName];
-
-                return;
-              }
-
-              requireTable[requiredJob].push(jobName);
+              // add connection line
+              elements.push({
+                id: v4(),
+                source: requiredJob,
+                target: jobName,
+                type: 'requires',
+                sourceHandle: `${requiredJob}_source`,
+                targetHandle: `${jobName}_target`,
+                animated: false,
+                style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+              });
             });
 
             column = greatestColumn + 1;
           }
 
           if (columns.length > column) {
-            columns[column].push(jobName);
+            columns[column]++;
           } else {
-            columns.push([jobName]);
+            columns.push(1);
           }
 
-          const row = (columns[column]?.length || 0) * nodeHeight;
+          const row = columns[column] * nodeHeight;
 
+          // add job node
           elements.push({
             id: jobName,
             data: { job: workflowJob.job, parameters: workflowJob.parameters },
@@ -449,22 +453,6 @@ const Actions: StoreActions = {
         // Build workflow and prep requirement connection generation
         jobs.forEach((workflowJob) => {
           solve(workflowJob);
-        });
-
-        // Generate connections
-        Object.entries(requireTable).forEach(([jobName, requiredBy]) => {
-          requiredBy.forEach((requiredId) => {
-            elements.push({
-              id: v4(),
-              source: jobName,
-              target: requiredId,
-              type: 'requires',
-              sourceHandle: `${jobName}_source`,
-              targetHandle: `${requiredId}_target`,
-              animated: false,
-              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-            });
-          });
         });
 
         return {
