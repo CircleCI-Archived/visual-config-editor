@@ -438,7 +438,7 @@ const Actions: StoreActions = {
           // add job node
           elements.push({
             id: jobName,
-            data: { job: workflowJob.job, parameters: workflowJob.parameters },
+            data: workflowJob,
             connectable: true,
             dragHandle: '.node',
             type: 'jobs',
@@ -486,23 +486,24 @@ const Actions: StoreActions = {
 
     const defs = state.definitions;
     // This is a merged config preview. TODO: Refactor merging process.
+    const merge = (cur: any, update: any) =>
+      update ? [...cur, ...update] : cur;
+    const pipelineParameters: parameters.CustomParameter<PipelineParameterLiteral>[] =
+      merge(defs.parameters, payload?.parameters);
+    const parameterList =
+      pipelineParameters.length > 0
+        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
+            pipelineParameters,
+          )
+        : undefined;
+
     const config = new Config(
       false,
-      payload?.jobs ? [...defs.jobs, ...payload.jobs] : defs.jobs,
+      merge(defs.jobs, payload?.jobs),
       workflows,
-      payload?.executors
-        ? [...defs.executors, ...payload.executors]
-        : defs.executors,
-      payload?.commands
-        ? [...defs.commands, ...payload.commands]
-        : defs.commands,
-      defs.parameters.length > 0
-        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            payload?.parameters
-              ? [...defs.parameters, ...payload.parameters]
-              : defs.parameters,
-          )
-        : undefined,
+      merge(defs.executors, payload?.executors),
+      merge(defs.commands, payload?.commands),
+      parameterList,
     );
 
     if (payload) {
