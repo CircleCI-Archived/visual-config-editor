@@ -1,15 +1,14 @@
-import { Job } from '@circleci/circleci-config-sdk';
-import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
-import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
+import { Job, workflow, types } from '@circleci/circleci-config-sdk';
 import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
+import JobOnHoldIcon from '../../../icons/components/JobOnHoldIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
-const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
+const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob }> = (
   props,
 ) => {
   const elements = useStoreState(
@@ -31,8 +30,11 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
   );
 
   const updateWorkflowJob = (
-    workflowJob: WorkflowJob,
-    applyToData: { job?: Job; parameters?: WorkflowJobParameters },
+    workflowJob: workflow.WorkflowJob,
+    applyToData: {
+      job?: Job;
+      parameters?: types.workflow.WorkflowJobParameters;
+    },
   ) =>
     elements.map((element) =>
       isNode(element) && element.data.job.name === workflowJob.job.name
@@ -46,6 +48,15 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
     remove: false,
     requires: false,
   });
+
+  const jobIcon = (isApproval: boolean = false) => {
+    const classNameValue = "w-5 mr-2"
+    if (isApproval) {
+      return <JobOnHoldIcon className={classNameValue} />;
+    } else {
+      return <JobIcon className={classNameValue} />;
+    }
+  }
 
   const trackHovering = (
     entering: string[],
@@ -141,7 +152,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
       </button>
 
       <div
-        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer 
+        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer
         ${
           (hovering['node'] && !hovering['remove']) ||
           (hovering['handles'] && connecting?.start)
@@ -151,13 +162,13 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
-        <button className="flex w-full">
-          <JobIcon className="w-5 mr-2" />
+        <div className="flex w-full">
+          {jobIcon(props.data.parameters?.type === 'approval')}
           {props.data.parameters?.name || props.data.job.name}
-        </button>
+        </div>
         <button
           className={`my-auto
-          opacity-${hovering['node'] ? 100 : 0} 
+          opacity-${hovering['node'] ? 100 : 0}
           transition-opacity duration-150 w-8 h-full flex`}
           {...trackHovering(['remove'], ['remove'])}
           onClick={() => {

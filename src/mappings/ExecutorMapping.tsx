@@ -3,7 +3,7 @@ import {
   Job,
   parsers,
   reusable,
-  workflow,
+  workflow
 } from '@circleci/circleci-config-sdk';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
