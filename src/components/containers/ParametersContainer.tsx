@@ -41,30 +41,33 @@ const ParameterContainer = (props: {
           >
             Add Parameter
           </button>
-          {props.values.parameters?.map((parameter: any) => (
-            <div
-              key={parameter.name}
-              className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
-            >
-              <div className="flex">
-                <p className="font-bold">{parameter.name}</p>
-              </div>
-              {parameter.description && (
-                <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
-                  {parameter.description}
-                </p>
-              )}
-              {parameter.defaultValue ? (
-                <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
-                  {parameter.description}
-                </p>
-              ) : (
-                <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
-                  Required
-                </p>
-              )}
-            </div>
-          ))}
+          {props.values.parameters &&
+            Object.entries(props.values.parameters).map(
+              ([name, parameter]: [string, any]) => (
+                <div
+                  key={name}
+                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                >
+                  <div className="flex">
+                    <p className="font-bold">{name}</p>
+                  </div>
+                  {parameter.description && (
+                    <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
+                      {parameter.description}
+                    </p>
+                  )}
+                  {parameter.defaultValue ? (
+                    <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
+                      {parameter.description}
+                    </p>
+                  ) : (
+                    <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
+                      Required
+                    </p>
+                  )}
+                </div>
+              ),
+            )}
         </div>
       )}
     />

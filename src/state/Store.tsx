@@ -247,13 +247,16 @@ const Actions: StoreActions = {
         }
       }
 
+      const values =
+        payload?.apply?.(travelTo.props.values) || travelTo.props.values;
+      const props = {
+        ...travelTo.props,
+        values: values,
+      };
+
       state.navigation = {
         ...travelTo,
-        props: {
-          ...travelTo.props,
-          values:
-            payload?.apply?.(travelTo.props.values) || travelTo.props.values,
-        },
+        props: props,
         jumpedFrom: distance > 1 ? state.navigation : undefined,
       };
     } else {
