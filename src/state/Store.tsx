@@ -384,7 +384,7 @@ const Actions: StoreActions = {
 
           elements.push({
             id: jobName,
-            data: { job: workflowJob.job, parameters: workflowJob.parameters },
+            data: workflowJob,
             connectable: true,
             dragHandle: '.node',
             type: 'jobs',
@@ -441,10 +441,7 @@ const Actions: StoreActions = {
     const workflows = state.workflows.map((flow) => {
       const jobs = flow.elements
         .filter((element) => element.type === JobMapping.type)
-        .map(
-          (element) =>
-            new WorkflowJob(element.data.job, element.data.parameters),
-        );
+        .map((element) => element.data);
 
       return new Workflow(flow.name, jobs);
     });
