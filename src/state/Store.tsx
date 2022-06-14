@@ -5,6 +5,7 @@ import {
   parsers,
   reusable,
   Workflow,
+  WorkflowJob,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -372,48 +373,86 @@ const Actions: StoreActions = {
         commands: config.commands || [],
       };
 
+      const nodeWidth = 250; // Make this dynamic
+      const nodeHeight = 60; // Make this dynamic
+
       state.workflows = config.workflows.map(({ name, jobs }) => {
-        const nodeWidth = 200; // Make this dynamic
+        const jobTable: Record<string, WorkflowJob> = {};
+
+        jobs.forEach((workflowJob) => {
+          const jobName = workflowJob.parameters.name || workflowJob.job.name;
+          jobTable[jobName] = workflowJob;
+        });
+
         const elements: Elements = [];
-        const requireTable: Record<ElementId, ElementId[]> = {};
+        const columns: Array<number> = [];
+        const solved: Record<ElementId, number> = {};
 
-        // Build workflow and prep requirement connection generation
-        jobs.forEach((workflowJob, i) => {
-          const jobName = workflowJob.job.name;
+        const solve = (workflowJob: WorkflowJob) => {
+          const jobName = workflowJob.parameters.name || workflowJob.job.name;
 
+          if (solved[jobName] !== undefined) {
+            return solved[jobName];
+          }
+
+          let column = 0;
+
+          if (workflowJob.parameters.requires) {
+            let greatestColumn = 0;
+
+            workflowJob.parameters.requires.forEach((requiredJob) => {
+              let requiredJobColumn = 0;
+
+              if (solved[requiredJob] === undefined) {
+                requiredJobColumn = solve(jobTable[requiredJob]);
+              } else {
+                requiredJobColumn = solved[requiredJob];
+              }
+
+              greatestColumn = Math.max(greatestColumn, requiredJobColumn);
+
+              // add connection line
+              elements.push({
+                id: v4(),
+                source: requiredJob,
+                target: jobName,
+                type: 'requires',
+                sourceHandle: `${requiredJob}_source`,
+                targetHandle: `${jobName}_target`,
+                animated: false,
+                style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+              });
+            });
+
+            column = greatestColumn + 1;
+          }
+
+          if (columns.length > column) {
+            columns[column]++;
+          } else {
+            columns.push(1);
+          }
+
+          const row = columns[column] * nodeHeight;
+
+          // add job node
           elements.push({
             id: jobName,
             data: { job: workflowJob.job, parameters: workflowJob.parameters },
             connectable: true,
             dragHandle: '.node',
             type: 'jobs',
-            position: { x: i * nodeWidth, y: 0 },
+            position: { x: column * nodeWidth, y: row },
           });
 
-          workflowJob.parameters.requires?.forEach((requiredJob) => {
-            if (!requireTable[requiredJob]) {
-              requireTable[requiredJob] = [jobName];
-              return;
-            }
+          solved[jobName] = column;
 
-            requireTable[requiredJob].push(jobName);
-          });
-        });
+          return column;
+        };
 
-        // Generate connections
-        Object.entries(requireTable).forEach(([jobName, requiredBy]) => {
-          requiredBy.forEach((requiredId) => {
-            elements.push({
-              id: v4(),
-              source: jobName,
-              target: requiredId,
-              type: 'requires',
-              sourceHandle: `${jobName}_source`,
-              targetHandle: `${requiredId}_target`,
-              animated: false,
-              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-            });
-          });
+        // Build workflow and prep requirement connection generation
+        jobs.forEach((workflowJob) => {
+          solve(workflowJob);
         });
 
         return {
