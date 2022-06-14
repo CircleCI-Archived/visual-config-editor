@@ -5,6 +5,7 @@ import {
   parsers,
   reusable,
   Workflow,
+  WorkflowJob,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -440,30 +441,34 @@ const Actions: StoreActions = {
     const workflows = state.workflows.map((flow) => {
       const jobs = flow.elements
         .filter((element) => element.type === JobMapping.type)
-        .map((element) => element.data);
+        .map(
+          (element) =>
+            new WorkflowJob(element.data.job, element.data.parameters),
+        );
 
       return new Workflow(flow.name, jobs);
     });
 
     const defs = state.definitions;
     // This is a merged config preview. TODO: Refactor merging process.
+    const merge = (cur: any, update: any) =>
+      update ? [...cur, ...update] : cur;
+    const pipelineParameters: parameters.CustomParameter<PipelineParameterLiteral>[] =
+      merge(defs.parameters, payload?.parameters);
+    const parameterList =
+      pipelineParameters.length > 0
+        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
+            pipelineParameters,
+          )
+        : undefined;
+
     const config = new Config(
       false,
-      payload?.jobs ? [...defs.jobs, ...payload.jobs] : defs.jobs,
+      merge(defs.jobs, payload?.jobs),
       workflows,
-      payload?.executors
-        ? [...defs.executors, ...payload.executors]
-        : defs.executors,
-      payload?.commands
-        ? [...defs.commands, ...payload.commands]
-        : defs.commands,
-      defs.parameters.length > 0
-        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            payload?.parameters
-              ? [...defs.parameters, ...payload.parameters]
-              : defs.parameters,
-          )
-        : undefined,
+      merge(defs.executors, payload?.executors),
+      merge(defs.commands, payload?.commands),
+      parameterList,
     );
 
     if (payload) {
