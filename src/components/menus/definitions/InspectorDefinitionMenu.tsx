@@ -81,12 +81,12 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           }}
           enableReinitialize
           onSubmit={(values) => {
-            const newDefinition = dataMapping.transform(values, definitions);
-            const submitData = props.editing
-              ? { old: unpacked, new: newDefinition }
-              : newDefinition;
-
             if (!props.passBackKey) {
+              const newDefinition = dataMapping.transform(values, definitions);
+              const submitData = props.editing
+                ? { old: unpacked, new: newDefinition }
+                : newDefinition;
+
               submitToStore(submitData);
             }
 
@@ -100,14 +100,18 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
 
             navigateBack({
               distance: 1,
-              apply: (values) => {
+              apply: (parentValues) => {
                 if (props.passBackKey) {
-                  values[props.passBackKey] = [
-                    ...(values[props.passBackKey] || []),
-                    newDefinition,
-                  ];
+                  const { name, ...args } = values;
+
+                  if (parentValues[props.passBackKey]) {
+                    parentValues[props.passBackKey][name] = args;
+                  } else {
+                    parentValues[props.passBackKey] = { [name]: args };
+                  }
                 }
-                return values;
+
+                return parentValues;
               },
             });
             generateConfig();
