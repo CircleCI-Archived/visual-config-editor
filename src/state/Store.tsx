@@ -5,7 +5,6 @@ import {
   parsers,
   reusable,
   Workflow,
-  WorkflowJob,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
