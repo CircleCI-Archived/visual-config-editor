@@ -137,7 +137,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
         />
       </button>
 
-      <button
+      <div
         className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer 
         ${
           (hovering['node'] && !hovering['remove']) ||
@@ -148,10 +148,10 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
-        <div className="flex w-full">
+        <button className="flex w-full">
           <JobIcon className="w-5 mr-2" />
           {props.data.parameters?.name || props.data.job.name}
-        </div>
+        </button>
         <button
           className={`my-auto
           opacity-${hovering['node'] ? 100 : 0} 
@@ -166,7 +166,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
             color={hovering['remove'] ? 'red' : '#AAAAAA'}
           />
         </button>
-      </button>
+      </div>
 
       <button
         className={`opacity-${
