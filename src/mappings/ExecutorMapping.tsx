@@ -3,7 +3,7 @@ import {
   Job,
   parsers,
   reusable,
-  WorkflowJob,
+  workflow,
 } from '@circleci/circleci-config-sdk';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
@@ -23,7 +23,7 @@ export type AnyExecutor =
 
 const ExecutorMapping: ComponentMapping<
   reusable.ReusableExecutor,
-  WorkflowJob
+  workflow.WorkflowJob
 > = {
   type: 'executors',
   name: {
@@ -79,7 +79,7 @@ const ExecutorMapping: ComponentMapping<
   applyToNode: (data, nodeData) => {
     const oldJob = nodeData.job;
 
-    return new WorkflowJob(
+    return new workflow.WorkflowJob(
       new Job(oldJob.name, data.reuse(), oldJob.steps),
       nodeData.parameters,
     );

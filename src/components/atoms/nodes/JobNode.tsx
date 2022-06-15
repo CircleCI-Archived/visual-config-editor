@@ -1,4 +1,5 @@
-import { Job, WorkflowJob } from '@circleci/circleci-config-sdk';
+import { Job } from '@circleci/circleci-config-sdk';
+import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
@@ -20,8 +21,10 @@ const JobNode: React.FunctionComponent<NodeProps & { data: WorkflowJob }> = (
   // );
   const updateJob = useStoreActions((actions) => actions.updateJob);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
-  const removeWorkflowElement = useStoreActions((actions) => actions.removeWorkflowElement);
-  
+  const removeWorkflowElement = useStoreActions(
+    (actions) => actions.removeWorkflowElement,
+  );
+
   const connecting = useStoreState((state) => state.connecting);
   const updateConnecting = useStoreActions(
     (actions) => actions.updateConnecting,
