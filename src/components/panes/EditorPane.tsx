@@ -76,6 +76,7 @@ const EditorPane = () => {
         ) : (
           <Editor
             theme="vs-dark"
+            wrapperProps={{ className: 'flex-1 flex-grow' }}
             language="yaml"
             value={config && configYAML(config)}
           />

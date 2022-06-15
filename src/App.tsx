@@ -13,7 +13,7 @@ const App = () => {
     <StoreProvider store={createStore(Store)}>
       <section className="flex flex-row h-full">
         <section
-          className="flex flex-col flex-nowrap"
+          className="flex flex-col flex-nowrap flex-1"
           style={{ width: appWidth.width - inspectorWidth }}
         >
           <WorkflowsPane />
