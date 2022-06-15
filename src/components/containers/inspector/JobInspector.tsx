@@ -13,7 +13,7 @@ const JobInspector = (
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const executor = props.values.executor;
-  const executorName = typeof executor === 'string' ? executor : executor.name;
+  const executorName = typeof executor === 'string' ? executor : executor?.name;
 
   return (
     <div>
