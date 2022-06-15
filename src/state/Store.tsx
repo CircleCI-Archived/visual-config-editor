@@ -5,7 +5,7 @@ import {
   parsers,
   reusable,
   Workflow,
-  WorkflowJob,
+  workflow,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -379,11 +379,20 @@ const Actions: StoreActions = {
       const nodeWidth = 250; // Make this dynamic
       const nodeHeight = 60; // Make this dynamic
 
+      const getJobName = (workflowJob: workflow.WorkflowJobAbstract) => {
+        const baseName =
+          workflowJob instanceof workflow.WorkflowJob
+            ? workflowJob.job.name
+            : (workflowJob as workflow.WorkflowJobApproval).name;
+
+        return workflowJob.parameters?.name || baseName;
+      };
+
       state.workflows = config.workflows.map(({ name, jobs }) => {
-        const jobTable: Record<string, WorkflowJob> = {};
+        const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
 
         jobs.forEach((workflowJob) => {
-          const jobName = workflowJob.parameters.name || workflowJob.job.name;
+          const jobName = getJobName(workflowJob);
           jobTable[jobName] = workflowJob;
         });
 
@@ -391,8 +400,8 @@ const Actions: StoreActions = {
         const columns: Array<number> = [];
         const solved: Record<ElementId, number> = {};
 
-        const solve = (workflowJob: WorkflowJob) => {
-          const jobName = workflowJob.parameters.name || workflowJob.job.name;
+        const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
+          const jobName = getJobName(workflowJob);
 
           if (solved[jobName] !== undefined) {
             return solved[jobName];
@@ -400,7 +409,7 @@ const Actions: StoreActions = {
 
           let column = 0;
 
-          if (workflowJob.parameters.requires) {
+          if (workflowJob.parameters?.requires) {
             let greatestColumn = 0;
 
             workflowJob.parameters.requires.forEach((requiredJob) => {
