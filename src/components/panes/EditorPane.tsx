@@ -26,6 +26,7 @@ const EditorPane = () => {
     return yml;
   };
 
+
   return (
     <div className="bg-circle-gray-900 h-2/5 w-full flex flex-col">
       <div className="border-b text-xl border-circle-gray-800 font-bold flex flex-row">
