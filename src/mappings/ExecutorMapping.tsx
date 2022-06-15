@@ -80,7 +80,7 @@ const ExecutorMapping: ComponentMapping<
     const oldJob = nodeData.job;
 
     return new WorkflowJob(
-      new Job(oldJob.name, data.reuse(), oldJob.steps),
+      new Job(oldJob.name, data.executor, oldJob.steps),
       nodeData.parameters,
     );
   },
