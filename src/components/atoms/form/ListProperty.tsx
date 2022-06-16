@@ -3,7 +3,9 @@ import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
+import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
+import StepDefinitionMenu from '../../menus/definitions/StepDefinitionMenu';
 import { InspectorFieldProps } from './InspectorProperty';
 
 export type ListPropertyProps = InspectorFieldProps & {
@@ -21,6 +23,8 @@ export type ListItemProps = {
 };
 
 const ListItem = ({ index, name, arrayHelper }: ListItemProps) => {
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, snapshot) => (
@@ -33,6 +37,16 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
           <button
             className="flex-1 cursor-pointer text-left text-circle-black leading-6"
             type="button"
+            onClick={() => { 
+              // navigateTo({
+              //   component: StepDefinitionMenu,
+              //   props: {
+              //     menuPage: StepDefinitionMenu,
+              //     passThrough: { dataType: JobMapping },
+              //   },
+              //   values: props.values,
+              // });
+            }}
           >
             {name}
           </button>
@@ -54,6 +68,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
   );
 };
 
+// This is currently hard coded to support steps, but can be broken out to support other sorts of lists.
 const ListProperty = ({
   label,
   values,
