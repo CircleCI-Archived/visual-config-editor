@@ -18,7 +18,7 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
   },
   parameters: componentParametersSubtypes.job,
   /**
-   TODO: Implement this to pass transform method to 
+   TODO: Implement this to pass transform method to
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
    */
   transform: ({ name, ...values }, definitions) => {
