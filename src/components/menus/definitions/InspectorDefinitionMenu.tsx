@@ -73,6 +73,16 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           }}
           validateOnBlur
           validate={(values) => {
+            // TODO: define error type
+            const errors: any = {};
+            const definition = definitions[dataMapping.type];
+            
+            const names = definition.map((d) => d.name);
+            const isNameDuplicate = names.includes(values.name);
+
+            if (isNameDuplicate) errors.name = 'Name is already in use';
+        
+            return errors;
             // TODO: handle error handling
             // const newDefinition = dataMapping.transform(values, definitions);
             // if (newDefinition) {
