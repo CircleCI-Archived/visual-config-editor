@@ -11,6 +11,7 @@ import TabbedMenu from '../TabbedMenu';
 type StepDefinitionProps = {
   values?: Record<string, object>;
   editing?: boolean;
+  index?: number;
 } & SubTypeMenuPageProps<any>;
 
 const StepDefinitionMenu = (props: StepDefinitionProps) => {
@@ -44,14 +45,28 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
           navigateBack({
             distance: 1,
             apply: (values: any) => {
-              const name = builtIn ? props.subtype : customCommand?.name;
+              const name = builtIn ? subtype : customCommand?.name;
 
-              values.steps = [
-                ...values.steps,
-                {
+              if (!props.editing) {
+                values.steps = [
+                  ...values.steps,
+                  {
+                    [name as string]: step.parameters,
+                  },
+                ];
+              } else {
+                if (props.index === undefined) {
+                  console.error('Step index was undefined when editing step.');
+
+                  return values;
+                }
+
+                console.log(step.parameters)
+
+                values.steps[props.index] = {
                   [name as string]: step.parameters,
-                },
-              ];
+                };
+              }
 
               return values;
             },

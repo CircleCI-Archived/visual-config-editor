@@ -50,7 +50,7 @@ const CommandInspector = (
       <ListProperty
         label="Steps"
         name="steps"
-        values={props.values.steps}
+        values={props.values}
         expanded
         required
         emptyText="No steps defined yet. At least one step is required."

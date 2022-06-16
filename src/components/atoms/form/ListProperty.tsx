@@ -49,6 +49,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
                     name: name,
                     ...parameters,
                   },
+                  index
                 },
                 values: {
                   ...values,

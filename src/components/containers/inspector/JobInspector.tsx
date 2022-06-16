@@ -38,6 +38,7 @@ const JobInspector = (
         name="steps"
         values={props.values}
         expanded
+        required
         emptyText="No steps defined yet."
         titleExpanded={
           <button
