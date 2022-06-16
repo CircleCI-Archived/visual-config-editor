@@ -32,17 +32,11 @@ const WorkflowsPane = () => {
         </div>
       </div>
 
-      {selectedWorkflow > -1 ? (
-        <WorkflowPane
-          workflow={workflows[selectedWorkflow]}
-          bgClassName="bg-circle-gray-200"
-          className="border border-r-0 h-full border-b-0 border-circle-gray-300"
-        />
-      ) : (
-        <div className='w-full h-full bg-gray-400'>
-          
-        </div>
-      )}
+      <WorkflowPane
+        workflow={workflows[selectedWorkflow]}
+        bgClassName="bg-circle-gray-200"
+        className="border border-r-0 h-full border-b-0 border-circle-gray-300"
+      />
     </div>
   );
 };
