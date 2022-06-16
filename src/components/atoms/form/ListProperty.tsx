@@ -5,7 +5,6 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
-import StepDefinitionMenu from '../../menus/definitions/StepDefinitionMenu';
 import { InspectorFieldProps } from './InspectorProperty';
 
 export type ListPropertyProps = InspectorFieldProps & {
@@ -37,14 +36,10 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
           <button
             className="flex-1 cursor-pointer text-left text-circle-black leading-6"
             type="button"
-            onClick={() => { 
+            onClick={() => {
               // navigateTo({
-              //   component: StepDefinitionMenu,
-              //   props: {
-              //     menuPage: StepDefinitionMenu,
-              //     passThrough: { dataType: JobMapping },
-              //   },
-              //   values: props.values,
+              //   component: StepDefinitionMenuNav,
+              //   props: { editing: true, values: flattened, dataType: props.type },
               // });
             }}
           >
