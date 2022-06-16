@@ -6,7 +6,7 @@ import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubt
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-const StepPropertiesMenu = (
+const StepDefinitionMenu = (
   props: SubTypeMenuPageProps<string | reusable.CustomCommand>,
 ) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
@@ -86,4 +86,28 @@ const StepPropertiesMenu = (
   );
 };
 
-export default StepPropertiesMenu;
+
+// const StepDefinitionMenuNav: NavigationComponent = {
+//   Component: StepDefinitionMenu,
+//   Label: (props: InspectorDefinitionProps) => {
+//     return (
+//       <p>
+//         {props.editing ? 'Edit' : 'New'} {props.dataType?.name.singular}
+//       </p>
+//     );
+//   },
+//   Icon: (props: InspectorDefinitionProps) => {
+//     let iconComponent = props.dataType?.components.icon;
+
+//     if (!iconComponent) {
+//       return null;
+//     }
+
+//     let DefinitionIcon = iconComponent;
+
+//     return <DefinitionIcon className="w-6 h-8 py-2" />;
+//   },
+// };
+
+
+export default StepDefinitionMenu;

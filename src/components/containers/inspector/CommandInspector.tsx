@@ -4,7 +4,7 @@ import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
-import StepPropertiesMenu from '../../menus/definitions/StepDefinitionMenu';
+import StepDefinitionMenu from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import SubTypeMenuNav from '../../menus/SubTypeMenu';
 
@@ -22,7 +22,7 @@ const NewButton = (
           component: SubTypeMenuNav,
           props: {
             typePage: StepTypePageNav,
-            menuPage: StepPropertiesMenu,
+            menuPage: StepDefinitionMenu,
             passThrough: { dataType: CommandMapping },
           },
           values: props.values,
