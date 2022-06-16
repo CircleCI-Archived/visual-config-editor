@@ -102,7 +102,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
               connectionHandleType: 'target',
               connectionHandleId: `${props.id}_target`,
             },
-            name: props.data.parameters?.name || props.data.job.name,
+            name: props.data.parameters?.name || props.data.name,
           });
         },
         () => {
@@ -164,7 +164,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
       >
         <div className="flex w-full">
           {jobIcon(props.data.parameters?.type === 'approval')}
-          {props.data.parameters?.name || props.data.job.name}
+          {props.data.parameters?.name || props.data.name}
         </div>
         <button
           className={`my-auto
@@ -202,7 +202,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
               connectionHandleType: 'source',
               connectionHandleId: `${props.id}_source`,
             },
-            name: props.data.parameters?.name || props.data.job.name,
+            name: props.data.parameters?.name || props.data.name,
           });
           e.preventDefault();
         }}
