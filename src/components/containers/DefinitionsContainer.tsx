@@ -40,11 +40,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                   ? navSubTypeMenu({
                       typePage: props.type.subtypes?.component,
                       menuPage: InspectorDefinitionMenu,
-                      menuProps: { dataType: props.type, index: -1  },
+                      menuProps: { dataType: props.type, index: -1 },
                     })
                   : {
                       component: InspectorDefinitionMenuNav,
-                      props: { dataType: props.type, index: -1,  },
+                      props: { dataType: props.type, index: -1 },
                     },
               )
             }
@@ -58,7 +58,12 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
           <ComponentInfo type={props.type} />
           {items && items.length > 0 ? (
             items?.map((item, index) => (
-              <Definition data={item} key={item.name} type={props.type} index={index} />
+              <Definition
+                data={item}
+                key={item.name}
+                type={props.type}
+                index={index}
+              />
             ))
           ) : (
             <div className="font-medium text-sm text-circle-gray-500">
