@@ -2,6 +2,20 @@ version: 2.1
 orbs:
   node: circleci/node@4.7.0
 
+commands:
+  update-version:
+    description: Updates the version in the package.json file to match the tag.
+    steps:
+      - run:
+          name: Set Package Version
+          command: |
+            # If "$CIRCLE_TAG" is not set, then set to dev version
+            if [ -z "$CIRCLE_TAG" ]; then
+              CIRCLE_TAG="0.0.0-development"
+            fi
+            # Set package-version.json version to match tag
+            echo "{\"version\": \"$CIRCLE_TAG\"}" > ./src/version.json
+
 jobs:
   deploy-page:
     executor: 
@@ -15,6 +29,7 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
           cache-version: v2
+      - update-version
       - run:
           name: Build Page
           command: yarn build
