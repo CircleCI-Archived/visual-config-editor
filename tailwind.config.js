@@ -6,14 +6,14 @@ module.exports = {
       cursor: {
         'ew-resize': 'ew-resize',
         'ns-resize': 'ns-resize',
-        'grab': 'grab',
+        grab: 'grab',
       },
       borderWidth: {
-        '5': '5px',
-        '6': '6px',
+        5: '5px',
+        6: '6px',
       },
       borderRadius: {
-        'md2': '4px'
+        md2: '4px',
       },
       colors: {
         'circle-gray': {
@@ -36,6 +36,9 @@ module.exports = {
         'circle-blue': {
           DEFAULT: '#0078CA',
           light: '#76CDFF',
+        },
+        'circle-purple': {
+          DEFAULT: '#8e62bd',
         },
       },
     },
