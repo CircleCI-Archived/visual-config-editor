@@ -26,7 +26,6 @@ const EditorPane = () => {
     return yml;
   };
 
-
   return (
     <div className="bg-circle-gray-900 h-2/5 w-full flex flex-col">
       <div className="border-b text-xl border-circle-gray-800 font-bold flex flex-row">
@@ -52,7 +51,7 @@ const EditorPane = () => {
           <DropdownContainer className="rounded-md bg-circle-blue text-white px-2">
             <div className="bg-white flex-col flex rounded shadow text-base">
               <button
-                className="border-b border-circle-gray-300 px-8"
+                className="border-b border-circle-gray-300 pl-3 pr-8 text-left"
                 onClick={(e) => {
                   inputFile.current?.click();
                   e.stopPropagation();
@@ -60,7 +59,9 @@ const EditorPane = () => {
               >
                 Open
               </button>
-              <button>Save</button>
+              <button className="border-b border-circle-gray-300 pl-3 pr-8 text-left">
+                Save
+              </button>
             </div>
           </DropdownContainer>
         </div>
