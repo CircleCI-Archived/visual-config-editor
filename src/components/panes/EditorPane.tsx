@@ -2,6 +2,7 @@ import Editor, { DiffEditor } from '@monaco-editor/react';
 import { useRef } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import DropdownContainer from '../containers/DropdownContainer';
+import { version } from '../../version.json';
 
 const EditorPane = () => {
   const config = useStoreState((state) => state.config);
@@ -13,7 +14,7 @@ const EditorPane = () => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
 
     if (yml && matchSDKComment && matchSDKComment.index) {
-      const comment = `# VCE Version: 0.2.0\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
+      const comment = `# VCE Version: ${version}\n# Modeled with the CircleCI visual config editor.\n# For more information, see https://github.com/CircleCI-Public/visual-config-editor\n`;
       const endOfSDKComment = matchSDKComment.index + matchSDKComment[0].length;
 
       return (

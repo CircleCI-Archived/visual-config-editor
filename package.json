@@ -1,6 +1,6 @@
 {
   "name": "visual-config-editor",
-  "version": "0.1.0",
+  "version": "0.0.0-development",
   "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
     "@circleci/circleci-config-sdk": "v0.9.0-alpha.1",
