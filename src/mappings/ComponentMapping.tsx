@@ -115,7 +115,7 @@ export default interface GenerableMapping<
 > {
   guide?: { info: string; step: number };
   /**  String name type of component. Must be equal to index within registry. */
-  type: string;
+  type: keyof DefinitionModel;
   /**  Language values of component. This should be used for UI display only. */
   name: {
     singular: string;

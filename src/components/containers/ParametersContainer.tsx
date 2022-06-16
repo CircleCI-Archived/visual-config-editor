@@ -32,9 +32,7 @@ const ParameterContainer = (props: {
                     passBackKey: 'parameters',
                   },
                 },
-                values: {
-                  ...props.values,
-                },
+                values: props.values,
               });
             }}
             className="m-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium mb-4"
