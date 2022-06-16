@@ -1,4 +1,6 @@
+import WorkflowIcon from '../../icons/components/WorkflowIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import Select from '../atoms/Select';
 import WorkflowPane from '../containers/WorkflowContainer';
 
 const WorkflowsPane = () => {
@@ -10,7 +12,13 @@ const WorkflowsPane = () => {
     <div className="flex flex-col flex-nowrap flex-1">
       <div className="flex w-full bg-white h-16">
         <div className="flex-col my-auto mx-4">
-          <select className="rounded border border-circle-gray-400 p-2">
+          <Select
+            placeholder="No workflows"
+            className="w-60"
+            value={workflows[selectedWorkflow].id}
+            dropdownClassName="w-60 rounded"
+            icon={<WorkflowIcon className="ml-2 w-6" />}
+          >
             {workflows.map((workflow, num) => (
               <option
                 value={workflow.id}
@@ -20,7 +28,7 @@ const WorkflowsPane = () => {
                 {workflow.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

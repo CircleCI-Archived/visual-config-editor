@@ -49,6 +49,7 @@ const EditorPane = () => {
             }}
           />
           <DropdownContainer className="rounded-md bg-circle-blue text-white px-2">
+            <p>•••</p>
             <div className="bg-white flex-col flex rounded shadow text-base">
               <button
                 className="border-b border-circle-gray-300 pl-3 pr-8 text-left"
