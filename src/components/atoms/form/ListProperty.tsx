@@ -5,6 +5,7 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
+import { StepDefinitionMenuNav } from '../../menus/definitions/StepDefinitionMenu';
 import { InspectorFieldProps } from './InspectorProperty';
 
 export type ListPropertyProps = InspectorFieldProps & {
@@ -18,10 +19,11 @@ export type ListPropertyProps = InspectorFieldProps & {
 export type ListItemProps = {
   index: number;
   name: string;
+  values?: any;
   arrayHelper: ArrayHelpers;
 };
 
-const ListItem = ({ index, name, arrayHelper }: ListItemProps) => {
+const ListItem = ({ index, values, name, arrayHelper }: ListItemProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
@@ -37,10 +39,17 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             className="flex-1 cursor-pointer text-left text-circle-black leading-6"
             type="button"
             onClick={() => {
-              // navigateTo({
-              //   component: StepDefinitionMenuNav,
-              //   props: { editing: true, values: flattened, dataType: props.type },
-              // });
+              console.log(values);
+              navigateTo({
+                component: StepDefinitionMenuNav,
+                props: {
+                  editing: true,
+                  values: {
+                    name: name,
+                    ...values,
+                  },
+                },
+              });
             }}
           >
             {name}
@@ -101,14 +110,20 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {values.map((cmd: any, index: number) => (
-                      <ListItem
-                        name={Object.keys(cmd)[0]}
-                        key={index}
-                        index={index}
-                        arrayHelper={arrayHelper}
-                      />
-                    ))}
+                    {values.map((cmd: any, index: number) => {
+                      const commandName = Object.keys(cmd)[0];
+                      const commandValues = cmd[commandName];
+
+                      return (
+                        <ListItem
+                          name={commandName}
+                          key={index}
+                          index={index}
+                          values={{ parameters: commandValues }}
+                          arrayHelper={arrayHelper}
+                        />
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}

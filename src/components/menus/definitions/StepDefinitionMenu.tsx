@@ -1,7 +1,7 @@
 import { reusable } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
-import { useStoreActions } from '../../../state/Hooks';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
@@ -15,12 +15,15 @@ type StepDefinitionProps = {
 
 const StepDefinitionMenu = (props: StepDefinitionProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
-  const builtIn = typeof props.subtype === 'string';
+  const definitions = useStoreState((state) => state.definitions);
+  const subtype = props.subtype || props.values?.name;
+
+  const builtIn = typeof subtype === 'string';
   const builtInSubtype = builtIn
-    ? commandSubtypes[props.subtype as string]
+    ? commandSubtypes[subtype as string]
     : undefined;
   const customCommand = !builtIn
-    ? (props.subtype as reusable.CustomCommand)
+    ? (subtype as reusable.CustomCommand)
     : undefined;
 
   return (
@@ -60,7 +63,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                   onClick={() => {
                     props.selectSubtype();
                   }}
-                  disabled={!props.editing}
+                  disabled={props.editing}
                 >
                   <p className="font-bold">
                     {builtInSubtype
