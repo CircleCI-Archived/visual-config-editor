@@ -1,22 +1,35 @@
 import { reusable } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
-import { useStoreActions } from '../../../state/Hooks';
+import CommandIcon from '../../../icons/components/CommandIcon';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import { NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-const StepDefinitionMenu = (
-  props: SubTypeMenuPageProps<string | reusable.CustomCommand>,
-) => {
+type StepDefinitionProps = {
+  values?: Record<string, object>;
+  editing?: boolean;
+} & SubTypeMenuPageProps<any>;
+
+const StepDefinitionMenu = (props: StepDefinitionProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
-  const builtIn = typeof props.subtype === 'string';
+  const definitions = useStoreState((state) => state.definitions);
+  const subtype = props.subtype || props.values?.name;
+
+  const isName = typeof subtype === 'string';
+  const builtIn = isName && subtype in commandSubtypes;
   const builtInSubtype = builtIn
-    ? commandSubtypes[props.subtype as string]
+    ? commandSubtypes[subtype as string]
     : undefined;
-  const customCommand = !builtIn
-    ? (props.subtype as reusable.CustomCommand)
-    : undefined;
+  let customCommand: reusable.CustomCommand | undefined;
+
+  if (!builtIn) {
+    customCommand = isName
+      ? definitions.commands.find((command) => (command.name = subtype))
+      : (subtype as reusable.CustomCommand);
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -25,14 +38,13 @@ const StepDefinitionMenu = (
         <h1 className="ml-6 text-2xl py-2 font-bold">New Step</h1>
       </header>
       <Formik
-        initialValues={{ parameters: undefined }}
+        initialValues={props.values || { parameters: undefined }}
         enableReinitialize={true}
         onSubmit={(step) => {
-
           navigateBack({
             distance: 1,
             apply: (values: any) => {
-              const name = builtIn ? props.subtype: customCommand?.name;
+              const name = builtIn ? props.subtype : customCommand?.name;
 
               values.steps = [
                 ...values.steps,
@@ -56,6 +68,7 @@ const StepDefinitionMenu = (
                   onClick={() => {
                     props.selectSubtype();
                   }}
+                  disabled={props.editing}
                 >
                   <p className="font-bold">
                     {builtInSubtype
@@ -86,28 +99,14 @@ const StepDefinitionMenu = (
   );
 };
 
+const StepDefinitionMenuNav: NavigationComponent = {
+  Component: StepDefinitionMenu,
+  Label: (props: StepDefinitionProps) => {
+    return <p>{props.editing ? 'Edit' : 'New'} Step</p>;
+  },
+  Icon: (props: StepDefinitionProps) => {
+    return <CommandIcon className="w-6 h-8 py-2" />;
+  },
+};
 
-// const StepDefinitionMenuNav: NavigationComponent = {
-//   Component: StepDefinitionMenu,
-//   Label: (props: InspectorDefinitionProps) => {
-//     return (
-//       <p>
-//         {props.editing ? 'Edit' : 'New'} {props.dataType?.name.singular}
-//       </p>
-//     );
-//   },
-//   Icon: (props: InspectorDefinitionProps) => {
-//     let iconComponent = props.dataType?.components.icon;
-
-//     if (!iconComponent) {
-//       return null;
-//     }
-
-//     let DefinitionIcon = iconComponent;
-
-//     return <DefinitionIcon className="w-6 h-8 py-2" />;
-//   },
-// };
-
-
-export default StepDefinitionMenu;
+export { StepDefinitionMenu, StepDefinitionMenuNav };
