@@ -36,7 +36,7 @@ const JobInspector = (
       <ListProperty
         label="Steps"
         name="steps"
-        values={props.values.steps}
+        values={props.values}
         expanded
         emptyText="No steps defined yet."
         titleExpanded={

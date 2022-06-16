@@ -18,13 +18,18 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
   const subtype = props.subtype || props.values?.name;
 
-  const builtIn = typeof subtype === 'string';
+  const isName = typeof subtype === 'string';
+  const builtIn = isName && subtype in commandSubtypes;
   const builtInSubtype = builtIn
     ? commandSubtypes[subtype as string]
     : undefined;
-  const customCommand = !builtIn
-    ? (subtype as reusable.CustomCommand)
-    : undefined;
+  let customCommand: reusable.CustomCommand | undefined;
+
+  if (!builtIn) {
+    customCommand = isName
+      ? definitions.commands.find((command) => (command.name = subtype))
+      : (subtype as reusable.CustomCommand);
+  }
 
   return (
     <div className="h-full flex flex-col">

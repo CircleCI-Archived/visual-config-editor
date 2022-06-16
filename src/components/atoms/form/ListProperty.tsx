@@ -19,11 +19,12 @@ export type ListPropertyProps = InspectorFieldProps & {
 export type ListItemProps = {
   index: number;
   name: string;
+  parameters?: any;
   values?: any;
   arrayHelper: ArrayHelpers;
 };
 
-const ListItem = ({ index, values, name, arrayHelper }: ListItemProps) => {
+const ListItem = ({ index, values, parameters, name, arrayHelper }: ListItemProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
@@ -46,8 +47,11 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
                   editing: true,
                   values: {
                     name: name,
-                    ...values,
+                    ...parameters,
                   },
+                },
+                values: {
+                  ...values,
                 },
               });
             }}
@@ -88,7 +92,7 @@ const ListProperty = ({
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}
     >
-      {values?.length > 0 ? (
+      {values[props.name]?.length > 0 ? (
         <FieldArray
           {...field}
           name={props.name}
@@ -110,7 +114,7 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {values.map((cmd: any, index: number) => {
+                    {values[props.name].map((cmd: any, index: number) => {
                       const commandName = Object.keys(cmd)[0];
                       const commandValues = cmd[commandName];
 
@@ -119,7 +123,8 @@ const ListProperty = ({
                           name={commandName}
                           key={index}
                           index={index}
-                          values={{ parameters: commandValues }}
+                          parameters={{ parameters: commandValues }}
+                          values={values}
                           arrayHelper={arrayHelper}
                         />
                       );
