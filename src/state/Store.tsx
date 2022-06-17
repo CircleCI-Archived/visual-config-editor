@@ -416,7 +416,7 @@ const Actions: StoreActions = {
             return solved[jobName];
           }
 
-          let props: JobNodeProps = { col: 0, row: 0 };
+          const props: JobNodeProps = { col: 0, row: 0 };
 
           if (workflowJob.parameters?.requires) {
             let greatestColumn = 0;
