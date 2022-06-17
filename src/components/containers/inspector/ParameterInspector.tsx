@@ -11,9 +11,15 @@ const ParameterInspector = (
 ) => {
   return (
     <div>
+      <InspectorProperty
+        name="type"
+        label="Type"
+        hidden
+        value={props.subtype}
+      />
       <InspectorProperty name="name" label="Name" required />
       <InspectorProperty name="description" label="Description" />
-      {parameterSubtypes[props.values.type]?.fields}
+      {props.subtype && parameterSubtypes[props.subtype]?.fields}
     </div>
   );
 };
