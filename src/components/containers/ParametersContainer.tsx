@@ -3,7 +3,7 @@ import ComponentMapping from '../../mappings/ComponentMapping';
 import ParameterMapping from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
-import { SubTypeMenuNav } from '../menus/SubTypeMenu';
+import { navSubTypeMenu } from '../menus/SubTypeMenu';
 const ParameterContainer = (props: {
   dataMapping: ComponentMapping;
   values: any;
@@ -20,20 +20,24 @@ const ParameterContainer = (props: {
           <button
             type="button"
             onClick={() => {
-              navigateTo({
-                component: SubTypeMenuNav,
-                props: {
-                  typePage: ParameterMapping.subtypes?.component,
-                  typeProps: { component: props.dataMapping },
-                  menuPage: InspectorDefinitionMenu,
-                  menuProps: {
-                    dataType: ParameterMapping,
-                    passBackKey: 'parameters',
+              if (!ParameterMapping.subtypes) {
+                return;
+              }
+
+              navigateTo(
+                navSubTypeMenu(
+                  {
+                    typePage: ParameterMapping.subtypes.component,
+                    typeProps: { component: props.dataMapping },
+                    menuPage: InspectorDefinitionMenu,
+                    menuProps: {
+                      dataType: ParameterMapping,
+                      passBackKey: 'parameters',
+                    },
                   },
-                  type: 'parameters',
-                },
-                values: props.values,
-              });
+                  props.values,
+                ),
+              );
             }}
             className="m-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium mb-4"
           >

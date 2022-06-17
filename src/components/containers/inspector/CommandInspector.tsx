@@ -6,7 +6,7 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
-import { SubTypeMenuNav } from '../../menus/SubTypeMenu';
+import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
 const NewButton = (
   props: FormikValues & {
@@ -18,16 +18,16 @@ const NewButton = (
     <button
       type="button"
       onClick={() => {
-        navigateTo({
-          component: SubTypeMenuNav,
-          props: {
-            typePage: StepTypePageNav,
-            menuPage: StepDefinitionMenu,
-            passThrough: { dataType: CommandMapping },
-            type: 'steps',
-          },
-          values: props.values,
-        });
+        navigateTo(
+          navSubTypeMenu(
+            {
+              typePage: StepTypePageNav,
+              menuPage: StepDefinitionMenu,
+              passThrough: { dataType: CommandMapping },
+            },
+            props.values,
+          ),
+        );
       }}
       className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
     >
