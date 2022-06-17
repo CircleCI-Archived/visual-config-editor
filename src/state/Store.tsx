@@ -399,6 +399,7 @@ const Actions: StoreActions = {
         const elements: Elements = [];
         const columns: Array<number> = [];
         const solved: Record<ElementId, number> = {};
+        let rows = new Map<string, number>();
 
         const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
           const jobName = getJobName(workflowJob);
@@ -408,17 +409,25 @@ const Actions: StoreActions = {
           }
 
           let column = 0;
+          let mostRecentRow: number | undefined;
+
 
           if (workflowJob.parameters?.requires) {
             let greatestColumn = 0;
+            let latestRequried = workflowJob.parameters.requires[0];
+
 
             workflowJob.parameters.requires.forEach((requiredJob) => {
               let requiredJobColumn = 0;
 
               if (solved[requiredJob] === undefined) {
                 requiredJobColumn = solve(jobTable[requiredJob]);
+                console.log("und");
+                
               } else {
                 requiredJobColumn = solved[requiredJob];
+                mostRecentRow = rows.get(latestRequried);
+              
               }
 
               greatestColumn = Math.max(greatestColumn, requiredJobColumn);
@@ -445,7 +454,18 @@ const Actions: StoreActions = {
             columns.push(1);
           }
 
-          const row = columns[column] * nodeHeight;
+            // assign job to most recent rquirement
+            let row;
+            if(mostRecentRow !== undefined) {
+              
+              row = mostRecentRow;
+            } else {
+              
+              row = columns[column] * nodeHeight;
+            }
+          
+            rows.set(jobName, row);
+            
 
           // add job node
           elements.push({
