@@ -122,7 +122,6 @@ const WorkflowPane = (props: ElementProps) => {
   const gap = 15;
 
   const NodesDebugger = () => {
-    // const asdsa = flowState((state) => state.connectionPosition);
     const setConnecting = flowActions((state) => state.setConnectionNodeId);
     const setConnectingPosition = flowActions(
       (state) => state.setConnectionPosition,

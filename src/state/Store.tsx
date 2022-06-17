@@ -390,15 +390,24 @@ const Actions: StoreActions = {
 
       state.workflows = config.workflows.map(({ name, jobs }) => {
         const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
+        const requiredJobs: Record<string, boolean> = {};
 
         jobs.forEach((workflowJob) => {
           const jobName = getJobName(workflowJob);
           jobTable[jobName] = workflowJob;
+
+          workflowJob.parameters?.requires?.forEach((requiredJob) => {
+            requiredJobs[requiredJob] = true;
+          });
         });
 
+        // Filter down to jobs that are not required by other jobs
+        const endJobs = jobs.filter((workflowJob) => !(getJobName(workflowJob) in requiredJobs));
+
+        type JobNodeProps = { col: number; row: number };
         const elements: Elements = [];
         const columns: Array<number> = [];
-        const solved: Record<ElementId, number> = {};
+        const solved: Record<ElementId, JobNodeProps> = {};
 
         const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
           const jobName = getJobName(workflowJob);
@@ -407,21 +416,23 @@ const Actions: StoreActions = {
             return solved[jobName];
           }
 
-          let column = 0;
+          const props: JobNodeProps = { col: 0, row: 0 };
 
           if (workflowJob.parameters?.requires) {
             let greatestColumn = 0;
+            let greatestRow = 0;
 
             workflowJob.parameters.requires.forEach((requiredJob) => {
-              let requiredJobColumn = 0;
+              let requiredJobProps;
 
               if (solved[requiredJob] === undefined) {
-                requiredJobColumn = solve(jobTable[requiredJob]);
+                requiredJobProps = solve(jobTable[requiredJob]);
               } else {
-                requiredJobColumn = solved[requiredJob];
+                requiredJobProps = solved[requiredJob];
               }
 
-              greatestColumn = Math.max(greatestColumn, requiredJobColumn);
+              greatestRow = Math.max(greatestRow, requiredJobProps.row);
+              greatestColumn = Math.max(greatestColumn, requiredJobProps.col);
 
               // add connection line
               elements.push({
@@ -436,16 +447,18 @@ const Actions: StoreActions = {
               });
             });
 
-            column = greatestColumn + 1;
+            props.col = greatestColumn + 1;
+            props.row = greatestRow;
           }
 
-          if (columns.length > column) {
-            columns[column]++;
+          if (columns.length > props.col) {
+            columns[props.col]++;
           } else {
             columns.push(1);
           }
 
-          const row = columns[column] * nodeHeight;
+          // assign job to most recent requirement
+          props.row = Math.max(columns[props.col], props.row);
 
           // add job node
           elements.push({
@@ -454,16 +467,16 @@ const Actions: StoreActions = {
             connectable: true,
             dragHandle: '.node',
             type: 'jobs',
-            position: { x: column * nodeWidth, y: row },
+            position: { x: props.col * nodeWidth, y: props.row * nodeHeight },
           });
 
-          solved[jobName] = column;
+          solved[jobName] = props;
 
-          return column;
+          return props;
         };
 
         // Build workflow and prep requirement connection generation
-        jobs.forEach((workflowJob) => {
+        endJobs.forEach((workflowJob) => {
           solve(workflowJob);
         });
 
