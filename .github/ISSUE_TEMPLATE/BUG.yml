@@ -17,7 +17,7 @@ body:
       required: true
     attributes:
       label: "Current behavior"
-      description: "How does the issue manifest?"
+      description: "How does the issue manifest? **Please consider submitting a video showcasing the issue, with steps to reproduce.** [How to submit video](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files)"
 
   - type: input
     validations:
