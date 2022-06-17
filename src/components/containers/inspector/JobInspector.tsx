@@ -6,7 +6,7 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePage from '../../menus/definitions/subtypes/StepTypePage';
-import SubTypeMenuNav from '../../menus/SubTypeMenu';
+import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
 const JobInspector = (
   props: FormikValues & { definitions: DefinitionModel },
@@ -44,15 +44,17 @@ const JobInspector = (
           <button
             type="button"
             onClick={() => {
-              navigateTo({
-                component: SubTypeMenuNav,
-                props: {
-                  typePage: StepTypePage,
-                  menuPage: StepDefinitionMenu,
-                  passThrough: { dataType: JobMapping },
-                },
-                values: props.values,
-              });
+              navigateTo(
+                navSubTypeMenu(
+                  {
+                    typePage: StepTypePage,
+                    menuPage: StepDefinitionMenu,
+                    passThrough: { dataType: JobMapping },
+                    type: 'steps',
+                  },
+                  props.values,
+                ),
+              );
             }}
             className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
           >

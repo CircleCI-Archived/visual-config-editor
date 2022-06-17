@@ -3,8 +3,7 @@ import ComponentMapping from '../../mappings/ComponentMapping';
 import ParameterMapping from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
-import SubTypeMenuNav from '../menus/SubTypeMenu';
-
+import { SubTypeMenuNav } from '../menus/SubTypeMenu';
 const ParameterContainer = (props: {
   dataMapping: ComponentMapping;
   values: any;
@@ -31,6 +30,7 @@ const ParameterContainer = (props: {
                     dataType: ParameterMapping,
                     passBackKey: 'parameters',
                   },
+                  type: 'parameters',
                 },
                 values: props.values,
               });

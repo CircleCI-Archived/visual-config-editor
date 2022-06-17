@@ -68,7 +68,6 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
       {dataMapping && (
         <Formik
           initialValues={{
-            type: props.subtype,
             ...unpacked,
           }}
           validateOnBlur
@@ -166,7 +165,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   {dataMapping.components.inspector({
                     ...formikProps,
                     definitions,
-                    subtype: subtype,
+                    subtype,
                   })}
                 </div>
                 {dataMapping.parameters ? (
