@@ -5,7 +5,7 @@ import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
-import StepTypePage from '../../menus/definitions/subtypes/StepTypePage';
+import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
 const JobInspector = (
@@ -47,10 +47,9 @@ const JobInspector = (
               navigateTo(
                 navSubTypeMenu(
                   {
-                    typePage: StepTypePage,
+                    typePage: StepTypePageNav,
                     menuPage: StepDefinitionMenu,
                     passThrough: { dataType: JobMapping },
-                    type: 'steps',
                   },
                   props.values,
                 ),

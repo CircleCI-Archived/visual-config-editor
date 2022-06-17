@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { v4 } from 'uuid';
 import { NavigationComponent } from '../../state/Store';
-/** TODO: ISubType interface for component mappings? */
 
 export type SubTypeMenuProps<T> = {
   typePage: NavigationComponent;
@@ -8,7 +8,6 @@ export type SubTypeMenuProps<T> = {
   menuPage: (props: SubTypeMenuPageProps<T> & any) => JSX.Element;
   menuProps?: object;
   passThrough?: any;
-  type: string;
 };
 export type SubTypeReference<T> = T;
 export type SubTypeSelectPageProps<T> = {
@@ -23,17 +22,19 @@ export interface SelectedSubType<T> {
   previous?: SubTypeReference<T>;
 }
 
-const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
+const SubTypeMenu = <SubTypeRef,>(
+  props: SubTypeMenuProps<SubTypeRef> & { nonce: string },
+) => {
   const [subtype, setSubtype] = useState<
     Record<string, SelectedSubType<SubTypeRef>>
   >({});
 
-  const current = subtype[props.type]?.current;
+  const current = subtype[props.nonce]?.current;
 
   const updateSubtype = (selected: SubTypeReference<SubTypeRef>) => {
     setSubtype({
       ...subtype,
-      [props.type]: {
+      [props.nonce]: {
         current: selected,
         previous: current,
       },
@@ -43,7 +44,7 @@ const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
   const navBack = () => {
     setSubtype({
       ...subtype,
-      [props.type]: {
+      [props.nonce]: {
         current: undefined,
         previous: current,
       },
@@ -84,9 +85,9 @@ const navSubTypeMenu = <SubTypeRef,>(
 ) => {
   return {
     component: SubTypeMenuNav,
-    props,
+    props: { ...props, nonce: v4() },
     values,
   };
 };
 
-export { SubTypeMenuNav, navSubTypeMenu };
+export { navSubTypeMenu };

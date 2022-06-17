@@ -7,7 +7,7 @@ import {
   InspectorDefinitionMenu,
   InspectorDefinitionMenuNav,
 } from '../menus/definitions/InspectorDefinitionMenu';
-import { SubTypeMenuNav } from '../menus/SubTypeMenu';
+import { navSubTypeMenu } from '../menus/SubTypeMenu';
 import CollapsibleList from './CollapsibleList';
 import GuideContainer from './GuideContainer';
 
@@ -37,15 +37,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
             onClick={() =>
               navigateTo(
                 props.type.subtypes?.component
-                  ? {
-                      component: SubTypeMenuNav,
-                      props: {
-                        typePage: props.type.subtypes?.component,
-                        menuPage: InspectorDefinitionMenu,
-                        menuProps: { dataType: props.type },
-                        type: props.type,
-                      },
-                    }
+                  ? navSubTypeMenu({
+                      typePage: props.type.subtypes?.component,
+                      menuPage: InspectorDefinitionMenu,
+                      menuProps: { dataType: props.type },
+                    })
                   : {
                       component: InspectorDefinitionMenuNav,
                       props: { dataType: props.type },
