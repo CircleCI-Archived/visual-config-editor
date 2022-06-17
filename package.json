@@ -38,6 +38,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "start-docker": "docker run --rm -p 3000:3000 -v ${PWD}:/app -w /app -it node:16.15.1 yarn install && yarn start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
