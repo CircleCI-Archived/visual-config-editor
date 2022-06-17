@@ -10,7 +10,13 @@ This project is currently early preview. Features are subject to changes.
 
 **[Try it out](https://circleci-public.github.io/visual-config-editor/)** for yourself! Fork the repo and **[contribute](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md)** to help us make this amazing!
 
-### Installing
+### Run Development Server
+
+#### With Docker
+
+#### Without Docker
+
+**Install**
 
 Using npm:
 
@@ -24,7 +30,13 @@ Using yarn:
 $ yarn install
 ```
 
-### Run Development Server
+After installing your dependencies, ensure are using the proper version of node by running NVM:
+
+```shell
+$ nvm use
+```
+
+**Start dev server**
 
 Using npm:
 
