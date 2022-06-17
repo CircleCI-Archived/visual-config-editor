@@ -24,18 +24,18 @@ Using yarn:
 $ yarn install
 ```
 
-### Building
+### Run Development Server
 
 Using npm:
 
 ```shell
-$ npm run build
+$ npm run start
 ```
 
 Using yarn:
 
 ```shell
-$ yarn build
+$ yarn start
 ```
 
 ## Preview
