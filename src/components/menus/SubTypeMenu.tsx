@@ -80,7 +80,7 @@ const SubTypeMenuNav: NavigationComponent = {
 };
 
 const navSubTypeMenu = <SubTypeRef,>(
-  props: Exclude<SubTypeMenuProps<SubTypeRef>, 'nonce'>,
+  props: SubTypeMenuProps<SubTypeRef>,
   values?: any,
 ) => {
   return {
