@@ -77,7 +77,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             const definition = definitions[dataMapping.type];
 
             const names = definition.map((d) => d.name);
-            const isNameDuplicate = names.includes(values.name);
+            const isNameDuplicate = names.includes(values.name.trim());
 
             if (isNameDuplicate) errors.name = 'Name is already in use';
 
