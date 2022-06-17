@@ -6,6 +6,7 @@ import { parameterSubtypes } from './subtypes/ParameterSubtypes';
 const ParameterInspector = (
   props: FormikValues & {
     definitions: DefinitionModel;
+    subtype?: string;
   },
 ) => {
   return (

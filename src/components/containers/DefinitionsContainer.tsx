@@ -7,7 +7,7 @@ import {
   InspectorDefinitionMenu,
   InspectorDefinitionMenuNav,
 } from '../menus/definitions/InspectorDefinitionMenu';
-import SubTypeMenuNav from '../menus/SubTypeMenu';
+import { SubTypeMenuNav } from '../menus/SubTypeMenu';
 import CollapsibleList from './CollapsibleList';
 import GuideContainer from './GuideContainer';
 
@@ -43,6 +43,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                         typePage: props.type.subtypes?.component,
                         menuPage: InspectorDefinitionMenu,
                         menuProps: { dataType: props.type },
+                        type: props.type,
                       },
                     }
                   : {
@@ -59,7 +60,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
       >
         <div className="w-full pl-2 pt-2">
           <ComponentInfo type={props.type} />
-          {(items || []).length > 0 ? (
+          {items && items.length > 0 ? (
             items?.map((item) => (
               <Definition data={item} key={item.name} type={props.type} />
             ))

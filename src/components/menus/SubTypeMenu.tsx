@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NavigationComponent } from '../../state/Store';
 /** TODO: ISubType interface for component mappings? */
 
 export type SubTypeMenuProps<T> = {
   typePage: NavigationComponent;
   typeProps?: object;
-  menuPage: React.FunctionComponent<SubTypeMenuPageProps<T>>;
+  menuPage: (props: SubTypeMenuPageProps<T> & any) => JSX.Element;
   menuProps?: object;
+  passThrough?: any;
+  type: string;
 };
 export type SubTypeReference<T> = T;
 export type SubTypeSelectPageProps<T> = {
@@ -22,14 +24,30 @@ export interface SelectedSubType<T> {
 }
 
 const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
-  const [subtype, setSubtype] = useState<SelectedSubType<SubTypeRef>>();
+  const [subtype, setSubtype] = useState<
+    Record<string, SelectedSubType<SubTypeRef>>
+  >({});
+
+  const current = subtype[props.type]?.current;
 
   const updateSubtype = (selected: SubTypeReference<SubTypeRef>) => {
-    setSubtype({ current: selected, previous: subtype?.current });
+    setSubtype({
+      ...subtype,
+      [props.type]: {
+        current: selected,
+        previous: current,
+      },
+    });
   };
 
   const navBack = () => {
-    setSubtype({ current: undefined, previous: subtype?.current });
+    setSubtype({
+      ...subtype,
+      [props.type]: {
+        current: undefined,
+        previous: current,
+      },
+    });
   };
 
   const SubTypeSelectPage = props.typePage.Component as React.FunctionComponent<
@@ -39,9 +57,9 @@ const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
 
   return (
     <div className="h-full flex flex-col">
-      {subtype?.current ? (
+      {current ? (
         <SubTypeMenuPage
-          subtype={subtype.current}
+          subtype={current}
           selectSubtype={navBack}
           {...props.menuProps}
         />
@@ -54,9 +72,21 @@ const SubTypeMenu = <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) => {
 
 const SubTypeMenuNav: NavigationComponent = {
   Component: SubTypeMenu,
-  Label: <SubTypeRef, >(props: SubTypeMenuProps<SubTypeRef>) => props.typePage.Label(props),
-  Icon: <SubTypeRef, >(props: SubTypeMenuProps<SubTypeRef>) =>
+  Label: <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) =>
+    props.typePage.Label(props),
+  Icon: <SubTypeRef,>(props: SubTypeMenuProps<SubTypeRef>) =>
     props.typePage.Icon ? props.typePage.Icon(props) : null,
 };
 
-export default SubTypeMenuNav;
+const navSubTypeMenu = <SubTypeRef,>(
+  props: SubTypeMenuProps<SubTypeRef>,
+  values?: any,
+) => {
+  return {
+    component: SubTypeMenuNav,
+    props,
+    values,
+  };
+};
+
+export { SubTypeMenuNav, navSubTypeMenu };

@@ -6,7 +6,7 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
-import SubTypeMenuNav from '../../menus/SubTypeMenu';
+import { SubTypeMenuNav } from '../../menus/SubTypeMenu';
 
 const NewButton = (
   props: FormikValues & {
@@ -24,6 +24,7 @@ const NewButton = (
             typePage: StepTypePageNav,
             menuPage: StepDefinitionMenu,
             passThrough: { dataType: CommandMapping },
+            type: 'steps',
           },
           values: props.values,
         });
@@ -54,7 +55,9 @@ const CommandInspector = (
         expanded
         required
         emptyText="No steps defined yet. At least one step is required."
-        titleExpanded={<NewButton values={props.values} definitions={props.definitions} />}
+        titleExpanded={
+          <NewButton values={props.values} definitions={props.definitions} />
+        }
       />
     </div>
   );
