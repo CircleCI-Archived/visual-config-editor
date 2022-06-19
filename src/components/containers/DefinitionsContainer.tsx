@@ -40,11 +40,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
                   ? navSubTypeMenu({
                       typePage: props.type.subtypes?.component,
                       menuPage: InspectorDefinitionMenu,
-                      menuProps: { dataType: props.type, index: -1 },
+                      menuProps: { dataType: props.type, index: -1  },
                     })
                   : {
                       component: InspectorDefinitionMenuNav,
-                      props: { dataType: props.type },
+                      props: { dataType: props.type, index: -1,  },
                     },
               )
             }

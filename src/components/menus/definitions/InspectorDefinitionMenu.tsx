@@ -11,7 +11,8 @@ type InspectorDefinitionProps = DataModel & {
   editing?: boolean;
   passBackKey?: string;
   activeTab?: number;
-  index?: number;
+  index: number;
+  source?: Array<any>;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -27,6 +28,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         ? dataMapping?.store.update(actions)
         : dataMapping?.store.add(actions)) || actions.error,
   );
+
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
 
@@ -75,21 +77,19 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           validate={(values) => {
             // TODO: define error type
             const errors: any = {};
-            const definition = definitions[dataMapping.type];
-
-            const dupIndex = definition.findIndex((d) => d.name === values.name.trim());
+            const source = props.source || definitions[dataMapping.type];
+            const dupIndex = source.findIndex((d) =>
+              (typeof d === 'string' ? d : d.name) === values.name.trim()
+            );
 
             if (dupIndex !== -1 && dupIndex !== props.index) {
               errors.name = 'Name is already in use';
             }
-            
+
             return errors;
           }}
           enableReinitialize
           onSubmit={(values) => {
-
-            console.log('huh')
-
             if (!props.passBackKey) {
               const newDefinition = dataMapping.transform(values, definitions);
               const submitData = props.editing

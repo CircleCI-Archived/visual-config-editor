@@ -1,4 +1,4 @@
-import { ErrorMessage, FormikValues } from 'formik';
+import { FormikValues } from 'formik';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { parameterSubtypes } from './subtypes/ParameterSubtypes';
@@ -17,7 +17,7 @@ const ParameterInspector = (
         hidden
         value={props.subtype}
       />
-      <ErrorMessage component="span" name="name" />
+      <InspectorProperty name="name" label="Name" required />
       <InspectorProperty name="description" label="Description" />
       {props.subtype && parameterSubtypes[props.subtype]?.fields}
     </div>

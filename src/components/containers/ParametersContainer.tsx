@@ -33,6 +33,8 @@ const ParameterContainer = (props: {
                     menuProps: {
                       dataType: ParameterMapping,
                       passBackKey: 'parameters',
+                      index: -1,
+                      source: props.values.parameters ? Object.keys(props.values.parameters) : undefined
                     },
                   },
                   props.values,
