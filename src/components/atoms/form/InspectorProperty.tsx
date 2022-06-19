@@ -15,13 +15,14 @@ export interface InspectorFieldProps {
 
 const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
   const [field, meta, helper] = useField(props);
+  const { touched, error, value } = meta;
 
   // Sync form value to the prop value on mount
   useEffect(() => {
-    if (props.value && meta.value !== props.value) {
+    if (props.value && value !== props.value) {
       helper.setValue(props.value);
     }
-  }, [props.value, helper, meta]);
+  }, [helper, value, props.value]);
 
   return (
     <div
@@ -40,10 +41,11 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
         {...field}
         {...props}
         className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-             border-circle-gray-300 border-2 rounded p-1 `}
+        border-2 rounded p-1 ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
       >
         {props.children}
       </Field>
+      {touched && error && <span className="text-sm text-circle-red">{error}</span>}
     </div>
   );
 };

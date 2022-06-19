@@ -11,6 +11,7 @@ type InspectorDefinitionProps = DataModel & {
   editing?: boolean;
   passBackKey?: string;
   activeTab?: number;
+  index?: number;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -76,20 +77,19 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             const errors: any = {};
             const definition = definitions[dataMapping.type];
 
-            const names = definition.map((d) => d.name);
-            const isNameDuplicate = names.includes(values.name.trim());
+            const dupIndex = definition.findIndex((d) => d.name === values.name.trim());
 
-            if (isNameDuplicate) errors.name = 'Name is already in use';
-
+            if (dupIndex !== -1 && dupIndex !== props.index) {
+              errors.name = 'Name is already in use';
+            }
+            
             return errors;
-            // TODO: handle error handling
-            // const newDefinition = dataMapping.transform(values, definitions);
-            // if (newDefinition) {
-            //   generateConfig({ [dataMapping.type]: [newDefinition] });
-            // }
           }}
           enableReinitialize
           onSubmit={(values) => {
+
+            console.log('huh')
+
             if (!props.passBackKey) {
               const newDefinition = dataMapping.transform(values, definitions);
               const submitData = props.editing

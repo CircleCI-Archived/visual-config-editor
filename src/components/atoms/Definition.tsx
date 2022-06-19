@@ -3,7 +3,7 @@ import ComponentMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenuNav } from '../menus/definitions/InspectorDefinitionMenu';
 
-const Definition = (props: { data: Generable; type: ComponentMapping }) => {
+const Definition = (props: { data: Generable; type: ComponentMapping, index: number }) => {
   const Summary = props.type.components.summary;
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setDragging = useStoreActions((actions) => actions.setDragging);
@@ -30,7 +30,7 @@ const Definition = (props: { data: Generable; type: ComponentMapping }) => {
 
         navigateTo({
           component: InspectorDefinitionMenuNav,
-          props: { editing: true, values: flattened, dataType: props.type },
+          props: { editing: true, values: flattened, dataType: props.type, index: props.index },
         });
       }}
     >
