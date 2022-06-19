@@ -15,8 +15,6 @@ const JobInspector = (
   const executor = props.values.executor;
   const executorName = typeof executor === 'string' ? executor : executor?.name;
 
-  console.log(props)
-
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
