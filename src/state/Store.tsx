@@ -62,6 +62,7 @@ export interface NavigationComponent {
 export interface NavigationStop {
   component: NavigationComponent;
   props: { [key: string]: any };
+  origin?: boolean;
 }
 
 export interface StoreModel {
@@ -146,8 +147,6 @@ export interface StoreActions {
 
   defineJob: Action<StoreModel, Job>;
   updateJob: Action<StoreModel, UpdateType<Job>>;
-
-  /** TODO: implement job removal */
   undefineJob: Action<StoreModel, Job>;
 
   defineCommand: Action<StoreModel, CustomCommand>;
@@ -230,10 +229,15 @@ const Actions: StoreActions = {
 
     state.navigation = {
       ...payload,
-      from: {
-        ...curNav,
-        props: { ...curNav.props, values: payload.values },
-      },
+      from: payload.origin
+        ? {
+            component: DefinitionsMenu,
+            props: { expanded: [true, true, false, false] },
+          }
+        : {
+            ...curNav,
+            props: { ...curNav.props, values: payload.values },
+          },
     };
   }),
 
