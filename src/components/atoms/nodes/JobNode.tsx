@@ -7,10 +7,11 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
+import { JobPropertiesMenuNav } from '../../menus/JobPropertiesMenu';
 
-const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob }> = (
-  props,
-) => {
+const JobNode: React.FunctionComponent<
+  NodeProps & { data: workflow.WorkflowJob }
+> = (props) => {
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
   );
@@ -19,6 +20,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
   //   (actions) => actions.setWorkflowElements,
   // );
   const updateJob = useStoreActions((actions) => actions.updateJob);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
@@ -50,13 +52,13 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
   });
 
   const jobIcon = (isApproval: boolean = false) => {
-    const classNameValue = "w-5 mr-2"
+    const classNameValue = 'w-5 mr-2';
     if (isApproval) {
       return <JobOnHoldIcon className={classNameValue} />;
     } else {
       return <JobIcon className={classNameValue} />;
     }
-  }
+  };
 
   const trackHovering = (
     entering: string[],
@@ -162,10 +164,19 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
-        <div className="flex w-full">
+        <button
+          className="flex w-full"
+          onClick={() => {
+            navigateTo({
+              component: JobPropertiesMenuNav,
+              props: { job: props.data },
+              origin: true,
+            });
+          }}
+        >
           {jobIcon(props.data.parameters?.type === 'approval')}
           {props.data.parameters?.name || props.data.name}
-        </div>
+        </button>
         <button
           className={`my-auto
           opacity-${hovering['node'] ? 100 : 0}

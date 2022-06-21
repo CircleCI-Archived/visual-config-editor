@@ -46,6 +46,7 @@ const WorkflowPane = (props: ElementProps) => {
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
   );
+
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
   );
