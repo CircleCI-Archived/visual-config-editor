@@ -61,8 +61,6 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                   return values;
                 }
 
-                console.log(step.parameters)
-
                 values.steps[props.index] = {
                   [name as string]: step.parameters,
                 };

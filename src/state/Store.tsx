@@ -253,7 +253,7 @@ const Actions: StoreActions = {
         ...travelTo.props,
         values: values,
       };
-
+      
       state.navigation = {
         ...travelTo,
         props: props,
