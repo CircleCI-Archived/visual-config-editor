@@ -10,7 +10,30 @@ This project is currently early preview. Features are subject to changes.
 
 **[Try it out](https://circleci-public.github.io/visual-config-editor/)** for yourself! Fork the repo and **[contribute](https://github.com/CircleCI-Public/visual-config-editor/blob/main/CONTRIBUTING.md)** to help us make this amazing!
 
-### Installing
+## Preview
+
+![Preview of the CircleCI Visual Config Editor](/.github/preview.png?raw=true 'Preview')
+
+
+## Run Development Server
+
+### With Docker
+
+Using npm:
+
+```shell
+$ npm run start-docker
+```
+
+Using yarn:
+
+```shell
+$ yarn start-docker
+```
+
+### Without Docker
+
+**Install**
 
 Using npm:
 
@@ -24,23 +47,25 @@ Using yarn:
 $ yarn install
 ```
 
-### Building
+After installing your dependencies, ensure are using the proper version of node by running NVM:
+
+```shell
+$ nvm use
+```
+
+**Start dev server**
 
 Using npm:
 
 ```shell
-$ npm run build
+$ npm run start
 ```
 
 Using yarn:
 
 ```shell
-$ yarn build
+$ yarn start
 ```
-
-## Preview
-
-![Preview of the CircleCI Visual Config Editor](/.github/preview.png?raw=true 'Preview')
 
 ## Example Generated Config
 
