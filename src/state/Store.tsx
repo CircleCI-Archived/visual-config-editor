@@ -10,6 +10,7 @@ import {
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Action, action } from 'easy-peasy';
 import { MutableRefObject } from 'react';
 import {
@@ -39,6 +40,7 @@ export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   jobs: Job[];
   commands: CustomCommand[];
   workflows: Workflow[];
+  orbs: OrbImport[];
 }
 
 export interface DataModel {
@@ -169,6 +171,8 @@ export interface StoreActions {
     CustomParameter<PipelineParameterLiteral>
   >;
 
+  importOrb: Action<StoreModel, OrbImport>;
+
   loadConfig: Action<StoreModel, string>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
   error: Action<StoreModel, any>;
@@ -253,7 +257,7 @@ const Actions: StoreActions = {
         ...travelTo.props,
         values: values,
       };
-      
+
       state.navigation = {
         ...travelTo,
         props: props,
@@ -360,6 +364,10 @@ const Actions: StoreActions = {
     );
   }),
 
+  importOrb: action((state, payload) => {
+    state.definitions.orbs?.push(payload);
+  }),
+
   error: action((state, payload) => {
     console.error('An action was not found! ', payload);
   }),
@@ -374,6 +382,7 @@ const Actions: StoreActions = {
         executors: config.executors || [],
         parameters: config.parameters?.parameters || [],
         commands: config.commands || [],
+        orbs: config.orbs || [],
       };
 
       const nodeWidth = 250; // Make this dynamic
@@ -402,7 +411,9 @@ const Actions: StoreActions = {
         });
 
         // Filter down to jobs that are not required by other jobs
-        const endJobs = jobs.filter((workflowJob) => !(getJobName(workflowJob) in requiredJobs));
+        const endJobs = jobs.filter(
+          (workflowJob) => !(getJobName(workflowJob) in requiredJobs),
+        );
 
         type JobNodeProps = { col: number; row: number };
         const elements: Elements = [];
@@ -555,6 +566,7 @@ const Store: StoreModel & StoreActions = {
     jobs: [],
     workflows: [],
     parameters: [],
+    orbs: [],
   },
   workflows: [
     {

@@ -3,7 +3,7 @@ import {
   Job,
   parsers,
   reusable,
-  workflow
+  workflow,
 } from '@circleci/circleci-config-sdk';
 import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
@@ -76,13 +76,24 @@ const ExecutorMapping: ComponentMapping<
     remove: (actions) => actions.undefineExecutor,
   },
   dragTarget: JobMapping.type,
-  applyToNode: (data, nodeData) => {
-    const oldJob = nodeData.job;
+  applyToNode: (data, { job, parameters }) => {
+    let params = { ...parameters };
 
-    return new workflow.WorkflowJob(
-      new Job(oldJob.name, data.reuse(), oldJob.steps),
-      nodeData.parameters,
-    );
+    if (!(job instanceof Job)) {
+      let executors = job.parameters.parameters.filter(
+        (param) => param.type === 'executor',
+      );
+
+      if (executors.length === 0) {
+        // TODO: Prompt user to add executor parameter
+      } else if (executors.length === 1) {
+        params[executors[0].name] = data.name;
+      } else {
+        // TODO: Prompt user to select executor parameter
+      }
+    }
+
+    return new workflow.WorkflowJob(job, params);
   },
   subtypes: {
     component: ExecutorTypePageNav,

@@ -9,10 +9,9 @@ export interface OrbImportProps {
 }
 
 const OrbImportsContainer = (props: OrbImportProps) => {
-  const items = ['test'];
-  // const items = useStoreState(props.type.store.get);
+  const items = useStoreState((state) => state.definitions.orbs);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  const guideStep = useStoreState((state) => state.guideStep);
+  // const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
 
   return (
@@ -38,7 +37,17 @@ const OrbImportsContainer = (props: OrbImportProps) => {
         <div className="w-full pl-2 pt-2">
           {/* <ComponentInfo type={props.type} /> */}
           {items && items.length > 0 ? (
-            items.map((item) => <div></div>)
+            items.map((orb) => (
+              <button
+                className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+      bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+              >
+                {orb.name}
+                <div className="ml-auto text-circle-gray-400">
+                  {orb.version}
+                </div>
+              </button>
+            ))
           ) : (
             <div className="font-medium text-sm text-circle-gray-500">
               No orbs imported.
