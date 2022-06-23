@@ -540,6 +540,7 @@ const Actions: StoreActions = {
       merge(defs.executors, payload?.executors),
       merge(defs.commands, payload?.commands),
       parameterList,
+      merge(defs.orbs, payload?.orbs),
     );
 
     if (payload) {
