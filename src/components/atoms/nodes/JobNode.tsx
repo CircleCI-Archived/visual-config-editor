@@ -1,4 +1,6 @@
 import { Job, workflow, types } from '@circleci/circleci-config-sdk';
+import { action } from 'easy-peasy';
+import { access } from 'fs';
 import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
@@ -8,9 +10,9 @@ import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 
-const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob }> = (
-  props,
-) => {
+const JobNode: React.FunctionComponent<
+  NodeProps & { data: workflow.WorkflowJob }
+> = (props) => {
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
   );
@@ -50,13 +52,13 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
   });
 
   const jobIcon = (isApproval: boolean = false) => {
-    const classNameValue = "w-5 mr-2"
+    const classNameValue = 'w-5 mr-2';
     if (isApproval) {
       return <JobOnHoldIcon className={classNameValue} />;
     } else {
       return <JobIcon className={classNameValue} />;
     }
-  }
+  };
 
   const trackHovering = (
     entering: string[],
@@ -181,38 +183,6 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
           />
         </button>
       </div>
-
-      <button
-        className={`opacity-${
-          hovering['handles'] && !hovering['node'] && !connecting?.start
-            ? 100
-            : 0
-        } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
-        {...trackHovering(['requiredBy', 'handles'], ['requiredBy'])}
-        id={`${props.id}_target`}
-        // onClick={() => {
-        // TODO: Implement 'add job' menu functionality
-        // }}
-        draggable
-        onDragStart={(e) => {
-          setConnecting({
-            ref: nodeRef,
-            id: {
-              connectionNodeId: props.id,
-              connectionHandleType: 'source',
-              connectionHandleId: `${props.id}_source`,
-            },
-            name: props.data.parameters?.name || props.data.name,
-          });
-          e.preventDefault();
-        }}
-      >
-        <PlusIcon
-          className="bg-white rounded-full w-full border border-white"
-          color="rgb(0, 120, 202)"
-          filled={hovering['requiredBy']}
-        />
-      </button>
 
       <Handle
         type="source"

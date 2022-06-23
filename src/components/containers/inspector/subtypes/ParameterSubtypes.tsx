@@ -20,7 +20,8 @@ export interface ComponentParameterMapping {
 const parameterSubtypes: ParameterTypes = {
   string: {
     text: 'String',
-    description: 'Pass text data',
+    description: `Sequence of characters that are optionally enlcosed by quotes.
+      Empty strings are treated as falsey while in evaluation of when clauses, and non-empty strings are treated as truthy.`,
     fields: (
       <InspectorProperty
         name="defaultValue"
@@ -31,6 +32,8 @@ const parameterSubtypes: ParameterTypes = {
   },
   boolean: {
     text: 'Boolean',
+    description: `A Boolean represents a true/false value. Such as "on" or "off".`,
+
     fields: (
       <InspectorProperty name="defaultValue" as="select" label="Default Value">
         <option value="undefined">No default</option>
@@ -41,6 +44,11 @@ const parameterSubtypes: ParameterTypes = {
   },
   integer: {
     text: 'Integer',
+    description: `Integers can be formatted using the familiar decimal notation.
+       Or have various formats such as having a leading “0x” to signal hexadecimal,
+        a leading “0b” to indicate binary bits (base 2), or have leading “0” to signal an octal base.
+        The use of “:” allows expressing integers in base 60, which is convenient for time/angle values.`,
+
     fields: (
       <InspectorProperty
         name="defaultValue"
@@ -51,6 +59,9 @@ const parameterSubtypes: ParameterTypes = {
   },
   enum: {
     text: 'Enum',
+    description: `Enums allow to define a list of any values,
+       which are useful in the case to enforce that the value must be one from a specific set of string values`,
+
     fields: <input type="text" />,
   },
   executor: {

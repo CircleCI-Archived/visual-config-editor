@@ -100,14 +100,6 @@ const WorkflowPane = (props: ElementProps) => {
           ),
         );
       }
-
-      setConnecting({
-        id: {
-          connectionNodeId: null,
-          connectionHandleType: null,
-          connectionHandleId: null,
-        },
-      });
     }
   };
 

@@ -127,6 +127,17 @@ export interface StoreActions {
     | undefined
   >;
 
+  removeConnecting: Action<
+    StoreModel,
+    | {
+        ref?: MutableRefObject<any>;
+        id: SetConnectionId;
+        pos?: XYPosition;
+        name?: string;
+      }
+    | undefined
+  >;
+
   setPlaceholder: Action<StoreModel, Node<any>>;
   setGuideStep: Action<StoreModel, number | undefined>;
 
@@ -192,6 +203,14 @@ const Actions: StoreActions = {
     }
   }),
   updateConnecting: action((state, payload) => {
+    if (state.connecting?.start) {
+      state.connecting = {
+        start: state.connecting.start,
+        end: payload,
+      };
+    }
+  }),
+  removeConnecting: action((state, payload) => {
     if (state.connecting?.start) {
       state.connecting = {
         start: state.connecting.start,
