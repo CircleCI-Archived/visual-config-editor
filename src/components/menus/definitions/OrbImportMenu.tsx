@@ -1,6 +1,5 @@
-import * as CircleCI from '@circleci/circleci-config-sdk';
-import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
-import { useStoreActions } from '../../../state/Hooks';
+import algoliasearch from 'algoliasearch/lite';
+import { Hits, InstantSearch, SearchBox } from 'react-instantsearch-hooks-web';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Card from '../../atoms/Card';
 import Select from '../../atoms/Select';
@@ -15,47 +14,13 @@ type InspectorDefinitionProps = DataModel & {
   activeTab?: number;
 } & SubTypeMenuPageProps<any>;
 
-let orbManifests: Array<
-  {
-    namespace: string;
-    name: string;
-    version: string;
-    description: string;
-  } & OrbImportManifest
-> = [
-  {
-    name: 'my-orb',
-    namespace: 'testing',
-    version: '1.2.3',
-    description: 'An orb that is hardcoded and for development purposes',
-    jobs: {
-      say_hello: {
-        greeting: {
-          type: 'string',
-        },
-      },
-    },
-    commands: {
-      say_it: {
-        what: {
-          type: 'string',
-        },
-      },
-    },
-    executors: {
-      python: {
-        version: {
-          type: 'string',
-          default: '1.0.0',
-        },
-      },
-    },
-  },
-];
+const searchClient = algoliasearch(
+  'U0RXNGRK45',
+  '798b0e1407310a2b54b566250592b3fd',
+);
 
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE', 'IN PROJECT'];
-  const importOrb = useStoreActions((actions) => actions.importOrb);
 
   return (
     <div className="h-full flex flex-col">
@@ -72,33 +37,42 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
           <Select className="mt-2 w-full">
             <option>Recommended Orbs</option>
           </Select>
-          <input
-            className="rounded border w-full border-circle-gray-400 pl-4 my-4 p-2 hover:border-circle-gray-700 "
-            placeholder="Search orb directory..."
-          />
-          {orbManifests.map((importingOrb) => {
-            let { name, namespace, description, version, ...manifest } =
-              importingOrb;
-
-            return (
-              <Card
-                title={importingOrb.name}
-                description={importingOrb.description}
-                onClick={() => {
-                  importOrb(
-                    new CircleCI.orb.OrbImport(
-                      name,
-                      namespace,
-                      name,
-                      manifest,
-                      version,
-                      description,
-                    ),
-                  );
-                }}
-              ></Card>
-            );
-          })}
+          <InstantSearch searchClient={searchClient} indexName="orbs-prod">
+            {/* <RefinementList attribute="brand" /> */}
+            <SearchBox
+              placeholder="Search Orb Directory..."
+              classNames={{
+                form: 'my-4 rounded border border-circle-gray-400 px-2 hover:border-circle-gray-700',
+                input: 'p-2',
+                submit: 'p-2',
+              }}
+            />
+            <Hits
+              className="overflow-y-auto"
+              hitComponent={({ hit, sendEvent }) => (
+                <Card
+                  icon={
+                    <img
+                      src={hit.logo_url as string}
+                      className="w-6 h-6 mr-2 mb-2"
+                      alt={`${hit.name} logo`}
+                    ></img>
+                  }
+                  pinned={
+                    <p className="text-circle-gray-400 text-sm">
+                      {hit.version as string}
+                    </p>
+                  }
+                  key={hit.full_name as string}
+                  title={hit.name as string}
+                  description={hit.description as string}
+                  onClick={() => {
+                    //TODO: Go to orb page
+                  }}
+                />
+              )}
+            />
+          </InstantSearch>
         </div>
       </TabbedMenu>
     </div>
