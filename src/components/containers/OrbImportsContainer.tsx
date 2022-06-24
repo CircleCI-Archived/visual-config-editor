@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import { OrbDefinitionMenuNav } from '../menus/definitions/OrbImportMenu';
+import { OrbImportMenuNav } from '../menus/definitions/OrbImportMenu';
 import CollapsibleList from './CollapsibleList';
 
 export interface OrbImportProps {
@@ -24,7 +24,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
           <button
             onClick={() => {
               navigateTo({
-                component: OrbDefinitionMenuNav,
+                component: OrbImportMenuNav,
                 props: {},
               });
             }}

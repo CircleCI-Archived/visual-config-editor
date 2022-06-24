@@ -1,11 +1,13 @@
 import algoliasearch from 'algoliasearch/lite';
 import { Hits, InstantSearch, SearchBox } from 'react-instantsearch-hooks-web';
+import { useStoreActions } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Card from '../../atoms/Card';
 import Select from '../../atoms/Select';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
+import { OrbDefinitionMenuNav, OrbDefinitionProps } from './OrbDefinitionsMenu';
 
 type InspectorDefinitionProps = DataModel & {
   values: Record<string, object>;
@@ -21,6 +23,7 @@ const searchClient = algoliasearch(
 
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE', 'IN PROJECT'];
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
     <div className="h-full flex flex-col">
@@ -49,28 +52,46 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
             />
             <Hits
               className="overflow-y-auto"
-              hitComponent={({ hit, sendEvent }) => (
-                <Card
-                  icon={
-                    <img
-                      src={hit.logo_url as string}
-                      className="w-6 h-6 mr-2 mb-2"
-                      alt={`${hit.name} logo`}
-                    ></img>
-                  }
-                  pinned={
-                    <p className="text-circle-gray-400 text-sm">
-                      {hit.version as string}
-                    </p>
-                  }
-                  key={hit.full_name as string}
-                  title={hit.name as string}
-                  description={hit.description as string}
-                  onClick={() => {
-                    //TODO: Go to orb page
-                  }}
-                />
-              )}
+              hitComponent={({ hit, sendEvent }) => {
+                let values = hit as unknown as OrbDefinitionProps;
+
+                return (
+                  <Card
+                    icon={
+                      <img
+                        src={
+                          (hit.logo_url as string) ||
+                          'https://circleci.com/developer/orb-logos/community.png'
+                        }
+                        className="w-6 h-6 mr-2 mb-2"
+                        alt=""
+                      ></img>
+                    }
+                    pinned={
+                      <p className="text-circle-gray-400 text-sm">
+                        {hit.version as string}
+                      </p>
+                    }
+                    key={hit.full_name as string}
+                    title={hit.name as string}
+                    description={hit.description as string}
+                    onClick={() => {
+                      navigateTo({
+                        component: OrbDefinitionMenuNav,
+                        props: {
+                          name: values.name,
+                          namespace: values.namespace,
+                          version: values.version,
+                          full_name: values.full_name,
+                          logo_url: values.logo_url,
+                          description: values.description,
+                          url: values.url,
+                        },
+                      });
+                    }}
+                  />
+                );
+              }}
             />
           </InstantSearch>
         </div>
@@ -79,7 +100,7 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
   );
 };
 
-const OrbDefinitionMenuNav: NavigationComponent = {
+const OrbImportMenuNav: NavigationComponent = {
   Component: OrbImportMenu,
   Label: (props: InspectorDefinitionProps) => {
     return <p>Orbs</p>;
@@ -97,4 +118,4 @@ const OrbDefinitionMenuNav: NavigationComponent = {
   },
 };
 
-export { OrbDefinitionMenuNav, OrbImportMenu };
+export { OrbImportMenuNav, OrbImportMenu };
