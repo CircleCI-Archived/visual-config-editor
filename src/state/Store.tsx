@@ -32,8 +32,7 @@ export interface WorkflowModel {
   name: string;
   id: string;
   /* 
-   * the main thing being updated. every time we want to change an element in this array,
-     we should 
+   * the main thing being updated. every time we want to change an element in this array
   */
   elements: Elements<any>;
 }
