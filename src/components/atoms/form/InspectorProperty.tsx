@@ -9,6 +9,7 @@ export interface InspectorFieldProps {
   value?: any;
   hidden?: boolean;
   required?: boolean;
+  placeholder?: string;
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
 }
@@ -37,15 +38,19 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
           </span>
         )}
       </div>
-      <Field
-        {...field}
-        {...props}
-        className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-        border-2 rounded p-1 ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
-      >
-        {props.children}
-      </Field>
-      {touched && error && <span className="text-sm text-circle-red">{error}</span>}
+      {props.children ?? (
+        <Field
+          {...field}
+          {...props}
+          className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
+        border-2 rounded p-1 ${
+          error ? 'border-circle-red' : 'border-circle-gray-300'
+        }`}
+        ></Field>
+      )}
+      {touched && error && (
+        <span className="text-sm text-circle-red">{error}</span>
+      )}
     </div>
   );
 };

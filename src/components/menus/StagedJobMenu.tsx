@@ -11,20 +11,25 @@ type WorkflowJobMenuProps = {
   job: WorkflowJob;
 };
 
-const JobPropertiesMenu = ({ job }: WorkflowJobMenuProps) => {
+const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
+
+  console.log({ name: job.name, parameters: job.parameters });
 
   return (
     <div className="h-full flex flex-col">
       <header>
         <BreadCrumbs />
-        <h1 className="ml-6 text-2xl py-2 font-bold">Edit Job Properties</h1>
+        <h1 className="ml-6 text-2xl py-2 font-bold">Edit Staged Job</h1>
       </header>
       <Formik
-        initialValues={job.parameters || { parameters: undefined }}
+        initialValues={{
+          name: job.name,
+          parameters: { name: '', ...job.parameters },
+        }}
         enableReinitialize={true}
         onSubmit={(values) => {
-          job.parameters = values;
+          job.parameters = values.parameters;
 
           navigateBack({
             distance: 1,
@@ -35,7 +40,20 @@ const JobPropertiesMenu = ({ job }: WorkflowJobMenuProps) => {
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
               <div className="p-6">
-                <InspectorProperty name="name" label="Name" />
+                <InspectorProperty type="button" name="name" label="Source Job">
+                  <button
+                    className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+      bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+                  >
+                    <JobIcon className="ml-1 mr-2 w-5 h-5" />
+                    <p className="leading-5">{job.name}</p>
+                  </button>
+                </InspectorProperty>
+                <InspectorProperty
+                  name="parameters.name"
+                  label="Name"
+                  placeholder={job.name}
+                />
               </div>
             </TabbedMenu>
 
@@ -44,7 +62,7 @@ const JobPropertiesMenu = ({ job }: WorkflowJobMenuProps) => {
               type="submit"
               className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
             >
-              Save Workflow Job
+              Save Staged Job
             </button>
           </Form>
         )}
@@ -53,8 +71,8 @@ const JobPropertiesMenu = ({ job }: WorkflowJobMenuProps) => {
   );
 };
 
-const JobPropertiesMenuNav: NavigationComponent = {
-  Component: JobPropertiesMenu,
+const StagedJobMenuNav: NavigationComponent = {
+  Component: StagedJobMenu,
   Label: (props: WorkflowJobMenuProps) => {
     return <p>{props.job.parameters?.name || props.job.name}</p>;
   },
@@ -63,4 +81,4 @@ const JobPropertiesMenuNav: NavigationComponent = {
   },
 };
 
-export { JobPropertiesMenu, JobPropertiesMenuNav };
+export { StagedJobMenu, StagedJobMenuNav };

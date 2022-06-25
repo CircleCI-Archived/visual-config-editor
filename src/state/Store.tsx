@@ -227,17 +227,21 @@ const Actions: StoreActions = {
       state.navigation.jumpedFrom = undefined;
     }
 
+    let root = curNav.from;
+
+    while (root?.from?.from !== undefined) {
+      root = root.from;
+    }
+
     state.navigation = {
       ...payload,
-      from: payload.origin
-        ? {
-            component: DefinitionsMenu,
-            props: { expanded: [true, true, false, false] },
-          }
-        : {
-            ...curNav,
-            props: { ...curNav.props, values: payload.values },
-          },
+      from:
+        payload.origin && root
+          ? root
+          : {
+              ...curNav,
+              props: { ...curNav.props, values: payload.values },
+            },
     };
   }),
 

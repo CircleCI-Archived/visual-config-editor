@@ -7,7 +7,7 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { JobPropertiesMenuNav } from '../../menus/JobPropertiesMenu';
+import { StagedJobMenuNav } from '../../menus/StagedJobMenu';
 
 const JobNode: React.FunctionComponent<
   NodeProps & { data: workflow.WorkflowJob }
@@ -168,7 +168,7 @@ const JobNode: React.FunctionComponent<
           className="flex w-full"
           onClick={() => {
             navigateTo({
-              component: JobPropertiesMenuNav,
+              component: StagedJobMenuNav,
               props: { job: props.data },
               origin: true,
             });
