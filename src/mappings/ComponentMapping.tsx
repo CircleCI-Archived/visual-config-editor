@@ -85,7 +85,11 @@ const componentToType = (data: any): GenerableMapping | undefined => {
   return foundType;
 };
 
-export { componentToType, dataMappings };
+const typeToComponent = (componentType: string) => {
+  return dataMappings.find((mapping) => mapping.type === componentType);
+};
+
+export { componentToType, typeToComponent, dataMappings };
 
 type StoreType = typeof Store;
 type KeysOfUnion<T> = T extends T ? keyof T : never;
