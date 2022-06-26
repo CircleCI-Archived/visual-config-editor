@@ -33,6 +33,13 @@ export interface WorkflowModel {
   elements: Elements<any>;
 }
 
+export interface PreviewToolboxModel {
+  filter: {
+    type: 'branches' | 'tags'
+    pattern: string
+  }
+}
+
 /** Reusable definitions of CircleCIConfigObject */
 export interface DefinitionModel /*extends CircleCIConfigObject*/ {
   parameters: CustomParameter<PipelineParameterLiteral>[];
@@ -79,6 +86,8 @@ export interface StoreModel {
   workflows: WorkflowModel[];
   /** Allows for tracking of components and their props in NavigationPanel */
   navigation: NavigationModel;
+  /** Staged Job Preview Toolbox state  */
+  previewToolbox: PreviewToolboxModel;
 
   /** Data being dragged from definition */
   dragging?: DataModel;
@@ -119,11 +128,11 @@ export interface StoreActions {
   updateConnecting: Action<
     StoreModel,
     | {
-        ref?: MutableRefObject<any>;
-        id: SetConnectionId;
-        pos?: XYPosition;
-        name?: string;
-      }
+      ref?: MutableRefObject<any>;
+      id: SetConnectionId;
+      pos?: XYPosition;
+      name?: string;
+    }
     | undefined
   >;
 
@@ -176,6 +185,8 @@ export interface StoreActions {
   loadConfig: Action<StoreModel, string>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
   error: Action<StoreModel, any>;
+
+  updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
 }
 
 const Actions: StoreActions = {
@@ -347,7 +358,7 @@ const Actions: StoreActions = {
     state.definitions.parameters =
       state.definitions.parameters?.concat(payload);
   }),
-  updateParameter: action((state, payload) => {}),
+  updateParameter: action((state, payload) => { }),
   undefineParameter: action((state, payload) => {
     state.definitions.parameters?.filter(
       (parameter) => parameter.name !== payload.name,
@@ -357,7 +368,7 @@ const Actions: StoreActions = {
   defineCommand: action((state, payload) => {
     state.definitions.commands = state.definitions.commands?.concat(payload);
   }),
-  updateCommand: action((state, payload) => {}),
+  updateCommand: action((state, payload) => { }),
   undefineCommand: action((state, payload) => {
     state.definitions.commands?.filter(
       (command) => command.name !== payload.name,
@@ -529,8 +540,8 @@ const Actions: StoreActions = {
     const parameterList =
       pipelineParameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            pipelineParameters,
-          )
+          pipelineParameters,
+        )
         : undefined;
 
     const config = new Config(
@@ -550,6 +561,10 @@ const Actions: StoreActions = {
       state.editingConfig = undefined;
     }
   }),
+
+  updatePreviewToolBox: action((state, payload) => {
+    state.previewToolbox = payload;
+  })
 };
 
 const Store: StoreModel & StoreActions = {
@@ -560,6 +575,13 @@ const Store: StoreModel & StoreActions = {
   navigation: {
     component: DefinitionsMenu,
     props: { expanded: [true, true, false, false] },
+  },
+  previewToolbox:
+  {
+    filter: {
+      type: 'branches',
+      pattern: '',
+    }
   },
   definitions: {
     commands: [],

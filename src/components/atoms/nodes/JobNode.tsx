@@ -1,4 +1,5 @@
-import { Job, workflow, types } from '@circleci/circleci-config-sdk';
+import { Job, types, workflow } from '@circleci/circleci-config-sdk';
+import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
@@ -20,6 +21,7 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
   // );
   const updateJob = useStoreActions((actions) => actions.updateJob);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
+  const toolbox = useStoreState((state) => state.previewToolbox)
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
   );
@@ -48,6 +50,23 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
     remove: false,
     requires: false,
   });
+
+  let filtered = false;
+
+  const job = props.data as WorkflowJob;
+  const filters = job.parameters?.filters;
+
+  if (filters && filters[toolbox.filter.type]) {
+    const jobFilter = filters[toolbox.filter.type];
+    const pattern = toolbox.filter.pattern;
+    const ignoreFilter = jobFilter?.ignore?.includes(pattern);
+    const onlyFilter = jobFilter?.only?.includes(pattern);
+
+    console.log(ignoreFilter || !onlyFilter)
+    filtered = ignoreFilter || !onlyFilter;
+  }
+
+  console.log(filtered)
 
   const jobIcon = (isApproval: boolean = false) => {
     const classNameValue = "w-5 mr-2"
@@ -136,11 +155,10 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
       }}
     >
       <button
-        className={`opacity-${
-          hovering['handles'] && !hovering['node'] && !connecting?.start
-            ? 100
-            : 0
-        } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
+        className={`opacity-${hovering['handles'] && !hovering['node'] && !connecting?.start
+          ? 100
+          : 0
+          } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
         id={`${props.id}_source`}
         {...trackHovering(['requires', 'handles'], ['requires'])}
       >
@@ -152,13 +170,12 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
       </button>
 
       <div
-        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer
-        ${
-          (hovering['node'] && !hovering['remove']) ||
-          (hovering['handles'] && connecting?.start)
+        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer ${filtered ? 'bg-gray-200 opacity-60' : 'opacity-100'}
+        ${(hovering['node'] && !hovering['remove']) ||
+            (hovering['handles'] && connecting?.start)
             ? 'border-circle-blue'
             : 'border-circle-gray-300'
-        }`}
+          }`}
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
@@ -183,11 +200,10 @@ const JobNode: React.FunctionComponent<NodeProps & { data: workflow.WorkflowJob 
       </div>
 
       <button
-        className={`opacity-${
-          hovering['handles'] && !hovering['node'] && !connecting?.start
-            ? 100
-            : 0
-        } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
+        className={`opacity-${hovering['handles'] && !hovering['node'] && !connecting?.start
+          ? 100
+          : 0
+          } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
         {...trackHovering(['requiredBy', 'handles'], ['requiredBy'])}
         id={`${props.id}_target`}
         // onClick={() => {
