@@ -14,8 +14,6 @@ type WorkflowJobMenuProps = {
 const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
 
-  console.log({ name: job.name, parameters: job.parameters });
-
   return (
     <div className="h-full flex flex-col">
       <header>
