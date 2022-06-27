@@ -31,6 +31,7 @@ const DropdownContainer = (props: {
       <button
         className={props.className}
         ref={buttonRef}
+        type="button"
         onClick={(event) => {
           setExtended(!isExtended);
           // prevent the click event from bubbling up to event that will close the drawer
