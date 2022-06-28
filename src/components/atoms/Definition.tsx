@@ -1,9 +1,20 @@
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
-import ComponentMapping from '../../mappings/ComponentMapping';
+import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import {
+  OrbImport,
+  OrbRef,
+} from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+import * as CircleCI from '@circleci/circleci-config-sdk';
+import GenerableMapping from '../../mappings/ComponentMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenuNav } from '../menus/definitions/InspectorDefinitionMenu';
 
-const Definition = (props: { data: Generable; type: ComponentMapping, index: number }) => {
+const Definition = (props: {
+  data: Generable | OrbRef<AnyParameterLiteral>;
+  type: GenerableMapping;
+  index: number;
+  orb?: OrbImport;
+}) => {
   const Summary = props.type.components.summary;
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setDragging = useStoreActions((actions) => actions.setDragging);
@@ -21,6 +32,10 @@ const Definition = (props: { data: Generable; type: ComponentMapping, index: num
         }
       }}
       onClick={(e) => {
+        if (props.data instanceof CircleCI.orb.OrbRef) {
+          return;
+        }
+
         // this generated object should always have a single key
         const generated = props.data.generate() as { [key: string]: object };
         const flattened = Object.entries(generated).map(([key, value]) => ({
@@ -30,7 +45,12 @@ const Definition = (props: { data: Generable; type: ComponentMapping, index: num
 
         navigateTo({
           component: InspectorDefinitionMenuNav,
-          props: { editing: true, values: flattened, dataType: props.type, index: props.index },
+          props: {
+            editing: true,
+            values: flattened,
+            dataType: props.type,
+            index: props.index,
+          },
         });
       }}
     >

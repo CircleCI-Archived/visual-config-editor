@@ -9,6 +9,7 @@ const Select = (props: {
   value?: string;
   className?: string;
   dropdownClassName?: string;
+  onChange?: (index: number, value?: any) => void;
   children: OptionElement[] | OptionElement;
   icon?: ReactElement;
 }) => {
@@ -21,7 +22,7 @@ const Select = (props: {
   return (
     <DropdownContainer
       className={
-        'rounded border border-circle-gray-400 px-2 hover:border-circle-gray-700 ' +
+        'rounded border border-circle-gray-300 px-2 shadow-sm hover:border-circle-gray-700 ' +
         props.className
       }
     >
@@ -37,7 +38,7 @@ const Select = (props: {
             : props.placeholder}
         </div>
         <div className="ml-auto py-2">
-          <ExpandIcon className="w-3 h-5 mr-3 " expanded={true} />
+          <ExpandIcon className="w-3 h-5 mr-3 ml-3" expanded={true} />
         </div>
       </div>
       <div className={'bg-white py-2 shadow-lg ' + props.dropdownClassName}>
@@ -48,7 +49,13 @@ const Select = (props: {
                 i > 0 && 'border-t border-circle-gray-300'
               }`}
               key={i}
-              onClick={() => setSelected(i)}
+              onClick={() => {
+                setSelected(i);
+
+                if (props.onChange) {
+                  props.onChange(i, children[i].props.value);
+                }
+              }}
             >
               {child.props.children}
             </button>

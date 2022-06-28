@@ -6,6 +6,7 @@ export interface CollapsibleListProps {
   titleExpanded?: ReactElement;
   children: ReactElement;
   expanded?: boolean;
+  classNameExpanded?: string;
   className?: string;
   onChange?: (expanded: boolean) => void;
 }
@@ -14,7 +15,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
   const [expanded, setExpanded] = useState(props.expanded || false);
 
   return (
-    <div className={props.className}>
+    <div className={props.classNameExpanded && expanded ? props.classNameExpanded : props.className}>
       <div className="flex flex-row">
         <button
           onClick={(e) => {

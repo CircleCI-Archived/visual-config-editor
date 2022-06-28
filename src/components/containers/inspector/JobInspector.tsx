@@ -23,7 +23,8 @@ const JobInspector = (
         label="Executor"
         as="select"
         name="executor.name"
-        value={executorName}
+        className="w-full"
+        value={executorName || 'Select Executor'}
         required
       >
         {[{ name: 'Select Executor' }, ...props.definitions.executors].map(
