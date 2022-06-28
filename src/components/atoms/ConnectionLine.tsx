@@ -54,7 +54,11 @@ const ConnectionLine = ({
         stroke={color}
         strokeWidth={1.5}
         className="animated"
-        d={`M${startX},${startY} ${startX + dist},${startY} ${startX + dist},${startY} ${endX - dist},${endY} ${endX - dist},${endY} ${endX},${endY}`}
+        d={`M${startX},${startY} ${startX + dist},${startY} ${
+          startX + dist
+        },${startY} ${endX - dist},${endY} ${
+          endX - dist
+        },${endY} ${endX},${endY}`}
       />
       <circle
         cx={endX}

@@ -6,6 +6,7 @@ import { useStoreActions } from '../../state/Hooks';
 import { NavigationComponent } from '../../state/Store';
 import InspectorProperty from '../atoms/form/InspectorProperty';
 import BreadCrumbs from '../containers/BreadCrumbs';
+import StagedFilterMenuNav from './StagedFilterMenu';
 import ParamListContainer from '../containers/ParamListContainer';
 import TabbedMenu from './TabbedMenu';
 
@@ -15,6 +16,7 @@ type WorkflowJobMenuProps = {
 
 const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
     <div className="h-full flex flex-col">
@@ -54,6 +56,19 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                   label="Name"
                   placeholder={job.name}
                 />
+                <button
+                  type="button"
+                  className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
+                  onClick={() => {
+                    navigateTo({
+                      component: StagedFilterMenuNav,
+                      props: { job },
+                      origin: true,
+                    });
+                  }}
+                >
+                  Edit Filters
+                </button>
                 {job.job instanceof reusable.ParameterizedJob && (
                   <div className="bg-red w-full">
                     <ParamListContainer
