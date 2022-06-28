@@ -1,4 +1,5 @@
-import { Job, workflow, types } from '@circleci/circleci-config-sdk';
+import { Job, types, workflow } from '@circleci/circleci-config-sdk';
+import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import React, { useRef } from 'react';
 import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
@@ -22,6 +23,7 @@ const JobNode: React.FunctionComponent<
   const updateJob = useStoreActions((actions) => actions.updateJob);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
+  const toolbox = useStoreState((state) => state.previewToolbox);
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
   );
@@ -50,6 +52,20 @@ const JobNode: React.FunctionComponent<
     remove: false,
     requires: false,
   });
+
+  let filtered = false;
+
+  const job = props.data as WorkflowJob;
+  const filters = job.parameters?.filters;
+
+  if (filters && filters[toolbox.filter.type]) {
+    const jobFilter = filters[toolbox.filter.type];
+    const pattern = toolbox.filter.pattern;
+    const ignoreFilter = jobFilter?.ignore?.includes(pattern);
+    const onlyFilter = jobFilter?.only?.includes(pattern);
+
+    filtered = ignoreFilter || !onlyFilter;
+  }
 
   const jobIcon = (isApproval: boolean = false) => {
     const classNameValue = 'w-5 mr-2';
@@ -154,7 +170,9 @@ const JobNode: React.FunctionComponent<
       </button>
 
       <div
-        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer
+        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer ${
+          filtered ? 'bg-gray-200 opacity-60' : 'opacity-100'
+        }
         ${
           (hovering['node'] && !hovering['remove']) ||
           (hovering['handles'] && connecting?.start)
