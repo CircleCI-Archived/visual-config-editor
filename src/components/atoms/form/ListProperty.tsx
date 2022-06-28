@@ -3,7 +3,6 @@ import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
-import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
 import { InspectorFieldProps } from './InspectorProperty';
 
@@ -29,31 +28,6 @@ export type ListItemProps = {
   arrayHelper: ArrayHelpers;
   children: ReactElement;
 };
-
-/*
- <button
-            className="flex-1 cursor-pointer text-left text-circle-black leading-6"
-            type="button"
-            onClick={() => {
-              navigateTo({
-                component: StepDefinitionMenuNav,
-                props: {
-                  editing: true,
-                  values: {
-                    name: name,
-                    ...parameters,
-                  },
-                  index,
-                },
-                values: {
-                  ...values,
-                },
-              });
-            }}
-          >
-            {name}
-          </button>
-*/
 
 const ListItem = ({
   index,

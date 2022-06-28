@@ -24,9 +24,9 @@ const subtypes: ParamInspector = {
 
     return {
       as: 'select',
-      children: enumParam.enumValues.map((value) => {
-        <option value={value}>{value}</option>;
-      }),
+      children: enumParam.enumValues.map((value) => (
+        <option value={value}>{value}</option>
+      )),
     };
   },
   string: (parameter) => {

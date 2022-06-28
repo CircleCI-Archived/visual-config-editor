@@ -3,9 +3,7 @@ import CommandMapping from '../../../mappings/CommandMapping';
 import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
-import ListProperty, {
-  ListItemChildProps,
-} from '../../atoms/form/ListProperty';
+import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
