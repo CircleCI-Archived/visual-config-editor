@@ -50,7 +50,8 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
     inspector: JobInspector,
   },
   docsInfo: {
-    description: 'Collection of steps to run your config',
+    description:
+      'Collection of steps to be executed within the Executor environment.',
     link: 'https://circleci.com/docs/2.0/concepts/#jobs',
   },
 };

@@ -32,7 +32,8 @@ const CommandMapping: ComponentMapping<CustomCommand> = {
     inspector: CommandInspector,
   },
   docsInfo: {
-    description: 'Sequenced steps to be executed',
+    description:
+      'A command defines a sequence of steps to be executed in a job.',
     link: 'https://circleci.com/docs/2.0/reusing-config/#the-commands-key',
   },
 };
