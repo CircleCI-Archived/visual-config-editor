@@ -1,5 +1,5 @@
 import { Field, FieldInputProps, useField } from 'formik';
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import Select from '../Select';
 
 export type InspectorFieldProps = {
