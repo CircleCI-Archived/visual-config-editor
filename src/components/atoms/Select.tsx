@@ -9,7 +9,7 @@ const Select = (props: {
   value?: string;
   className?: string;
   dropdownClassName?: string;
-  onChange?: (value?: any) => void;
+  onChange?: (index: number, value?: any) => void;
   children: OptionElement[] | OptionElement;
   icon?: ReactElement;
 }) => {
@@ -29,8 +29,9 @@ const Select = (props: {
       <div className="flex flex-row">
         {props.icon}
         <div
-          className={`${selected === -1 ? 'text-circle-gray-500' : 'text-circle-black'
-            } ml-2 leading-10`}
+          className={`${
+            selected === -1 ? 'text-circle-gray-500' : 'text-circle-black'
+          } ml-2 leading-10`}
         >
           {selected > -1
             ? children[selected].props.children
@@ -44,14 +45,15 @@ const Select = (props: {
         {children.map((child, i) => {
           return (
             <button
-              className={`px-3 py-1 text-left w-full hover:bg-circle-gray-200 ${i > 0 && 'border-t border-circle-gray-300'
-                }`}
+              className={`px-3 py-1 text-left w-full hover:bg-circle-gray-200 ${
+                i > 0 && 'border-t border-circle-gray-300'
+              }`}
               key={i}
               onClick={() => {
-                setSelected(i)
+                setSelected(i);
 
                 if (props.onChange) {
-                  props.onChange(children[i].props.value);
+                  props.onChange(i, children[i].props.value);
                 }
               }}
             >
