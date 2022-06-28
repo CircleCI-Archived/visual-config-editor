@@ -21,7 +21,7 @@ export default function PreviewToolbox() {
             <div className="flex flex-row">
               <Select
                 value={toolbox.filter.type}
-                onChange={(value: 'branches' | 'tags') =>
+                onChange={(_, value: 'branches' | 'tags') =>
                   updateFilter('type', value)
                 }
                 className="mt-2"
