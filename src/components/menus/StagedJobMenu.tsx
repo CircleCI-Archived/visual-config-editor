@@ -1,3 +1,4 @@
+import { reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../icons/components/JobIcon';
@@ -5,6 +6,7 @@ import { useStoreActions } from '../../state/Hooks';
 import { NavigationComponent } from '../../state/Store';
 import InspectorProperty from '../atoms/form/InspectorProperty';
 import BreadCrumbs from '../containers/BreadCrumbs';
+import ParamListContainer from '../containers/ParamListContainer';
 import TabbedMenu from './TabbedMenu';
 
 type WorkflowJobMenuProps = {
@@ -52,6 +54,13 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                   label="Name"
                   placeholder={job.name}
                 />
+                {job.job instanceof reusable.ParameterizedJob && (
+                  <div className="bg-red w-full">
+                    <ParamListContainer
+                      paramList={job.job.parameters}
+                    ></ParamListContainer>
+                  </div>
+                )}
               </div>
             </TabbedMenu>
 
