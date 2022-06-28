@@ -5,11 +5,12 @@ import {
   parsers,
   reusable,
   Workflow,
-  workflow,
+  workflow
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Action, action } from 'easy-peasy';
 import { MutableRefObject } from 'react';
@@ -20,7 +21,7 @@ import {
   isNode,
   Node,
   SetConnectionId,
-  XYPosition,
+  XYPosition
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
@@ -30,6 +31,9 @@ import JobMapping from '../mappings/JobMapping';
 export interface WorkflowModel {
   name: string;
   id: string;
+  /* 
+   * the main thing being updated. every time we want to change an element in this array
+  */
   elements: Elements<any>;
 }
 
@@ -72,6 +76,14 @@ export interface NavigationStop {
   origin?: boolean;
 }
 
+export interface StagedJobMap {
+  workflows: {
+    [workflow: string]: {
+      [job: string]: number
+    }
+  }
+}
+
 export interface StoreModel {
   /** Last generated configuration */
   config: string | undefined;
@@ -83,6 +95,8 @@ export interface StoreModel {
   guideStep?: number;
   /** Node placeholder element info */
   placeholder?: { index: number; id: string };
+  /** Map to staged workflow jobs, to save on time-space complexity */
+  stagedJobs: StagedJobMap
   /** Array of workflow panes */
   workflows: WorkflowModel[];
   /** Allows for tracking of components and their props in NavigationPanel */
@@ -297,6 +311,7 @@ const Actions: StoreActions = {
       id: v4(),
       elements: [],
     });
+    state.stagedJobs = { ...state.stagedJobs, }
   }),
   selectWorkflow: action((state, index) => {
     state.selectedWorkflow = index;
@@ -310,15 +325,63 @@ const Actions: StoreActions = {
   addWorkflowElement: action((state, payload) => {
     const workflow = state.workflows[state.selectedWorkflow];
 
+    if (payload.type === 'jobs') {
+      const jobData = payload.data as WorkflowJobAbstract;
+      const jobName = jobData.name;
+      const stagedJobs = state.stagedJobs.workflows;
+      let curWorkflow = stagedJobs[workflow.name];
+
+      if (workflow.name in state.stagedJobs.workflows) {
+
+        if (!curWorkflow[jobName]) {
+          curWorkflow[jobName] = 1
+        } else {
+          curWorkflow[jobName]++
+        }
+      } else {
+        stagedJobs[workflow.name] = { [jobName]: 1 }
+      }
+
+      state.stagedJobs = { workflows: stagedJobs };
+    }
+
+    // Not sure why this mutable update causes the workflow pane to refresh, but it does.
     workflow.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
     const workflow = state.workflows[state.selectedWorkflow];
+    const map = state.stagedJobs;
+    const stagedJob = map.workflows[workflow.name];
 
     state.workflows[state.selectedWorkflow] = {
       ...workflow,
-      elements: workflow.elements.filter((element) => element.id !== payload),
+      elements: workflow.elements.filter((element, i) => {
+        const filtered = element.id === payload;
+
+        if (filtered) {
+          if (element.type === 'jobs') {
+            const workflowJob = element.data as WorkflowJobAbstract;
+            const name = workflowJob.name;
+            const sameSourceJobs = stagedJob[name];
+
+            if (sameSourceJobs) {
+              stagedJob[name]--;
+
+              if (stagedJob[name] === 0) {
+                delete stagedJob[name];
+              }
+
+              state.stagedJobs = { workflows: map.workflows }
+            }
+          }
+        }
+
+        // TODO: determine if there are any more of the same job type in the workflow.
+        // Requires name duplication to be fully logical
+        return !filtered;
+      }),
     };
+
   }),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
@@ -598,6 +661,11 @@ const Store: StoreModel & StoreActions = {
     workflows: [],
     parameters: [],
     orbs: [],
+  },
+  stagedJobs: {
+    workflows: {
+      'build-and-test': {}
+    }
   },
   workflows: [
     {
