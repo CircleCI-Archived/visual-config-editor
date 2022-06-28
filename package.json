@@ -1,12 +1,20 @@
 {
   "name": "visual-config-editor",
-  "version": "0.0.0-development",
+  "version": "0.1.0",
   "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
-    "@circleci/circleci-config-sdk": "v0.9.0-alpha.2",
+    "@circleci/circleci-config-sdk": "0.7.0",
     "@craco/craco": "^6.3.0",
     "@monaco-editor/react": "^4.3.1",
-    "algoliasearch": "^4.13.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.35",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-tabs": "^2.3.3",
+    "@types/uuid": "^8.3.1",
     "autoprefixer": "^9",
     "easy-peasy": "^5.0.3",
     "formik": "^2.2.9",
@@ -17,7 +25,6 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.7",
-    "react-instantsearch-hooks-web": "^6.29.0",
     "react-redux": "^7.2.6",
     "react-scripts": "4.0.3",
     "react-tabs": "^3.2.2",
@@ -31,7 +38,6 @@
   },
   "scripts": {
     "start": "craco start",
-    "start-docker": "docker run --rm -p 3000:3000 -v ${PWD}:/app -w /app -it node:16.15.1 yarn install && yarn start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
@@ -57,16 +63,6 @@
   "devDependencies": {
     "@reduxjs/toolkit": "^1.6.2",
     "@types/react-beautiful-dnd": "^13.1.2",
-    "@types/algoliasearch": "^4.0.0",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.35",
-    "@types/react": "^17.0.24",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-tabs": "^2.3.3",
-    "@types/uuid": "^8.3.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
     "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

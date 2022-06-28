@@ -4,6 +4,7 @@ export interface TabbedPaneProps {
   tabs: string[];
   activeTab?: number;
   children: React.ReactNode | React.ReactNode[];
+  onChange?: (index: number) => void;
 }
 
 const TabbedMenu = (props: TabbedPaneProps) => {
@@ -21,7 +22,13 @@ const TabbedMenu = (props: TabbedPaneProps) => {
                 ? 'border-black border-b-4 text-circle-black'
                 : 'text-circle-gray-600 mb-1'
             }`}
-            onClick={() => setActiveTab(index)}
+            onClick={() => {
+              if (props.onChange) {
+                props.onChange(index);
+              }
+
+              setActiveTab(index);
+            }}
           >
             {tab}
           </button>

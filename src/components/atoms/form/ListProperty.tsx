@@ -5,8 +5,13 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
-import { StepDefinitionMenuNav } from '../../menus/definitions/StepDefinitionMenu';
 import { InspectorFieldProps } from './InspectorProperty';
+
+export type ListItemChildProps = {
+  item: any;
+  index: number;
+  values: any;
+};
 
 export type ListPropertyProps = InspectorFieldProps & {
   titleExpanded?: ReactElement;
@@ -14,33 +19,22 @@ export type ListPropertyProps = InspectorFieldProps & {
   description?: string;
   expanded?: boolean;
   emptyText?: string;
+  listItem: (props: ListItemChildProps) => ReactElement;
 };
 
 export type ListItemProps = {
   index: number;
-  name: string;
   parameters?: any;
   values?: any;
   arrayHelper: ArrayHelpers;
+  children: ReactElement;
 };
 
-const ListItem = ({ index, values, parameters, name, arrayHelper }: ListItemProps) => {
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
-  return (
-    <Draggable key={index} draggableId={`${index}`} index={index}>
-      {(provided, snapshot) => (
-        <div
-          className="w-full mb-2 p-1 px-3 text-sm 
-bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-        >
-          <button
+/*
+ <button
             className="flex-1 cursor-pointer text-left text-circle-black leading-6"
             type="button"
             onClick={() => {
-              console.log(values);
               navigateTo({
                 component: StepDefinitionMenuNav,
                 props: {
@@ -49,7 +43,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
                     name: name,
                     ...parameters,
                   },
-                  index
+                  index,
                 },
                 values: {
                   ...values,
@@ -59,9 +53,28 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
           >
             {name}
           </button>
+*/
+
+const ListItem = ({
+  index,
+  values,
+  parameters,
+  arrayHelper,
+  children,
+}: ListItemProps) => {
+  return (
+    <Draggable key={index} draggableId={`${index}`} index={index}>
+      {(provided, snapshot) => (
+        <div
+          className="w-full mb-2 p-1 px-3 text-sm 
+bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
           <div className="ml-auto mr-3" {...provided.dragHandleProps}>
             <DragListIcon className="w-4 h-6 py-1" color="#AAAAAA" />
           </div>
+          {children}
           <button
             onClick={() => {
               arrayHelper.remove(index);
@@ -83,9 +96,11 @@ const ListProperty = ({
   values,
   description,
   emptyText,
+  listItem,
   ...props
 }: InspectorFieldProps & ListPropertyProps) => {
   const [field] = useField(props);
+  const ListChild = listItem;
 
   return (
     <CollapsibleList
@@ -115,21 +130,23 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {values[props.name].map((cmd: any, index: number) => {
-                      const commandName = Object.keys(cmd)[0];
-                      const commandValues = cmd[commandName];
-
+                    {values[props.name].map((item: any, index: number) => {
                       return (
                         <ListItem
-                          name={commandName}
                           key={index}
                           index={index}
-                          parameters={{ parameters: commandValues }}
                           values={values}
                           arrayHelper={arrayHelper}
-                        />
+                        >
+                          <ListChild
+                            item={item}
+                            index={index}
+                            values={values}
+                          />
+                        </ListItem>
                       );
                     })}
+
                     {provided.placeholder}
                   </div>
                 )}

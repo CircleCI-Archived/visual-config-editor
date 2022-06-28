@@ -4,6 +4,7 @@ import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
+import StepListItem from '../../atoms/form/StepListItem';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
@@ -39,6 +40,7 @@ const JobInspector = (
         values={props.values}
         expanded
         required
+        listItem={StepListItem}
         emptyText="No steps defined yet."
         titleExpanded={
           <button

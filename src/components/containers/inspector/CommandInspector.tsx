@@ -3,7 +3,10 @@ import CommandMapping from '../../../mappings/CommandMapping';
 import { useStoreActions } from '../../../state/Hooks';
 import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
-import ListProperty from '../../atoms/form/ListProperty';
+import ListProperty, {
+  ListItemChildProps,
+} from '../../atoms/form/ListProperty';
+import StepListItem from '../../atoms/form/StepListItem';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
@@ -55,6 +58,7 @@ const CommandInspector = (
         expanded
         required
         emptyText="No steps defined yet. At least one step is required."
+        listItem={StepListItem}
         titleExpanded={
           <NewButton values={props.values} definitions={props.definitions} />
         }
