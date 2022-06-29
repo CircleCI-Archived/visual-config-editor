@@ -1,18 +1,50 @@
+import { FieldHelperProps, FieldInputProps, FieldMetaProps } from 'formik';
 import React, { OptionHTMLAttributes, ReactElement, useState } from 'react';
 import ExpandIcon from '../../icons/ui/ExpandIcon';
 import DropdownContainer from '../containers/DropdownContainer';
 
 type OptionElement = ReactElement<OptionHTMLAttributes<HTMLHtmlElement>>;
 
-const Select = (props: {
+type SelectProps = {
   placeholder?: string;
   value?: string;
   className?: string;
   dropdownClassName?: string;
-  onChange?: (index: number, value?: any) => void;
+  onChange?: (value: any) => void;
   children: OptionElement[] | OptionElement;
   icon?: ReactElement;
-}) => {
+};
+
+type SelectFieldProps = SelectProps & {
+  name: string;
+  field: FieldInputProps<any>;
+  meta: FieldMetaProps<any>;
+  helper: FieldHelperProps<any>;
+};
+
+const SelectField = ({
+  name,
+  field,
+  meta,
+  helper,
+  ...props
+}: SelectFieldProps) => {
+  const { value, initialValue } = meta;
+  const { setValue } = helper;
+
+  return (
+    <Select
+      {...field}
+      {...props}
+      value={value || initialValue}
+      onChange={(value) => {
+        setValue(value);
+      }}
+    />
+  );
+};
+
+const Select = (props: SelectProps) => {
   const children = React.Children.toArray(props.children) as OptionElement[];
   const defaultSelected = children.findIndex(
     (child) => child.props.value === props.value,
@@ -53,7 +85,7 @@ const Select = (props: {
                 setSelected(i);
 
                 if (props.onChange) {
-                  props.onChange(i, children[i].props.value);
+                  props.onChange(children[i].props.value);
                 }
               }}
             >
@@ -66,4 +98,4 @@ const Select = (props: {
   );
 };
 
-export default Select;
+export { Select, SelectField };

@@ -15,6 +15,7 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
   defaults: {
     name: 'New Job',
     steps: [],
+    executor: { name: 'Select Executor' },
   },
   parameters: componentParametersSubtypes.job,
   /**

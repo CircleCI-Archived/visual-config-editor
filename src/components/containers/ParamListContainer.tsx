@@ -15,8 +15,8 @@ type ParamInspector = {
 const subtypes: ParamInspector = {
   integer: (parameter) => {
     return {
-      className: 'w-20',
-      as: 'number',
+      className: 'w-full',
+      type: 'number',
     };
   },
   enum: (parameter) => {
@@ -24,13 +24,16 @@ const subtypes: ParamInspector = {
 
     return {
       as: 'select',
+      className: 'w-full',
       children: enumParam.enumValues.map((value) => (
         <option value={value}>{value}</option>
       )),
     };
   },
   string: (parameter) => {
-    return {};
+    return {
+      placeholder: parameter.defaultValue as string,
+    };
   },
   boolean: (parameter) => {
     return {
@@ -57,11 +60,6 @@ const ParamListContainer = ({ paramList }: ParamListContainerProps) => {
             label={parameter.name}
             name={parameter.name}
             {...subtypes[parameter.type](parameter)}
-            placeholder={
-              parameter.type === 'string'
-                ? (parameter.defaultValue as string)
-                : undefined
-            }
           />
         );
       })}

@@ -1,7 +1,7 @@
 import WorkflowIcon from '../../icons/components/WorkflowIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import AddButton from '../atoms/AddButton';
-import Select from '../atoms/Select';
+import { Select } from '../atoms/Select';
 import WorkflowPane from '../containers/WorkflowContainer';
 
 const WorkflowsPane = () => {
@@ -19,11 +19,11 @@ const WorkflowsPane = () => {
             className="w-60"
             value={workflows[selectedWorkflow].id}
             dropdownClassName="w-60 rounded"
-            onChange={(index) => selectWorkflow(index)}
+            onChange={(e) => selectWorkflow(e.target.value)}
             icon={<WorkflowIcon className="ml-2 w-6" />}
           >
             {workflows.map((workflow, num) => (
-              <option value={workflow.id} key={workflow.id}>
+              <option value={num} key={workflow.id}>
                 {workflow.name}
               </option>
             ))}
