@@ -1,6 +1,12 @@
-import { Field, FieldInputProps, useField } from 'formik';
+import {
+  Field,
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
+  useField,
+} from 'formik';
 import { ReactElement, useEffect } from 'react';
-import Select from '../Select';
+import { SelectField } from '../Select';
 
 export type InspectorFieldProps = {
   label: string;
@@ -19,17 +25,23 @@ export type InspectorFieldProps = {
 const getField = (
   props: Partial<InspectorFieldProps>,
   field: FieldInputProps<any>,
+  meta: FieldMetaProps<any>,
+  helper: FieldHelperProps<any>,
   error?: string,
 ) => {
   if (props.children && props.as === 'select') {
     return (
-      <Select
-        value={props.value}
+      <SelectField
+        {...props}
+        name={props.name}
+        meta={meta}
+        field={field}
+        helper={helper}
         placeholder={props.placeholder}
-        className={props.className}
+        className={'w-full ' + props.className}
       >
         {props.children}
-      </Select>
+      </SelectField>
     );
   }
 
@@ -73,7 +85,7 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
           </span>
         )}
       </div>
-      {getField(props, field, error)}
+      {getField(props, field, meta, helper, error)}
       {touched && error && (
         <span className="text-sm text-circle-red">{error}</span>
       )}

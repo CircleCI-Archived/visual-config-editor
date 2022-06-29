@@ -14,7 +14,10 @@ const JobInspector = (
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const executor = props.values.executor;
-  const executorName = typeof executor === 'string' ? executor : executor?.name;
+  const isFlat = typeof executor === 'string';
+  const executorName = isFlat ? executor : executor?.name;
+
+  console.log(executorName);
 
   return (
     <div>

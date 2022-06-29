@@ -3,7 +3,7 @@ import { Hits, InstantSearch, SearchBox } from 'react-instantsearch-hooks-web';
 import { useStoreActions } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Card from '../../atoms/Card';
-import Select from '../../atoms/Select';
+import { Select } from '../../atoms/Select';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';

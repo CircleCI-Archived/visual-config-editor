@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import Select from '../atoms/Select';
+import { Select } from '../atoms/Select';
 import CollapsibleList from './CollapsibleList';
 
 export default function PreviewToolbox() {
@@ -21,7 +21,7 @@ export default function PreviewToolbox() {
             <div className="flex flex-row">
               <Select
                 value={toolbox.filter.type}
-                onChange={(_, value: 'branches' | 'tags') =>
+                onChange={(value: 'branches' | 'tags') =>
                   updateFilter('type', value)
                 }
                 className="mt-2"
