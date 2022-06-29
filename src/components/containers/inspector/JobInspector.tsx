@@ -9,40 +9,24 @@ import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
-const getEmbeddedExecutor = (values: any) => {
-  const executorKeys = ['machine', 'macos', 'docker'];
-
-  return Object.keys(values).find((key) => executorKeys.includes(key));
-};
-
 const JobInspector = (
   props: FormikValues & { definitions: DefinitionModel },
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  const embeddedExecutor = getEmbeddedExecutor(props.values);
+  const executor = props.values.executor;
+  const isFlat = typeof executor === 'string';
+  const executorName = isFlat ? executor : executor?.name;
 
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
-      {embeddedExecutor && (
-        <button type="button">Embedded {embeddedExecutor} executor</button>
-      )}
       <InspectorProperty
         label="Executor"
         as="select"
         name="executor.name"
         className="w-full"
+        value={executorName || 'Select Executor'}
         required
-        value={
-          embeddedExecutor
-            ? 'Embedded {embeddedExecutor} executor'
-            : props.values.executor.name
-        }
-        onChange={(e) => {
-          if (embeddedExecutor) {
-            delete props.values[embeddedExecutor];
-          }
-        }}
       >
         {[{ name: 'Select Executor' }, ...props.definitions.executors].map(
           (executor) => (
