@@ -17,8 +17,6 @@ const JobInspector = (
   const isFlat = typeof executor === 'string';
   const executorName = isFlat ? executor : executor?.name;
 
-  console.log(executorName);
-
   return (
     <div>
       <InspectorProperty label="Name" name="name" required />
