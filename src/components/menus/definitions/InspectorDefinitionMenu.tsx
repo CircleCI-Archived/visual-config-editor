@@ -1,8 +1,10 @@
 import { Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
+import ToastContainer from '../../atoms/ToastContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
@@ -13,6 +15,7 @@ type InspectorDefinitionProps = DataModel & {
   activeTab?: number;
   index: number;
   source?: Array<any>;
+  toast: boolean;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -78,8 +81,9 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             // TODO: define error type
             const errors: any = {};
             const source = props.source || definitions[dataMapping.type];
-            const dupIndex = source.findIndex((d) =>
-              (typeof d === 'string' ? d : d.name) === values.name.trim()
+            const dupIndex = source.findIndex(
+              (d) =>
+                (typeof d === 'string' ? d : d.name) === values.name.trim(),
             );
 
             if (dupIndex !== -1 && dupIndex !== props.index) {
@@ -176,9 +180,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 ) : null}
               </TabbedMenu>
 
+              <ToastContainer />
+
               <span className="border-b border-circle-gray-300 mt-auto" />
               <button
                 type="submit"
+                // onClick={() => {
+                //   setShow(true);
+                //   setTimeout(() => setShow(false), 1000);
+                // }}
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
               >
                 {props.editing ? 'Save' : 'Create'} {dataMapping?.name.singular}

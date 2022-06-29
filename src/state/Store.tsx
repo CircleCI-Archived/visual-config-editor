@@ -5,7 +5,7 @@ import {
   parsers,
   reusable,
   Workflow,
-  workflow
+  workflow,
 } from '@circleci/circleci-config-sdk';
 import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
@@ -13,7 +13,7 @@ import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Action, action } from 'easy-peasy';
-import { MutableRefObject } from 'react';
+import { MutableRefObject, ReactElement } from 'react';
 import {
   ElementId,
   Elements,
@@ -21,27 +21,39 @@ import {
   isNode,
   Node,
   SetConnectionId,
-  XYPosition
+  XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import ComponentMapping from '../mappings/ComponentMapping';
 import JobMapping from '../mappings/JobMapping';
 
+export interface NavigationBack {
+  distance?: number;
+  apply?: (values: any) => any;
+  toast?: ToastModel;
+}
+
+export interface ToastModel {
+  label: string;
+  content: string;
+  status: 'success' | 'failed' | 'warning';
+}
+
 export interface WorkflowModel {
   name: string;
   id: string;
-  /* 
+  /*
    * the main thing being updated. every time we want to change an element in this array
-  */
+   */
   elements: Elements<any>;
 }
 
 export interface PreviewToolboxModel {
   filter: {
-    type: 'branches' | 'tags'
-    pattern: string
-  }
+    type: 'branches' | 'tags';
+    pattern: string;
+  };
 }
 
 /** Reusable definitions of CircleCIConfigObject */
@@ -79,9 +91,9 @@ export interface NavigationStop {
 export interface StagedJobMap {
   workflows: {
     [workflow: string]: {
-      [job: string]: number
-    }
-  }
+      [job: string]: number;
+    };
+  };
 }
 
 export interface StoreModel {
@@ -96,7 +108,7 @@ export interface StoreModel {
   /** Node placeholder element info */
   placeholder?: { index: number; id: string };
   /** Map to staged workflow jobs, to save on time-space complexity */
-  stagedJobs: StagedJobMap
+  stagedJobs: StagedJobMap;
   /** Array of workflow panes */
   workflows: WorkflowModel[];
   /** Allows for tracking of components and their props in NavigationPanel */
@@ -104,6 +116,7 @@ export interface StoreModel {
   /** Staged Job Preview Toolbox state  */
   previewToolbox: PreviewToolboxModel;
 
+  toast?: ToastModel;
   /** Data being dragged from definition */
   dragging?: DataModel;
   connecting?: {
@@ -143,11 +156,11 @@ export interface StoreActions {
   updateConnecting: Action<
     StoreModel,
     | {
-      ref?: MutableRefObject<any>;
-      id: SetConnectionId;
-      pos?: XYPosition;
-      name?: string;
-    }
+        ref?: MutableRefObject<any>;
+        id: SetConnectionId;
+        pos?: XYPosition;
+        name?: string;
+      }
     | undefined
   >;
 
@@ -155,10 +168,7 @@ export interface StoreActions {
   setGuideStep: Action<StoreModel, number | undefined>;
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
-  navigateBack: Action<
-    StoreModel,
-    { distance?: number; apply?: (values: any) => any } | void
-  >;
+  navigateBack: Action<StoreModel, NavigationBack | void>;
 
   addWorkflow: Action<StoreModel, string>;
   selectWorkflow: Action<StoreModel, number>;
@@ -200,6 +210,7 @@ export interface StoreActions {
   error: Action<StoreModel, any>;
 
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
+  clearToast: Action<StoreModel, void>;
 }
 
 const Actions: StoreActions = {
@@ -299,6 +310,8 @@ const Actions: StoreActions = {
     } else {
       state.navigation = { component: DefinitionsMenu, props: {} };
     }
+
+    state.toast = payload?.toast;
   }),
 
   setDragging: action((state, payload) => {
@@ -311,7 +324,7 @@ const Actions: StoreActions = {
       id: v4(),
       elements: [],
     });
-    state.stagedJobs = { ...state.stagedJobs, }
+    state.stagedJobs = { ...state.stagedJobs };
   }),
   selectWorkflow: action((state, index) => {
     state.selectedWorkflow = index;
@@ -332,14 +345,13 @@ const Actions: StoreActions = {
       let curWorkflow = stagedJobs[workflow.name];
 
       if (workflow.name in state.stagedJobs.workflows) {
-
         if (!curWorkflow[jobName]) {
-          curWorkflow[jobName] = 1
+          curWorkflow[jobName] = 1;
         } else {
-          curWorkflow[jobName]++
+          curWorkflow[jobName]++;
         }
       } else {
-        stagedJobs[workflow.name] = { [jobName]: 1 }
+        stagedJobs[workflow.name] = { [jobName]: 1 };
       }
 
       state.stagedJobs = { workflows: stagedJobs };
@@ -371,7 +383,7 @@ const Actions: StoreActions = {
                 delete stagedJob[name];
               }
 
-              state.stagedJobs = { workflows: map.workflows }
+              state.stagedJobs = { workflows: map.workflows };
             }
           }
         }
@@ -381,7 +393,6 @@ const Actions: StoreActions = {
         return !filtered;
       }),
     };
-
   }),
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
@@ -429,7 +440,7 @@ const Actions: StoreActions = {
     state.definitions.parameters =
       state.definitions.parameters?.concat(payload);
   }),
-  updateParameter: action((state, payload) => { }),
+  updateParameter: action((state, payload) => {}),
   undefineParameter: action((state, payload) => {
     state.definitions.parameters?.filter(
       (parameter) => parameter.name !== payload.name,
@@ -439,7 +450,7 @@ const Actions: StoreActions = {
   defineCommand: action((state, payload) => {
     state.definitions.commands = state.definitions.commands?.concat(payload);
   }),
-  updateCommand: action((state, payload) => { }),
+  updateCommand: action((state, payload) => {}),
   undefineCommand: action((state, payload) => {
     state.definitions.commands?.filter(
       (command) => command.name !== payload.name,
@@ -611,8 +622,8 @@ const Actions: StoreActions = {
     const parameterList =
       pipelineParameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-          pipelineParameters,
-        )
+            pipelineParameters,
+          )
         : undefined;
 
     const config = new Config(
@@ -635,7 +646,10 @@ const Actions: StoreActions = {
 
   updatePreviewToolBox: action((state, payload) => {
     state.previewToolbox = payload;
-  })
+  }),
+  clearToast: action((state) => {
+    state.toast = undefined;
+  }),
 };
 
 const Store: StoreModel & StoreActions = {
@@ -647,12 +661,11 @@ const Store: StoreModel & StoreActions = {
     component: DefinitionsMenu,
     props: { expanded: [true, true, false, false] },
   },
-  previewToolbox:
-  {
+  previewToolbox: {
     filter: {
       type: 'branches',
       pattern: '',
-    }
+    },
   },
   definitions: {
     commands: [],
@@ -664,8 +677,8 @@ const Store: StoreModel & StoreActions = {
   },
   stagedJobs: {
     workflows: {
-      'build-and-test': {}
-    }
+      'build-and-test': {},
+    },
   },
   workflows: [
     {

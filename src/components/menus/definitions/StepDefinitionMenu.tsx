@@ -42,11 +42,16 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         initialValues={props.values || { parameters: undefined }}
         enableReinitialize={true}
         onSubmit={(step) => {
+          const name = builtIn ? subtype : customCommand?.name;
+
           navigateBack({
+            toast: {
+              label: name ?? '',
+              content: 'saved',
+              status: 'success',
+            },
             distance: 1,
             apply: (values: any) => {
-              const name = builtIn ? subtype : customCommand?.name;
-
               if (!props.editing) {
                 values.steps = [
                   ...values.steps,
