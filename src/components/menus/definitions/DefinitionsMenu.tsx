@@ -7,7 +7,7 @@ import { NavigationComponent } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
-import ToastContainer from '../../atoms/ToastContainer';
+import Toast from '../../atoms/Toast';
 import TabbedMenu from '../TabbedMenu';
 
 /**
@@ -70,7 +70,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           </Formik>
         </div>
       </TabbedMenu>
-      <ToastContainer />
+      <Toast />
       <span className="border-b border-circle-gray-300" />
       <button
         className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"

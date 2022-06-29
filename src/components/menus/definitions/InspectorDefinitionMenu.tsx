@@ -1,10 +1,9 @@
 import { Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
+import Toast from '../../atoms/Toast';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
-import ToastContainer from '../../atoms/ToastContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
@@ -184,7 +183,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 ) : null}
               </TabbedMenu>
 
-              <ToastContainer />
+              <Toast />
 
               <span className="border-b border-circle-gray-300 mt-auto" />
               <button
