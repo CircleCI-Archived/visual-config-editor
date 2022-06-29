@@ -70,6 +70,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           </Formik>
         </div>
       </TabbedMenu>
+      <ToastContainer />
       <span className="border-b border-circle-gray-300" />
       <button
         className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"

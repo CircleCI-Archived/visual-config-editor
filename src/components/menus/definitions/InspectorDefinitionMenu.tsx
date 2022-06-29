@@ -112,11 +112,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             }
 
             navigateBack({
+              toast: {
+                label: values.name.trim(),
+                content: 'saved',
+                status: 'success',
+              },
               distance: 1,
               apply: (parentValues) => {
                 if (props.passBackKey) {
                   const { name, ...args } = values;
-
                   if (parentValues[props.passBackKey]) {
                     parentValues[props.passBackKey][name] = args;
                   } else {
