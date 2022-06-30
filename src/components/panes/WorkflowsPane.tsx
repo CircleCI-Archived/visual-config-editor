@@ -19,7 +19,7 @@ const WorkflowsPane = () => {
             className="w-60"
             value={workflows[selectedWorkflow].id}
             dropdownClassName="w-60 rounded"
-            onChange={(e) => selectWorkflow(e.target.value)}
+            onChange={(e) => selectWorkflow(e)}
             icon={<WorkflowIcon className="ml-2 w-6" />}
           >
             {workflows.map((workflow, num) => (
