@@ -46,6 +46,7 @@ const Definition = (props: {
         navigateTo({
           component: InspectorDefinitionMenuNav,
           props: {
+            data: props.data,
             editing: true,
             values: flattened,
             dataType: props.type,
