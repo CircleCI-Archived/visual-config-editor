@@ -13,7 +13,7 @@ import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Action, action } from 'easy-peasy';
-import { MutableRefObject, ReactElement } from 'react';
+import { MutableRefObject } from 'react';
 import {
   ElementId,
   Elements,

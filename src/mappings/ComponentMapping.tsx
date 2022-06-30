@@ -4,6 +4,7 @@ import {
   parameters,
   reusable,
 } from '@circleci/circleci-config-sdk';
+import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { ActionCreator, Actions, State } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
@@ -188,6 +189,7 @@ export default interface GenerableMapping<
     inspector: (
       props: FormikValues & {
         definitions: DefinitionModel;
+        data?: Generable;
         subtype?: string;
       },
       // data: ConfigDataType;

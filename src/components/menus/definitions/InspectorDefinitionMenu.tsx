@@ -1,10 +1,9 @@
 import { Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
+import ToastContainer from '../../atoms/ToastContainer';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
-import ToastContainer from '../../atoms/ToastContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
@@ -16,6 +15,7 @@ type InspectorDefinitionProps = DataModel & {
   index: number;
   source?: Array<any>;
   toast: boolean;
+  data?: any;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -174,6 +174,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     ...formikProps,
                     definitions,
                     subtype,
+                    data: props.data,
                   })}
                 </div>
                 {dataMapping.parameters ? (
