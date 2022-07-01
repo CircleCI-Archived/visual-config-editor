@@ -10,6 +10,8 @@ import StepListItem from '../../atoms/form/StepListItem';
 import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
+import CollapsibleList from '../CollapsibleList';
+import ParamListContainer from '../ParamListContainer';
 
 export type JobInspectorProps = FormikValues & { definitions: DefinitionModel };
 
@@ -89,21 +91,46 @@ const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
           {...props}
         />
       ) : (
-        <InspectorProperty
-          label="Executor"
-          as="select"
-          name="executor.name"
-          className="w-full"
-          required
-        >
-          {[{ name: 'Select Executor' }, ...definitions.executors].map(
-            (executor) => (
-              <option value={executor.name} key={executor.name}>
-                {executor.name}
-              </option>
-            ),
-          )}
-        </InspectorProperty>
+        <>
+          <InspectorProperty
+            label="Executor"
+            as="select"
+            name="executor.name"
+            className="w-full"
+            required
+            dependent={(executorName) => {
+              const executor = definitions.executors.find(
+                (exec) => exec.name === executorName,
+              );
+
+              return (
+                <>
+                  {executor?.parameters && (
+                    <>
+                      <CollapsibleList title="Properties" expanded>
+                        <div className="pt-2">
+                          <ParamListContainer
+                            paramList={executor.parameters}
+                            parent="executor"
+                          />
+                        </div>
+                      </CollapsibleList>
+                      <div className="w-full border-b border-circle-gray-300 my-2"></div>
+                    </>
+                  )}
+                </>
+              );
+            }}
+          >
+            {[{ name: 'Select Executor' }, ...definitions.executors].map(
+              (executor) => (
+                <option value={executor.name} key={executor.name}>
+                  {executor.name}
+                </option>
+              ),
+            )}
+          </InspectorProperty>
+        </>
       )}
 
       <ListProperty

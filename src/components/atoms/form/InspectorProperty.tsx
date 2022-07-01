@@ -20,6 +20,7 @@ export type InspectorFieldProps = {
   placeholder?: string;
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
+  dependent?: (value: any) => ReactElement;
 };
 
 const getField = (
@@ -71,25 +72,28 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
   }, [helper, value, props.value]);
 
   return (
-    <div
-      className={`${props.type === 'checkbox' && `flex flex-row`} mb-3 ${
-        props.className
-      }`}
-      hidden={props.hidden}
-    >
-      <div className="flex flex-row mb-2">
-        <p className="font-bold leading-5 tracking-wide">{label}</p>
-        {props.required && (
-          <span className="ml-auto tracking-wide leading-6 text-sm text-circle-gray-400 font-medium">
-            Required
-          </span>
+    <>
+      <div
+        className={`${props.type === 'checkbox' && `flex flex-row`} mb-3 ${
+          props.className
+        }`}
+        hidden={props.hidden}
+      >
+        <div className="flex flex-row mb-2">
+          <p className="font-bold leading-5 tracking-wide">{label}</p>
+          {props.required && (
+            <span className="ml-auto tracking-wide leading-6 text-sm text-circle-gray-400 font-medium">
+              Required
+            </span>
+          )}
+        </div>
+        {getField(props, field, meta, helper, error)}
+        {touched && error && (
+          <span className="text-sm text-circle-red">{error}</span>
         )}
       </div>
-      {getField(props, field, meta, helper, error)}
-      {touched && error && (
-        <span className="text-sm text-circle-red">{error}</span>
-      )}
-    </div>
+      {props.dependent && props.dependent(value)}
+    </>
   );
 };
 
