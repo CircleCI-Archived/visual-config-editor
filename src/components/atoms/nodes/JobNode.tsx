@@ -58,7 +58,7 @@ const JobNode: React.FunctionComponent<
   const job = props.data as WorkflowJob;
   const filters = job.parameters?.filters;
 
-  if (filters && filters[toolbox.filter.type]) {
+  if (filters && toolbox.filter.preview && filters[toolbox.filter.type]) {
     const jobFilter = filters[toolbox.filter.type];
     const pattern = toolbox.filter.pattern;
     const ignoreFilter = jobFilter?.ignore?.includes(pattern);

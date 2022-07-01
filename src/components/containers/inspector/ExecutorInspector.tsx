@@ -10,13 +10,11 @@ const ExecutorInspector = (
   },
 ) => {
   if (!props.subtype) {
-    return <div>
-      Something went wrong!
-    </div>;
+    return <p>Something went wrong!</p>;
   }
 
   return (
-    <div>
+    <>
       <InspectorProperty label="Name" name="name" required />
       <InspectorProperty
         label="Description"
@@ -38,15 +36,9 @@ const ExecutorInspector = (
         )}
       </InspectorProperty>
       {executorSubtypes[props.subtype]?.fields}
-      <InspectorProperty
-        label="Shell"
-        name={`shell`}
-      />
-      <InspectorProperty
-        label="Working Directory"
-        name={`working_directory`}
-      />
-    </div>
+      <InspectorProperty label="Shell" name={`shell`} />
+      <InspectorProperty label="Working Directory" name={`working_directory`} />
+    </>
   );
 };
 
