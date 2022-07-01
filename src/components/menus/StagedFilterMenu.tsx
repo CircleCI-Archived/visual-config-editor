@@ -14,7 +14,7 @@ type FilterListProps = {
   type: 'Only' | 'Ignore';
 } & FormikValues;
 
-const FilterItem = ({ item, index, values }: ListItemChildProps) => {
+const FilterItem = ({ item }: ListItemChildProps) => {
   return <div>{item}</div>;
 };
 
