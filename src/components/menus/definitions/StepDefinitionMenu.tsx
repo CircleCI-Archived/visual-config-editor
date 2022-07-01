@@ -5,6 +5,7 @@ import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
+import ParamListContainer from '../../containers/ParamListContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
@@ -43,6 +44,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         enableReinitialize={true}
         onSubmit={(step) => {
           const name = builtIn ? subtype : customCommand?.name;
+          const parameters = builtIn ? step.parameters : step;
 
           navigateBack({
             toast: {
@@ -56,7 +58,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                 values.steps = [
                   ...values.steps,
                   {
-                    [name as string]: step.parameters,
+                    [name as string]: parameters,
                   },
                 ];
               } else {
@@ -67,7 +69,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                 }
 
                 values.steps[props.index] = {
-                  [name as string]: step.parameters,
+                  [name as string]: parameters,
                 };
               }
 
@@ -99,7 +101,14 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                       : customCommand?.description}
                   </p>
                 </button>
-                {builtInSubtype ? builtInSubtype?.fields : 'custom fields'}
+                {builtInSubtype
+                  ? builtInSubtype?.fields
+                  : customCommand?.parameters && (
+                      <ParamListContainer
+                        props={formikProps}
+                        paramList={customCommand.parameters}
+                      />
+                    )}
               </div>
             </TabbedMenu>
 

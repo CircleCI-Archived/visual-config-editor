@@ -19,8 +19,6 @@ const FilterItem = ({ item, index, values }: ListItemChildProps) => {
 };
 
 const FilterList = ({ type, values, target }: FilterListProps) => {
-  console.log(values, target);
-
   return (
     <ListProperty
       label={type}
