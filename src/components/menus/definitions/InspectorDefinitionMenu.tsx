@@ -121,14 +121,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               apply: (parentValues) => {
                 if (props.passBackKey) {
                   const { name, ...args } = values;
-                  if (parentValues[props.passBackKey]) {
-                    parentValues[props.passBackKey][name] = args;
-                  } else {
-                    parentValues[props.passBackKey] = { [name]: args };
-                  }
-                }
 
-                return parentValues;
+                  return {
+                    ...parentValues,
+                    [props.passBackKey]: {
+                      ...parentValues[props.passBackKey],
+                      [name]: args,
+                    },
+                  };
+                }
               },
             });
             generateConfig();
