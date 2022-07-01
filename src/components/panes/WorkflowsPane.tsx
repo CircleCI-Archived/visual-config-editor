@@ -17,7 +17,7 @@ const WorkflowsPane = () => {
           <Select
             placeholder="No workflows"
             className="w-60"
-            value={workflows[selectedWorkflow].id}
+            value={selectedWorkflow}
             dropdownClassName="w-60 rounded"
             onChange={(e) => selectWorkflow(e)}
             icon={<WorkflowIcon className="ml-2 w-6" />}

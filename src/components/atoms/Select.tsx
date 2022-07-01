@@ -7,7 +7,7 @@ type OptionElement = ReactElement<OptionHTMLAttributes<HTMLHtmlElement>>;
 
 type SelectProps = {
   placeholder?: string;
-  value?: string;
+  value?: any;
   className?: string;
   dropdownClassName?: string;
   onChange?: (value: any) => void;
