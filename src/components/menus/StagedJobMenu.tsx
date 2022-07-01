@@ -9,6 +9,12 @@ import BreadCrumbs from '../containers/BreadCrumbs';
 import StagedFilterMenuNav from './StagedFilterMenu';
 import ParamListContainer from '../containers/ParamListContainer';
 import TabbedMenu from './TabbedMenu';
+import ListProperty from '../atoms/form/ListProperty';
+import StepListItem from '../atoms/form/StepListItem';
+import JobMapping from '../../mappings/JobMapping';
+import { StepDefinitionMenu } from './definitions/StepDefinitionMenu';
+import StepTypePageNav from './definitions/subtypes/StepTypePage';
+import { navSubTypeMenu } from './SubTypeMenu';
 
 type WorkflowJobMenuProps = {
   job: WorkflowJob;
@@ -27,7 +33,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
       <Formik
         initialValues={{
           name: job.name,
-          parameters: { name: '', ...job.parameters },
+          parameters: { name: '', pre_steps: [], ...job.parameters },
         }}
         enableReinitialize={true}
         onSubmit={(values) => {
@@ -76,6 +82,34 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                     ></ParamListContainer>
                   </div>
                 )}
+
+                <ListProperty
+                  label="Pre-steps"
+                  name="parameters.pre_steps"
+                  expanded
+                  required
+                  listItem={StepListItem}
+                  emptyText="No steps defined yet."
+                  titleExpanded={
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigateTo(
+                          navSubTypeMenu(
+                            {
+                              typePage: StepTypePageNav,
+                              menuPage: StepDefinitionMenu,
+                            },
+                            job,
+                          ),
+                        );
+                      }}
+                      className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                    >
+                      New
+                    </button>
+                  }
+                ></ListProperty>
               </div>
             </TabbedMenu>
 

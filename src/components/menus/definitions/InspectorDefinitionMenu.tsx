@@ -191,10 +191,6 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               <span className="border-b border-circle-gray-300 mt-auto" />
               <button
                 type="submit"
-                // onClick={() => {
-                //   setShow(true);
-                //   setTimeout(() => setShow(false), 1000);
-                // }}
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
               >
                 {props.editing ? 'Save' : 'Create'} {dataMapping?.name.singular}
