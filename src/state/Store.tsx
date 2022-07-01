@@ -53,6 +53,7 @@ export interface PreviewToolboxModel {
   filter: {
     type: 'branches' | 'tags';
     pattern: string;
+    preview: boolean;
   };
 }
 
@@ -695,6 +696,7 @@ const Store: StoreModel & StoreActions = {
     filter: {
       type: 'branches',
       pattern: '',
+      preview: false,
     },
   },
   definitions: {
