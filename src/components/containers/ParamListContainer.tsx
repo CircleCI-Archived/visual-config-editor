@@ -4,6 +4,7 @@ import InspectorProperty from '../atoms/form/InspectorProperty';
 
 export type ParamListContainerProps = {
   paramList: parameters.CustomParametersList<AnyParameterLiteral>;
+  parent?: string;
 };
 
 type ParamInspector = {
@@ -51,14 +52,15 @@ const subtypes: ParamInspector = {
   },
 };
 
-const ParamListContainer = ({ paramList }: ParamListContainerProps) => {
+const ParamListContainer = ({ paramList, parent }: ParamListContainerProps) => {
   return (
     <>
-      {paramList.parameters.map((parameter) => {
+      {paramList.parameters.map((parameter, index) => {
         return (
           <InspectorProperty
             label={parameter.name}
-            name={parameter.name}
+            key={index}
+            name={parent ? `${parent}.${parameter.name}` : parameter.name}
             {...subtypes[parameter.type](parameter)}
           />
         );
