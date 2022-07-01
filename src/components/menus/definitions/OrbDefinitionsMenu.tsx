@@ -1,7 +1,10 @@
 import * as CircleCI from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { OrbRef } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
-import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
+import {
+  OrbImport,
+  OrbRef,
+} from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+import { useEffect, useState } from 'react';
 import GenerableMapping, {
   typeToComponent,
 } from '../../../mappings/ComponentMapping';
@@ -21,29 +24,13 @@ export type OrbDefinitionProps = {
   url: string;
 };
 
-const importManifest: OrbImportManifest = {
-  jobs: {
-    say_hello: {
-      greeting: {
-        type: 'string',
-      },
-    },
-  },
-  commands: {
-    say_it: {
-      what: {
-        type: 'string',
-      },
-    },
-  },
-  executors: {
-    python: {
-      version: {
-        type: 'string',
-        default: '1.0.0',
-      },
-    },
-  },
+const loadOrb = (orb: string) => {
+  const endpoint =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3030'
+      : 'https://temp-orb-manifest-endpoint.herokuapp.com';
+
+  return fetch(`${endpoint}/orbs?orb=${orb}`).then((res) => res.json());
 };
 
 const orbDefinitions = ['jobs', 'commands', 'executors'] as Array<
@@ -70,13 +57,23 @@ const OrbDefinitionContainer = (props: {
 };
 
 const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
-  const orbImport = new CircleCI.orb.OrbImport(
-    props.name,
-    props.namespace,
-    props.name,
-    importManifest,
-    props.namespace,
-  );
+  const [orb, setOrb] = useState<OrbImport>();
+
+  useEffect(() => {
+    loadOrb(`${props.namespace}/${props.name}@${props.version}`).then(
+      (manifest) => {
+        setOrb(
+          new CircleCI.orb.OrbImport(
+            props.name,
+            props.namespace,
+            props.name,
+            manifest,
+            props.namespace,
+          ),
+        );
+      },
+    );
+  }, [setOrb, props]);
 
   return (
     <div className="h-full flex flex-col">
@@ -101,21 +98,25 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           </p>
         </div>
       </header>
-      <div className="p-2">
-        {orbDefinitions.map((component) => {
-          const mapping = typeToComponent(component);
+      {orb ? (
+        <div className="p-2">
+          {orbDefinitions.map((component) => {
+            const mapping = typeToComponent(component);
 
-          if (mapping) {
-            return (
-              <OrbDefinitionContainer
-                dataMapping={mapping.mapping}
-                data={orbImport[component]}
-              />
-            );
-          }
-          return <p>Error</p>;
-        })}
-      </div>
+            if (mapping) {
+              return (
+                <OrbDefinitionContainer
+                  dataMapping={mapping.mapping}
+                  data={orb[component]}
+                />
+              );
+            }
+            return <p>Error</p>;
+          })}
+        </div>
+      ) : (
+        <div> </div>
+      )}
     </div>
   );
 };
