@@ -505,7 +505,9 @@ const Actions: StoreActions = {
         return workflowJob.parameters?.name || baseName;
       };
 
+      const workflowJobCounts: Record<string, Record<string, number>> = {};
       state.workflows = config.workflows.map(({ name, jobs }) => {
+        const sourceJobCounts: Record<string, number> = {};
         const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
         const requiredJobs: Record<string, boolean> = {};
 
@@ -513,10 +515,22 @@ const Actions: StoreActions = {
           const jobName = getJobName(workflowJob);
           jobTable[jobName] = workflowJob;
 
+          if (workflowJob instanceof workflow.WorkflowJob) {
+            const sourceJobName = workflowJob.job.name;
+
+            if (sourceJobCounts[sourceJobName] > 0) {
+              sourceJobCounts[sourceJobName]++;
+            } else {
+              sourceJobCounts[sourceJobName] = 1;
+            }
+          }
+
           workflowJob.parameters?.requires?.forEach((requiredJob) => {
             requiredJobs[requiredJob] = true;
           });
         });
+
+        workflowJobCounts[name] = sourceJobCounts;
 
         // Filter down to jobs that are not required by other jobs
         const endJobs = jobs.filter(
@@ -606,6 +620,8 @@ const Actions: StoreActions = {
         };
       });
 
+      console.log({ workflows: workflowJobCounts });
+      state.stagedJobs = { workflows: workflowJobCounts };
       state.config = config.generate();
     } catch (exception) {
       if (!(exception instanceof Error)) {
