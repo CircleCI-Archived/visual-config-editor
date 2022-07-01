@@ -11,8 +11,6 @@ const ParameterContainer = (props: {
   const [field] = useField(props.values.parameters);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
-  console.log(props.values);
-
   return (
     <FieldArray
       {...field}
