@@ -10,7 +10,7 @@ import ReactFlow, {
   isNode,
   Node,
   NodeTypesType,
-  useStoreActions as flowActions
+  useStoreActions as flowActions,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/ComponentMapping';
@@ -69,12 +69,12 @@ const WorkflowPane = (props: ElementProps) => {
         JobMapping.node?.transform &&
         (element.data.parameters?.name || element.data.job.name) === targetJob
         ? {
-          ...element,
-          data: JobMapping.node.transform(
-            element.data.job,
-            applyToData(element.data.parameters),
-          ),
-        }
+            ...element,
+            data: JobMapping.node.transform(
+              element.data.job,
+              applyToData(element.data.parameters),
+            ),
+          }
         : element;
     });
 
@@ -148,7 +148,7 @@ const WorkflowPane = (props: ElementProps) => {
           e.preventDefault();
         }
       }}
-      onDrag={(e) => { }}
+      onDrag={(e) => {}}
       onMouseMove={(e) => {
         const containerBounds = (e.target as Element)
           .closest('.react-flow')
@@ -190,7 +190,7 @@ const WorkflowPane = (props: ElementProps) => {
         }
       }}
     >
-      <PreviewToolbox></PreviewToolbox>
+      <PreviewToolbox />
       <ReactFlow
         elements={elements}
         className={props.className}
@@ -215,7 +215,7 @@ const WorkflowPane = (props: ElementProps) => {
           size={1}
         />
       </ReactFlow>
-    </div >
+    </div>
   );
 };
 
