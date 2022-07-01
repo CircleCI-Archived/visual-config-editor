@@ -11,6 +11,8 @@ const ParameterContainer = (props: {
   const [field] = useField(props.values.parameters);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
+  console.log(props.values);
+
   return (
     <FieldArray
       {...field}
@@ -34,7 +36,9 @@ const ParameterContainer = (props: {
                       dataType: ParameterMapping,
                       passBackKey: 'parameters',
                       index: -1,
-                      source: props.values.parameters ? Object.keys(props.values.parameters) : undefined
+                      source: props.values.parameters
+                        ? Object.keys(props.values.parameters)
+                        : undefined,
                     },
                   },
                   props.values,
@@ -62,7 +66,7 @@ const ParameterContainer = (props: {
                   )}
                   {parameter.defaultValue ? (
                     <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
-                      {parameter.description}
+                      {parameter.defaultValue}
                     </p>
                   ) : (
                     <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">

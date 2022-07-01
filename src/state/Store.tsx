@@ -297,10 +297,25 @@ const Actions: StoreActions = {
 
       const values =
         payload?.apply?.(travelTo.props.values) || travelTo.props.values;
-      const props = {
-        ...travelTo.props,
-        values: values,
-      };
+      let props;
+
+      /**
+       * Solution for modifying props on sub menus.
+       */
+      if (travelTo.props?.menuProps) {
+        props = {
+          ...travelTo.props,
+          menuProps: {
+            ...travelTo.props.menuProps,
+            values: values,
+          },
+        };
+      } else {
+        props = {
+          ...travelTo.props,
+          values: values,
+        };
+      }
 
       state.navigation = {
         ...travelTo,
