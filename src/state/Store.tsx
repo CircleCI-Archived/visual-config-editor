@@ -620,7 +620,6 @@ const Actions: StoreActions = {
         };
       });
 
-      console.log({ workflows: workflowJobCounts });
       state.stagedJobs = { workflows: workflowJobCounts };
       state.config = config.generate();
     } catch (exception) {
