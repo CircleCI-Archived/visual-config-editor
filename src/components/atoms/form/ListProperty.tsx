@@ -29,16 +29,10 @@ export type ListItemProps = {
   children: ReactElement;
 };
 
-const ListItem = ({
-  index,
-  values,
-  parameters,
-  arrayHelper,
-  children,
-}: ListItemProps) => {
+const ListItem = ({ index, arrayHelper, children }: ListItemProps) => {
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
-      {(provided, snapshot) => (
+      {(provided, _) => (
         <div
           className="w-full mb-2 p-1 px-3 text-sm 
 bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
@@ -82,7 +76,7 @@ const ListProperty = ({
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}
     >
-      {values[props.name]?.length > 0 ? (
+      {field.value?.length > 0 ? (
         <FieldArray
           {...field}
           name={props.name}
@@ -104,12 +98,11 @@ const ListProperty = ({
                     ref={provided.innerRef}
                     className="p-2 pr-0"
                   >
-                    {values[props.name].map((item: any, index: number) => {
+                    {field.value.map((item: any, index: number) => {
                       return (
                         <ListItem
                           key={index}
                           index={index}
-                          values={values}
                           arrayHelper={arrayHelper}
                         >
                           <ListChild

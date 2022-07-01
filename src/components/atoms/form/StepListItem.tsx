@@ -22,9 +22,7 @@ const StepListItem = ({ item, index, values }: ListItemChildProps) => {
             },
             index,
           },
-          values: {
-            ...values,
-          },
+          values,
         });
       }}
     >
