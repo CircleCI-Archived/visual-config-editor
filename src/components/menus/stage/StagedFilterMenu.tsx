@@ -1,10 +1,12 @@
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
 import React, { useState } from 'react';
-import { NavigationComponent } from '../../state/Store';
-import ListProperty, { ListItemChildProps } from '../atoms/form/ListProperty';
-import BreadCrumbs from '../containers/BreadCrumbs';
-import TabbedMenu from './TabbedMenu';
+import { NavigationComponent } from '../../../state/Store';
+import ListProperty, {
+  ListItemChildProps,
+} from '../../atoms/form/ListProperty';
+import BreadCrumbs from '../../containers/BreadCrumbs';
+import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
   job: WorkflowJob;

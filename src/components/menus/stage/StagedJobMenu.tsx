@@ -1,14 +1,13 @@
-import { reusable } from '@circleci/circleci-config-sdk';
+import { orb, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
-import JobIcon from '../../icons/components/JobIcon';
-import { useStoreActions } from '../../state/Hooks';
-import { NavigationComponent } from '../../state/Store';
-import InspectorProperty from '../atoms/form/InspectorProperty';
-import BreadCrumbs from '../containers/BreadCrumbs';
-import StagedFilterMenuNav from './StagedFilterMenu';
-import ParamListContainer from '../containers/ParamListContainer';
-import TabbedMenu from './TabbedMenu';
+import JobIcon from '../../../icons/components/JobIcon';
+import { useStoreActions } from '../../../state/Hooks';
+import { NavigationComponent } from '../../../state/Store';
+import InspectorProperty from '../../atoms/form/InspectorProperty';
+import BreadCrumbs from '../../containers/BreadCrumbs';
+import ParamListContainer from '../../containers/ParamListContainer';
+import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
   job: WorkflowJob;
@@ -16,7 +15,7 @@ type WorkflowJobMenuProps = {
 
 const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  // const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
     <div className="h-full flex flex-col">
@@ -27,7 +26,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
       <Formik
         initialValues={{
           name: job.name,
-          parameters: { name: '', ...job.parameters },
+          parameters: { name: undefined, ...job.parameters },
         }}
         enableReinitialize={true}
         onSubmit={(values) => {
@@ -56,7 +55,9 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                   label="Name"
                   placeholder={job.name}
                 />
-                <button
+                {/**
+                  TODO: Replace with collapsible list
+                  <button
                   type="button"
                   className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
                   onClick={() => {
@@ -68,13 +69,13 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                   }}
                 >
                   Edit Filters
-                </button>
-                {job.job instanceof reusable.ParameterizedJob && (
-                  <div className="bg-red w-full">
-                    <ParamListContainer
-                      paramList={job.job.parameters}
-                    ></ParamListContainer>
-                  </div>
+                </button> */}
+                {(job.job instanceof reusable.ParameterizedJob ||
+                  job.job instanceof orb.OrbRef) && (
+                  <ParamListContainer
+                    parent="parameters"
+                    paramList={job.job.parameters}
+                  ></ParamListContainer>
                 )}
               </div>
             </TabbedMenu>
