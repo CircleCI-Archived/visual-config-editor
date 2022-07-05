@@ -10,17 +10,23 @@ import ParamListContainer from '../../containers/ParamListContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-type StepDefinitionProps = DataModel & {
+export type StepDefinitionProps = DataModel & {
   values?: Record<string, object>;
   editing?: boolean;
   index?: number;
-  readonly data?: any;
+  getter?: (values: any) => Array<Record<string, unknown>>;
+  setter?: (values: any, value: any) => void;
 } & SubTypeMenuPageProps<any>;
+
+const defaultGetter = (values: any) => values.steps;
+const defaultSetter = (values: any, value: any) => (values.steps = value);
 
 const StepDefinitionMenu = (props: StepDefinitionProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const definitions = useStoreState((state) => state.definitions);
   const subtype = props.subtype || props.values?.name;
+  const valueGetter = props.getter || defaultGetter;
+  const valueSetter = props.setter || defaultSetter;
 
   const isName = typeof subtype === 'string';
   const builtIn = isName && subtype in commandSubtypes;
@@ -36,6 +42,8 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         )?.value
       : (subtype as reusable.CustomCommand);
   }
+
+  console.log(valueGetter, valueSetter);
 
   return (
     <div className="h-full flex flex-col">
@@ -58,13 +66,14 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             },
             distance: 1,
             applyValues: (values: any) => {
+              const newStep = {
+                [name as string]: parameters,
+              };
+
+              const value = valueGetter(values) || [];
+
               if (!props.editing) {
-                values.steps = [
-                  ...values.steps,
-                  {
-                    [name as string]: parameters,
-                  },
-                ];
+                valueSetter(values, [...value, newStep]);
               } else {
                 if (props.index === undefined) {
                   console.error('Step index was undefined when editing step.');
@@ -72,9 +81,8 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                   return values;
                 }
 
-                values.steps[props.index] = {
-                  [name as string]: parameters,
-                };
+                values.steps[props.index] = newStep;
+                value[props.index] = newStep;
               }
 
               return values;

@@ -3,11 +3,7 @@
   "version": "0.0.0-development",
   "homepage": "https://circleci-public.github.io/visual-config-editor/",
   "dependencies": {
-<<<<<<< HEAD
     "@circleci/circleci-config-sdk": "v0.9.0-alpha.6",
-=======
-    "@circleci/circleci-config-sdk": "v0.9.0-alpha.4",
->>>>>>> f9c37cc... feat: pre/post steps implementation
     "@craco/craco": "^6.3.0",
     "@monaco-editor/react": "^4.3.1",
     "algoliasearch": "^4.13.1",
