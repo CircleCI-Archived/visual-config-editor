@@ -1,4 +1,4 @@
-import { orb, reusable } from '@circleci/circleci-config-sdk';
+import { Job } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
@@ -70,8 +70,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                 >
                   Edit Filters
                 </button> */}
-                {(job.job instanceof reusable.ParameterizedJob ||
-                  job.job instanceof orb.OrbRef) && (
+                {!(job.job instanceof Job) && (
                   <ParamListContainer
                     parent="parameters"
                     paramList={job.job.parameters}
