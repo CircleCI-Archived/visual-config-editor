@@ -1,5 +1,12 @@
 import algoliasearch from 'algoliasearch/lite';
-import { Hits, InstantSearch, SearchBox } from 'react-instantsearch-hooks-web';
+import {
+  Hits,
+  HitsPerPage,
+  InstantSearch,
+  PaginationProps,
+  SearchBox,
+  usePagination,
+} from 'react-instantsearch-hooks-web';
 import { useStoreActions } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Card from '../../atoms/Card';
@@ -21,6 +28,26 @@ const searchClient = algoliasearch(
   '798b0e1407310a2b54b566250592b3fd',
 );
 
+function Pagination(props: PaginationProps) {
+  const { pages, refine } = usePagination(props);
+
+  return (
+    <div className="flex flex-row mx-auto">
+      {pages.map((page) => (
+        <button
+          className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
+          key={page}
+          onClick={() => {
+            refine(page + 1);
+          }}
+        >
+          {page + 1}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE', 'IN PROJECT'];
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
@@ -29,26 +56,30 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
     <div className="h-full flex flex-col">
       <header>
         <BreadCrumbs />
-        <div className="ml-6 mr-5 py-3 flex text-sm text-circle-gray-500">
+        <div className="pl-6 pr-5 py-3 flex text-sm text-circle-gray-500">
           Make use of curated definitions from official or community orbs to
           speed up your pipeline building process.
         </div>
       </header>
       <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
-        <div className="m-6">
-          <p className="font-bold leading-5 tracking-wide">Search Filters</p>
-          <Select className="mt-2 w-full">
-            <option>Recommended Orbs</option>
-          </Select>
+        <div className="p-6">
           <InstantSearch searchClient={searchClient} indexName="orbs-prod">
             {/* <RefinementList attribute="brand" /> */}
+            <p className="font-bold leading-5 tracking-wide">Search Filters</p>
+            <Select className="mt-2 w-full">
+              <option>Recommended Orbs</option>
+            </Select>
             <SearchBox
               placeholder="Search Orb Directory..."
               classNames={{
-                form: 'my-4 rounded border border-circle-gray-400 px-2 hover:border-circle-gray-700',
+                form: 'my-2 rounded border border-circle-gray-300 px-2 hover:border-circle-gray-700',
                 input: 'p-2',
                 submit: 'p-2',
               }}
+            />
+            <HitsPerPage
+              hidden
+              items={[{ value: 6, label: '', default: true }]}
             />
             <Hits
               className="overflow-y-auto"
@@ -57,6 +88,7 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
 
                 return (
                   <Card
+                    truncate={140}
                     icon={
                       <img
                         src={
@@ -93,8 +125,12 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
                 );
               }}
             />
+            <div className="flex px-auto">
+              <Pagination padding={2}></Pagination>
+            </div>
           </InstantSearch>
         </div>
+        <div></div>
       </TabbedMenu>
     </div>
   );
