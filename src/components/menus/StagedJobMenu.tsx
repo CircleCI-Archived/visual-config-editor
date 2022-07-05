@@ -5,16 +5,15 @@ import JobIcon from '../../icons/components/JobIcon';
 import { useStoreActions } from '../../state/Hooks';
 import { NavigationComponent } from '../../state/Store';
 import InspectorProperty from '../atoms/form/InspectorProperty';
-import BreadCrumbs from '../containers/BreadCrumbs';
-import StagedFilterMenuNav from './StagedFilterMenu';
-import ParamListContainer from '../containers/ParamListContainer';
-import TabbedMenu from './TabbedMenu';
 import ListProperty from '../atoms/form/ListProperty';
 import StepListItem from '../atoms/form/StepListItem';
-import JobMapping from '../../mappings/JobMapping';
+import BreadCrumbs from '../containers/BreadCrumbs';
+import ParamListContainer from '../containers/ParamListContainer';
 import { StepDefinitionMenu } from './definitions/StepDefinitionMenu';
 import StepTypePageNav from './definitions/subtypes/StepTypePage';
+import StagedFilterMenuNav from './StagedFilterMenu';
 import { navSubTypeMenu } from './SubTypeMenu';
+import TabbedMenu from './TabbedMenu';
 
 type WorkflowJobMenuProps = {
   job: WorkflowJob;
@@ -99,6 +98,12 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                             {
                               typePage: StepTypePageNav,
                               menuPage: StepDefinitionMenu,
+                              menuProps: {
+                                getter: (values: any) =>
+                                  values.parameters.pre_steps,
+                                setter: (values: any, value: any) =>
+                                  (values.parameters.pre_steps = value),
+                              },
                             },
                             job,
                           ),
