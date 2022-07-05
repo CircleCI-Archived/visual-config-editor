@@ -8,7 +8,7 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { StagedJobMenuNav } from '../../menus/StagedJobMenu';
+import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
 
 const JobNode: React.FunctionComponent<
   NodeProps & { data: workflow.WorkflowJob }
