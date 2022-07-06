@@ -5,10 +5,31 @@ import { Handle, isNode, NodeProps, Position } from 'react-flow-renderer';
 import JobIcon from '../../../icons/components/JobIcon';
 import JobOnHoldIcon from '../../../icons/components/JobOnHoldIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
+import MinusIcon from '../../../icons/ui/MinusIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
 import JobMapping from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
+
+const ConnectorIcon = (props: { filled: boolean; subtraction?: boolean }) => {
+  return (
+    <>
+      {props.subtraction ? (
+        <MinusIcon
+          filled={props.filled}
+          color="rgb(150, 0, 8)"
+          className="bg-white rounded-full w-full border border-white"
+        />
+      ) : (
+        <PlusIcon
+          filled={props.filled}
+          color="rgb(0, 120, 202)"
+          className="bg-white rounded-full w-full border border-white"
+        />
+      )}
+    </>
+  );
+};
 
 const JobNode: React.FunctionComponent<
   NodeProps & { data: workflow.WorkflowJob }
@@ -24,6 +45,7 @@ const JobNode: React.FunctionComponent<
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const toolbox = useStoreState((state) => state.previewToolbox);
+  const altAction = useStoreState((state) => state.altAction);
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
   );
@@ -105,6 +127,19 @@ const JobNode: React.FunctionComponent<
   };
 
   const nodeRef = useRef(null);
+  const startConnecting =
+    (side: 'source' | 'target') => (e: React.DragEvent<HTMLButtonElement>) => {
+      setConnecting({
+        ref: nodeRef,
+        id: {
+          connectionNodeId: props.id,
+          connectionHandleType: side,
+          connectionHandleId: `${props.id}_${side}`,
+        },
+        name: props.data.parameters?.name || props.data.name,
+      });
+      e.preventDefault();
+    };
 
   return (
     <div
@@ -113,12 +148,14 @@ const JobNode: React.FunctionComponent<
         ['handles'],
         ['handles', 'node', 'requires', 'requiredBy'],
         () => {
+          const startType = connecting?.start?.id.connectionHandleType;
+          const side = startType === 'source' ? 'target' : 'source';
           updateConnecting({
             ref: nodeRef,
             id: {
               connectionNodeId: props.id,
-              connectionHandleType: 'target',
-              connectionHandleId: `${props.id}_target`,
+              connectionHandleType: side,
+              connectionHandleId: `${props.id}_${side}`,
             },
             name: props.data.parameters?.name || props.data.name,
           });
@@ -161,12 +198,10 @@ const JobNode: React.FunctionComponent<
         } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
         id={`${props.id}_source`}
         {...trackHovering(['requires', 'handles'], ['requires'])}
+        draggable
+        onDragStart={startConnecting('target')}
       >
-        <PlusIcon
-          filled={hovering['requires']}
-          color="rgb(0, 120, 202)"
-          className="bg-white rounded-full w-full border border-white"
-        />
+        <ConnectorIcon filled={hovering['requires']} subtraction={altAction} />
       </button>
 
       <div
@@ -219,27 +254,15 @@ const JobNode: React.FunctionComponent<
         } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
         {...trackHovering(['requiredBy', 'handles'], ['requiredBy'])}
         id={`${props.id}_target`}
-        // onClick={() => {
+        // onClick={() => {--
         // TODO: Implement 'add job' menu functionality
         // }}
         draggable
-        onDragStart={(e) => {
-          setConnecting({
-            ref: nodeRef,
-            id: {
-              connectionNodeId: props.id,
-              connectionHandleType: 'source',
-              connectionHandleId: `${props.id}_source`,
-            },
-            name: props.data.parameters?.name || props.data.name,
-          });
-          e.preventDefault();
-        }}
+        onDragStart={startConnecting('source')}
       >
-        <PlusIcon
-          className="bg-white rounded-full w-full border border-white"
-          color="rgb(0, 120, 202)"
+        <ConnectorIcon
           filled={hovering['requiredBy']}
+          subtraction={altAction}
         />
       </button>
 

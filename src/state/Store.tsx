@@ -120,7 +120,9 @@ export interface StoreModel {
   toast?: ToastModel;
   /** Data being dragged from definition */
   dragging?: DataModel;
+  altAction?: boolean;
   connecting?: {
+    intent: 'creating' | 'deleting';
     start?: {
       ref?: MutableRefObject<any>;
       id: SetConnectionId;
@@ -154,6 +156,7 @@ export interface StoreActions {
       name?: string;
     }
   >;
+  setAltAction: Action<StoreModel, boolean>;
   updateConnecting: Action<
     StoreModel,
     | {
@@ -219,9 +222,13 @@ const Actions: StoreActions = {
   persistProps: action((state, payload) => {
     state.navigation = { ...state.navigation, props: payload };
   }),
+  setAltAction: action((state, payload) => {
+    state.altAction = payload;
+  }),
   setConnecting: action((state, payload) => {
     if (payload.ref) {
       state.connecting = {
+        intent: state.altAction ? 'deleting' : 'creating',
         start: payload,
       };
     } else {
@@ -231,7 +238,7 @@ const Actions: StoreActions = {
   updateConnecting: action((state, payload) => {
     if (state.connecting?.start) {
       state.connecting = {
-        start: state.connecting.start,
+        ...state.connecting,
         end: payload,
       };
     }
