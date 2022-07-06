@@ -49,11 +49,11 @@ const EditorPane = () => {
               });
             }}
           />
-          <DropdownContainer className="rounded-md bg-circle-blue text-white px-2">
+          <DropdownContainer className="rounded-md bg-circle-gray-300 text-circle-black px-2 hover:bg-circle-gray-400">
             <p>•••</p>
             <div className="bg-white flex-col flex rounded shadow text-base">
               <button
-                className="border-b border-circle-gray-300 pl-3 pr-8 text-left"
+                className="border-b border-circle-gray-300 pl-3 pr-8 text-left hover:bg-circle-gray-300"
                 onClick={(e) => {
                   inputFile.current?.click();
                   e.stopPropagation();
@@ -61,7 +61,7 @@ const EditorPane = () => {
               >
                 Open
               </button>
-              <button className="border-b border-circle-gray-300 pl-3 pr-8 text-left">
+              <button className="border-b border-circle-gray-300 pl-3 pr-8 text-left hover:bg-circle-gray-300">
                 Save
               </button>
             </div>

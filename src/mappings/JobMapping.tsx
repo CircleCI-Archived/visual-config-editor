@@ -23,8 +23,6 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
    */
   transform: ({ name, ...values }, definitions) => {
-    console.log(values)
-
     return parsers.parseJob(
       name,
       values,

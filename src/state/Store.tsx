@@ -652,7 +652,7 @@ const Actions: StoreActions = {
       let error = exception as Error;
       state.errorMessage = error.message;
 
-      console.log(error);
+      console.error(error);
     }
   }),
   generateConfig: action((state, payload) => {
