@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import { OrbDefinitionMenuNav } from '../menus/definitions/OrbDefinitionsMenu';
 import { OrbImportMenuNav } from '../menus/definitions/OrbImportMenu';
 import CollapsibleList from './CollapsibleList';
 
@@ -41,6 +42,17 @@ const OrbImportsContainer = (props: OrbImportProps) => {
               <button
                 className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+                onClick={() => {
+                  navigateTo({
+                    component: OrbDefinitionMenuNav,
+                    props: {
+                      name: orb.name,
+                      namespace: orb.namespace,
+                      version: orb.version,
+                      description: orb.description,
+                    },
+                  });
+                }}
               >
                 <p className="text-circle-gray-400">{orb.namespace}/</p>
                 {orb.name}

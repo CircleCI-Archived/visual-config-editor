@@ -114,7 +114,6 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
                           name: values.name,
                           namespace: values.namespace,
                           version: values.version,
-                          full_name: values.full_name,
                           logo_url: values.logo_url,
                           description: values.description,
                           url: values.url,

@@ -19,7 +19,6 @@ export type OrbDefinitionProps = {
   name: string;
   namespace: string;
   version: string;
-  full_name: string;
   logo_url: string;
   description: string;
   url: string;
