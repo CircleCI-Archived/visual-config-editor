@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import GenerableMapping, {
   typeToComponent,
 } from '../../../mappings/ComponentMapping';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import ComponentInfo from '../../atoms/ComponentInfo';
 import Definition from '../../atoms/Definition';
@@ -57,6 +58,8 @@ const OrbDefinitionContainer = (props: {
 };
 
 const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
+  const definitions = useStoreState((state) => state.definitions);
+  const importOrb = useStoreActions((actions) => actions.importOrb);
   const [orb, setOrb] = useState<OrbImport>();
 
   useEffect(() => {
@@ -68,18 +71,23 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             props.namespace,
             props.name,
             manifest,
-            props.namespace,
+            props.version,
           ),
         );
       },
     );
   }, [setOrb, props]);
 
+  const inProject = definitions.orbs.find(
+    (importedOrb) =>
+      importedOrb.namespace === orb?.namespace && importedOrb.name === orb.name,
+  );
+
   return (
     <div className="h-full flex flex-col">
       <header className="border-b border-circle-gray-300">
         <BreadCrumbs />
-        <div className="px-6 pt-3">
+        <div className="px-6 p-3">
           <div className="flex flex-row">
             <h2 className="text-circle-gray-400">{props.version}</h2>
             <h2 className="flex ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium">
@@ -96,6 +104,22 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           <p className="mr-5 py-3 flex text-sm text-circle-gray-400">
             {props.description}
           </p>
+          {inProject ? (
+            <button className="text-circle-black bg-gray-200 rounded p-2 w-full hover:border-circle-red hover:bg-red-200 border ">
+              Imported
+            </button>
+          ) : (
+            <button
+              className="text-circle-black bg-gray-200 rounded p-2 w-full hover:border-gray-700 border"
+              onClick={() => {
+                if (orb) {
+                  importOrb(orb);
+                }
+              }}
+            >
+              Import
+            </button>
+          )}
         </div>
       </header>
       {orb ? (

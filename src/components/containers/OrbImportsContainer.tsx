@@ -42,6 +42,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
                 className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
               >
+                <p className="text-circle-gray-400">{orb.namespace}/</p>
                 {orb.name}
                 <div className="ml-auto text-circle-gray-400">
                   {orb.version}
