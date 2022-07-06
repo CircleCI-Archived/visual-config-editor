@@ -49,7 +49,7 @@ function Pagination(props: PaginationProps) {
 }
 
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
-  const tabs = ['EXPLORE', 'IN PROJECT'];
+  const tabs = ['EXPLORE'];
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
   return (
