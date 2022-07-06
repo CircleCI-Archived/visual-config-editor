@@ -208,6 +208,7 @@ export interface StoreActions {
   >;
 
   importOrb: Action<StoreModel, OrbImport>;
+  unimportOrb: Action<StoreModel, OrbImport>;
 
   loadConfig: Action<StoreModel, string>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
@@ -273,7 +274,7 @@ const Actions: StoreActions = {
 
     let root = curNav.from;
 
-    while (root?.from?.from !== undefined) {
+    while (root?.from !== undefined) {
       root = root.from;
     }
 
@@ -481,7 +482,19 @@ const Actions: StoreActions = {
   }),
 
   importOrb: action((state, payload) => {
-    state.definitions.orbs?.push(payload);
+    const isImported = state.definitions.orbs.find(
+      (orb) => orb.name === payload.name && orb.namespace === payload.namespace,
+    );
+
+    if (!isImported) {
+      state.definitions.orbs?.push(payload);
+    }
+  }),
+
+  unimportOrb: action((state, payload) => {
+    state.definitions.orbs = state.definitions.orbs.filter(
+      (orb) => orb.name !== payload.name && orb.namespace !== payload.namespace,
+    );
   }),
 
   error: action((state, payload) => {

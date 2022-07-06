@@ -1,3 +1,4 @@
+import { orb } from '@circleci/circleci-config-sdk';
 import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types/WorkflowJob.types';
 import { useEffect, useState } from 'react';
 import ReactFlow, {
@@ -39,6 +40,7 @@ const getTypes = (): NodeTypesType =>
   );
 
 const WorkflowPane = (props: ElementProps) => {
+  const importOrb = useStoreActions((actions) => actions.importOrb);
   const [transform, setTransform] = useState<FlowTransform>({
     x: 0,
     y: 0,
@@ -52,7 +54,6 @@ const WorkflowPane = (props: ElementProps) => {
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
   );
-
   const dragging = useStoreState((state) => state.dragging);
   const connecting = useStoreState((state) => state.connecting);
   const setWorkflowElements = useStoreActions(
@@ -113,6 +114,7 @@ const WorkflowPane = (props: ElementProps) => {
                 style: { stroke: '#A3A3A3', strokeWidth: '2px' },
               },
               updateWorkflowJob(target.name, (parameters) => ({
+                ...parameters,
                 requires: parameters?.requires
                   ? [...parameters.requires, startName]
                   : [startName],
@@ -157,7 +159,7 @@ const WorkflowPane = (props: ElementProps) => {
 
   const gap = 15;
 
-  const NodesDebugger = () => {
+  const NodeGraph = () => {
     const setConnecting = flowActions((state) => state.setConnectionNodeId);
     const setConnectingPosition = flowActions(
       (state) => state.setConnectionPosition,
@@ -211,6 +213,10 @@ const WorkflowPane = (props: ElementProps) => {
             data = nodeMapping.transform(data);
           }
 
+          if (data.job instanceof orb.OrbRef) {
+            importOrb(data.job.orb);
+          }
+
           const workflowNode: Node<any> = {
             id: v4(),
             data,
@@ -240,7 +246,7 @@ const WorkflowPane = (props: ElementProps) => {
           ConnectionLine as React.ComponentType<ConnectionLineComponentProps>
         }
       >
-        <NodesDebugger />
+        <NodeGraph />
         <Background
           variant={BackgroundVariant.Dots}
           gap={gap}
