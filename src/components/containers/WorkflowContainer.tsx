@@ -96,6 +96,7 @@ const WorkflowPane = (props: ElementProps) => {
               style: { stroke: '#A3A3A3', strokeWidth: '2px' },
             },
             updateWorkflowJob(connecting.end.name, (parameters) => ({
+              ...parameters,
               requires: parameters?.requires
                 ? [...parameters.requires, startName]
                 : [startName],
