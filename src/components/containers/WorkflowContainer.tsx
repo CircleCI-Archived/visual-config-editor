@@ -6,6 +6,7 @@ import ReactFlow, {
   BackgroundVariant,
   ConnectionLineComponentProps,
   ConnectionMode,
+  EdgeProps,
   FlowTransform,
   isNode,
   Node,
@@ -58,7 +59,15 @@ const WorkflowPane = (props: ElementProps) => {
     (actions) => actions.setWorkflowElements,
   );
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
+  const altAction = useStoreState((state) => state.altAction);
+  const setAltAction = useStoreActions((actions) => actions.setAltAction);
   const [connectingTo, setConnectingTo] = useState({ x: 0, y: 0 });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.shiftKey) {
+      setAltAction(!altAction);
+    }
+  });
 
   const updateWorkflowJob = (
     targetJob: string,
@@ -80,27 +89,52 @@ const WorkflowPane = (props: ElementProps) => {
 
   const handleMouseUp = () => {
     if (connecting?.start?.name) {
-      const startName = connecting.start.name;
+      const source =
+        connecting.start.id.connectionHandleType === 'source'
+          ? connecting.start
+          : connecting.end;
+      const target =
+        connecting.start.id.connectionHandleType === 'source'
+          ? connecting.end
+          : connecting.start;
+      const startName = source?.name;
 
-      if (connecting?.end?.name) {
-        setWorkflowElements(
-          addEdge(
-            {
-              source: connecting.start.id.connectionNodeId,
-              target: connecting.end.id.connectionNodeId,
-              type: 'requires',
-              sourceHandle: connecting.start.id.connectionHandleId,
-              targetHandle: connecting.end.id.connectionNodeId,
-              animated: false,
-              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-            },
-            updateWorkflowJob(connecting.end.name, (parameters) => ({
-              requires: parameters?.requires
-                ? [...parameters.requires, startName]
-                : [startName],
-            })),
-          ),
-        );
+      if (target?.name && startName) {
+        if (connecting.intent === 'creating') {
+          setWorkflowElements(
+            addEdge(
+              {
+                source: source.id.connectionNodeId,
+                target: target.id.connectionNodeId,
+                type: 'requires',
+                sourceHandle: source.id.connectionHandleId,
+                targetHandle: target.id.connectionNodeId,
+                animated: false,
+                style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+              },
+              updateWorkflowJob(target.name, (parameters) => ({
+                requires: parameters?.requires
+                  ? [...parameters.requires, startName]
+                  : [startName],
+              })),
+            ),
+          );
+        } else {
+          const filtered = elements.filter((e) => {
+            if (e.type !== 'requires') {
+              return true;
+            }
+
+            const edge = e as EdgeProps;
+
+            return (
+              edge.source !== source.id.connectionNodeId ||
+              edge.target !== target.id.connectionNodeId
+            );
+          });
+
+          setWorkflowElements(filtered);
+        }
       }
 
       setConnecting({
