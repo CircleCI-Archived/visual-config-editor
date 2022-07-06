@@ -46,6 +46,7 @@ const WorkflowPane = (props: ElementProps) => {
     y: 0,
     zoom: 1,
   });
+  const [cooldown, setCooldown] = useState(false);
 
   const elements = useStoreState(
     (state) => state.workflows[state.selectedWorkflow].elements,
@@ -65,8 +66,14 @@ const WorkflowPane = (props: ElementProps) => {
   const [connectingTo, setConnectingTo] = useState({ x: 0, y: 0 });
 
   window.addEventListener('keydown', (e) => {
-    if (e.shiftKey) {
+    if (e.shiftKey && !cooldown) {
       setAltAction(!altAction);
+
+      setCooldown(true);
+
+      setTimeout(() => {
+        setCooldown(false);
+      }, 5);
     }
   });
 
@@ -101,7 +108,10 @@ const WorkflowPane = (props: ElementProps) => {
       const startName = source?.name;
 
       if (target?.name && startName) {
-        if (connecting.intent === 'creating') {
+        if (
+          connecting.intent === 'creating' &&
+          source.id.connectionNodeId !== target.id.connectionNodeId
+        ) {
           setWorkflowElements(
             addEdge(
               {
