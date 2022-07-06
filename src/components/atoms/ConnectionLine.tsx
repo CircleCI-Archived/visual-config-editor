@@ -4,32 +4,36 @@ import {
 } from 'react-flow-renderer';
 import { useStoreState } from '../../state/Hooks';
 
-const ConnectionLine = ({
-  sourceX,
-  sourceY,
-  sourcePosition,
-  targetX,
-  targetY,
-  targetPosition,
-  connectionLineType,
-  connectionLineStyle,
-}: ConnectionLineComponentProps) => {
+const getPos = (isSource: boolean, bounds: DOMRect, transform: number[]) => {
+  let x, y;
+
+  if (isSource) {
+    x = (bounds.x + bounds.width - transform[0]) / transform[2];
+  } else {
+    x = (bounds.x - transform[0]) / transform[2];
+  }
+
+  y = (bounds.y + bounds.height / 2 - 60 - transform[1]) / transform[2];
+
+  return { x, y };
+};
+
+const ConnectionLine = ({ targetX, targetY }: ConnectionLineComponentProps) => {
   const connecting = useStoreState((state) => state.connecting);
+  const altAction = useStoreState((state) => state.altAction);
   const transform = flowState((state: any) => state.transform);
   const handle = connecting?.start?.ref?.current as Element;
+  const isSource = connecting?.start?.id.connectionHandleType === 'source';
 
   if (!handle) {
     return null;
   }
 
   const bounds = handle.getBoundingClientRect();
-  const startX = (bounds.x + bounds.width - transform[0]) / transform[2];
-  const startY =
-    (bounds.y + bounds.height / 2 - 64 - transform[1]) / transform[2];
-  let endX = targetX;
-  let endY = targetY;
-  const dist = 30;
-  const invalid = endX - dist < startX + dist;
+  const start = getPos(isSource, bounds, transform);
+  let end = { x: targetX, y: targetY };
+  const dist = 30 * (isSource ? 1 : -1);
+  const invalid = isSource ? end.x < start.x : end.y > start.x;
   let color = '#76CDFF';
 
   if (!invalid && connecting?.end?.ref) {
@@ -37,15 +41,12 @@ const ConnectionLine = ({
 
     if (snapTo && connecting?.end?.ref.current !== handle) {
       const snapToBounds = snapTo.getBoundingClientRect();
-      endX = (snapToBounds.x - transform[0]) / transform[2];
-      endY =
-        (snapToBounds.y + snapToBounds.height / 2 - 64 - transform[1]) /
-        transform[2];
+      end = getPos(!isSource, snapToBounds, transform);
       color = '#0078CA';
     }
   }
 
-  color = invalid ? '#F24646' : color;
+  color = invalid || altAction ? '#F24646' : color;
 
   return (
     <g>
@@ -54,23 +55,23 @@ const ConnectionLine = ({
         stroke={color}
         strokeWidth={1.5}
         className="animated"
-        d={`M${startX},${startY} ${startX + dist},${startY} ${
-          startX + dist
-        },${startY} ${endX - dist},${endY} ${
-          endX - dist
-        },${endY} ${endX},${endY}`}
+        d={`M${start.x},${start.y} ${start.x + dist},${start.y} ${
+          start.x + dist
+        },${start.y} ${end.x - dist},${end.y} ${end.x - dist},${end.y} ${
+          end.x
+        },${end.y}`}
       />
       <circle
-        cx={endX}
-        cy={endY}
+        cx={end.x}
+        cy={end.y}
         fill="#fff"
         r={3}
         stroke={color}
         strokeWidth={1.5}
       />
       <circle
-        cx={startX - 2}
-        cy={startY}
+        cx={start.x - 2}
+        cy={start.y}
         fill="#fff"
         r={3}
         stroke={color}
