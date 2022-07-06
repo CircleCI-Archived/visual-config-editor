@@ -132,7 +132,23 @@ const WorkflowPane = (props: ElementProps) => {
             ),
           );
         } else {
-          const filtered = elements.filter((e) => {
+          const updated = updateWorkflowJob(target.name, (parameters) => {
+            let requires = undefined;
+
+            if (parameters.requires) {
+              const updatedRequires = parameters?.requires?.filter(
+                (requirement) => requirement !== startName,
+              );
+              requires =
+                updatedRequires.length > 0 ? updatedRequires : undefined;
+            }
+            return {
+              ...parameters,
+              requires,
+            };
+          });
+
+          const filtered = updated.filter((e) => {
             if (e.type !== 'requires') {
               return true;
             }
