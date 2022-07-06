@@ -267,7 +267,7 @@ const Actions: StoreActions = {
 
     let root = curNav.from;
 
-    while (root?.from?.from !== undefined) {
+    while (root?.from !== undefined) {
       root = root.from;
     }
 
