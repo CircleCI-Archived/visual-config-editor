@@ -15,6 +15,9 @@ import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 import { OrbDefinitionMenuNav, OrbDefinitionProps } from './OrbDefinitionsMenu';
+import { useState } from 'react';
+import Loading from '../../../icons/svgs/loading.svg';
+import './OrbImportMenu.css';
 
 type InspectorDefinitionProps = DataModel & {
   values: Record<string, object>;
@@ -27,6 +30,8 @@ const searchClient = algoliasearch(
   'U0RXNGRK45',
   '798b0e1407310a2b54b566250592b3fd',
 );
+
+console.log(searchClient);
 
 function Pagination(props: PaginationProps) {
   const { pages, refine } = usePagination(props);
@@ -51,7 +56,8 @@ function Pagination(props: PaginationProps) {
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE'];
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -81,10 +87,15 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
               hidden
               items={[{ value: 6, label: '', default: true }]}
             />
+            <div style={{display: isLoading ? 'flex' : 'none', justifyContent: 'center'}}>
+              <img src={Loading} alt="loading wheel" className="w-8 h-8 rotate"/>
+            </div>
             <Hits
               className="overflow-y-auto"
               hitComponent={({ hit, sendEvent }) => {
                 let values = hit as unknown as OrbDefinitionProps;
+
+                setIsLoading(false);
 
                 return (
                   <Card
