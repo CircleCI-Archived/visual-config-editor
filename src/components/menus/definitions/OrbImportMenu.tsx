@@ -31,8 +31,6 @@ const searchClient = algoliasearch(
   '798b0e1407310a2b54b566250592b3fd',
 );
 
-console.log(searchClient);
-
 function Pagination(props: PaginationProps) {
   const { pages, refine } = usePagination(props);
 
