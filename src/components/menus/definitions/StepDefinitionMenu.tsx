@@ -28,9 +28,9 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
   let customCommand: reusable.CustomCommand | undefined;
 
   if (!builtIn) {
-    customCommand = isName
-      ? definitions.commands.find((command) => (command.name = subtype))
-      : (subtype as reusable.CustomCommand);
+    // customCommand = isName
+    //   ? definitions.commands.find((command) => (command.name = subtype))
+    //   : (subtype as reusable.CustomCommand);
   }
 
   return (

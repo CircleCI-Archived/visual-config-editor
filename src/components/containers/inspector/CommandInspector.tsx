@@ -1,7 +1,7 @@
 import { FormikValues } from 'formik';
 import CommandMapping from '../../../mappings/CommandMapping';
+import { DefinitionsModel } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
-import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
@@ -11,7 +11,7 @@ import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
 const NewButton = (
   props: FormikValues & {
-    definitions: DefinitionModel;
+    definitions: DefinitionsModel;
   },
 ) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
@@ -38,7 +38,7 @@ const NewButton = (
 };
 
 const CommandInspector = (
-  props: FormikValues & { definitions: DefinitionModel },
+  props: FormikValues & { definitions: DefinitionsModel },
 ) => {
   return (
     <div>

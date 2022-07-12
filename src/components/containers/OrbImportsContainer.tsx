@@ -37,7 +37,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
       >
         <div className="w-full pl-2 pt-2">
           {/* <ComponentInfo type={props.type} /> */}
-          {items && items.length > 0 ? (
+          {/* {items && items.length > 0 ? (
             items.map((orb) => (
               <button
                 className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
@@ -65,7 +65,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             <div className="font-medium text-sm text-circle-gray-500">
               No orbs imported.
             </div>
-          )}
+          )} */}
         </div>
       </CollapsibleList>
       <div className="w-full p-2 border-b border-circle-gray-300"></div>

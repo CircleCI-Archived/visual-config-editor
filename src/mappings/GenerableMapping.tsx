@@ -5,15 +5,12 @@ import {
   reusable,
 } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
-import { ActionCreator, Actions, State } from 'easy-peasy';
+import { ActionCreator, Actions } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
-import Store, {
-  DefinitionModel,
-  NavigationComponent,
-  UpdateType,
-} from '../state/Store';
+import { DefinitionsModel, DefinitionType } from '../state/DefinitionStore';
+import Store, { NavigationComponent, UpdateType } from '../state/Store';
 import CommandMapping from './CommandMapping';
 import ExecutorMapping from './ExecutorMapping';
 import JobMapping from './JobMapping';
@@ -120,12 +117,14 @@ export default interface GenerableMapping<
 > {
   guide?: { info: string; step: number };
   /**  String name type of component. Must be equal to index within registry. */
-  type: keyof DefinitionModel;
+  type: DefinitionType;
   /**  Language values of component. This should be used for UI display only. */
   name: {
     singular: string;
     plural: string;
   };
+  subscriptions?: Partial<Array<DefinitionType>>;
+
   /** Default values to populate inspectors
    *  @todo need to add support for subtype defaults
    */
@@ -140,11 +139,9 @@ export default interface GenerableMapping<
   /** Transform field values into an instance of ConfigDataType */
   transform: (
     values: { [K: string]: any },
-    definitions: DefinitionModel,
+    store: DefinitionsModel,
   ) => ConfigDataType | undefined;
   store: {
-    /** Returns easy-peasy state hook for component array */
-    get: (state: State<StoreType>) => ConfigDataType[] | undefined;
     /** Returns easy-peasy add action hook for component array */
     add: (state: Actions<StoreType>) => ActionCreator<ConfigDataType>;
     /** Returns easy-peasy update action hook for data type */
@@ -188,7 +185,7 @@ export default interface GenerableMapping<
      * @returns Function which returns a Formik Form object*/
     inspector: (
       props: FormikValues & {
-        definitions: DefinitionModel;
+        definitions: DefinitionsModel;
         data?: Generable;
         subtype?: string;
       },

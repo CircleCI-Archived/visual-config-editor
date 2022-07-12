@@ -2,8 +2,11 @@ import { executors, Job } from '@circleci/circleci-config-sdk';
 import { FormikValues, useField } from 'formik';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import JobMapping from '../../../mappings/JobMapping';
+import {
+  DefinitionsModel,
+  mapDefinitions,
+} from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
-import { DefinitionModel } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
@@ -13,7 +16,9 @@ import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 import CollapsibleList from '../CollapsibleList';
 import ParamListContainer from '../ParamListContainer';
 
-export type JobInspectorProps = FormikValues & { definitions: DefinitionModel };
+export type JobInspectorProps = FormikValues & {
+  definitions: DefinitionsModel;
+};
 
 const getEmbeddedExecutor = (values: any) => {
   const executorKeys = ['machine', 'macos', 'docker'];
@@ -28,7 +33,7 @@ const EmbeddedExecutor = ({
   values,
   ...props
 }: { embeddedExecutor: string; data: Job } & JobInspectorProps) => {
-  const defineExecutor = useStoreActions((actions) => actions.defineExecutor);
+  const defineExecutor = useStoreActions((actions) => actions.define_executors);
   const embeddedHelper = useField({
     name: embeddedExecutor,
     ...props,
@@ -96,12 +101,11 @@ const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
             label="Executor"
             as="select"
             name="executor.name"
+            placeholder="Select Executor"
             className="w-full"
             required
             dependent={(executorName) => {
-              const executor = definitions.executors.find(
-                (exec) => exec.name === executorName,
-              );
+              const executor = definitions.executors[executorName]?.value;
 
               return (
                 <>
@@ -122,13 +126,11 @@ const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
               );
             }}
           >
-            {[{ name: 'Select Executor' }, ...definitions.executors].map(
-              (executor) => (
-                <option value={executor.name} key={executor.name}>
-                  {executor.name}
-                </option>
-              ),
-            )}
+            {mapDefinitions(definitions.executors, (executor) => (
+              <option value={executor.name} key={executor.name}>
+                {executor.name}
+              </option>
+            ))}
           </InspectorProperty>
         </>
       )}

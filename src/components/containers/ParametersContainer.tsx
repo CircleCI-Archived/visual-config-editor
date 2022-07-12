@@ -1,11 +1,11 @@
 import { FieldArray, useField } from 'formik';
-import ComponentMapping from '../../mappings/ComponentMapping';
+import GenerableMapping from '../../mappings/GenerableMapping';
 import ParameterMapping from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
 import { navSubTypeMenu } from '../menus/SubTypeMenu';
 const ParameterContainer = (props: {
-  dataMapping: ComponentMapping;
+  dataMapping: GenerableMapping;
   values: any;
 }) => {
   const [field] = useField(props.values.parameters);

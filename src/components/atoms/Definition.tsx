@@ -5,7 +5,7 @@ import {
   OrbRef,
 } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import * as CircleCI from '@circleci/circleci-config-sdk';
-import GenerableMapping from '../../mappings/ComponentMapping';
+import GenerableMapping from '../../mappings/GenerableMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenuNav } from '../menus/definitions/InspectorDefinitionMenu';
 

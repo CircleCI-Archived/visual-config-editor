@@ -1,5 +1,5 @@
 import { executors } from '@circleci/circleci-config-sdk';
-import { SubTypeMapping } from '../../../../mappings/ComponentMapping';
+import { SubTypeMapping } from '../../../../mappings/GenerableMapping';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 
 export interface ExecutorSubTypes {
@@ -21,9 +21,7 @@ const executorSubtypes: ExecutorSubTypes = {
       '2xlarge',
       '2xlarge+',
     ],
-    fields: (
-      <InspectorProperty label="Image" name="docker[0].image" required />
-    ),
+    fields: <InspectorProperty label="Image" name="docker[0].image" required />,
     docsLink: 'https://circleci.com/docs/2.0/executor-types/#using-docker',
     description: 'Steps run in container with provided image',
   },
@@ -47,7 +45,12 @@ const executorSubtypes: ExecutorSubTypes = {
   windows: {
     text: 'Windows',
     component: executors.WindowsExecutor,
-    resourceClasses: ['windows.medium', 'windows.large', 'windows.xlarge', 'windows.2xlarge'],
+    resourceClasses: [
+      'windows.medium',
+      'windows.large',
+      'windows.xlarge',
+      'windows.2xlarge',
+    ],
     fields: <InspectorProperty label="Image" name="machine.image" required />,
     docsLink:
       'https://circleci.com/docs/2.0/executor-types/#using-the-windows-executor',

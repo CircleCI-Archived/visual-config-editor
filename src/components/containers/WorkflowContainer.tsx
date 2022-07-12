@@ -15,7 +15,7 @@ import ReactFlow, {
   useStoreActions as flowActions,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { dataMappings } from '../../mappings/ComponentMapping';
+import { dataMappings } from '../../mappings/GenerableMapping';
 import JobMapping from '../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { WorkflowModel } from '../../state/Store';

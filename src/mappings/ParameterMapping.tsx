@@ -1,4 +1,4 @@
-import { parsers } from '@circleci/circleci-config-sdk';
+import { parameters, parsers } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
@@ -6,9 +6,10 @@ import ParameterInspector from '../components/containers/inspector/ParameterInsp
 import { parameterSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import ParameterTypePageNav from '../components/menus/definitions/subtypes/ParameterTypePage';
 import ParameterIcon from '../icons/components/ParameterIcon';
-import ComponentMapping from './ComponentMapping';
+import { DefinitionAction } from '../state/DefinitionStore';
+import GenerableMapping from './GenerableMapping';
 
-const ParameterMapping: ComponentMapping<
+const ParameterMapping: GenerableMapping<
   CustomParameter<PipelineParameterLiteral>
 > = {
   type: 'parameters',
@@ -37,10 +38,9 @@ const ParameterMapping: ComponentMapping<
     ) as CustomParameter<PipelineParameterLiteral>;
   },
   store: {
-    get: (state) => state.definitions.parameters,
-    add: (actions) => actions.defineParameter,
-    update: (actions) => actions.updateParameter,
-    remove: (actions) => actions.undefineParameter,
+    add: (actions) => actions.define_parameters,
+    update: (actions) => actions.update_parameters,
+    remove: (actions) => actions.delete_parameters,
   },
   subtypes: {
     component: ParameterTypePageNav,
@@ -57,6 +57,16 @@ const ParameterMapping: ComponentMapping<
       'Options to help describe and expand functionality of a job, command, or executor.',
     link: 'https://circleci.com/docs/2.0/reusing-config/#using-the-parameters-declaration',
   },
+};
+
+type ParameterAction = DefinitionAction<
+  parameters.CustomParameter<PipelineParameterLiteral>
+>;
+
+export type ParameterActions = {
+  define_parameters: ParameterAction;
+  update_parameters: ParameterAction;
+  delete_parameters: ParameterAction;
 };
 
 export default ParameterMapping;

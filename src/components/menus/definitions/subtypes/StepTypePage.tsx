@@ -5,8 +5,12 @@ import BreadCrumbs from '../../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../../containers/inspector/subtypes/CommandSubtypes';
 import TabbedMenu from '../../TabbedMenu';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
+import { mapDefinitions } from '../../../../state/DefinitionStore';
+import { reusable } from '@circleci/circleci-config-sdk';
 
-const StepTypePage = (props: SubTypeSelectPageProps<string | CustomCommand>) => {
+const StepTypePage = (
+  props: SubTypeSelectPageProps<string | CustomCommand>,
+) => {
   const definitions = useStoreState((state) => state.definitions);
 
   return (
@@ -36,23 +40,24 @@ const StepTypePage = (props: SubTypeSelectPageProps<string | CustomCommand>) => 
           ))}
         </div>
         <div className="p-6">
-          {definitions.commands.map((command) => (
-            <button
-              key={command.name}
-              type="button"
-              className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
-              onClick={() => {
-                props.setSubtype(command);
-              }}
-            >
-              <p className="font-bold">{command.name}</p>
-              <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                {/* {command.description} */}
-                Command description will show here
-              </p>
-            </button>
-            // <InspectorProperty name={command} label={commandProps[command].text} as="card" />
-          ))}
+          {mapDefinitions<reusable.CustomCommand>(
+            definitions.commands,
+            (command) => (
+              <button
+                key={command.name}
+                type="button"
+                className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                onClick={() => {
+                  props.setSubtype(command);
+                }}
+              >
+                <p className="font-bold">{command.name}</p>
+                <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                  Command description will show here
+                </p>
+              </button>
+            ),
+          )}
         </div>
         <div>User defined commands will show here</div>
         <div>Predefined orb steps will show here</div>

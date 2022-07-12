@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 import GenerableMapping, {
   typeToComponent,
-} from '../../../mappings/ComponentMapping';
+} from '../../../mappings/GenerableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import ComponentInfo from '../../atoms/ComponentInfo';
@@ -77,10 +77,11 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
     );
   }, [setOrb, props]);
 
-  const inProject = definitions.orbs.find(
-    (importedOrb) =>
-      importedOrb.namespace === orb?.namespace && importedOrb.name === orb.name,
-  );
+  const inProject = false;
+  //  Object.values(definitions.orbs).find(
+  //   (importedOrb) =>
+  //     importedOrb.namespace === orb?.namespace && importedOrb.name === orb.name,
+  // );
 
   return (
     <div className="h-full flex flex-col">

@@ -1,11 +1,11 @@
 import { FormikValues } from 'formik';
-import { DefinitionModel } from '../../../state/Store';
+import { DefinitionsModel } from '../../../state/DefinitionStore';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { parameterSubtypes } from './subtypes/ParameterSubtypes';
 // data: CustomParameter<PrimitiveParameterLiteral>
 const ParameterInspector = (
   props: FormikValues & {
-    definitions: DefinitionModel;
+    definitions: DefinitionsModel;
     subtype?: string;
   },
 ) => {

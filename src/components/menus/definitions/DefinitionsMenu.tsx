@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
-import { dataMappings } from '../../../mappings/ComponentMapping';
+import { dataMappings } from '../../../mappings/GenerableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';

@@ -1,11 +1,11 @@
 import { FormikValues } from 'formik';
-import { DefinitionModel } from '../../../state/Store';
+import { DefinitionsModel } from '../../../state/DefinitionStore';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { executorSubtypes } from './subtypes/ExecutorSubtypes';
 
 const ExecutorInspector = (
   props: FormikValues & {
-    definitions: DefinitionModel;
+    definitions: DefinitionsModel;
     subtype?: string;
   },
 ) => {
@@ -28,7 +28,7 @@ const ExecutorInspector = (
         as="select"
       >
         {executorSubtypes[props.subtype]?.resourceClasses?.map(
-          (resourceClass) => (
+          (resourceClass: any) => (
             <option value={resourceClass} key={resourceClass}>
               {resourceClass}
             </option>
