@@ -57,7 +57,7 @@ const OrbDefinitionContainer = (props: {
 };
 
 const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
-  const definitions = useStoreState((state) => state.definitions);
+  const orbs = useStoreState((state) => state.definitions.orbs);
   const importOrb = useStoreActions((actions) => actions.importOrb);
   const [orb, setOrb] = useState<OrbImport>();
 
@@ -77,11 +77,11 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
     );
   }, [setOrb, props]);
 
-  const inProject = false;
-  //  Object.values(definitions.orbs).find(
-  //   (importedOrb) =>
-  //     importedOrb.namespace === orb?.namespace && importedOrb.name === orb.name,
-  // );
+  const inProject = Object.values(orbs).find(
+    (importedOrb) =>
+      importedOrb.value.namespace === orb?.namespace &&
+      importedOrb.value.name === orb.name,
+  );
 
   return (
     <div className="h-full flex flex-col">

@@ -392,72 +392,15 @@ const Actions: StoreActions = {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
   ...DefinitionActions,
-  // defineJob: action((state, payload) => {
-  //   state.definitions.jobs?.push(payload);
-  // }),
-  // updateJob: action((state, payload) => {
-  //   if (state.definitions.jobs) {
-  //     const workflows = state.workflows[state.selectedWorkflow];
-
-  //     workflows.elements = workflows.elements.map((e) =>
-  //       isNode(e) && e.type === 'job' && e.data.job.name === payload.old.name
-  //         ? { ...e, data: { ...e.data, job: payload.new } }
-  //         : e,
-  //     );
-
-  //     state.definitions.jobs = state.definitions.jobs.map((job) =>
-  //       job.name === payload.old.name ? payload.new : job,
-  //     );
-  //   }
-  // }),
-  // undefineJob: action((state, payload) => {
-  //   state.definitions.jobs = state.definitions.jobs?.filter(
-  //     (job) => job.name === payload.name,
-  //   );
-  // }),
-
-  // defineExecutor: action((state, payload) => {
-  //   state.definitions.executors = state.definitions.executors?.concat(payload);
-  // }),
-  // updateExecutor: action((state, payload) => {
-  //   state.definitions.executors = state.definitions.executors?.map((executor) =>
-  //     executor.name === payload.old.name ? payload.new : executor,
-  //   );
-  // }),
-  // undefineExecutor: action((state, payload) => {
-  //   state.definitions.executors?.filter(
-  //     (executor) => executor.name !== payload.name,
-  //   );
-  // }),
-
-  // defineParameter: action((state, payload) => {
-  //   state.definitions.parameters =
-  //     state.definitions.parameters?.concat(payload);
-  // }),
-  // updateParameter: action((state, payload) => {}),
-  // undefineParameter: action((state, payload) => {
-  //   state.definitions.parameters?.filter(
-  //     (parameter) => parameter.name !== payload.name,
-  //   );
-  // }),
-
-  // defineCommand: action((state, payload) => {
-  //   state.definitions.commands = state.definitions.commands?.concat(payload);
-  // }),
-  // updateCommand: action((state, payload) => {}),
-  // undefineCommand: action((state, payload) => {
-  //   state.definitions.commands?.filter(
-  //     (command) => command.name !== payload.name,
-  //   );
-  // }),
 
   importOrb: action((state, payload) => {
-    // const isImported = state.definitions.orbs.find(
-    //   (orb) => orb.name === payload.name && orb.namespace === payload.namespace,
-    // );
-    // if (!isImported) {
-    //   state.definitions.orbs?.push(payload);
-    // }
+    const orb = state.definitions.orbs[payload.name];
+    if (!orb) {
+      state.definitions.orbs = {
+        ...state.definitions.orbs,
+        [payload.name]: { dependencies: {}, value: payload },
+      };
+    }
   }),
 
   unimportOrb: action((state, payload) => {

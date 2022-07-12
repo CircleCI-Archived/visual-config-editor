@@ -4,7 +4,7 @@ import CommandSummary from '../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../components/containers/inspector/CommandInspector';
 import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import CommandIcon from '../icons/components/CommandIcon';
-import { DefinitionAction } from '../state/DefinitionStore';
+import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
 import GenerableMapping from './GenerableMapping';
 
 const CommandMapping: GenerableMapping<CustomCommand> = {
@@ -22,7 +22,8 @@ const CommandMapping: GenerableMapping<CustomCommand> = {
     return parsers.parseCustomCommand(
       name,
       values,
-      // Object.values(definitions.commands), TODO: Add dependency tracking to definition inspector, and use those arrays here
+      definitionsAsArray(definitions.commands),
+      // TODO: Add dependency tracking to definition inspector, and use those arrays here
     );
   },
   store: {

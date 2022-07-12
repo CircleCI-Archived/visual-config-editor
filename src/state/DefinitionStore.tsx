@@ -85,12 +85,8 @@ export const createDefinitionActions = <G extends NamedGenerable>(
 ): {
   [x: string]: DefinitionAction<G>;
 } => {
-  console.log(mapping?.type);
-
   return {
     [`define_${type}`]: action((state, payload: G) => {
-      console.log(payload);
-
       const oldState = state.definitions[type];
 
       state.definitions = {
@@ -110,12 +106,12 @@ export const createDefinitionActions = <G extends NamedGenerable>(
         return;
       }
 
-      const subscriptions = Object.assign(
-        {},
-        ...mapping.subscriptions.map((value) =>
-          value ? { [value]: {} } : undefined,
-        ),
-      );
+      // const subscriptions = Object.assign(
+      //   {},
+      //   ...mapping.subscriptions.map((value) =>
+      //     value ? { [value]: {} } : undefined,
+      //   ),
+      // );
 
       // state.definitions.jobs[] = push({
       //   subscriptions,
@@ -131,26 +127,23 @@ export const createDefinitionActions = <G extends NamedGenerable>(
       // });
     }),
     [`update_${type}`]: action((state, payload: UpdateType<G>) => {
-      const prevDefinition = state.definitions[type];
+      // const prevDefinition = state.definitions[type];
       const newDefinition = onUpdate ? onUpdate(state, payload) : payload.new;
       const oldState = state.definitions[type];
 
       const newDefinitions = {
-        ...state.definitions,
-        [type]: {
-          ...oldState,
-          [payload.new.name]: {
-            dependencies: oldState[payload.old.name]?.dependencies,
-            value: newDefinition,
-          },
+        ...oldState,
+        [payload.new.name]: {
+          dependencies: oldState[payload.old.name]?.dependencies,
+          value: newDefinition,
         },
       };
 
       if (payload.new.name !== payload.old.name) {
-        delete newDefinitions[type][payload.old.name];
+        delete newDefinitions[payload.old.name];
       }
 
-      state.definitions = newDefinitions;
+      state.definitions[type] = newDefinitions as DefinitionRecord<any>;
 
       // Object.entries(prevDefinition.subscriptions).forEach(
       //   ([type, observers]) => {
