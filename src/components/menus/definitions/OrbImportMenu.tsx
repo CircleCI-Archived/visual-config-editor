@@ -17,7 +17,6 @@ import TabbedMenu from '../TabbedMenu';
 import { OrbDefinitionMenuNav, OrbDefinitionProps } from './OrbDefinitionsMenu';
 import { useState } from 'react';
 import Loading from '../../../icons/svgs/loading.svg';
-import './OrbImportMenu.css';
 
 type InspectorDefinitionProps = DataModel & {
   values: Record<string, object>;
@@ -85,8 +84,8 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
               hidden
               items={[{ value: 6, label: '', default: true }]}
             />
-            <div style={{display: isLoading ? 'flex' : 'none', justifyContent: 'center'}}>
-              <img src={Loading} alt="loading wheel" className="w-8 h-8 rotate"/>
+            <div style={{display: isLoading ? 'flex' : 'none' , justifyContent: 'center'}}>
+              <img src={Loading} alt="loading wheel" className="w-8 h-8 animate-spin"/>
             </div>
             <Hits
               className="overflow-y-auto"

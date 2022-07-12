@@ -15,7 +15,6 @@ import Definition from '../../atoms/Definition';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import CollapsibleList from '../../containers/CollapsibleList';
 import Loading from '../../../icons/svgs/loading.svg';
-import './OrbImportMenu.css';
 
 export type OrbDefinitionProps = {
   name: string;
@@ -141,8 +140,8 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
         </div>
       ) : (
         <div style={{display: 'flex', justifyContent: 'center'}}>
-              <img src={Loading} alt="loading wheel" className="w-8 h-8 rotate"/>
-            </div>
+          <img src={Loading} alt="loading wheel" className="w-8 h-8 animate-spin"/>
+        </div>
       )}
     </div>
   );
