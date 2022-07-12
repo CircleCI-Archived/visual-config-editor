@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import ComponentMapping from '../../mappings/ComponentMapping';
+import GenerableMapping from '../../mappings/GenerableMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
@@ -12,13 +12,13 @@ import CollapsibleList from './CollapsibleList';
 import GuideContainer from './GuideContainer';
 
 export interface DefinitionsProps {
-  type: ComponentMapping;
+  type: GenerableMapping;
   expanded?: boolean;
   onChange?: (expanded: boolean) => void;
 }
 
 const DefinitionsContainer = (props: DefinitionsProps) => {
-  const items = useStoreState(props.type.store.get);
+  const items = useStoreState((store) => store.definitions[props.type.type]);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
@@ -56,11 +56,11 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
       >
         <div className="w-full pl-2 pt-2">
           <ComponentInfo type={props.type} />
-          {items && items.length > 0 ? (
-            items?.map((item, index) => (
+          {typeof items === 'object' && !Array.isArray(items) ? (
+            Object.entries(items).map(([name, definition], index) => (
               <Definition
-                data={item}
-                key={item.name}
+                data={definition.value}
+                key={name}
                 type={props.type}
                 index={index}
               />

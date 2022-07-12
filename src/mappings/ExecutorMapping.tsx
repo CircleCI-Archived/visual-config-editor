@@ -11,7 +11,8 @@ import { executorSubtypes } from '../components/containers/inspector/subtypes/Ex
 import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import ExecutorTypePageNav from '../components/menus/definitions/subtypes/ExecutorTypePage';
 import ExecutorIcon from '../icons/components/ExecutorIcon';
-import ComponentMapping from './ComponentMapping';
+import { DefinitionAction } from '../state/DefinitionStore';
+import GenerableMapping from './GenerableMapping';
 import JobMapping from './JobMapping';
 
 export type AnyExecutor =
@@ -21,7 +22,7 @@ export type AnyExecutor =
   | executors.WindowsExecutor
   | executors.Executor;
 
-const ExecutorMapping: ComponentMapping<
+const ExecutorMapping: GenerableMapping<
   reusable.ReusableExecutor,
   workflow.WorkflowJob
 > = {
@@ -70,10 +71,9 @@ const ExecutorMapping: ComponentMapping<
     return parsers.parseReusableExecutor(name, values);
   },
   store: {
-    get: (state) => state.definitions.executors,
-    add: (actions) => actions.defineExecutor,
-    update: (actions) => actions.updateExecutor,
-    remove: (actions) => actions.undefineExecutor,
+    add: (actions) => actions.define_executors,
+    update: (actions) => actions.update_executors,
+    remove: (actions) => actions.delete_executors,
   },
   dragTarget: JobMapping.type,
   applyToNode: (data, { job, parameters }) => {
@@ -116,6 +116,14 @@ const ExecutorMapping: ComponentMapping<
       'Technology/Environment which Jobs execute their steps inside of.',
     link: 'https://circleci.com/docs/2.0/executor-types/',
   },
+};
+
+type ExecutorAction = DefinitionAction<reusable.ReusableExecutor>;
+
+export type ExecutorActions = {
+  define_executors: ExecutorAction;
+  update_executors: ExecutorAction;
+  delete_executors: ExecutorAction;
 };
 
 export default ExecutorMapping;

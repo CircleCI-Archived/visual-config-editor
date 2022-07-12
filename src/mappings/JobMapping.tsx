@@ -4,9 +4,10 @@ import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
 import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
 import JobIcon from '../icons/components/JobIcon';
-import ComponentMapping from './ComponentMapping';
+import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
+import GenerableMapping from './GenerableMapping';
 
-const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
+const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
   type: 'jobs',
   name: {
     singular: 'Job',
@@ -18,6 +19,7 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
     executor: { name: 'Select Executor' },
   },
   parameters: componentParametersSubtypes.job,
+  subscriptions: ['commands', 'executors', 'orbs'],
   /**
    TODO: Implement this to pass transform method to
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
@@ -26,17 +28,14 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
     return parsers.parseJob(
       name,
       values,
-      definitions.commands,
-      definitions.executors,
+      definitionsAsArray(definitions.commands),
+      definitionsAsArray(definitions.executors),
     );
   },
   store: {
-    get: (state) => {
-      return state.definitions.jobs;
-    },
-    add: (actions) => actions.defineJob,
-    update: (actions) => actions.updateJob,
-    remove: (actions) => actions.undefineJob,
+    add: (actions) => actions.define_jobs,
+    update: (actions) => actions.update_jobs,
+    remove: (actions) => actions.delete_jobs,
   },
   dragTarget: 'workflow',
   node: {
@@ -55,6 +54,14 @@ const JobMapping: ComponentMapping<Job, workflow.WorkflowJob> = {
       'Collection of steps to be executed within the Executor environment.',
     link: 'https://circleci.com/docs/2.0/concepts/#jobs',
   },
+};
+
+type JobAction = DefinitionAction<Job>;
+
+export type JobActions = {
+  define_jobs: JobAction;
+  update_jobs: JobAction;
+  delete_jobs: JobAction;
 };
 
 export default JobMapping;

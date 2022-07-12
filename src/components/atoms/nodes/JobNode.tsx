@@ -41,7 +41,7 @@ const JobNode: React.FunctionComponent<
   // const setWorkflowElements = useStoreActions(
   //   (actions) => actions.setWorkflowElements,
   // );
-  const updateJob = useStoreActions((actions) => actions.updateJob);
+  const updateJob = useStoreActions((actions) => actions.update_jobs);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const toolbox = useStoreState((state) => state.previewToolbox);

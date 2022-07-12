@@ -81,9 +81,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
             // TODO: define error type
             const errors: any = {};
             const source = props.source || definitions[dataMapping.type];
-            const dupIndex = source.findIndex(
+            const dupIndex = Object.values(source).findIndex(
               (d) =>
-                (typeof d === 'string' ? d : d.name) === values.name.trim(),
+                (typeof d === 'string' ? d : d.value.name) ===
+                values.name.trim(),
             );
 
             if (dupIndex !== -1 && dupIndex !== props.index) {

@@ -1,14 +1,10 @@
 import {
   Config,
-  Job,
   parameters,
   parsers,
-  reusable,
   Workflow,
   workflow,
 } from '@circleci/circleci-config-sdk';
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
-import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
@@ -18,15 +14,23 @@ import {
   ElementId,
   Elements,
   FlowElement,
-  isNode,
   Node,
   SetConnectionId,
   XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
-import ComponentMapping from '../mappings/ComponentMapping';
+import GenerableMapping from '../mappings/GenerableMapping';
 import JobMapping from '../mappings/JobMapping';
+import {
+  AllDefinitionActions,
+  DefinitionActions,
+  definitionsAsArray,
+  DefinitionsModel,
+  DefinitionsStoreModel,
+  DefinitionStore,
+  NamedGenerable,
+} from './DefinitionStore';
 
 export interface NavigationBack {
   distance?: number;
@@ -57,19 +61,9 @@ export interface PreviewToolboxModel {
   };
 }
 
-/** Reusable definitions of CircleCIConfigObject */
-export interface DefinitionModel /*extends CircleCIConfigObject*/ {
-  parameters: CustomParameter<PipelineParameterLiteral>[];
-  executors: reusable.ReusableExecutor[];
-  jobs: Job[];
-  commands: CustomCommand[];
-  workflows: Workflow[];
-  orbs: OrbImport[];
-}
-
 export interface DataModel {
   data?: any;
-  dataType?: ComponentMapping;
+  dataType?: GenerableMapping;
 }
 
 export interface NavigationModel extends NavigationStop {
@@ -82,7 +76,6 @@ export interface NavigationComponent {
   Component: React.FunctionComponent<any>;
   Label: React.FunctionComponent<any>;
 }
-
 export interface NavigationStop {
   component: NavigationComponent;
   props: { [key: string]: any };
@@ -97,13 +90,12 @@ export interface StagedJobMap {
   };
 }
 
-export interface StoreModel {
+export type StoreModel = DefinitionsStoreModel & {
   /** Last generated configuration */
   config: string | undefined;
   /** The configuration with proposed changes */
   editingConfig: string | undefined;
   /** Component definitions which are used to generate the configuration*/
-  definitions: DefinitionModel;
   /** The current step of the guide */
   guideStep?: number;
   /** Node placeholder element info */
@@ -138,14 +130,14 @@ export interface StoreModel {
   /** Currently selected workflow pane index */
   selectedWorkflow: number;
   errorMessage?: string;
-}
+};
 
 export interface UpdateType<T> {
   old: T;
   new: T;
 }
 
-export interface StoreActions {
+export type StoreActions = AllDefinitionActions & {
   persistProps: Action<StoreModel, { [key: string]: object }>;
   setDragging: Action<StoreModel, DataModel | undefined>;
   setConnecting: Action<
@@ -182,41 +174,16 @@ export interface StoreActions {
   removeWorkflowElement: Action<StoreModel, string>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
 
-  defineJob: Action<StoreModel, Job>;
-  updateJob: Action<StoreModel, UpdateType<Job>>;
-  undefineJob: Action<StoreModel, Job>;
-
-  defineCommand: Action<StoreModel, CustomCommand>;
-  updateCommand: Action<StoreModel, UpdateType<CustomCommand>>;
-  undefineCommand: Action<StoreModel, CustomCommand>;
-
-  defineExecutor: Action<StoreModel, reusable.ReusableExecutor>;
-  updateExecutor: Action<StoreModel, UpdateType<reusable.ReusableExecutor>>;
-  undefineExecutor: Action<StoreModel, reusable.ReusableExecutor>;
-
-  defineParameter: Action<
-    StoreModel,
-    CustomParameter<PipelineParameterLiteral>
-  >;
-  updateParameter: Action<
-    StoreModel,
-    UpdateType<CustomParameter<PipelineParameterLiteral>>
-  >;
-  undefineParameter: Action<
-    StoreModel,
-    CustomParameter<PipelineParameterLiteral>
-  >;
-
   importOrb: Action<StoreModel, OrbImport>;
   unimportOrb: Action<StoreModel, OrbImport>;
 
   loadConfig: Action<StoreModel, string>;
-  generateConfig: Action<StoreModel, void | Partial<DefinitionModel>>;
+  generateConfig: Action<StoreModel, void | Partial<DefinitionsModel>>;
   error: Action<StoreModel, any>;
 
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
   clearToast: Action<StoreModel, void>;
-}
+};
 
 const Actions: StoreActions = {
   persistProps: action((state, payload) => {
@@ -265,6 +232,9 @@ const Actions: StoreActions = {
     state.guideStep = payload;
   }),
 
+  /** TODO: Refactor with context
+   * https://reactjs.org/docs/hooks-reference.html#usecontext
+   */
   navigateTo: action((state, payload) => {
     const curNav = state.navigation;
 
@@ -421,80 +391,22 @@ const Actions: StoreActions = {
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
-
-  defineJob: action((state, payload) => {
-    state.definitions.jobs?.push(payload);
-  }),
-  updateJob: action((state, payload) => {
-    if (state.definitions.jobs) {
-      const workflows = state.workflows[state.selectedWorkflow];
-
-      workflows.elements = workflows.elements.map((e) =>
-        isNode(e) && e.type === 'job' && e.data.job.name === payload.old.name
-          ? { ...e, data: { ...e.data, job: payload.new } }
-          : e,
-      );
-
-      state.definitions.jobs = state.definitions.jobs.map((job) =>
-        job.name === payload.old.name ? payload.new : job,
-      );
-    }
-  }),
-  undefineJob: action((state, payload) => {
-    state.definitions.jobs = state.definitions.jobs?.filter(
-      (job) => job.name === payload.name,
-    );
-  }),
-
-  defineExecutor: action((state, payload) => {
-    state.definitions.executors = state.definitions.executors?.concat(payload);
-  }),
-  updateExecutor: action((state, payload) => {
-    state.definitions.executors = state.definitions.executors?.map((executor) =>
-      executor.name === payload.old.name ? payload.new : executor,
-    );
-  }),
-  undefineExecutor: action((state, payload) => {
-    state.definitions.executors?.filter(
-      (executor) => executor.name !== payload.name,
-    );
-  }),
-
-  defineParameter: action((state, payload) => {
-    state.definitions.parameters =
-      state.definitions.parameters?.concat(payload);
-  }),
-  updateParameter: action((state, payload) => {}),
-  undefineParameter: action((state, payload) => {
-    state.definitions.parameters?.filter(
-      (parameter) => parameter.name !== payload.name,
-    );
-  }),
-
-  defineCommand: action((state, payload) => {
-    state.definitions.commands = state.definitions.commands?.concat(payload);
-  }),
-  updateCommand: action((state, payload) => {}),
-  undefineCommand: action((state, payload) => {
-    state.definitions.commands?.filter(
-      (command) => command.name !== payload.name,
-    );
-  }),
+  ...DefinitionActions,
 
   importOrb: action((state, payload) => {
-    const isImported = state.definitions.orbs.find(
-      (orb) => orb.name === payload.name && orb.namespace === payload.namespace,
-    );
-
-    if (!isImported) {
-      state.definitions.orbs?.push(payload);
+    const orb = state.definitions.orbs[payload.name];
+    if (!orb) {
+      state.definitions.orbs = {
+        ...state.definitions.orbs,
+        [payload.name]: { dependencies: {}, value: payload },
+      };
     }
   }),
 
   unimportOrb: action((state, payload) => {
-    state.definitions.orbs = state.definitions.orbs.filter(
-      (orb) => orb.name !== payload.name && orb.namespace !== payload.namespace,
-    );
+    // state.definitions.orbs = state.definitions.orbs.filter(
+    //   (orb) => orb.name !== payload.name && orb.namespace !== payload.namespace,
+    // );
   }),
 
   error: action((state, payload) => {
@@ -505,14 +417,14 @@ const Actions: StoreActions = {
     try {
       const config = parsers.parseConfig(payload);
 
-      state.definitions = {
-        workflows: config.workflows,
-        jobs: config.jobs,
-        executors: config.executors || [],
-        parameters: config.parameters?.parameters || [],
-        commands: config.commands || [],
-        orbs: config.orbs || [],
-      };
+      // state.definitions = {
+      //   workflows: config.workflows,
+      //   jobs: config.jobs,
+      //   executors: config.executors || [],
+      //   parameters: config.parameters?.parameters || [],
+      //   commands: config.commands || [],
+      //   orbs: config.orbs || [],
+      // };
 
       const nodeWidth = 250; // Make this dynamic
       const nodeHeight = 60; // Make this dynamic
@@ -668,8 +580,10 @@ const Actions: StoreActions = {
     // This is a merged config preview. TODO: Refactor merging process.
     const merge = (cur: any, update: any) =>
       update ? [...cur, ...update] : cur;
+
     const pipelineParameters: parameters.CustomParameter<PipelineParameterLiteral>[] =
       merge(defs.parameters, payload?.parameters);
+
     const parameterList =
       pipelineParameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
@@ -677,14 +591,25 @@ const Actions: StoreActions = {
           )
         : undefined;
 
+    const toArray = (defs: Partial<DefinitionsModel>) =>
+      Object.assign(
+        {},
+        ...Object.entries(defs).map(([type, defRecord]) => ({
+          [type]: definitionsAsArray<NamedGenerable>(defRecord),
+        })),
+      );
+
+    const defArrays = toArray(defs);
+    const payloadArrays = payload ? toArray(payload) : undefined;
+
     const config = new Config(
       false,
-      merge(defs.jobs, payload?.jobs),
+      merge(defArrays.jobs, payloadArrays?.jobs),
       workflows,
-      merge(defs.executors, payload?.executors),
-      merge(defs.commands, payload?.commands),
+      merge(defArrays.executors, payloadArrays?.executors),
+      merge(defArrays.commands, payloadArrays?.commands),
       parameterList,
-      merge(defs.orbs, payload?.orbs),
+      merge(defArrays.orbs, payloadArrays?.orbs),
     );
 
     if (payload) {
@@ -719,14 +644,7 @@ const Store: StoreModel & StoreActions = {
       preview: false,
     },
   },
-  definitions: {
-    commands: [],
-    executors: [],
-    jobs: [],
-    workflows: [],
-    parameters: [],
-    orbs: [],
-  },
+  ...DefinitionStore,
   stagedJobs: {
     workflows: {
       'build-and-test': {},
