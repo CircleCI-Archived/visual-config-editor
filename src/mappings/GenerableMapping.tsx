@@ -9,12 +9,18 @@ import { ActionCreator, Actions } from 'easy-peasy';
 import { FormikValues } from 'formik';
 import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
-import { DefinitionsModel, DefinitionType } from '../state/DefinitionStore';
+import {
+  DefinitionsModel,
+  DefinitionSubscription,
+  DefinitionType,
+  MappingSubscriptions,
+  NamedGenerable,
+} from '../state/DefinitionStore';
 import Store, { NavigationComponent, UpdateType } from '../state/Store';
-import CommandMapping from './CommandMapping';
-import ExecutorMapping from './ExecutorMapping';
-import JobMapping from './JobMapping';
-import ParameterMapping from './ParameterMapping';
+import { CommandMapping } from './CommandMapping';
+import { ExecutorMapping } from './ExecutorMapping';
+import { JobMapping } from './JobMapping';
+import { ParameterMapping } from './ParameterMapping';
 
 /**
  * Interface to add a circleci-config-sdk component to a data mapping.
@@ -111,9 +117,11 @@ export interface GenerableInfoType {
  * @interface
  */
 export default interface GenerableMapping<
-  ConfigDataType = any,
+  GenerableType extends NamedGenerable = any,
   ConfigNodeProps = any,
   InspectorDefaults = any,
+  Subscriptions extends NamedGenerable = any,
+  SubscriptionTypes extends DefinitionType = any,
 > {
   guide?: { info: string; step: number };
   /**  String name type of component. Must be equal to index within registry. */
@@ -123,13 +131,20 @@ export default interface GenerableMapping<
     singular: string;
     plural: string;
   };
-  subscriptions?: Partial<Array<DefinitionType>>;
+  subscriptions?: MappingSubscriptions<
+    GenerableType,
+    Subscriptions,
+    SubscriptionTypes
+  >;
+  resolveObservables?: (
+    generable: GenerableType,
+  ) => Record<SubscriptionTypes, Subscriptions | Subscriptions[]>;
 
   /** Default values to populate inspectors
    *  @todo need to add support for subtype defaults
    */
   defaults: {
-    [K in KeysOfUnion<ConfigDataType | InspectorDefaults>]?: any;
+    [K in KeysOfUnion<GenerableType | InspectorDefaults>]?: any;
   };
   /**
    * Is true when the component can accept parameters.
@@ -140,16 +155,16 @@ export default interface GenerableMapping<
   transform: (
     values: { [K: string]: any },
     store: DefinitionsModel,
-  ) => ConfigDataType | undefined;
+  ) => GenerableType | undefined;
   store: {
     /** Returns easy-peasy add action hook for component array */
-    add: (state: Actions<StoreType>) => ActionCreator<ConfigDataType>;
+    add: (state: Actions<StoreType>) => ActionCreator<GenerableType>;
     /** Returns easy-peasy update action hook for data type */
     update: (
       state: Actions<StoreType>,
-    ) => (data: UpdateType<ConfigDataType>) => void;
+    ) => (data: UpdateType<GenerableType>) => void;
     /** Returns easy-peasy removal action hook for data type */
-    remove: (state: Actions<StoreType>) => (data: ConfigDataType) => void;
+    remove: (state: Actions<StoreType>) => (data: GenerableType) => void;
   };
   /**
    * Name of target that a definition can be tragged to.
@@ -161,33 +176,36 @@ export default interface GenerableMapping<
    * @todo Potentially support multiple node types.
    * @returns Object populated with values of ConfigNodeProps */
   applyToNode?: (
-    data: ConfigDataType,
+    data: GenerableType,
     nodeData: ConfigNodeProps,
   ) => { [K in KeysOfUnion<ConfigNodeProps>]?: any };
   node?: {
     /** Transform definition data */
-    transform?: (data: ConfigDataType, extras?: any) => ConfigNodeProps;
+    transform?: (data: GenerableType, extras?: any) => ConfigNodeProps;
     /** @todo: Add store functionality to better support updating defintions and their corresponding workflow nodes */
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;
   };
   subtypes?: {
     component: NavigationComponent;
-    getSubtype: (data: ConfigDataType) => string | undefined;
+    getSubtype: (data: GenerableType) => string | undefined;
     definitions: { [subtype: string]: SubTypeMapping };
   };
   components: {
     /** Icon Generable to render in definition */
     icon?: React.FunctionComponent<any>;
     /** Generable to render in definition */
-    summary: React.FunctionComponent<{ data: ConfigDataType }>;
+    summary: React.FunctionComponent<{ data: GenerableType }>;
     /**
      * Called by InspectorPane and CreateNew to generate form
+     * TODO: refactor into useInspector hook
      * @returns Function which returns a Formik Form object*/
     inspector: (
       props: FormikValues & {
         definitions: DefinitionsModel;
         data?: Generable;
         subtype?: string;
+        subscriptions?: Array<DefinitionSubscription>;
+        setSubscriptions?: (subscriptions: DefinitionSubscription[]) => void;
       },
       // data: ConfigDataType;
     ) => JSX.Element;

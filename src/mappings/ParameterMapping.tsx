@@ -9,7 +9,7 @@ import ParameterIcon from '../icons/components/ParameterIcon';
 import { DefinitionAction } from '../state/DefinitionStore';
 import GenerableMapping from './GenerableMapping';
 
-const ParameterMapping: GenerableMapping<
+export const ParameterMapping: GenerableMapping<
   CustomParameter<PipelineParameterLiteral>
 > = {
   type: 'parameters',
@@ -59,7 +59,7 @@ const ParameterMapping: GenerableMapping<
   },
 };
 
-type ParameterAction = DefinitionAction<
+export type ParameterAction = DefinitionAction<
   parameters.CustomParameter<PipelineParameterLiteral>
 >;
 
@@ -68,5 +68,3 @@ export type ParameterActions = {
   update_parameters: ParameterAction;
   delete_parameters: ParameterAction;
 };
-
-export default ParameterMapping;

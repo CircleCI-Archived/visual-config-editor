@@ -7,43 +7,55 @@ import {
 } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { Action, action } from 'easy-peasy';
-import CommandMapping, { CommandActions } from '../mappings/CommandMapping';
-import ExecutorMapping, { ExecutorActions } from '../mappings/ExecutorMapping';
+import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
+import { store } from '../App';
+import { CommandActions, CommandMapping } from '../mappings/CommandMapping';
+import { ExecutorActions, ExecutorMapping } from '../mappings/ExecutorMapping';
 import GenerableMapping from '../mappings/GenerableMapping';
-import JobMapping, { JobActions } from '../mappings/JobMapping';
-import ParameterMapping, {
+import { JobActions, JobMapping } from '../mappings/JobMapping';
+import {
   ParameterActions,
+  ParameterMapping,
 } from '../mappings/ParameterMapping';
 import { UpdateType } from './Store';
 
-export type DefinitionType =
-  | 'parameters'
-  | 'workflows'
-  | 'jobs'
-  | 'commands'
-  | 'executors'
-  | 'orbs';
+export type DefinitionType = 'parameters' | 'jobs' | 'commands' | 'executors';
 
 export type NamedGenerable = Generable & { name: string };
 
-// Definitions will create a subscription that triggers a constant function when a change is made.
+/***
+ * @param observers - a list of dependent components which observe
+ * @param observables - a list of dependent components which observe
+ * @param value - current value of this definition
+ */
 export type Definition<G> = {
-  dependencies: Partial<Record<DefinitionType, NamedGenerable>>;
+  observers?: Array<DefinitionSubscription>;
+  observables?: Array<DefinitionSubscription>;
   value: G;
 };
 
-export type DefinitionSubscription<Generable> = (
-  prev: Generable,
-  cur: Generable,
-  observer: Generable,
-) => void;
+export type SubscriptionCallback<
+  Observer extends NamedGenerable,
+  Observable extends NamedGenerable,
+> = (prev: Observable, cur: Observable, observer: Observer) => Observer;
 
+export type DefinitionSubscription = {
+  type: DefinitionType;
+  name: string;
+};
+
+/**
+ * Definition Records String to Definition map.
+ * Definition must be some type of Generable.
+ */
 export type DefinitionRecord<G extends Generable> = Record<
   string,
   Definition<G>
 >;
 
+/**
+ * Component definitions which are used to generate the configuration
+ */
 export type DefinitionsModel = {
   commands: DefinitionRecord<reusable.CustomCommand>;
   executors: DefinitionRecord<reusable.ReusableExecutor>;
@@ -55,6 +67,29 @@ export type DefinitionsModel = {
   orbs: DefinitionRecord<orb.OrbImport>;
 };
 
+export type AllDefinitionActions = JobActions &
+  ExecutorActions &
+  CommandActions &
+  ParameterActions;
+
+export type DefinitionSubscriptionThunk = ThunkOn<
+  AllDefinitionActions,
+  UpdateType<NamedGenerable>
+>;
+
+export type MappingSubscriptions<
+  Observer extends NamedGenerable,
+  Observables extends NamedGenerable,
+  Types extends DefinitionType,
+> = Record<Types, SubscriptionCallback<Observer, Observables>>;
+
+export type ObserverMapping<Observer extends NamedGenerable> =
+  GenerableMapping<Observer> &
+    Required<Pick<GenerableMapping<Observer>, 'subscriptions'>>;
+
+/**
+ * Definition Action wraps generable components life cycle actions and handles the core events
+ */
 export type DefinitionAction<G extends NamedGenerable> = Action<
   DefinitionsStoreModel,
   G | UpdateType<G>
@@ -75,26 +110,116 @@ export const definitionsAsArray = <G extends NamedGenerable>(
   return Object.values(definitions).map((definition) => definition.value);
 };
 
-/** Create wrappers for definition actions */
+export const createSubscription = (
+  state: DefinitionsStoreModel,
+  observer: NamedGenerable,
+  observerType: DefinitionType,
+  observable: NamedGenerable,
+  observableType: DefinitionType,
+  observableDefs: Record<string, DefinitionRecord<NamedGenerable>>,
+): DefinitionSubscription => {
+  const observableTarget =
+    state.definitions[observableType as DefinitionType][observable.name];
+  const otherObservers = observableTarget.observers;
+  const observerSub = { type: observerType, name: observer.name };
+
+  observableDefs[observableType][observable.name] = {
+    ...(observableTarget || {}),
+    observers: otherObservers
+      ? [...(otherObservers || []), observerSub]
+      : [observerSub],
+  };
+
+  return {
+    type: observableType,
+    name: observable.name,
+  } as DefinitionSubscription;
+};
+
+export const subscribeToObservables = <G extends NamedGenerable>(
+  state: DefinitionsStoreModel,
+  mapping: GenerableMapping<G>,
+  observer: G,
+) => {
+  const type = mapping.type;
+  let subscriptions: DefinitionSubscription[] = [];
+  const observables = mapping.subscriptions
+    ? Object.assign(
+        {},
+        ...Object.keys(mapping.subscriptions).map((key) => ({ [key]: {} })),
+      )
+    : [];
+
+  if (mapping.resolveObservables && observables) {
+    const observerDefinitions = mapping.resolveObservables(observer) as Record<
+      DefinitionType,
+      NamedGenerable
+    >;
+
+    Object.entries(observerDefinitions).forEach(
+      ([observableType, oneOrMore]) => {
+        if (Array.isArray(oneOrMore)) {
+          subscriptions.push(
+            ...oneOrMore.map((observable) =>
+              createSubscription(
+                state,
+                observer,
+                type,
+                observable,
+                observableType as DefinitionType,
+                observables,
+              ),
+            ),
+          );
+        } else {
+          subscriptions.push(
+            createSubscription(
+              state,
+              observer,
+              type,
+              oneOrMore,
+              observableType as DefinitionType,
+              observables,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  return [observables, subscriptions];
+};
+
+/***
+ * Create wrappers for definition actions
+ */
 export const createDefinitionActions = <G extends NamedGenerable>(
-  type: DefinitionType,
-  mapping: GenerableMapping,
+  mapping: GenerableMapping<G>,
   onSet?: (store: DefinitionsStoreModel, value: G) => void,
   onUpdate?: (store: DefinitionsStoreModel, value: UpdateType<G>) => G,
   onDispose?: () => void,
-): {
-  [x: string]: DefinitionAction<G>;
-} => {
+): Record<string, DefinitionAction<G>> => {
+  const type = mapping.type;
+
   return {
     [`define_${type}`]: action((state, payload: G) => {
       const oldState = state.definitions[type];
+      const [observables, subscriptions] = subscribeToObservables(
+        state,
+        mapping,
+        payload,
+      );
+
+      console.log(observables, subscriptions);
 
       state.definitions = {
         ...state.definitions,
+        ...(observables || {}),
         [type]: {
           ...oldState,
+          ...(observables[type] || {}),
           [payload.name]: {
-            dependencies: oldState[payload.name]?.dependencies,
+            observers: subscriptions || [],
             value: payload,
           },
         },
@@ -102,39 +227,20 @@ export const createDefinitionActions = <G extends NamedGenerable>(
 
       onSet && onSet(state, payload);
 
-      if (!mapping.subscriptions) {
+      if (!mapping?.subscriptions || !mapping.resolveObservables) {
         return;
       }
-
-      // const subscriptions = Object.assign(
-      //   {},
-      //   ...mapping.subscriptions.map((value) =>
-      //     value ? { [value]: {} } : undefined,
-      //   ),
-      // );
-
-      // state.definitions.jobs[] = push({
-      //   subscriptions,
-      //   value: payload,
-      // });
-
-      // const subscriptions = Object.keys(mapping.subscriptions);
-
-      // subscriptions.forEach((subscription) => {
-      //   const definition = subscription as DefinitionType;
-
-      //   state[definition].subscriptions[mapping.type]?.push(payload);
-      // });
     }),
     [`update_${type}`]: action((state, payload: UpdateType<G>) => {
-      // const prevDefinition = state.definitions[type];
       const newDefinition = onUpdate ? onUpdate(state, payload) : payload.new;
       const oldState = state.definitions[type];
+      const oldDefinition = oldState[payload.old.name];
 
       const newDefinitions = {
         ...oldState,
         [payload.new.name]: {
-          dependencies: oldState[payload.old.name]?.dependencies,
+          observers: oldDefinition.observers,
+          observables: oldDefinition.observables,
           value: newDefinition,
         },
       };
@@ -144,20 +250,6 @@ export const createDefinitionActions = <G extends NamedGenerable>(
       }
 
       state.definitions[type] = newDefinitions as DefinitionRecord<any>;
-
-      // Object.entries(prevDefinition.subscriptions).forEach(
-      //   ([type, observers]) => {
-      //     observers.forEach((observer) => {
-      //       if (mapping.subscriptions) {
-      //         const reaction = mapping.subscriptions[type as DefinitionType];
-
-      //         if (reaction) {
-      //           reaction(observer, prevDefinition, newDefinition);
-      //         }
-      //       }
-      //     });
-      //   },
-      // );
     }),
     [`delete_${type}`]: action((state: DefinitionsStoreModel, payload: G) => {
       const newDefinitions = {
@@ -171,24 +263,80 @@ export const createDefinitionActions = <G extends NamedGenerable>(
   };
 };
 
-export type AllDefinitionActions = JobActions &
-  ExecutorActions &
-  CommandActions &
-  ParameterActions;
+const createObserverSubscription = <
+  Observer extends NamedGenerable,
+  Observables extends NamedGenerable,
+>(
+  observableType: DefinitionType,
+  subscription: SubscriptionCallback<Observer, Observables>,
+): DefinitionSubscriptionThunk => {
+  return thunkOn(
+    (actions) => actions[`update_${observableType}`],
+    async (actions, target) => {
+      const change = target.payload as unknown as UpdateType<Observables>;
+      const name = change.new.name;
+      const definitions = store.getState().definitions;
+      const observers = definitions[observableType][name].observers;
 
-export const DefinitionActions: AllDefinitionActions = {
-  ...(createDefinitionActions<Job>('jobs', JobMapping) as JobActions),
-  ...(createDefinitionActions<reusable.ReusableExecutor>(
-    'executors',
-    ExecutorMapping,
-  ) as ExecutorActions),
-  ...(createDefinitionActions<
-    parameters.CustomParameter<PipelineParameterLiteral>
-  >('parameters', ParameterMapping) as ParameterActions),
-  ...(createDefinitionActions<reusable.CustomCommand>(
-    'commands',
-    CommandMapping,
-  ) as CommandActions),
+      if (!observers) {
+        return;
+      }
+
+      observers.forEach((observerSub) => {
+        const observer = definitions[observerSub.type][observerSub.name]
+          .value as unknown as Observer;
+        const observerUpdate = actions[
+          `update_${observerSub.type}`
+        ] as unknown as ActionCreator<UpdateType<Observer>>;
+
+        observerUpdate({
+          old: observer,
+          new: subscription(change.old, change.new, observer),
+        });
+      });
+    },
+  );
+};
+
+export const createSubscriptionThunks = <
+  Observer extends NamedGenerable,
+  Observables extends NamedGenerable,
+>(
+  mapping: ObserverMapping<Observer>,
+): Partial<Record<DefinitionType, DefinitionSubscriptionThunk>> => {
+  const observerType = mapping.type;
+
+  return Object.assign(
+    {},
+    ...Object.entries(mapping.subscriptions).map(
+      ([observableType, subscription]) => ({
+        [`${observerType}_subscribes_to_${observableType}`]:
+          createObserverSubscription<Observer, Observables>(
+            observableType as DefinitionType,
+            subscription,
+          ),
+      }),
+    ),
+  );
+};
+
+export const createDefinitionStore = (): AllDefinitionActions => {
+  return {
+    ...createSubscriptionThunks<
+      Job,
+      reusable.CustomCommand | reusable.ReusableExecutor
+    >(JobMapping as ObserverMapping<Job>),
+    ...(createDefinitionActions<reusable.CustomCommand>(
+      CommandMapping,
+    ) as CommandActions),
+    ...(createDefinitionActions<Job>(JobMapping) as JobActions),
+    ...(createDefinitionActions<reusable.ReusableExecutor>(
+      ExecutorMapping,
+    ) as ExecutorActions),
+    ...(createDefinitionActions<
+      parameters.CustomParameter<PipelineParameterLiteral>
+    >(ParameterMapping) as ParameterActions),
+  };
 };
 
 export type DefinitionsStoreModel = { definitions: DefinitionsModel };

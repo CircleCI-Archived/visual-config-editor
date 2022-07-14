@@ -5,7 +5,7 @@ import WorkflowsPane from './components/panes/WorkflowsPane';
 import useWindowDimensions from './state/Hooks';
 import Store from './state/Store';
 
-const store = createStore(Store);
+export const store = createStore(Store);
 
 const App = () => {
   const inspectorWidth = 320;

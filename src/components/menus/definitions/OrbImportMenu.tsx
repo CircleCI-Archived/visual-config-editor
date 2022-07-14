@@ -54,7 +54,7 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE'];
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -84,8 +84,17 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
               hidden
               items={[{ value: 6, label: '', default: true }]}
             />
-            <div style={{display: isLoading ? 'flex' : 'none' , justifyContent: 'center'}}>
-              <img src={Loading} alt="loading wheel" className="w-8 h-8 animate-spin"/>
+            <div
+              style={{
+                display: isLoading ? 'flex' : 'none',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src={Loading}
+                alt="loading wheel"
+                className="w-8 h-8 animate-spin"
+              />
             </div>
             <Hits
               className="overflow-y-auto"

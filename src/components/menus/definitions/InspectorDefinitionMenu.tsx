@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import { DefinitionSubscription } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Toast from '../../atoms/Toast';
@@ -9,6 +10,7 @@ import TabbedMenu from '../TabbedMenu';
 
 type InspectorDefinitionProps = DataModel & {
   values: Record<string, object>;
+  dependencies: Array<DefinitionSubscription>;
   editing?: boolean;
   passBackKey?: string;
   activeTab?: number;
@@ -119,7 +121,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 status: 'success',
               },
               distance: 1,
-              apply: (parentValues) => {
+              applyValues: (parentValues) => {
                 if (props.passBackKey) {
                   const { name, ...args } = values;
 

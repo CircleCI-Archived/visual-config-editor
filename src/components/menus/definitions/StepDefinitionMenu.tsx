@@ -55,7 +55,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
               status: 'success',
             },
             distance: 1,
-            apply: (values: any) => {
+            applyValues: (values: any) => {
               if (!props.editing) {
                 values.steps = [
                   ...values.steps,
@@ -76,6 +76,18 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
               }
 
               return values;
+            },
+            applyObservers: (current) => {
+              if (customCommand) {
+                const newDependency = {
+                  type: 'commands',
+                  name: customCommand.name,
+                };
+
+                return current ? [...current] : [newDependency];
+              }
+
+              return current;
             },
           });
         }}

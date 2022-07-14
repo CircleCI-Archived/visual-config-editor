@@ -7,7 +7,7 @@ import JobOnHoldIcon from '../../../icons/components/JobOnHoldIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import MinusIcon from '../../../icons/ui/MinusIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
-import JobMapping from '../../../mappings/JobMapping';
+import { JobMapping } from '../../../mappings/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
 
