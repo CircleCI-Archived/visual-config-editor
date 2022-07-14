@@ -44,7 +44,7 @@ export const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
       );
     },
   },
-  resolveObservers: (job) => ({
+  resolveObservables: (job) => ({
     executors:
       job.executor instanceof reusable.ReusedExecutor
         ? job.executor.executor

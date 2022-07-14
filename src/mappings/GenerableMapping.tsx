@@ -136,7 +136,7 @@ export default interface GenerableMapping<
     Subscriptions,
     SubscriptionTypes
   >;
-  resolveObservers?: (
+  resolveObservables?: (
     generable: GenerableType,
   ) => Record<SubscriptionTypes, Subscriptions | Subscriptions[]>;
 

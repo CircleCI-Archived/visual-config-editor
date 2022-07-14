@@ -67,6 +67,26 @@ export type DefinitionsModel = {
   orbs: DefinitionRecord<orb.OrbImport>;
 };
 
+export type AllDefinitionActions = JobActions &
+  ExecutorActions &
+  CommandActions &
+  ParameterActions;
+
+export type DefinitionSubscriptionThunk = ThunkOn<
+  AllDefinitionActions,
+  UpdateType<NamedGenerable>
+>;
+
+export type MappingSubscriptions<
+  Observer extends NamedGenerable,
+  Observables extends NamedGenerable,
+  Types extends DefinitionType,
+> = Record<Types, SubscriptionCallback<Observer, Observables>>;
+
+export type ObserverMapping<Observer extends NamedGenerable> =
+  GenerableMapping<Observer> &
+    Required<Pick<GenerableMapping<Observer>, 'subscriptions'>>;
+
 /**
  * Definition Action wraps generable components life cycle actions and handles the core events
  */
@@ -90,6 +110,86 @@ export const definitionsAsArray = <G extends NamedGenerable>(
   return Object.values(definitions).map((definition) => definition.value);
 };
 
+export const createSubscription = (
+  state: DefinitionsStoreModel,
+  observer: NamedGenerable,
+  observerType: DefinitionType,
+  observable: NamedGenerable,
+  observableType: DefinitionType,
+  observableDefs: Record<string, DefinitionRecord<NamedGenerable>>,
+): DefinitionSubscription => {
+  const observableTarget =
+    state.definitions[observableType as DefinitionType][observable.name];
+  const otherObservers = observableTarget.observers;
+  const observerSub = { type: observerType, name: observer.name };
+
+  observableDefs[observableType][observable.name] = {
+    ...(observableTarget || {}),
+    observers: otherObservers
+      ? [...(otherObservers || []), observerSub]
+      : [observerSub],
+  };
+
+  return {
+    type: observableType,
+    name: observable.name,
+  } as DefinitionSubscription;
+};
+
+export const subscribeToObservables = <G extends NamedGenerable>(
+  state: DefinitionsStoreModel,
+  mapping: GenerableMapping<G>,
+  observer: G,
+) => {
+  const type = mapping.type;
+  let subscriptions: DefinitionSubscription[] = [];
+  const observables = mapping.subscriptions
+    ? Object.assign(
+        {},
+        ...Object.keys(mapping.subscriptions).map((key) => ({ [key]: {} })),
+      )
+    : [];
+
+  if (mapping.resolveObservables && observables) {
+    const observerDefinitions = mapping.resolveObservables(observer) as Record<
+      DefinitionType,
+      NamedGenerable
+    >;
+
+    Object.entries(observerDefinitions).forEach(
+      ([observableType, oneOrMore]) => {
+        if (Array.isArray(oneOrMore)) {
+          subscriptions.push(
+            ...oneOrMore.map((observable) =>
+              createSubscription(
+                state,
+                observer,
+                type,
+                observable,
+                observableType as DefinitionType,
+                observables,
+              ),
+            ),
+          );
+        } else {
+          subscriptions.push(
+            createSubscription(
+              state,
+              observer,
+              type,
+              oneOrMore,
+              observableType as DefinitionType,
+              observables,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  return [observables, subscriptions];
+};
+
 /***
  * Create wrappers for definition actions
  */
@@ -104,67 +204,13 @@ export const createDefinitionActions = <G extends NamedGenerable>(
   return {
     [`define_${type}`]: action((state, payload: G) => {
       const oldState = state.definitions[type];
-      let subscriptions: DefinitionSubscription[] = [];
-      const observables = mapping.subscriptions
-        ? Object.assign(
-            {},
-            ...Object.keys(mapping.subscriptions).map((key) => ({ [key]: {} })),
-          )
-        : [];
+      const [observables, subscriptions] = subscribeToObservables(
+        state,
+        mapping,
+        payload,
+      );
 
-      if (mapping.resolveObservers && observables) {
-        const observerGenerables = mapping.resolveObservers(payload) as Record<
-          DefinitionType,
-          NamedGenerable
-        >;
-
-        Object.entries(observerGenerables).forEach(
-          ([observableType, oneOrMore]) => {
-            if (Array.isArray(oneOrMore)) {
-              subscriptions.concat(
-                oneOrMore.map((generable) => {
-                  const observableTarget =
-                    state.definitions[observableType as DefinitionType][
-                      generable.name
-                    ];
-                  const otherObservers = observableTarget.observers;
-                  const observerSub = { type, name: payload.name };
-
-                  observables[observableType][generable.name] = {
-                    ...(observableTarget || {}),
-                    observers: otherObservers
-                      ? [...(otherObservers || []), observerSub]
-                      : [observerSub],
-                  };
-
-                  return {
-                    type: observableType,
-                    name: generable.name,
-                  } as DefinitionSubscription;
-                }),
-              );
-            } else {
-              const observableTarget =
-                state.definitions[observableType as DefinitionType][
-                  oneOrMore.name
-                ];
-              const otherObservers = observableTarget.observers;
-              const observerSub = { type, name: payload.name };
-
-              observables[observableType][oneOrMore.name] = {
-                ...(observableTarget || []),
-                observers: otherObservers
-                  ? [...otherObservers, observerSub]
-                  : [observerSub],
-              };
-              subscriptions.push({
-                type: observableType,
-                name: oneOrMore.name,
-              } as DefinitionSubscription);
-            }
-          },
-        );
-      }
+      console.log(observables, subscriptions);
 
       state.definitions = {
         ...state.definitions,
@@ -181,7 +227,7 @@ export const createDefinitionActions = <G extends NamedGenerable>(
 
       onSet && onSet(state, payload);
 
-      if (!mapping?.subscriptions || !mapping.resolveObservers) {
+      if (!mapping?.subscriptions || !mapping.resolveObservables) {
         return;
       }
     }),
@@ -216,26 +262,6 @@ export const createDefinitionActions = <G extends NamedGenerable>(
     }),
   };
 };
-
-export type AllDefinitionActions = JobActions &
-  ExecutorActions &
-  CommandActions &
-  ParameterActions;
-
-export type DefinitionSubscriptionThunk = ThunkOn<
-  AllDefinitionActions,
-  UpdateType<NamedGenerable>
->;
-
-export type MappingSubscriptions<
-  Observer extends NamedGenerable,
-  Observables extends NamedGenerable,
-  Types extends DefinitionType,
-> = Record<Types, SubscriptionCallback<Observer, Observables>>;
-
-export type ObserverMapping<Observer extends NamedGenerable> =
-  GenerableMapping<Observer> &
-    Required<Pick<GenerableMapping<Observer>, 'subscriptions'>>;
 
 const createObserverSubscription = <
   Observer extends NamedGenerable,
