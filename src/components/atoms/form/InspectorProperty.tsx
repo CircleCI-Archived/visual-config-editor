@@ -39,6 +39,7 @@ const getField = (
         field={field}
         helper={helper}
         placeholder={props.placeholder}
+        onChange={props.onChange}
         className={'w-full ' + props.className}
       >
         {props.children}

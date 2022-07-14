@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { v4 } from 'uuid';
+import { DefinitionSubscription } from '../../state/DefinitionStore';
 import { NavigationComponent } from '../../state/Store';
 
 export type SubTypeMenuProps<T> = {
@@ -79,15 +80,15 @@ const SubTypeMenuNav: NavigationComponent = {
     props.typePage.Icon ? props.typePage.Icon(props) : null,
 };
 
-const navSubTypeMenu = <SubTypeRef,>(
+export const navSubTypeMenu = <SubTypeRef,>(
   props: SubTypeMenuProps<SubTypeRef>,
   values?: any,
+  subscriptions?: DefinitionSubscription[],
 ) => {
   return {
     component: SubTypeMenuNav,
     props: { ...props, nonce: v4() },
     values,
+    subscriptions,
   };
 };
-
-export { navSubTypeMenu };

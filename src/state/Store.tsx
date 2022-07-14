@@ -21,20 +21,22 @@ import {
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import GenerableMapping from '../mappings/GenerableMapping';
-import JobMapping from '../mappings/JobMapping';
+import { JobMapping } from '../mappings/JobMapping';
 import {
   AllDefinitionActions,
-  DefinitionActions,
+  createDefinitionStore,
   definitionsAsArray,
   DefinitionsModel,
   DefinitionsStoreModel,
   DefinitionStore,
+  DefinitionSubscription,
   NamedGenerable,
 } from './DefinitionStore';
 
 export interface NavigationBack {
   distance?: number;
-  apply?: (values: any) => any;
+  applyValues?: (current: any) => any;
+  applyObservers?: (current?: Array<DefinitionSubscription>) => any;
   toast?: ToastModel;
 }
 
@@ -95,7 +97,6 @@ export type StoreModel = DefinitionsStoreModel & {
   config: string | undefined;
   /** The configuration with proposed changes */
   editingConfig: string | undefined;
-  /** Component definitions which are used to generate the configuration*/
   /** The current step of the guide */
   guideStep?: number;
   /** Node placeholder element info */
@@ -132,9 +133,9 @@ export type StoreModel = DefinitionsStoreModel & {
   errorMessage?: string;
 };
 
-export interface UpdateType<T> {
-  old: T;
-  new: T;
+export interface UpdateType<Out, In = Out> {
+  old: Out;
+  new: In;
 }
 
 export type StoreActions = AllDefinitionActions & {
@@ -163,7 +164,10 @@ export type StoreActions = AllDefinitionActions & {
   setPlaceholder: Action<StoreModel, Node<any>>;
   setGuideStep: Action<StoreModel, number | undefined>;
 
-  navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
+  navigateTo: Action<
+    StoreModel,
+    NavigationStop & { values?: any; subscriptions?: DefinitionSubscription[] }
+  >;
   navigateBack: Action<StoreModel, NavigationBack | void>;
 
   addWorkflow: Action<StoreModel, string>;
@@ -255,7 +259,11 @@ const Actions: StoreActions = {
           ? root
           : {
               ...curNav,
-              props: { ...curNav.props, values: payload.values },
+              props: {
+                ...curNav.props,
+                values: payload.values,
+                subscriptions: payload.subscriptions,
+              },
             },
     };
   }),
@@ -275,7 +283,11 @@ const Actions: StoreActions = {
       }
 
       const values =
-        payload?.apply?.(travelTo.props.values) || travelTo.props.values;
+        payload?.applyValues?.(travelTo.props.values) || travelTo.props.values;
+      const observers =
+        payload?.applyObservers?.(travelTo.props.subscriptions) ||
+        travelTo.props.subscriptions;
+
       let props;
 
       /**
@@ -287,12 +299,14 @@ const Actions: StoreActions = {
           menuProps: {
             ...travelTo.props.menuProps,
             values: values,
+            subscriptions: observers,
           },
         };
       } else {
         props = {
           ...travelTo.props,
           values: values,
+          subscriptions: observers,
         };
       }
 
@@ -391,14 +405,15 @@ const Actions: StoreActions = {
   setWorkflowElements: action((state, payload) => {
     state.workflows[state.selectedWorkflow].elements = payload;
   }),
-  ...DefinitionActions,
+
+  ...createDefinitionStore(),
 
   importOrb: action((state, payload) => {
     const orb = state.definitions.orbs[payload.name];
     if (!orb) {
       state.definitions.orbs = {
         ...state.definitions.orbs,
-        [payload.name]: { dependencies: {}, value: payload },
+        [payload.name]: { observers: [], value: payload },
       };
     }
   }),

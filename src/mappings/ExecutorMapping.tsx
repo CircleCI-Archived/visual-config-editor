@@ -13,7 +13,7 @@ import ExecutorTypePageNav from '../components/menus/definitions/subtypes/Execut
 import ExecutorIcon from '../icons/components/ExecutorIcon';
 import { DefinitionAction } from '../state/DefinitionStore';
 import GenerableMapping from './GenerableMapping';
-import JobMapping from './JobMapping';
+import { JobMapping } from './JobMapping';
 
 export type AnyExecutor =
   | executors.DockerExecutor
@@ -22,7 +22,7 @@ export type AnyExecutor =
   | executors.WindowsExecutor
   | executors.Executor;
 
-const ExecutorMapping: GenerableMapping<
+export const ExecutorMapping: GenerableMapping<
   reusable.ReusableExecutor,
   workflow.WorkflowJob
 > = {
@@ -118,12 +118,10 @@ const ExecutorMapping: GenerableMapping<
   },
 };
 
-type ExecutorAction = DefinitionAction<reusable.ReusableExecutor>;
+export type ExecutorAction = DefinitionAction<reusable.ReusableExecutor>;
 
 export type ExecutorActions = {
   define_executors: ExecutorAction;
   update_executors: ExecutorAction;
   delete_executors: ExecutorAction;
 };
-
-export default ExecutorMapping;

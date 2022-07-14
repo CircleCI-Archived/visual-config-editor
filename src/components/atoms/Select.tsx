@@ -39,6 +39,8 @@ const SelectField = ({
       value={value || initialValue}
       onChange={(value) => {
         setValue(value);
+
+        props.onChange && props.onChange(value);
       }}
     />
   );

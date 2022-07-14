@@ -1,9 +1,10 @@
 import { executors, Job } from '@circleci/circleci-config-sdk';
 import { FormikValues, useField } from 'formik';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
-import JobMapping from '../../../mappings/JobMapping';
+import { JobMapping } from '../../../mappings/JobMapping';
 import {
   DefinitionsModel,
+  DefinitionSubscription,
   mapDefinitions,
 } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
@@ -18,6 +19,7 @@ import ParamListContainer from '../ParamListContainer';
 
 export type JobInspectorProps = FormikValues & {
   definitions: DefinitionsModel;
+  addSubscriptions?: (subscriptions: DefinitionSubscription) => void;
 };
 
 const getEmbeddedExecutor = (values: any) => {
@@ -32,7 +34,11 @@ const EmbeddedExecutor = ({
   data,
   values,
   ...props
-}: { embeddedExecutor: string; data: Job } & JobInspectorProps) => {
+}: {
+  embeddedExecutor: string;
+  data: Job;
+  definitions: DefinitionsModel;
+} & FormikValues) => {
   const defineExecutor = useStoreActions((actions) => actions.define_executors);
   const embeddedHelper = useField({
     name: embeddedExecutor,
@@ -81,7 +87,13 @@ const EmbeddedExecutor = ({
   );
 };
 
-const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
+const JobInspector = ({
+  data,
+  definitions,
+  subscriptions,
+  setSubscriptions,
+  ...props
+}: JobInspectorProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const embeddedExecutor = getEmbeddedExecutor(props.values);
 
@@ -104,6 +116,14 @@ const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
             placeholder="Select Executor"
             className="w-full"
             required
+            onChange={(e: string) => {
+              const subscription = { name: e, type: 'executors' };
+              const subs = subscriptions
+                ? [...subscriptions, subscription]
+                : [subscription];
+
+              setSubscriptions && setSubscriptions(subs);
+            }}
             dependent={(executorName) => {
               const executor = definitions.executors[executorName]?.value;
 
@@ -155,6 +175,7 @@ const JobInspector = ({ data, definitions, ...props }: JobInspectorProps) => {
                     passThrough: { dataType: JobMapping },
                   },
                   props.values,
+                  subscriptions,
                 ),
               );
             }}

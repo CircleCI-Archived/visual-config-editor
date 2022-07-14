@@ -1,6 +1,6 @@
 import { FieldArray, useField } from 'formik';
 import GenerableMapping from '../../mappings/GenerableMapping';
-import ParameterMapping from '../../mappings/ParameterMapping';
+import { ParameterMapping } from '../../mappings/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
 import { navSubTypeMenu } from '../menus/SubTypeMenu';

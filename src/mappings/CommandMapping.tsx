@@ -1,5 +1,4 @@
 import { parsers, reusable } from '@circleci/circleci-config-sdk';
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import CommandSummary from '../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../components/containers/inspector/CommandInspector';
 import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
@@ -7,7 +6,7 @@ import CommandIcon from '../icons/components/CommandIcon';
 import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
 import GenerableMapping from './GenerableMapping';
 
-const CommandMapping: GenerableMapping<CustomCommand> = {
+export const CommandMapping: GenerableMapping<reusable.CustomCommand> = {
   type: 'commands',
   name: {
     singular: 'Command',
@@ -43,12 +42,10 @@ const CommandMapping: GenerableMapping<CustomCommand> = {
   },
 };
 
-type CommandAction = DefinitionAction<reusable.CustomCommand>;
+export type CommandAction = DefinitionAction<reusable.CustomCommand>;
 
 export type CommandActions = {
   define_commands: CommandAction;
   update_commands: CommandAction;
   delete_commands: CommandAction;
 };
-
-export default CommandMapping;

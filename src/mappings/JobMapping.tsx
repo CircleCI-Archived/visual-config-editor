@@ -1,4 +1,9 @@
-import { Job, parsers, workflow } from '@circleci/circleci-config-sdk';
+import {
+  Job,
+  parsers,
+  reusable,
+  workflow,
+} from '@circleci/circleci-config-sdk';
 import JobNode from '../components/atoms/nodes/JobNode';
 import JobSummary from '../components/atoms/summaries/JobSummary';
 import JobInspector from '../components/containers/inspector/JobInspector';
@@ -7,7 +12,7 @@ import JobIcon from '../icons/components/JobIcon';
 import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
 import GenerableMapping from './GenerableMapping';
 
-const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
+export const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
   type: 'jobs',
   name: {
     singular: 'Job',
@@ -19,7 +24,35 @@ const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
     executor: { name: 'Select Executor' },
   },
   parameters: componentParametersSubtypes.job,
-  subscriptions: ['commands', 'executors', 'orbs'],
+  subscriptions: {
+    commands: (prev, cur, j) => {
+      // const steps = j.steps.map(() )
+
+      return new reusable.ParameterizedJob(
+        j.name,
+        j.executor,
+        j instanceof reusable.ParameterizedJob ? j.parameters : undefined,
+        j.steps,
+      );
+    },
+    executors: (_, cur, j) => {
+      return new reusable.ParameterizedJob(
+        j.name,
+        cur.reuse(),
+        j instanceof reusable.ParameterizedJob ? j.parameters : undefined,
+        j.steps,
+      );
+    },
+  },
+  resolveObservers: (job) => ({
+    executors:
+      job.executor instanceof reusable.ReusedExecutor
+        ? job.executor.executor
+        : undefined,
+    commands: job.steps.filter(
+      (command) => command instanceof reusable.CustomCommand,
+    ),
+  }),
   /**
    TODO: Implement this to pass transform method to
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
@@ -56,12 +89,10 @@ const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
   },
 };
 
-type JobAction = DefinitionAction<Job>;
+export type JobAction = DefinitionAction<Job>;
 
 export type JobActions = {
   define_jobs: JobAction;
   update_jobs: JobAction;
   delete_jobs: JobAction;
 };
-
-export default JobMapping;

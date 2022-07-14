@@ -1,5 +1,5 @@
 import { FormikValues } from 'formik';
-import CommandMapping from '../../../mappings/CommandMapping';
+import { CommandMapping } from '../../../mappings/CommandMapping';
 import { DefinitionsModel } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
