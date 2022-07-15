@@ -309,11 +309,7 @@ const createObserverSubscription = <
       const definitions = store.getState().definitions;
       const observers = definitions[observableType][name].observers;
 
-      if (!observers) {
-        return;
-      }
-
-      observers.forEach((observerSub) => {
+      observers?.forEach((observerSub) => {
         const observer = definitions[observerSub.type][observerSub.name]
           ?.value as unknown as Observer;
 
@@ -363,6 +359,9 @@ export const createDefinitionStore = (): AllDefinitionActions => {
       Job,
       reusable.CustomCommand | reusable.ReusableExecutor
     >(JobMapping as ObserverMapping<Job>),
+    ...createSubscriptionThunks<reusable.CustomCommand, reusable.CustomCommand>(
+      CommandMapping as ObserverMapping<reusable.CustomCommand>,
+    ),
     ...(createDefinitionActions<reusable.CustomCommand>(
       CommandMapping,
     ) as CommandActions),
