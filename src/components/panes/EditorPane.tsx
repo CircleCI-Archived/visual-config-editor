@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import DropdownContainer from '../containers/DropdownContainer';
 import { version } from '../../version.json';
+import { parsers } from '@circleci/circleci-config-sdk';
 
 const EditorPane = () => {
   const config = useStoreState((state) => state.config);
@@ -45,7 +46,13 @@ const EditorPane = () => {
               }
 
               e.target.files[0].text().then((yml) => {
-                loadConfig(yml);
+                let config;
+                try {
+                  config = parsers.parseConfig(yml);
+                } catch (e) {
+                  config = e as Error;
+                }
+                loadConfig(config);
               });
             }}
           />
