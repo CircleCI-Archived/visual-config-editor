@@ -17,6 +17,27 @@ export const CommandMapping: GenerableMapping<reusable.CustomCommand> = {
     steps: [],
   },
   parameters: componentParametersSubtypes.command,
+  subscriptions: {
+    commands: (prev, cur, c) => {
+      const steps = c.steps.map((step) =>
+        step instanceof reusable.ReusableCommand && step.name === prev.name
+          ? new reusable.ReusableCommand(cur, step.parameters)
+          : step,
+      );
+
+      return new reusable.CustomCommand(
+        c.name,
+        steps,
+        c.parameters,
+        c.description,
+      );
+    },
+  },
+  resolveObservables: (command) => ({
+    commands: command.steps.filter(
+      (command) => command instanceof reusable.ReusableCommand,
+    ),
+  }),
   transform: ({ name, ...values }, definitions) => {
     return parsers.parseCustomCommand(
       name,

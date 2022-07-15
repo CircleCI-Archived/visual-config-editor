@@ -20,7 +20,15 @@ import {
 } from '../mappings/ParameterMapping';
 import { UpdateType } from './Store';
 
-export type DefinitionType = 'parameters' | 'jobs' | 'commands' | 'executors';
+export type ParameterDefinition = 'parameters';
+export type JobsDefinition = 'jobs';
+export type CommandDefinition = 'commands';
+export type ExecutorsDefinition = 'executors';
+export type DefinitionType =
+  | ParameterDefinition
+  | JobsDefinition
+  | ExecutorsDefinition
+  | CommandDefinition;
 
 export type NamedGenerable = Generable & { name: string };
 
@@ -222,13 +230,9 @@ export const createDefinitionActions = <G extends NamedGenerable>(
         {},
         ...Object.entries(state.definitions).map(([type, definitions]) => {
           let recordUpdate = definitions;
+          // const isObservable =
 
-          if (type in observables) {
-            recordUpdate = {
-              ...state.definitions[type as DefinitionType],
-              ...observables[type],
-            };
-          } else if (type === defType) {
+          if (type === defType) {
             recordUpdate = {
               ...oldState,
               ...(observables[defType] || {}),
@@ -236,6 +240,11 @@ export const createDefinitionActions = <G extends NamedGenerable>(
                 observers: subscriptions || [],
                 value: payload,
               },
+            };
+          } else if (type in observables) {
+            recordUpdate = {
+              ...state.definitions[type as DefinitionType],
+              ...observables[type],
             };
           }
 
@@ -306,7 +315,13 @@ const createObserverSubscription = <
 
       observers.forEach((observerSub) => {
         const observer = definitions[observerSub.type][observerSub.name]
-          .value as unknown as Observer;
+          ?.value as unknown as Observer;
+
+        console.log(definitions[observerSub.type][observerSub.name]);
+        if (!observer) {
+          return;
+        }
+
         const observerUpdate = actions[
           `update_${observerSub.type}`
         ] as unknown as ActionCreator<UpdateType<Observer>>;
@@ -372,23 +387,4 @@ export const DefinitionStore: DefinitionsStoreModel = {
     parameters: {},
     orbs: {},
   },
-};
-
-export const loadDefinition = <G extends NamedGenerable>(
-  generable?: Array<G>,
-): DefinitionRecord<G> => {
-  return {};
-};
-
-export const loadDefinitions = (config: Config): DefinitionsModel => {
-  return {
-    orbs: {},
-    parameters: loadDefinition<
-      parameters.CustomParameter<PipelineParameterLiteral>
-    >(config.parameters?.parameters), // TODO: improve parameter list
-    executors: loadDefinition<reusable.ReusableExecutor>(config.executors),
-    commands: loadDefinition<reusable.CustomCommand>(config.commands),
-    jobs: loadDefinition<Job>(config.jobs),
-    workflows: loadDefinition<Workflow>(),
-  };
 };
