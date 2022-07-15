@@ -213,6 +213,11 @@ export const createDefinitionActions = <G extends NamedGenerable>(
         payload,
       );
 
+      /*
+       * Add new observable list to the corresponding definition record,
+       * and define the new definition
+       * All types not relevant to this definition will return itself.
+       */
       state.definitions = Object.assign(
         {},
         ...Object.entries(state.definitions).map(([type, definitions]) => {
