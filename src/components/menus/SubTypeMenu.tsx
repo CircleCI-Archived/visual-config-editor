@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { v4 } from 'uuid';
-import { DefinitionSubscription } from '../../state/DefinitionStore';
+import { DefinitionSubscriptions } from '../../state/DefinitionStore';
 import { NavigationComponent } from '../../state/Store';
 
 export type SubTypeMenuProps<T> = {
@@ -83,7 +83,7 @@ const SubTypeMenuNav: NavigationComponent = {
 export const navSubTypeMenu = <SubTypeRef,>(
   props: SubTypeMenuProps<SubTypeRef>,
   values?: any,
-  subscriptions?: DefinitionSubscription[],
+  subscriptions?: DefinitionSubscriptions[],
 ) => {
   return {
     component: SubTypeMenuNav,

@@ -25,14 +25,18 @@ export const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
   },
   parameters: componentParametersSubtypes.job,
   subscriptions: {
-    commands: (prev, cur, j) => {
-      // const steps = j.steps.map(() )
+    commands: (prev, cur: reusable.CustomCommand, j) => {
+      const steps = j.steps.map((step) =>
+        step instanceof reusable.ReusableCommand && step.name === prev.name
+          ? new reusable.ReusableCommand(cur, step.parameters)
+          : step,
+      );
 
       return new reusable.ParameterizedJob(
         j.name,
         j.executor,
         j instanceof reusable.ParameterizedJob ? j.parameters : undefined,
-        j.steps,
+        steps,
       );
     },
     executors: (_, cur, j) => {
@@ -50,7 +54,7 @@ export const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
         ? job.executor.executor
         : undefined,
     commands: job.steps.filter(
-      (command) => command instanceof reusable.CustomCommand,
+      (command) => command instanceof reusable.ReusableCommand,
     ),
   }),
   /**

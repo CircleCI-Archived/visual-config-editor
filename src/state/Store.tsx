@@ -1,14 +1,13 @@
 import {
   Config,
   parameters,
-  parsers,
   Workflow,
   workflow,
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
-import { Action, action } from 'easy-peasy';
+import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
 import { MutableRefObject } from 'react';
 import {
   ElementId,
@@ -29,14 +28,15 @@ import {
   DefinitionsModel,
   DefinitionsStoreModel,
   DefinitionStore,
-  DefinitionSubscription,
+  DefinitionSubscriptions,
+  DefinitionType,
   NamedGenerable,
 } from './DefinitionStore';
 
 export interface NavigationBack {
   distance?: number;
   applyValues?: (current: any) => any;
-  applyObservers?: (current?: Array<DefinitionSubscription>) => any;
+  applyObservers?: (current?: Array<DefinitionSubscriptions>) => any;
   toast?: ToastModel;
 }
 
@@ -166,7 +166,7 @@ export type StoreActions = AllDefinitionActions & {
 
   navigateTo: Action<
     StoreModel,
-    NavigationStop & { values?: any; subscriptions?: DefinitionSubscription[] }
+    NavigationStop & { values?: any; subscriptions?: DefinitionSubscriptions[] }
   >;
   navigateBack: Action<StoreModel, NavigationBack | void>;
 
@@ -181,7 +181,8 @@ export type StoreActions = AllDefinitionActions & {
   importOrb: Action<StoreModel, OrbImport>;
   unimportOrb: Action<StoreModel, OrbImport>;
 
-  loadConfig: Action<StoreModel, string>;
+  loadConfig: Action<StoreModel, Config | Error>;
+  loadDefinitions: ThunkOn<StoreActions, Config | Error>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionsModel>>;
   error: Action<StoreModel, any>;
 
@@ -375,7 +376,7 @@ const Actions: StoreActions = {
 
     state.workflows[state.selectedWorkflow] = {
       ...workflow,
-      elements: workflow.elements.filter((element, i) => {
+      elements: workflow.elements.filter((element) => {
         const filtered = element.id === payload;
 
         if (filtered) {
@@ -413,7 +414,7 @@ const Actions: StoreActions = {
     if (!orb) {
       state.definitions.orbs = {
         ...state.definitions.orbs,
-        [payload.name]: { observers: [], value: payload },
+        [payload.name]: { observers: {}, value: payload },
       };
     }
   }),
@@ -428,159 +429,173 @@ const Actions: StoreActions = {
     console.error('An action was not found! ', payload);
   }),
 
-  loadConfig: action((state, payload) => {
-    try {
-      const config = parsers.parseConfig(payload);
+  loadDefinitions: thunkOn(
+    (actions) => actions.loadConfig,
+    async (actions, target) => {
+      const config = target.payload;
 
-      // state.definitions = {
-      //   workflows: config.workflows,
-      //   jobs: config.jobs,
-      //   executors: config.executors || [],
-      //   parameters: config.parameters?.parameters || [],
-      //   commands: config.commands || [],
-      //   orbs: config.orbs || [],
-      // };
-
-      const nodeWidth = 250; // Make this dynamic
-      const nodeHeight = 60; // Make this dynamic
-
-      const getJobName = (workflowJob: workflow.WorkflowJobAbstract) => {
-        const baseName =
-          workflowJob instanceof workflow.WorkflowJob
-            ? workflowJob.job.name
-            : (workflowJob as workflow.WorkflowJobApproval).name;
-
-        return workflowJob.parameters?.name || baseName;
-      };
-
-      const workflowJobCounts: Record<string, Record<string, number>> = {};
-      state.workflows = config.workflows.map(({ name, jobs }) => {
-        const sourceJobCounts: Record<string, number> = {};
-        const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
-        const requiredJobs: Record<string, boolean> = {};
-
-        jobs.forEach((workflowJob) => {
-          const jobName = getJobName(workflowJob);
-          jobTable[jobName] = workflowJob;
-
-          if (workflowJob instanceof workflow.WorkflowJob) {
-            const sourceJobName = workflowJob.job.name;
-
-            if (sourceJobCounts[sourceJobName] > 0) {
-              sourceJobCounts[sourceJobName]++;
-            } else {
-              sourceJobCounts[sourceJobName] = 1;
-            }
-          }
-
-          workflowJob.parameters?.requires?.forEach((requiredJob) => {
-            requiredJobs[requiredJob] = true;
-          });
-        });
-
-        workflowJobCounts[name] = sourceJobCounts;
-
-        // Filter down to jobs that are not required by other jobs
-        const endJobs = jobs.filter(
-          (workflowJob) => !(getJobName(workflowJob) in requiredJobs),
-        );
-
-        type JobNodeProps = { col: number; row: number };
-        const elements: Elements = [];
-        const columns: Array<number> = [];
-        const solved: Record<ElementId, JobNodeProps> = {};
-
-        const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
-          const jobName = getJobName(workflowJob);
-
-          if (solved[jobName] !== undefined) {
-            return solved[jobName];
-          }
-
-          const props: JobNodeProps = { col: 0, row: 0 };
-
-          if (workflowJob.parameters?.requires) {
-            let greatestColumn = 0;
-            let greatestRow = 0;
-
-            workflowJob.parameters.requires.forEach((requiredJob) => {
-              let requiredJobProps;
-
-              if (solved[requiredJob] === undefined) {
-                requiredJobProps = solve(jobTable[requiredJob]);
-              } else {
-                requiredJobProps = solved[requiredJob];
-              }
-
-              greatestRow = Math.max(greatestRow, requiredJobProps.row);
-              greatestColumn = Math.max(greatestColumn, requiredJobProps.col);
-
-              // add connection line
-              elements.push({
-                id: v4(),
-                source: requiredJob,
-                target: jobName,
-                type: 'requires',
-                sourceHandle: `${requiredJob}_source`,
-                targetHandle: `${jobName}_target`,
-                animated: false,
-                style: { stroke: '#A3A3A3', strokeWidth: '2px' },
-              });
-            });
-
-            props.col = greatestColumn + 1;
-            props.row = greatestRow;
-          }
-
-          if (columns.length > props.col) {
-            columns[props.col]++;
-          } else {
-            columns.push(1);
-          }
-
-          // assign job to most recent requirement
-          props.row = Math.max(columns[props.col], props.row);
-
-          // add job node
-          elements.push({
-            id: jobName,
-            data: workflowJob,
-            connectable: true,
-            dragHandle: '.node',
-            type: 'jobs',
-            position: { x: props.col * nodeWidth, y: props.row * nodeHeight },
-          });
-
-          solved[jobName] = props;
-
-          return props;
-        };
-
-        // Build workflow and prep requirement connection generation
-        endJobs.forEach((workflowJob) => {
-          solve(workflowJob);
-        });
-
-        return {
-          name,
-          id: v4(),
-          elements,
-        };
-      });
-
-      state.stagedJobs = { workflows: workflowJobCounts };
-      state.config = config.generate();
-    } catch (exception) {
-      if (!(exception instanceof Error)) {
-        state.errorMessage = `Caught unhandled exception:\n ${exception}`;
+      if (config instanceof Error) {
         return;
       }
 
-      let error = exception as Error;
-      state.errorMessage = error.message;
+      const { parameters: parameterList, ...rest } = config;
+      const defineAction = (type: DefinitionType) =>
+        actions[`define_${type}`] as unknown as ActionCreator<NamedGenerable>;
 
-      console.error(error);
+      const defineParameter = defineAction('parameters');
+
+      parameterList?.parameters.forEach(defineParameter);
+
+      type NonParameterType = Exclude<DefinitionType, 'parameters'>;
+
+      ['commands', 'executors', 'jobs'].forEach((type) => {
+        const gens: NamedGenerable[] | undefined =
+          rest[type as NonParameterType];
+        gens?.forEach((g) => {
+          const define = defineAction(type as NonParameterType);
+          define(g);
+        });
+      });
+    },
+  ),
+
+  loadConfig: action((state, payload) => {
+    if (payload instanceof Error) {
+      state.errorMessage = payload.message;
+
+      console.error(payload);
+      return;
     }
+
+    const nodeWidth = 250; // Make this dynamic
+    const nodeHeight = 60; // Make this dynamic
+
+    const getJobName = (workflowJob: workflow.WorkflowJobAbstract) => {
+      const baseName =
+        workflowJob instanceof workflow.WorkflowJob
+          ? workflowJob.job.name
+          : (workflowJob as workflow.WorkflowJobApproval).name;
+
+      return workflowJob.parameters?.name || baseName;
+    };
+
+    const workflowJobCounts: Record<string, Record<string, number>> = {};
+    state.workflows = payload.workflows.map(({ name, jobs }) => {
+      const sourceJobCounts: Record<string, number> = {};
+      const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
+      const requiredJobs: Record<string, boolean> = {};
+
+      jobs.forEach((workflowJob) => {
+        const jobName = getJobName(workflowJob);
+        jobTable[jobName] = workflowJob;
+
+        if (workflowJob instanceof workflow.WorkflowJob) {
+          const sourceJobName = workflowJob.job.name;
+
+          if (sourceJobCounts[sourceJobName] > 0) {
+            sourceJobCounts[sourceJobName]++;
+          } else {
+            sourceJobCounts[sourceJobName] = 1;
+          }
+        }
+
+        workflowJob.parameters?.requires?.forEach((requiredJob) => {
+          requiredJobs[requiredJob] = true;
+        });
+      });
+
+      workflowJobCounts[name] = sourceJobCounts;
+
+      // Filter down to jobs that are not required by other jobs
+      const endJobs = jobs.filter(
+        (workflowJob) => !(getJobName(workflowJob) in requiredJobs),
+      );
+
+      type JobNodeProps = { col: number; row: number };
+      const elements: Elements = [];
+      const columns: Array<number> = [];
+      const solved: Record<ElementId, JobNodeProps> = {};
+
+      const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
+        const jobName = getJobName(workflowJob);
+
+        if (solved[jobName] !== undefined) {
+          return solved[jobName];
+        }
+
+        const props: JobNodeProps = { col: 0, row: 0 };
+
+        if (workflowJob.parameters?.requires) {
+          let greatestColumn = 0;
+          let greatestRow = 0;
+
+          workflowJob.parameters.requires.forEach((requiredJob) => {
+            let requiredJobProps;
+
+            if (solved[requiredJob] === undefined) {
+              requiredJobProps = solve(jobTable[requiredJob]);
+            } else {
+              requiredJobProps = solved[requiredJob];
+            }
+
+            greatestRow = Math.max(greatestRow, requiredJobProps.row);
+            greatestColumn = Math.max(greatestColumn, requiredJobProps.col);
+
+            // add connection line
+            elements.push({
+              id: v4(),
+              source: requiredJob,
+              target: jobName,
+              type: 'requires',
+              sourceHandle: `${requiredJob}_source`,
+              targetHandle: `${jobName}_target`,
+              animated: false,
+              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+            });
+          });
+
+          props.col = greatestColumn + 1;
+          props.row = greatestRow;
+        }
+
+        if (columns.length > props.col) {
+          columns[props.col]++;
+        } else {
+          columns.push(1);
+        }
+
+        // assign job to most recent requirement
+        props.row = Math.max(columns[props.col], props.row);
+
+        // add job node
+        elements.push({
+          id: jobName,
+          data: workflowJob,
+          connectable: true,
+          dragHandle: '.node',
+          type: 'jobs',
+          position: { x: props.col * nodeWidth, y: props.row * nodeHeight },
+        });
+
+        solved[jobName] = props;
+
+        return props;
+      };
+
+      // Build workflow and prep requirement connection generation
+      endJobs.forEach((workflowJob) => {
+        solve(workflowJob);
+      });
+
+      return {
+        name,
+        id: v4(),
+        elements,
+      };
+    });
+
+    state.stagedJobs = { workflows: workflowJobCounts };
+    state.config = payload.generate();
   }),
   generateConfig: action((state, payload) => {
     const workflows = state.workflows.map((flow) => {
@@ -596,16 +611,6 @@ const Actions: StoreActions = {
     const merge = (cur: any, update: any) =>
       update ? [...cur, ...update] : cur;
 
-    const pipelineParameters: parameters.CustomParameter<PipelineParameterLiteral>[] =
-      merge(defs.parameters, payload?.parameters);
-
-    const parameterList =
-      pipelineParameters.length > 0
-        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            pipelineParameters,
-          )
-        : undefined;
-
     const toArray = (defs: Partial<DefinitionsModel>) =>
       Object.assign(
         {},
@@ -616,6 +621,16 @@ const Actions: StoreActions = {
 
     const defArrays = toArray(defs);
     const payloadArrays = payload ? toArray(payload) : undefined;
+
+    const pipelineParameters: parameters.CustomParameter<PipelineParameterLiteral>[] =
+      merge(defArrays.parameters, defArrays?.parameters);
+
+    const parameterList =
+      pipelineParameters.length > 0
+        ? new parameters.CustomParametersList<PipelineParameterLiteral>(
+            pipelineParameters,
+          )
+        : undefined;
 
     const config = new Config(
       false,

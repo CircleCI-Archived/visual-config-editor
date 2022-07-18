@@ -19,7 +19,15 @@ import {
 } from '../mappings/ParameterMapping';
 import { UpdateType } from './Store';
 
-export type DefinitionType = 'parameters' | 'jobs' | 'commands' | 'executors';
+export type ParameterDefinition = 'parameters';
+export type JobsDefinition = 'jobs';
+export type CommandDefinition = 'commands';
+export type ExecutorsDefinition = 'executors';
+export type DefinitionType =
+  | ParameterDefinition
+  | JobsDefinition
+  | ExecutorsDefinition
+  | CommandDefinition;
 
 export type NamedGenerable = Generable & { name: string };
 
@@ -29,8 +37,8 @@ export type NamedGenerable = Generable & { name: string };
  * @param value - current value of this definition
  */
 export type Definition<G> = {
-  observers?: Array<DefinitionSubscription>;
-  observables?: Array<DefinitionSubscription>;
+  observers?: DefinitionSubscriptions;
+  observables?: DefinitionSubscriptions;
   value: G;
 };
 
@@ -39,9 +47,10 @@ export type SubscriptionCallback<
   Observable extends NamedGenerable,
 > = (prev: Observable, cur: Observable, observer: Observer) => Observer;
 
-export type DefinitionSubscription = {
-  type: DefinitionType;
-  name: string;
+export type DefinitionSubscriptions = {
+  [type in DefinitionType]?: {
+    [name: string]: number;
+  };
 };
 
 /**
@@ -59,7 +68,7 @@ export type DefinitionRecord<G extends Generable> = Record<
 export type DefinitionsModel = {
   commands: DefinitionRecord<reusable.CustomCommand>;
   executors: DefinitionRecord<reusable.ReusableExecutor>;
-  jobs: DefinitionRecord<reusable.ParameterizedJob>;
+  jobs: DefinitionRecord<Job>;
   workflows: DefinitionRecord<Workflow>;
   parameters: DefinitionRecord<
     parameters.CustomParameter<PipelineParameterLiteral>
@@ -110,6 +119,9 @@ export const definitionsAsArray = <G extends NamedGenerable>(
   return Object.values(definitions).map((definition) => definition.value);
 };
 
+/**
+ * Adds observer to observable, and returns the subscription to the observer
+ */
 export const createSubscription = (
   state: DefinitionsStoreModel,
   observer: NamedGenerable,
@@ -117,23 +129,35 @@ export const createSubscription = (
   observable: NamedGenerable,
   observableType: DefinitionType,
   observableDefs: Record<string, DefinitionRecord<NamedGenerable>>,
-): DefinitionSubscription => {
-  const observableTarget =
-    state.definitions[observableType as DefinitionType][observable.name];
-  const otherObservers = observableTarget.observers;
-  const observerSub = { type: observerType, name: observer.name };
+): DefinitionSubscriptions => {
+  const observableTarget = state.definitions[observableType][observable.name];
+  const observerSub = { [observer.name]: 1 };
 
-  observableDefs[observableType][observable.name] = {
-    ...(observableTarget || {}),
-    observers: otherObservers
-      ? [...(otherObservers || []), observerSub]
-      : [observerSub],
-  };
+  if (observableTarget.observers) {
+    const otherObservers = observableTarget.observers;
+
+    observableDefs[observableType][observable.name] = {
+      ...observableTarget,
+      observers: otherObservers[observerType]
+        ? {
+            ...otherObservers,
+            [observerType]: {
+              ...otherObservers[observerType],
+              ...observerSub,
+            },
+          }
+        : { [observerType]: observerSub },
+    };
+  } else {
+    observableDefs[observableType][observable.name] = {
+      ...observableTarget,
+      observers: { [observerType]: observerSub },
+    };
+  }
 
   return {
-    type: observableType,
     name: observable.name,
-  } as DefinitionSubscription;
+  } as DefinitionSubscriptions;
 };
 
 export const subscribeToObservables = <G extends NamedGenerable>(
@@ -142,13 +166,13 @@ export const subscribeToObservables = <G extends NamedGenerable>(
   observer: G,
 ) => {
   const type = mapping.type;
-  let subscriptions: DefinitionSubscription[] = [];
+  let subscriptions: DefinitionSubscriptions[] = [];
   const observables = mapping.subscriptions
     ? Object.assign(
         {},
         ...Object.keys(mapping.subscriptions).map((key) => ({ [key]: {} })),
       )
-    : [];
+    : {};
 
   if (mapping.resolveObservables && observables) {
     const observerDefinitions = mapping.resolveObservables(observer) as Record<
@@ -160,18 +184,20 @@ export const subscribeToObservables = <G extends NamedGenerable>(
       ([observableType, oneOrMore]) => {
         if (Array.isArray(oneOrMore)) {
           subscriptions.push(
-            ...oneOrMore.map((observable) =>
-              createSubscription(
-                state,
-                observer,
-                type,
-                observable,
-                observableType as DefinitionType,
-                observables,
+            ...oneOrMore
+              .filter((o) => o !== undefined)
+              .map((observable) =>
+                createSubscription(
+                  state,
+                  observer,
+                  type,
+                  observable,
+                  observableType as DefinitionType,
+                  observables,
+                ),
               ),
-            ),
           );
-        } else {
+        } else if (oneOrMore !== undefined) {
           subscriptions.push(
             createSubscription(
               state,
@@ -190,6 +216,58 @@ export const subscribeToObservables = <G extends NamedGenerable>(
   return [observables, subscriptions];
 };
 
+export const setDefinitions = <G extends NamedGenerable>(
+  state: DefinitionsStoreModel,
+  mapping: GenerableMapping<G>,
+  generable: G,
+  observers?: DefinitionSubscriptions,
+  updateRecord?: (record: DefinitionRecord<G>) => void,
+) => {
+  const defType = mapping.type;
+  const oldState = state.definitions[mapping.type];
+  const [otherObservables, subscriptions] = subscribeToObservables(
+    state,
+    mapping,
+    generable,
+  );
+
+  /*
+   * Add new observable list to the corresponding definition record,
+   * and define the new definition
+   * All types not relevant to this definition will return itself.
+   */
+  state.definitions = Object.assign(
+    {},
+    ...Object.entries(state.definitions).map(([type, definitions]) => {
+      let recordUpdate = definitions as unknown as DefinitionRecord<G>;
+      // const isObservable =
+
+      if (type === defType) {
+        recordUpdate = {
+          ...oldState,
+          ...(otherObservables[defType] || {}),
+          [generable.name]: {
+            observables: subscriptions || [],
+            observers: observers || {},
+            value: generable,
+          },
+        };
+
+        updateRecord && updateRecord(recordUpdate);
+      } else if (type in otherObservables) {
+        recordUpdate = {
+          ...state.definitions[type as DefinitionType],
+          ...otherObservables[type],
+        };
+      }
+
+      return {
+        [type]: recordUpdate,
+      };
+    }),
+  );
+};
+
 /***
  * Create wrappers for definition actions
  */
@@ -199,67 +277,45 @@ export const createDefinitionActions = <G extends NamedGenerable>(
   onUpdate?: (store: DefinitionsStoreModel, value: UpdateType<G>) => G,
   onDispose?: () => void,
 ): Record<string, DefinitionAction<G>> => {
-  const type = mapping.type;
+  const defType = mapping.type;
 
   return {
-    [`define_${type}`]: action((state, payload: G) => {
-      const oldState = state.definitions[type];
-      const [observables, subscriptions] = subscribeToObservables(
-        state,
-        mapping,
-        payload,
-      );
-
-      console.log(observables, subscriptions);
-
-      state.definitions = {
-        ...state.definitions,
-        ...(observables || {}),
-        [type]: {
-          ...oldState,
-          ...(observables[type] || {}),
-          [payload.name]: {
-            observers: subscriptions || [],
-            value: payload,
-          },
-        },
-      };
-
+    [`define_${defType}`]: action((state, payload: G) => {
+      setDefinitions(state, mapping, payload);
       onSet && onSet(state, payload);
 
       if (!mapping?.subscriptions || !mapping.resolveObservables) {
         return;
       }
     }),
-    [`update_${type}`]: action((state, payload: UpdateType<G>) => {
+    [`update_${defType}`]: action((state, payload: UpdateType<G>) => {
       const newDefinition = onUpdate ? onUpdate(state, payload) : payload.new;
-      const oldState = state.definitions[type];
+      const oldState = state.definitions[defType];
       const oldDefinition = oldState[payload.old.name];
 
-      const newDefinitions = {
-        ...oldState,
-        [payload.new.name]: {
-          observers: oldDefinition.observers,
-          observables: oldDefinition.observables,
-          value: newDefinition,
+      setDefinitions(
+        state,
+        mapping,
+        newDefinition,
+        oldDefinition.observers,
+        (definitions) => {
+          if (payload.new.name !== payload.old.name) {
+            delete definitions[payload.old.name];
+          }
         },
-      };
-
-      if (payload.new.name !== payload.old.name) {
-        delete newDefinitions[payload.old.name];
-      }
-
-      state.definitions[type] = newDefinitions as DefinitionRecord<any>;
+      );
     }),
-    [`delete_${type}`]: action((state: DefinitionsStoreModel, payload: G) => {
-      const newDefinitions = {
-        ...state.definitions,
-      };
+    [`delete_${defType}`]: action(
+      (state: DefinitionsStoreModel, payload: G) => {
+        const newDefinitions = {
+          ...state.definitions,
+        };
 
-      delete newDefinitions[type][payload.name];
+        delete newDefinitions[defType][payload.name];
 
-      onDispose && onDispose();
-    }),
+        onDispose && onDispose();
+      },
+    ),
   };
 };
 
@@ -268,6 +324,7 @@ const createObserverSubscription = <
   Observables extends NamedGenerable,
 >(
   observableType: DefinitionType,
+  observerType: DefinitionType,
   subscription: SubscriptionCallback<Observer, Observables>,
 ): DefinitionSubscriptionThunk => {
   return thunkOn(
@@ -275,18 +332,25 @@ const createObserverSubscription = <
     async (actions, target) => {
       const change = target.payload as unknown as UpdateType<Observables>;
       const name = change.new.name;
-      const definitions = store.getState().definitions;
-      const observers = definitions[observableType][name].observers;
+      const state = store.getState();
+      const definitions = state.definitions;
+      const observerSubs = definitions[observableType][name].observers;
+      const observer = observerSubs ? observerSubs[observerType] : undefined;
 
-      if (!observers) {
+      if (!observer) {
         return;
       }
 
-      observers.forEach((observerSub) => {
-        const observer = definitions[observerSub.type][observerSub.name]
-          .value as unknown as Observer;
+      Object.entries(observer).forEach(([name, count]) => {
+        const definition = definitions[observerType][name];
+        const observer = definition?.value as unknown as Observer;
+
+        if (!observer) {
+          return;
+        }
+
         const observerUpdate = actions[
-          `update_${observerSub.type}`
+          `update_${observerType}`
         ] as unknown as ActionCreator<UpdateType<Observer>>;
 
         observerUpdate({
@@ -313,6 +377,7 @@ export const createSubscriptionThunks = <
         [`${observerType}_subscribes_to_${observableType}`]:
           createObserverSubscription<Observer, Observables>(
             observableType as DefinitionType,
+            observerType as DefinitionType,
             subscription,
           ),
       }),
@@ -326,6 +391,9 @@ export const createDefinitionStore = (): AllDefinitionActions => {
       Job,
       reusable.CustomCommand | reusable.ReusableExecutor
     >(JobMapping as ObserverMapping<Job>),
+    ...createSubscriptionThunks<reusable.CustomCommand, reusable.CustomCommand>(
+      CommandMapping as ObserverMapping<reusable.CustomCommand>,
+    ),
     ...(createDefinitionActions<reusable.CustomCommand>(
       CommandMapping,
     ) as CommandActions),
