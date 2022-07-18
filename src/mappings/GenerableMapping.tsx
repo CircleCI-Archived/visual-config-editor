@@ -11,7 +11,7 @@ import { ReactElement } from 'react';
 import { NodeProps } from 'react-flow-renderer';
 import {
   DefinitionsModel,
-  DefinitionSubscription,
+  DefinitionSubscriptions,
   DefinitionType,
   MappingSubscriptions,
   NamedGenerable,
@@ -204,8 +204,8 @@ export default interface GenerableMapping<
         definitions: DefinitionsModel;
         data?: Generable;
         subtype?: string;
-        subscriptions?: Array<DefinitionSubscription>;
-        setSubscriptions?: (subscriptions: DefinitionSubscription[]) => void;
+        subscriptions?: Array<DefinitionSubscriptions>;
+        setSubscriptions?: (subscriptions: DefinitionSubscriptions[]) => void;
       },
       // data: ConfigDataType;
     ) => JSX.Element;

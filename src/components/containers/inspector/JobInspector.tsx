@@ -4,7 +4,7 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import { JobMapping } from '../../../mappings/JobMapping';
 import {
   DefinitionsModel,
-  DefinitionSubscription,
+  DefinitionSubscriptions,
   mapDefinitions,
 } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
@@ -19,7 +19,7 @@ import ParamListContainer from '../ParamListContainer';
 
 export type JobInspectorProps = FormikValues & {
   definitions: DefinitionsModel;
-  addSubscriptions?: (subscriptions: DefinitionSubscription) => void;
+  addSubscriptions?: (subscriptions: DefinitionSubscriptions) => void;
 };
 
 const getEmbeddedExecutor = (values: any) => {

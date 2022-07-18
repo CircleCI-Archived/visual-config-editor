@@ -31,7 +31,7 @@ import {
   DefinitionsModel,
   DefinitionsStoreModel,
   DefinitionStore,
-  DefinitionSubscription,
+  DefinitionSubscriptions,
   DefinitionType,
   NamedGenerable,
 } from './DefinitionStore';
@@ -39,7 +39,7 @@ import {
 export interface NavigationBack {
   distance?: number;
   applyValues?: (current: any) => any;
-  applyObservers?: (current?: Array<DefinitionSubscription>) => any;
+  applyObservers?: (current?: Array<DefinitionSubscriptions>) => any;
   toast?: ToastModel;
 }
 
@@ -169,7 +169,7 @@ export type StoreActions = AllDefinitionActions & {
 
   navigateTo: Action<
     StoreModel,
-    NavigationStop & { values?: any; subscriptions?: DefinitionSubscription[] }
+    NavigationStop & { values?: any; subscriptions?: DefinitionSubscriptions[] }
   >;
   navigateBack: Action<StoreModel, NavigationBack | void>;
 
@@ -417,7 +417,7 @@ const Actions: StoreActions = {
     if (!orb) {
       state.definitions.orbs = {
         ...state.definitions.orbs,
-        [payload.name]: { observers: [], value: payload },
+        [payload.name]: { observers: {}, value: payload },
       };
     }
   }),
