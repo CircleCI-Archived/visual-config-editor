@@ -146,7 +146,7 @@ export const createSubscription = (
               ...observerSub,
             },
           }
-        : { [observerType]: observerSub },
+        : { ...otherObservers, [observerType]: observerSub },
     };
   } else {
     observableDefs[observableType][observable.name] = {
