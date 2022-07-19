@@ -1,25 +1,64 @@
 import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import './new.css';
+
+export type ConfirmationType = 'save' | 'delete';
+
+export type ConfirmationDialogue = Record<
+  ConfirmationType,
+  { header: string; body: string; button: string; buttonClass: string }
+>;
+
+const confirmDialogue: ConfirmationDialogue = {
+  save: {
+    header: '',
+    body: '',
+    button: '',
+    buttonClass: '',
+  },
+  delete: {
+    header: 'Would you like to delete %s?',
+    body: '',
+    button: '',
+    buttonClass: '',
+  },
+};
+
 const ComfirmationModal = () => {
-  // const toast = useStoreState((state) => state.toast);
-  // const clearToast = useStoreActions((actions) => actions.clearToast);
+  const confirm = useStoreState((state) => state.confirm);
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     clearToast();
-  //   }, 3500);
-  // }, [toast, clearToast]);
+  const dialogue = confirmDialogue[confirm?.type || 'save'];
 
+  // implement dialog dictionary, make it pretty, functionality first bro, get components to delete
   return (
-    <div className="dialog">
-      <h3>Delete Post</h3>
-      <p>Are you sure you want to delete the selected post?</p>
-      <div className="action-group">
-        <button>Delete</button>
-        <button>Cancel</button>
-      </div>
-    </div>
+    <>
+      {confirm && (
+        <div className="dialog">
+          <h3> {dialogue.header.replace('%s', 'step')}</h3>
+          <p>{dialogue.body}</p>
+          <div className="action-group">
+            <button
+              onClick={() => {
+                confirm.onConfirm();
+                updateConfirmation(undefined);
+              }}
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => {
+                updateConfirmation(undefined);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

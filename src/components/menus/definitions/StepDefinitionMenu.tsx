@@ -1,4 +1,5 @@
 import { reusable } from '@circleci/circleci-config-sdk';
+import { job } from '@circleci/circleci-config-sdk/dist/src/lib/Types';
 import { Form, Formik } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
@@ -34,6 +35,9 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         )?.value
       : (subtype as reusable.CustomCommand);
   }
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -127,12 +131,39 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <button
-              type="submit"
-              className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-            >
-              Save Step
-            </button>
+            <div className="display: flex	align-items: center justify-content: center">
+              <button
+                type="submit"
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+              >
+                {props.editing ? 'Save Step' : 'Create Step'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  navigateBack({
+                    distance: 1,
+                  });
+                }}
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-red duration:50 transition-all rounded-md2"
+              >
+                Cancel
+              </button>
+              {props.editing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateConfirmation({
+                      type: 'delete',
+                      onConfirm: () => alert('delete'),
+                    });
+                  }}
+                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </Form>
         )}
       </Formik>

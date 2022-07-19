@@ -1,5 +1,4 @@
 import { Form, Formik } from 'formik';
-import { v4 } from 'uuid';
 import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
@@ -33,6 +32,17 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
       (props.editing
         ? dataMapping?.store.update(actions)
         : dataMapping?.store.add(actions)) || actions.error,
+  );
+  const deleteDefintion = useStoreActions(
+    (actions) =>
+      (props.editing && dataMapping?.store.remove(actions)) || actions.error,
+  );
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
+
+  const removeWorkflowElement = useStoreActions(
+    (actions) => actions.removeWorkflowElement,
   );
 
   const getIcon = (className: string) => {
@@ -139,7 +149,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
 
                   return {
                     ...parentValues,
-                    [props.passBackKey]: nestedValues,
+                    [props.passBackKey]: {
+                      ...parentValues[props.passBackKey],
+                      [name]: args,
+                    },
                   };
                 }
               },
@@ -149,11 +162,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu
-                tabs={tabs}
-                activeTab={props.activeTab || 0}
-                id={dataMapping.type}
-              >
+              <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
@@ -194,27 +203,62 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     data: props.data,
                   })}
                 </div>
-                {dataMapping.parameters && (
+                {dataMapping.parameters ? (
                   <ParameterContainer
                     dataMapping={dataMapping}
                     values={formikProps.values}
                   />
-                )}
+                ) : null}
               </TabbedMenu>
 
               <Toast />
 
               <span className="border-b border-circle-gray-300 mt-auto" />
-              <button
-                type="submit"
-                // onClick={() => {
-                //   setShow(true);
-                //   setTimeout(() => setShow(false), 1000);
-                // }}
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-              >
-                {props.editing ? 'Save' : 'Create'} {dataMapping?.name.singular}
-              </button>
+              <div className="display: flex	align-items: center justify-content: center">
+                <button
+                  type="submit"
+                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+                >
+                  {props.editing ? 'Save' : 'Create'}{' '}
+                  {dataMapping?.name.singular}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigateBack({
+                      distance: 1,
+                    });
+                  }}
+                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+                >
+                  Cancel
+                </button>
+
+                {props.editing && (
+                  <button
+                    type="button"
+                    onClick={(values) => {
+                      updateConfirmation({
+                        type: 'delete',
+                        onConfirm: () => {
+                          console.log('delete');
+                          console.log(values);
+
+                          const newDefinition = dataMapping.transform(
+                            values,
+                            definitions,
+                          );
+                          deleteDefintion(newDefinition);
+                        },
+                      });
+                    }}
+                    className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </Form>
           )}
         </Formik>

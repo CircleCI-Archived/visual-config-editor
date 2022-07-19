@@ -3,6 +3,7 @@ import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
+import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
 import AddButton from '../AddButton';
 import { InspectorFieldProps } from './InspectorProperty';
@@ -39,6 +40,9 @@ const ListItem = ({
   children,
   lastRemaining,
 }: ListItemProps) => {
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, _) => (
@@ -55,7 +59,10 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
           {!lastRemaining && (
             <button
               onClick={() => {
-                arrayHelper.remove(index);
+                updateConfirmation({
+                  type: 'delete',
+                  onConfirm: () => arrayHelper.remove(index),
+                });
               }}
               type="button"
               className="my-auto"
@@ -70,6 +77,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
 };
 
 // This is currently hard coded to support steps, but can be broken out to support other sorts of lists.
+
 const ListProperty = ({
   label,
   values,
