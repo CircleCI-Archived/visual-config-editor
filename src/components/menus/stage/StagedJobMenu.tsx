@@ -1,5 +1,6 @@
 import { orb, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
+import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
 import { useStoreActions } from '../../../state/Hooks';
@@ -16,7 +17,9 @@ type WorkflowJobMenuProps = {
 const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   // const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -81,12 +84,32 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <button
-              type="submit"
-              className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-            >
-              Save Staged Job
-            </button>
+            <div className="display: flex	align-items: center justify-content: center">
+              <button
+                type="submit"
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-red duration:50 transition-all rounded-md2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  updateConfirmation({
+                    type: 'delete',
+                    onConfirm: () => alert('delete'),
+                  });
+                }}
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
+              >
+                Delete
+              </button>
+              <button
+                type="submit"
+                className="text-white text-sm font-medium p-2 m-6 bg-circle-green duration:50 transition-all rounded-md2"
+              >
+                Save
+              </button>
+            </div>
           </Form>
         )}
       </Formik>

@@ -19,6 +19,7 @@ import {
   XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
+import { ConfirmationDialogue } from '../components/atoms/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import GenerableMapping from '../mappings/GenerableMapping';
 import JobMapping from '../mappings/JobMapping';
@@ -42,6 +43,11 @@ export interface ToastModel {
   label: string;
   content: string;
   status: 'success' | 'failed' | 'warning';
+}
+
+export interface ConfirmationModal {
+  type: 'save' | 'delete';
+  onConfirm: () => void;
 }
 
 export interface WorkflowModel {
@@ -110,6 +116,8 @@ export type StoreModel = DefinitionsStoreModel & {
   previewToolbox: PreviewToolboxModel;
 
   toast?: ToastModel;
+  confirm?: ConfirmationModal;
+
   /** Data being dragged from definition */
   dragging?: DataModel;
   altAction?: boolean;
@@ -183,6 +191,7 @@ export type StoreActions = AllDefinitionActions & {
 
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
   clearToast: Action<StoreModel, void>;
+  updateConfirmation: Action<StoreModel, ConfirmationModal | undefined>;
 };
 
 const Actions: StoreActions = {
@@ -625,6 +634,9 @@ const Actions: StoreActions = {
   }),
   clearToast: action((state) => {
     state.toast = undefined;
+  }),
+  updateConfirmation: action((state, payload) => {
+    state.confirm = payload;
   }),
 };
 
