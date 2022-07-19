@@ -20,6 +20,13 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const updateConfirmation = useStoreActions(
     (actions) => actions.updateConfirmation,
   );
+
+  const onDelete = () => {
+    alert('delete');
+    navigateBack({
+      distance: 1,
+    });
+  };
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -86,7 +93,12 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
             <span className="border-b border-circle-gray-300 mt-auto" />
             <div className="display: flex	align-items: center justify-content: center">
               <button
-                type="submit"
+                type="button"
+                onClick={() => {
+                  navigateBack({
+                    distance: 1,
+                  });
+                }}
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-red duration:50 transition-all rounded-md2"
               >
                 Cancel
@@ -96,7 +108,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                 onClick={() => {
                   updateConfirmation({
                     type: 'delete',
-                    onConfirm: () => alert('delete'),
+                    onConfirm: () => onDelete(),
                   });
                 }}
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
