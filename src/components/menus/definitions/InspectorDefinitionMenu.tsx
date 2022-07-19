@@ -37,9 +37,6 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     (actions) =>
       (props.editing && dataMapping?.store.remove(actions)) || actions.error,
   );
-  const updateConfirmation = useStoreActions(
-    (actions) => actions.updateConfirmation,
-  );
 
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
@@ -73,6 +70,9 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     tabs.push('PARAMETERS');
   }
 
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
   return (
     <div className="h-full flex flex-col">
       <header>
