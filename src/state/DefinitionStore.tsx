@@ -4,6 +4,7 @@ import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
 import { v4 } from 'uuid';
 import { store } from '../App';
+import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
 import {
   CommandActions,
   CommandMapping,
@@ -82,7 +83,7 @@ export type DefinitionsModel = {
   parameters: DefinitionRecord<
     parameters.CustomParameter<PipelineParameterLiteral>
   >;
-  orbs: DefinitionRecord<orb.OrbImport>;
+  orbs: DefinitionRecord<OrbImportWithMeta>;
 };
 
 export type AllDefinitionActions = JobActions &
@@ -328,6 +329,10 @@ export const createDefinitionActions = <G extends NamedGenerable>(
   };
 };
 
+/**
+ * Creates a thunk that watches the observable update action,
+ * and updates the observer according to it's subscription
+ */
 const createObserverSubscription = <
   Observer extends NamedGenerable,
   Observables extends NamedGenerable,
@@ -384,6 +389,7 @@ export const createSubscriptionThunks = <
     ...Object.entries(mapping.subscriptions).map(
       ([observableType, subscription]) => ({
         [`${observerType}_subscribes_to_${observableType}`]:
+          // create the thunk
           createObserverSubscription<Observer, Observables>(
             observableType as DefinitionType,
             observerType as DefinitionType,
@@ -396,6 +402,7 @@ export const createSubscriptionThunks = <
 
 export const createDefinitionStore = (): AllDefinitionActions => {
   return {
+    // thunks - observe actions, and trigger subscriptions
     ...createSubscriptionThunks<
       Job,
       reusable.CustomCommand | reusable.ReusableExecutor
@@ -406,6 +413,7 @@ export const createDefinitionStore = (): AllDefinitionActions => {
     ...createSubscriptionThunks<WorkflowStage, reusable.CustomCommand | Job>(
       WorkflowMapping as ObserverMapping<WorkflowStage>,
     ),
+    // actions - lifecycle for each definition
     ...(createDefinitionActions<reusable.CustomCommand>(
       CommandMapping,
     ) as CommandActions),

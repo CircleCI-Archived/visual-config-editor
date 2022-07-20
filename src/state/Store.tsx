@@ -6,7 +6,6 @@ import {
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
-import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
 import { MutableRefObject } from 'react';
 import {
@@ -18,6 +17,7 @@ import {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
+import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
 import { JobMapping } from '../mappings/components/JobMapping';
 import {
   setWorkflowDefinition,
@@ -185,8 +185,8 @@ export type StoreActions = AllDefinitionActions & {
   updateWorkflowElement: Action<StoreModel, { id: string; data: any }>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
 
-  importOrb: Action<StoreModel, OrbImport>;
-  unimportOrb: Action<StoreModel, OrbImport>;
+  importOrb: Action<StoreModel, OrbImportWithMeta>;
+  unimportOrb: Action<StoreModel, OrbImportWithMeta>;
 
   loadConfig: Action<StoreModel, Config | Error>;
   loadDefinitions: ThunkOn<StoreActions, Config | Error>;
@@ -198,6 +198,7 @@ export type StoreActions = AllDefinitionActions & {
 };
 
 const Actions: StoreActions = {
+  ...createDefinitionStore(),
   persistProps: action((state, payload) => {
     state.navigation = { ...state.navigation, props: payload };
   }),
@@ -434,8 +435,6 @@ const Actions: StoreActions = {
       ),
     });
   }),
-
-  ...createDefinitionStore(),
 
   importOrb: action((state, payload) => {
     const orb = state.definitions.orbs[payload.name];

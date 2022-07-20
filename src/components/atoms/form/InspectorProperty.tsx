@@ -17,6 +17,7 @@ export type InspectorFieldProps = {
   hidden?: boolean;
   className?: string;
   required?: boolean;
+  beEmpty?: boolean;
   placeholder?: string;
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;

@@ -1,9 +1,10 @@
-import * as CircleCI from '@circleci/circleci-config-sdk';
+import { orb } from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { OrbRef } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import {
-  OrbImport,
-  OrbRef,
-} from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+  OrbDisplayMeta,
+  OrbImportManifest,
+} from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useEffect, useState } from 'react';
 import Loading from '../../../icons/svgs/loading.svg';
 import { typeToComponent } from '../../../mappings/GenerableMapping';
@@ -14,6 +15,25 @@ import ComponentInfo from '../../atoms/ComponentInfo';
 import Definition from '../../atoms/Definition';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import CollapsibleList from '../../containers/CollapsibleList';
+
+export class OrbImportWithMeta extends orb.OrbImport {
+  logo_url: string;
+
+  constructor(
+    alias: string,
+    namespace: string,
+    orb: string,
+    manifest: OrbImportManifest,
+    version: string,
+    logo_url: string,
+    description?: string,
+    display?: OrbDisplayMeta,
+  ) {
+    super(alias, namespace, orb, manifest, version, description, display);
+
+    this.logo_url = logo_url;
+  }
+}
 
 export type OrbDefinitionProps = {
   name: string;
@@ -59,18 +79,19 @@ const OrbDefinitionContainer = (props: {
 const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
   const orbs = useStoreState((state) => state.definitions.orbs);
   const importOrb = useStoreActions((actions) => actions.importOrb);
-  const [orb, setOrb] = useState<OrbImport>();
+  const [orb, setOrb] = useState<OrbImportWithMeta>();
 
   useEffect(() => {
     loadOrb(`${props.namespace}/${props.name}@${props.version}`).then(
       (manifest) => {
         setOrb(
-          new CircleCI.orb.OrbImport(
+          new OrbImportWithMeta(
             props.name,
             props.namespace,
             props.name,
             manifest,
             props.version,
+            props.logo_url,
           ),
         );
       },
