@@ -1,5 +1,5 @@
 import ParameterIcon from '../../../../icons/components/ParameterIcon';
-import GenerableMapping from '../../../../mappings/GenerableMapping';
+import InspectableMapping from '../../../../mappings/InspectableMapping';
 import { NavigationComponent } from '../../../../state/Store';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
 import {
@@ -9,7 +9,7 @@ import {
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 
 const ParameterTypePage = (
-  props: SubTypeSelectPageProps<string> & { component: GenerableMapping },
+  props: SubTypeSelectPageProps<string> & { component: InspectableMapping },
 ) => {
   const parameters =
     props.component?.parameters || componentParametersSubtypes.pipeline;

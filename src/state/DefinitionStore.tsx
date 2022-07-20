@@ -1,33 +1,42 @@
-import {
-  Job,
-  orb,
-  parameters,
-  reusable,
-  Workflow,
-} from '@circleci/circleci-config-sdk';
+import { Job, orb, parameters, reusable } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
+import { v4 } from 'uuid';
 import { store } from '../App';
-import { CommandActions, CommandMapping } from '../mappings/CommandMapping';
-import { ExecutorActions, ExecutorMapping } from '../mappings/ExecutorMapping';
-import GenerableMapping from '../mappings/GenerableMapping';
-import { JobActions, JobMapping } from '../mappings/JobMapping';
+import {
+  CommandActions,
+  CommandMapping,
+} from '../mappings/components/CommandMapping';
+import {
+  ExecutorActions,
+  ExecutorMapping,
+} from '../mappings/components/ExecutorMapping';
+import { JobActions, JobMapping } from '../mappings/components/JobMapping';
 import {
   ParameterActions,
   ParameterMapping,
-} from '../mappings/ParameterMapping';
-import { UpdateType } from './Store';
+} from '../mappings/components/ParameterMapping';
+import {
+  WorkflowActions,
+  WorkflowMapping,
+  WorkflowStage,
+} from '../mappings/components/WorkflowMapping';
+import GenerableMapping from '../mappings/GenerableMapping';
+import { StoreModel, UpdateType } from './Store';
 
 export type ParameterDefinition = 'parameters';
 export type JobsDefinition = 'jobs';
 export type CommandDefinition = 'commands';
 export type ExecutorsDefinition = 'executors';
+export type WorkflowDefinition = 'workflows';
+
 export type DefinitionType =
   | ParameterDefinition
   | JobsDefinition
   | ExecutorsDefinition
-  | CommandDefinition;
+  | CommandDefinition
+  | WorkflowDefinition;
 
 export type NamedGenerable = Generable & { name: string };
 
@@ -69,7 +78,7 @@ export type DefinitionsModel = {
   commands: DefinitionRecord<reusable.CustomCommand>;
   executors: DefinitionRecord<reusable.ReusableExecutor>;
   jobs: DefinitionRecord<Job>;
-  workflows: DefinitionRecord<Workflow>;
+  workflows: DefinitionRecord<WorkflowStage>;
   parameters: DefinitionRecord<
     parameters.CustomParameter<PipelineParameterLiteral>
   >;
@@ -79,7 +88,8 @@ export type DefinitionsModel = {
 export type AllDefinitionActions = JobActions &
   ExecutorActions &
   CommandActions &
-  ParameterActions;
+  ParameterActions &
+  WorkflowActions;
 
 export type DefinitionSubscriptionThunk = ThunkOn<
   AllDefinitionActions,
@@ -240,7 +250,6 @@ export const setDefinitions = <G extends NamedGenerable>(
     {},
     ...Object.entries(state.definitions).map(([type, definitions]) => {
       let recordUpdate = definitions as unknown as DefinitionRecord<G>;
-      // const isObservable =
 
       if (type === defType) {
         recordUpdate = {
@@ -273,23 +282,23 @@ export const setDefinitions = <G extends NamedGenerable>(
  */
 export const createDefinitionActions = <G extends NamedGenerable>(
   mapping: GenerableMapping<G>,
-  onSet?: (store: DefinitionsStoreModel, value: G) => void,
-  onUpdate?: (store: DefinitionsStoreModel, value: UpdateType<G>) => G,
-  onDispose?: () => void,
 ): Record<string, DefinitionAction<G>> => {
   const defType = mapping.type;
 
   return {
     [`define_${defType}`]: action((state, payload: G) => {
       setDefinitions(state, mapping, payload);
-      onSet && onSet(state, payload);
+      mapping.overrides?.add &&
+        mapping.overrides?.add(state as StoreModel, payload);
 
       if (!mapping?.subscriptions || !mapping.resolveObservables) {
         return;
       }
     }),
     [`update_${defType}`]: action((state, payload: UpdateType<G>) => {
-      const newDefinition = onUpdate ? onUpdate(state, payload) : payload.new;
+      const newDefinition = mapping.overrides?.update
+        ? mapping.overrides.update(state as StoreModel, payload)
+        : payload.new;
       const oldState = state.definitions[defType];
       const oldDefinition = oldState[payload.old.name];
 
@@ -313,7 +322,7 @@ export const createDefinitionActions = <G extends NamedGenerable>(
 
         delete newDefinitions[defType][payload.name];
 
-        onDispose && onDispose();
+        mapping.overrides?.remove && mapping.overrides?.remove();
       },
     ),
   };
@@ -394,6 +403,9 @@ export const createDefinitionStore = (): AllDefinitionActions => {
     ...createSubscriptionThunks<reusable.CustomCommand, reusable.CustomCommand>(
       CommandMapping as ObserverMapping<reusable.CustomCommand>,
     ),
+    ...createSubscriptionThunks<WorkflowStage, reusable.CustomCommand | Job>(
+      WorkflowMapping as ObserverMapping<WorkflowStage>,
+    ),
     ...(createDefinitionActions<reusable.CustomCommand>(
       CommandMapping,
     ) as CommandActions),
@@ -404,6 +416,9 @@ export const createDefinitionStore = (): AllDefinitionActions => {
     ...(createDefinitionActions<
       parameters.CustomParameter<PipelineParameterLiteral>
     >(ParameterMapping) as ParameterActions),
+    ...(createDefinitionActions<WorkflowStage>(
+      WorkflowMapping,
+    ) as WorkflowActions),
   };
 };
 
@@ -414,7 +429,11 @@ export const DefinitionStore: DefinitionsStoreModel = {
     commands: {},
     executors: {},
     jobs: {},
-    workflows: {},
+    workflows: {
+      'build-and-deploy': {
+        value: new WorkflowStage('build-and-deploy', v4(), [], undefined, []),
+      },
+    },
     parameters: {},
     orbs: {},
   },

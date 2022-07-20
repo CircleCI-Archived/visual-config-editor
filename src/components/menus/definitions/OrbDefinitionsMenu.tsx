@@ -5,16 +5,15 @@ import {
   OrbRef,
 } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { useEffect, useState } from 'react';
-import GenerableMapping, {
-  typeToComponent,
-} from '../../../mappings/GenerableMapping';
+import Loading from '../../../icons/svgs/loading.svg';
+import { typeToComponent } from '../../../mappings/GenerableMapping';
+import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import ComponentInfo from '../../atoms/ComponentInfo';
 import Definition from '../../atoms/Definition';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import CollapsibleList from '../../containers/CollapsibleList';
-import Loading from '../../../icons/svgs/loading.svg';
 
 export type OrbDefinitionProps = {
   name: string;
@@ -39,7 +38,7 @@ const orbDefinitions = ['jobs', 'commands', 'executors'] as Array<
 >;
 
 const OrbDefinitionContainer = (props: {
-  dataMapping: GenerableMapping;
+  dataMapping: InspectableMapping;
   data: Record<string, OrbRef<AnyParameterLiteral>>;
 }) => {
   return (
@@ -140,8 +139,12 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           })}
         </div>
       ) : (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
-          <img src={Loading} alt="loading wheel" className="w-8 h-8 animate-spin"/>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <img
+            src={Loading}
+            alt="loading wheel"
+            className="w-8 h-8 animate-spin"
+          />
         </div>
       )}
     </div>

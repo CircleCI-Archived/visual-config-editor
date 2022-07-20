@@ -16,7 +16,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/GenerableMapping';
-import { JobMapping } from '../../mappings/JobMapping';
+import { JobMapping } from '../../mappings/components/JobMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { WorkflowModel } from '../../state/Store';
 import ConnectionLine from '../atoms/ConnectionLine';
@@ -49,17 +49,18 @@ const WorkflowPane = (props: ElementProps) => {
   const [cooldown, setCooldown] = useState(false);
 
   const elements = useStoreState(
-    (state) => state.workflows[state.selectedWorkflow].elements,
+    (state) =>
+      state.definitions.workflows[state.selectedWorkflow].value.elements,
   );
 
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
   );
-  const dragging = useStoreState((state) => state.dragging);
-  const connecting = useStoreState((state) => state.connecting);
   const setWorkflowElements = useStoreActions(
     (actions) => actions.setWorkflowElements,
   );
+  const dragging = useStoreState((state) => state.dragging);
+  const connecting = useStoreState((state) => state.connecting);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const altAction = useStoreState((state) => state.altAction);
   const setAltAction = useStoreActions((actions) => actions.setAltAction);

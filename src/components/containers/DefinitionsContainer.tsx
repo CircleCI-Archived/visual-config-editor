@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import GenerableMapping from '../../mappings/GenerableMapping';
+import InspectableMapping from '../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
@@ -12,7 +12,7 @@ import CollapsibleList from './CollapsibleList';
 import GuideContainer from './GuideContainer';
 
 export interface DefinitionsProps {
-  type: GenerableMapping;
+  type: InspectableMapping;
   expanded?: boolean;
   onChange?: (expanded: boolean) => void;
 }

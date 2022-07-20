@@ -1,7 +1,7 @@
 import { executors, Job } from '@circleci/circleci-config-sdk';
 import { FormikValues, useField } from 'formik';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
-import { JobMapping } from '../../../mappings/JobMapping';
+import { JobMapping } from '../../../mappings/components/JobMapping';
 import {
   DefinitionsModel,
   DefinitionSubscriptions,

@@ -1,15 +1,15 @@
 import { parameters, parsers } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import ParameterSummary from '../components/atoms/summaries/ParameterSummary';
-import ParameterInspector from '../components/containers/inspector/ParameterInspector';
-import { parameterSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
-import ParameterTypePageNav from '../components/menus/definitions/subtypes/ParameterTypePage';
-import ParameterIcon from '../icons/components/ParameterIcon';
-import { DefinitionAction } from '../state/DefinitionStore';
-import GenerableMapping from './GenerableMapping';
+import ParameterSummary from '../../components/atoms/summaries/ParameterSummary';
+import ParameterInspector from '../../components/containers/inspector/ParameterInspector';
+import { parameterSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
+import ParameterTypePageNav from '../../components/menus/definitions/subtypes/ParameterTypePage';
+import ParameterIcon from '../../icons/components/ParameterIcon';
+import { DefinitionAction } from '../../state/DefinitionStore';
+import InspectableMapping from '../InspectableMapping';
 
-export const ParameterMapping: GenerableMapping<
+export const ParameterMapping: InspectableMapping<
   CustomParameter<PipelineParameterLiteral>
 > = {
   type: 'parameters',

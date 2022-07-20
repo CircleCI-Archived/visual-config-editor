@@ -1,8 +1,8 @@
 import {
   Config,
   parameters,
-  Workflow,
   workflow,
+  Workflow,
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
@@ -13,14 +13,17 @@ import {
   ElementId,
   Elements,
   FlowElement,
-  Node,
   SetConnectionId,
   XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
-import GenerableMapping from '../mappings/GenerableMapping';
-import { JobMapping } from '../mappings/JobMapping';
+import { JobMapping } from '../mappings/components/JobMapping';
+import {
+  setWorkflowDefinition,
+  WorkflowStage,
+} from '../mappings/components/WorkflowMapping';
+import InspectableMapping from '../mappings/InspectableMapping';
 import {
   AllDefinitionActions,
   createDefinitionStore,
@@ -65,7 +68,7 @@ export interface PreviewToolboxModel {
 
 export interface DataModel {
   data?: any;
-  dataType?: GenerableMapping;
+  dataType?: InspectableMapping;
 }
 
 export interface NavigationModel extends NavigationStop {
@@ -103,8 +106,6 @@ export type StoreModel = DefinitionsStoreModel & {
   placeholder?: { index: number; id: string };
   /** Map to staged workflow jobs, to save on time-space complexity */
   stagedJobs: StagedJobMap;
-  /** Array of workflow panes */
-  workflows: WorkflowModel[];
   /** Allows for tracking of components and their props in NavigationPanel */
   navigation: NavigationModel;
   /** Staged Job Preview Toolbox state  */
@@ -129,13 +130,22 @@ export type StoreModel = DefinitionsStoreModel & {
     };
   };
   /** Currently selected workflow pane index */
-  selectedWorkflow: number;
+  selectedWorkflow: string;
   errorMessage?: string;
 };
 
+export type UpdateDiff = {
+  type: 'add' | 'remove' | 'update';
+  value: UpdateType<NamedGenerable>;
+};
 export interface UpdateType<Out, In = Out> {
   old: Out;
   new: In;
+  /**
+   * Used by Workflows to update WorkflowJobs
+   * Could be used to optimize subscriptions later.
+   */
+  diff?: UpdateDiff;
 }
 
 export type StoreActions = AllDefinitionActions & {
@@ -161,7 +171,6 @@ export type StoreActions = AllDefinitionActions & {
     | undefined
   >;
 
-  setPlaceholder: Action<StoreModel, Node<any>>;
   setGuideStep: Action<StoreModel, number | undefined>;
 
   navigateTo: Action<
@@ -170,12 +179,10 @@ export type StoreActions = AllDefinitionActions & {
   >;
   navigateBack: Action<StoreModel, NavigationBack | void>;
 
-  addWorkflow: Action<StoreModel, string>;
-  selectWorkflow: Action<StoreModel, number>;
-  removeWorkflow: Action<StoreModel, WorkflowModel>;
-
+  selectWorkflow: Action<StoreModel, string>;
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
   removeWorkflowElement: Action<StoreModel, string>;
+  updateWorkflowElement: Action<StoreModel, { id: string; data: any }>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
 
   importOrb: Action<StoreModel, OrbImport>;
@@ -215,24 +222,7 @@ const Actions: StoreActions = {
       };
     }
   }),
-  setPlaceholder: action((state, payload) => {
-    const workflow = state.workflows[state.selectedWorkflow];
-    if (state.placeholder /** && payload.overwrite */) {
-      state.workflows[state.selectedWorkflow] = {
-        ...workflow,
-        elements: workflow.elements.map((element) =>
-          element.id === state.placeholder?.id ? payload : element,
-        ),
-      };
-    } else {
-      workflow.elements.push(payload);
-    }
 
-    state.placeholder = {
-      index: workflow.elements.length - 1,
-      id: workflow.id,
-    };
-  }),
   setGuideStep: action((state, payload) => {
     state.guideStep = payload;
   }),
@@ -327,25 +317,13 @@ const Actions: StoreActions = {
     state.dragging = payload;
   }),
 
-  addWorkflow: action((state, name) => {
-    state.workflows = state.workflows.concat({
-      name,
-      id: v4(),
-      elements: [],
-    });
-    state.stagedJobs = { ...state.stagedJobs };
-  }),
   selectWorkflow: action((state, index) => {
     state.selectedWorkflow = index;
   }),
-  removeWorkflow: action((state, payload) => {
-    state.workflows = state.workflows.filter(
-      (workflow) => workflow.id !== payload.id,
-    );
-  }),
 
   addWorkflowElement: action((state, payload) => {
-    const workflow = state.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflow = workflowDef.value;
 
     if (payload.type === 'jobs') {
       const jobData = payload.data as WorkflowJobAbstract;
@@ -366,45 +344,95 @@ const Actions: StoreActions = {
       state.stagedJobs = { workflows: stagedJobs };
     }
 
-    // Not sure why this mutable update causes the workflow pane to refresh, but it does.
+    setWorkflowDefinition(state, workflow.name, {
+      ...workflowDef,
+      value: new WorkflowStage(
+        workflow.name,
+        workflow.id,
+        workflow.jobs,
+        workflow.when,
+        [...workflow.elements, payload],
+      ),
+    });
+
     workflow.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
-    const workflow = state.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflow = workflowDef.value;
     const map = state.stagedJobs;
     const stagedJob = map.workflows[workflow.name];
 
-    state.workflows[state.selectedWorkflow] = {
-      ...workflow,
-      elements: workflow.elements.filter((element) => {
-        const filtered = element.id === payload;
+    const elements = workflow.elements.filter((element) => {
+      const filtered = element.id === payload;
 
-        if (filtered) {
-          if (element.type === 'jobs') {
-            const workflowJob = element.data as WorkflowJobAbstract;
-            const name = workflowJob.name;
-            const sameSourceJobs = stagedJob[name];
+      if (filtered) {
+        if (element.type === 'jobs') {
+          const workflowJob = element.data as WorkflowJobAbstract;
+          const name = workflowJob.name;
+          const sameSourceJobs = stagedJob[name];
 
-            if (sameSourceJobs) {
-              stagedJob[name]--;
+          if (sameSourceJobs) {
+            stagedJob[name]--;
 
-              if (stagedJob[name] === 0) {
-                delete stagedJob[name];
-              }
-
-              state.stagedJobs = { workflows: map.workflows };
+            if (stagedJob[name] === 0) {
+              delete stagedJob[name];
             }
+
+            state.stagedJobs = { workflows: map.workflows };
           }
         }
+      }
 
-        // TODO: determine if there are any more of the same job type in the workflow.
-        // Requires name duplication to be fully logical
-        return !filtered;
-      }),
-    };
+      // TODO: determine if there are any more of the same job type in the workflow.
+      // Requires name duplication to be fully logical
+      return !filtered;
+    });
+
+    setWorkflowDefinition(state, workflow.name, {
+      ...workflowDef,
+      value: new WorkflowStage(
+        workflow.name,
+        workflow.id,
+        workflow.jobs,
+        workflow.when,
+        elements,
+      ),
+    });
   }),
   setWorkflowElements: action((state, payload) => {
-    state.workflows[state.selectedWorkflow].elements = payload;
+    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflow = workflowDef.value;
+
+    setWorkflowDefinition(state, workflow.name, {
+      ...workflowDef,
+
+      value: new WorkflowStage(
+        workflow.name,
+        workflow.id,
+        workflow.jobs,
+        workflow.when,
+        payload,
+      ),
+    });
+  }),
+  updateWorkflowElement: action((state, payload) => {
+    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflow = workflowDef.value;
+
+    setWorkflowDefinition(state, workflow.name, {
+      ...workflowDef,
+
+      value: new WorkflowStage(
+        workflow.name,
+        workflow.id,
+        workflow.jobs,
+        workflow.when,
+        workflow.elements.map((e) =>
+          e.id === payload.id ? { ...e, data: payload.data } : e,
+        ),
+      ),
+    });
   }),
 
   ...createDefinitionStore(),
@@ -480,130 +508,145 @@ const Actions: StoreActions = {
     };
 
     const workflowJobCounts: Record<string, Record<string, number>> = {};
-    state.workflows = payload.workflows.map(({ name, jobs }) => {
-      const sourceJobCounts: Record<string, number> = {};
-      const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
-      const requiredJobs: Record<string, boolean> = {};
+    const workflows = Object.assign(
+      {},
+      ...payload.workflows.map((flow) => {
+        const sourceJobCounts: Record<string, number> = {};
+        const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
+        const requiredJobs: Record<string, boolean> = {};
 
-      jobs.forEach((workflowJob) => {
-        const jobName = getJobName(workflowJob);
-        jobTable[jobName] = workflowJob;
+        flow.jobs.forEach((workflowJob) => {
+          const jobName = getJobName(workflowJob);
+          jobTable[jobName] = workflowJob;
 
-        if (workflowJob instanceof workflow.WorkflowJob) {
-          const sourceJobName = workflowJob.job.name;
+          if (workflowJob instanceof workflow.WorkflowJob) {
+            const sourceJobName = workflowJob.job.name;
 
-          if (sourceJobCounts[sourceJobName] > 0) {
-            sourceJobCounts[sourceJobName]++;
-          } else {
-            sourceJobCounts[sourceJobName] = 1;
-          }
-        }
-
-        workflowJob.parameters?.requires?.forEach((requiredJob) => {
-          requiredJobs[requiredJob] = true;
-        });
-      });
-
-      workflowJobCounts[name] = sourceJobCounts;
-
-      // Filter down to jobs that are not required by other jobs
-      const endJobs = jobs.filter(
-        (workflowJob) => !(getJobName(workflowJob) in requiredJobs),
-      );
-
-      type JobNodeProps = { col: number; row: number };
-      const elements: Elements = [];
-      const columns: Array<number> = [];
-      const solved: Record<ElementId, JobNodeProps> = {};
-
-      const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
-        const jobName = getJobName(workflowJob);
-
-        if (solved[jobName] !== undefined) {
-          return solved[jobName];
-        }
-
-        const props: JobNodeProps = { col: 0, row: 0 };
-
-        if (workflowJob.parameters?.requires) {
-          let greatestColumn = 0;
-          let greatestRow = 0;
-
-          workflowJob.parameters.requires.forEach((requiredJob) => {
-            let requiredJobProps;
-
-            if (solved[requiredJob] === undefined) {
-              requiredJobProps = solve(jobTable[requiredJob]);
+            if (sourceJobCounts[sourceJobName] > 0) {
+              sourceJobCounts[sourceJobName]++;
             } else {
-              requiredJobProps = solved[requiredJob];
+              sourceJobCounts[sourceJobName] = 1;
             }
+          }
 
-            greatestRow = Math.max(greatestRow, requiredJobProps.row);
-            greatestColumn = Math.max(greatestColumn, requiredJobProps.col);
+          workflowJob.parameters?.requires?.forEach((requiredJob) => {
+            requiredJobs[requiredJob] = true;
+          });
+        });
 
-            // add connection line
-            elements.push({
-              id: v4(),
-              source: requiredJob,
-              target: jobName,
-              type: 'requires',
-              sourceHandle: `${requiredJob}_source`,
-              targetHandle: `${jobName}_target`,
-              animated: false,
-              style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+        workflowJobCounts[flow.name] = sourceJobCounts;
+
+        // Filter down to jobs that are not required by other jobs
+        const endJobs = flow.jobs.filter(
+          (workflowJob) => !(getJobName(workflowJob) in requiredJobs),
+        );
+
+        type JobNodeProps = { col: number; row: number };
+        const elements: Elements = [];
+        const columns: Array<number> = [];
+        const solved: Record<ElementId, JobNodeProps> = {};
+
+        const solve = (workflowJob: workflow.WorkflowJobAbstract) => {
+          const jobName = getJobName(workflowJob);
+
+          if (solved[jobName] !== undefined) {
+            return solved[jobName];
+          }
+
+          const props: JobNodeProps = { col: 0, row: 0 };
+
+          if (workflowJob.parameters?.requires) {
+            let greatestColumn = 0;
+            let greatestRow = 0;
+
+            workflowJob.parameters.requires.forEach((requiredJob) => {
+              let requiredJobProps;
+
+              if (solved[requiredJob] === undefined) {
+                requiredJobProps = solve(jobTable[requiredJob]);
+              } else {
+                requiredJobProps = solved[requiredJob];
+              }
+
+              greatestRow = Math.max(greatestRow, requiredJobProps.row);
+              greatestColumn = Math.max(greatestColumn, requiredJobProps.col);
+
+              // add connection line
+              elements.push({
+                id: v4(),
+                source: requiredJob,
+                target: jobName,
+                type: 'requires',
+                sourceHandle: `${requiredJob}_source`,
+                targetHandle: `${jobName}_target`,
+                animated: false,
+                style: { stroke: '#A3A3A3', strokeWidth: '2px' },
+              });
             });
+
+            props.col = greatestColumn + 1;
+            props.row = greatestRow;
+          }
+
+          if (columns.length > props.col) {
+            columns[props.col]++;
+          } else {
+            columns.push(1);
+          }
+
+          // assign job to most recent requirement
+          props.row = Math.max(columns[props.col], props.row);
+
+          // add job node
+          elements.push({
+            id: jobName,
+            data: workflowJob,
+            connectable: true,
+            dragHandle: '.node',
+            type: 'jobs',
+            position: { x: props.col * nodeWidth, y: props.row * nodeHeight },
           });
 
-          props.col = greatestColumn + 1;
-          props.row = greatestRow;
-        }
+          solved[jobName] = props;
 
-        if (columns.length > props.col) {
-          columns[props.col]++;
-        } else {
-          columns.push(1);
-        }
+          return props;
+        };
 
-        // assign job to most recent requirement
-        props.row = Math.max(columns[props.col], props.row);
-
-        // add job node
-        elements.push({
-          id: jobName,
-          data: workflowJob,
-          connectable: true,
-          dragHandle: '.node',
-          type: 'jobs',
-          position: { x: props.col * nodeWidth, y: props.row * nodeHeight },
+        // Build workflow and prep requirement connection generation
+        endJobs.forEach((workflowJob) => {
+          solve(workflowJob);
         });
 
-        solved[jobName] = props;
+        return {
+          [flow.name]: {
+            value: new WorkflowStage(
+              flow.name,
+              v4(),
+              flow.jobs,
+              flow.when,
+              elements,
+            ),
+          },
+        };
+      }),
+    );
 
-        return props;
-      };
-
-      // Build workflow and prep requirement connection generation
-      endJobs.forEach((workflowJob) => {
-        solve(workflowJob);
-      });
-
-      return {
-        name,
-        id: v4(),
-        elements,
-      };
-    });
-
+    state.definitions = {
+      ...state.definitions,
+      workflows,
+    };
+    state.selectedWorkflow = Object.keys(workflows)[0];
     state.stagedJobs = { workflows: workflowJobCounts };
     state.config = payload.generate();
   }),
   generateConfig: action((state, payload) => {
-    const workflows = state.workflows.map((flow) => {
-      const jobs = flow.elements
+    const stages = Object.values(state.definitions.workflows);
+    const workflows = stages.map((stage) => {
+      const jobs = stage.value.elements
         .filter((element) => element.type === JobMapping.type)
         .map((element) => element.data);
 
-      return new Workflow(flow.name, jobs);
+      return new Workflow(stage.value.name, jobs);
     });
 
     const defs = state.definitions;
@@ -659,7 +702,7 @@ const Actions: StoreActions = {
 };
 
 const Store: StoreModel & StoreActions = {
-  selectedWorkflow: 0,
+  selectedWorkflow: 'build-and-deploy',
   editingConfig: undefined,
   config: undefined,
   guideStep: 1,
@@ -677,16 +720,16 @@ const Store: StoreModel & StoreActions = {
   ...DefinitionStore,
   stagedJobs: {
     workflows: {
-      'build-and-test': {},
+      'build-and-deploy': {},
     },
   },
-  workflows: [
-    {
-      name: 'build-and-test',
-      elements: [],
-      id: v4(),
-    },
-  ],
+  // workflows: [
+  //   {
+  //     name: 'build-and-test',
+  //     elements: [],
+  //     id: v4(),
+  //   },
+  // ],
   ...Actions,
 };
 

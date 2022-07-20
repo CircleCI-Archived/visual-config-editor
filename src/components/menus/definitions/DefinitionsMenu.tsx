@@ -1,13 +1,13 @@
 import { Form, Formik } from 'formik';
-import React from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/GenerableMapping';
+import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
+import Toast from '../../atoms/Toast';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
-import Toast from '../../atoms/Toast';
 import TabbedMenu from '../TabbedMenu';
 
 /**
@@ -20,11 +20,11 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const parameters = useStoreState((state) => state.parameters); 
   const defineParameter = useStoreActions((actions) => actions.defineParameter); */
   // const generateConfig = useStoreActions((actions) => actions.generateConfig);
-  const workflowGraphs = useStoreState((state) => state.workflows);
+  const workflowGraphs = useStoreState((state) => state.definitions.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);
-  const workflow = workflowGraphs[selectedWorkflow];
+  const workflow = workflowGraphs[selectedWorkflow].value;
 
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
@@ -37,7 +37,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
         <div className="p-2 flex-1 h-full w-full flex-col">
           <OrbImportsContainer></OrbImportsContainer>
           {dataMappings.map((mapping, index) => {
-            const dataType = mapping.mapping;
+            const dataType = mapping.mapping as InspectableMapping;
 
             return (
               <DefinitionsContainer
