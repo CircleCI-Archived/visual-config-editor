@@ -7,9 +7,10 @@ import JobOnHoldIcon from '../../../icons/components/JobOnHoldIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import MinusIcon from '../../../icons/ui/MinusIcon';
 import PlusIcon from '../../../icons/ui/PlusIcon';
-import { JobMapping } from '../../../mappings/JobMapping';
+import { JobMapping } from '../../../mappings/components/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
+import { flattenGenerable } from '../Definition';
 
 const ConnectorIcon = (props: { filled: boolean; subtraction?: boolean }) => {
   return (
@@ -35,7 +36,8 @@ const JobNode: React.FunctionComponent<
   NodeProps & { data: workflow.WorkflowJob }
 > = (props) => {
   const elements = useStoreState(
-    (state) => state.workflows[state.selectedWorkflow].elements,
+    (state) =>
+      state.definitions.workflows[state.selectedWorkflow].value.elements,
   );
   const dragging = useStoreState((state) => state.dragging);
   // const setWorkflowElements = useStoreActions(
@@ -77,8 +79,8 @@ const JobNode: React.FunctionComponent<
 
   let filtered = false;
 
-  const job = props.data as WorkflowJob;
-  const filters = job.parameters?.filters;
+  const workflowJob = props.data as WorkflowJob;
+  const filters = workflowJob.parameters?.filters;
 
   if (filters && toolbox.filter.preview && filters[toolbox.filter.type]) {
     const jobFilter = filters[toolbox.filter.type];
@@ -96,6 +98,18 @@ const JobNode: React.FunctionComponent<
     } else {
       return <JobIcon className={classNameValue} />;
     }
+  };
+
+  const viewJobProperties = () => {
+    navigateTo({
+      component: StagedJobMenuNav,
+      props: {
+        source: workflowJob.job,
+        values: flattenGenerable(workflowJob, true),
+        id: props.id,
+      },
+      origin: true,
+    });
   };
 
   const trackHovering = (
@@ -217,16 +231,7 @@ const JobNode: React.FunctionComponent<
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
-        <button
-          className="flex w-full"
-          onClick={() => {
-            navigateTo({
-              component: StagedJobMenuNav,
-              props: { job: props.data },
-              origin: true,
-            });
-          }}
-        >
+        <button className="flex w-full" onClick={viewJobProperties}>
           {jobIcon(props.data.parameters?.type === 'approval')}
           {props.data.parameters?.name || props.data.name}
         </button>

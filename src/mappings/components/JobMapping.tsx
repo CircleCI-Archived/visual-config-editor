@@ -4,15 +4,18 @@ import {
   reusable,
   workflow,
 } from '@circleci/circleci-config-sdk';
-import JobNode from '../components/atoms/nodes/JobNode';
-import JobSummary from '../components/atoms/summaries/JobSummary';
-import JobInspector from '../components/containers/inspector/JobInspector';
-import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
-import JobIcon from '../icons/components/JobIcon';
-import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
-import GenerableMapping from './GenerableMapping';
+import JobNode from '../../components/atoms/nodes/JobNode';
+import JobSummary from '../../components/atoms/summaries/JobSummary';
+import JobInspector from '../../components/containers/inspector/JobInspector';
+import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
+import JobIcon from '../../icons/components/JobIcon';
+import {
+  DefinitionAction,
+  definitionsAsArray,
+} from '../../state/DefinitionStore';
+import InspectableMapping from '../InspectableMapping';
 
-export const JobMapping: GenerableMapping<Job, workflow.WorkflowJob> = {
+export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   type: 'jobs',
   name: {
     singular: 'Job',

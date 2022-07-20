@@ -5,10 +5,8 @@ import { useStoreState } from '../../../state/Hooks';
 
 const JobSummary: React.FunctionComponent<{ data: Job }> = (props) => {
   const stagedJobMap = useStoreState((state) => state.stagedJobs);
-  const workflows = useStoreState((state) => state.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
-  const workflowName = workflows[selectedWorkflow].name;
-  const stagedJobs = stagedJobMap.workflows[workflowName];
+  const stagedJobs = stagedJobMap.workflows[selectedWorkflow];
 
   return (
     <div className="flex flex-row">

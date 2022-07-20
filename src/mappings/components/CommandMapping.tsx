@@ -1,12 +1,15 @@
 import { parsers, reusable } from '@circleci/circleci-config-sdk';
-import CommandSummary from '../components/atoms/summaries/CommandSummary';
-import CommandInspector from '../components/containers/inspector/CommandInspector';
-import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
-import CommandIcon from '../icons/components/CommandIcon';
-import { DefinitionAction, definitionsAsArray } from '../state/DefinitionStore';
-import GenerableMapping from './GenerableMapping';
+import CommandSummary from '../../components/atoms/summaries/CommandSummary';
+import CommandInspector from '../../components/containers/inspector/CommandInspector';
+import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
+import CommandIcon from '../../icons/components/CommandIcon';
+import {
+  DefinitionAction,
+  definitionsAsArray,
+} from '../../state/DefinitionStore';
+import InspectableMapping from '../InspectableMapping';
 
-export const CommandMapping: GenerableMapping<reusable.CustomCommand> = {
+export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   type: 'commands',
   name: {
     singular: 'Command',

@@ -5,14 +5,14 @@ import {
   reusable,
   workflow,
 } from '@circleci/circleci-config-sdk';
-import ExecutorSummary from '../components/atoms/summaries/ExecutorSummary';
-import ExecutorInspector from '../components/containers/inspector/ExecutorInspector';
-import { executorSubtypes } from '../components/containers/inspector/subtypes/ExecutorSubtypes';
-import { componentParametersSubtypes } from '../components/containers/inspector/subtypes/ParameterSubtypes';
-import ExecutorTypePageNav from '../components/menus/definitions/subtypes/ExecutorTypePage';
-import ExecutorIcon from '../icons/components/ExecutorIcon';
-import { DefinitionAction } from '../state/DefinitionStore';
-import GenerableMapping from './GenerableMapping';
+import ExecutorSummary from '../../components/atoms/summaries/ExecutorSummary';
+import ExecutorInspector from '../../components/containers/inspector/ExecutorInspector';
+import { executorSubtypes } from '../../components/containers/inspector/subtypes/ExecutorSubtypes';
+import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
+import ExecutorTypePageNav from '../../components/menus/definitions/subtypes/ExecutorTypePage';
+import ExecutorIcon from '../../icons/components/ExecutorIcon';
+import { DefinitionAction } from '../../state/DefinitionStore';
+import InspectableMapping from '../InspectableMapping';
 import { JobMapping } from './JobMapping';
 
 export type AnyExecutor =
@@ -22,7 +22,7 @@ export type AnyExecutor =
   | executors.WindowsExecutor
   | executors.Executor;
 
-export const ExecutorMapping: GenerableMapping<
+export const ExecutorMapping: InspectableMapping<
   reusable.ReusableExecutor,
   workflow.WorkflowJob
 > = {
