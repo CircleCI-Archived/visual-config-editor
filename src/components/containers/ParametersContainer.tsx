@@ -1,13 +1,12 @@
 import { FieldArray, useField } from 'formik';
-import GenerableMapping from '../../mappings/GenerableMapping';
 import { ParameterMapping } from '../../mappings/components/ParameterMapping';
+import GenerableMapping from '../../mappings/GenerableMapping';
 import { useStoreActions } from '../../state/Hooks';
 import {
   InspectorDefinitionMenu,
   InspectorDefinitionMenuNav,
 } from '../menus/definitions/InspectorDefinitionMenu';
 import { navSubTypeMenu } from '../menus/SubTypeMenu';
-import { type } from 'os';
 const ParameterContainer = (props: {
   dataMapping: GenerableMapping;
   values: any;
@@ -83,9 +82,9 @@ const ParameterContainer = (props: {
                       {parameter.description}
                     </p>
                   )}
-                  {parameter.defaultValue ? (
+                  {parameter.default ? (
                     <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">
-                      {parameter.defaultValue}
+                      {parameter.default}
                     </p>
                   ) : (
                     <p className="text-sm mt-1 leading-4 whitespace-pre-wrap text-circle-gray-500">

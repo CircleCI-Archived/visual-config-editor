@@ -2,13 +2,17 @@ import { FormikValues } from 'formik';
 import { DefinitionsModel } from '../../../state/DefinitionStore';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { parameterSubtypes } from './subtypes/ParameterSubtypes';
-// data: CustomParameter<PrimitiveParameterLiteral>
+
 const ParameterInspector = (
   props: FormikValues & {
     definitions: DefinitionsModel;
     subtype?: string;
   },
 ) => {
+  const fields = props.subtype
+    ? parameterSubtypes[props.subtype]?.fields
+    : undefined;
+
   return (
     <div>
       <InspectorProperty
@@ -19,7 +23,7 @@ const ParameterInspector = (
       />
       <InspectorProperty name="name" label="Name" required />
       <InspectorProperty name="description" label="Description" />
-      {props.subtype && parameterSubtypes[props.subtype]?.fields}
+      {fields && (typeof fields === 'function' ? fields(props) : fields)}
     </div>
   );
 };

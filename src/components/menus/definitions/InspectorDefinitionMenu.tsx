@@ -131,8 +131,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   };
 
                   if (
-                    name !== props.values.name &&
-                    typeof props.values.name === 'string'
+                    name !== props.values?.name &&
+                    typeof props.values?.name === 'string'
                   ) {
                     delete nestedValues[props.values.name];
                   }
