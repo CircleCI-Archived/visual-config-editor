@@ -173,10 +173,7 @@ export type StoreActions = AllDefinitionActions & {
 
   setGuideStep: Action<StoreModel, number | undefined>;
 
-  navigateTo: Action<
-    StoreModel,
-    NavigationStop & { values?: any; subscriptions?: DefinitionSubscriptions[] }
-  >;
+  navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
   navigateBack: Action<StoreModel, NavigationBack | void>;
 
   selectWorkflow: Action<StoreModel, string>;
@@ -253,7 +250,6 @@ const Actions: StoreActions = {
               props: {
                 ...curNav.props,
                 values: payload.values,
-                subscriptions: payload.subscriptions,
               },
             },
     };
@@ -275,9 +271,6 @@ const Actions: StoreActions = {
 
       const values =
         payload?.applyValues?.(travelTo.props.values) || travelTo.props.values;
-      const observers =
-        payload?.applyObservers?.(travelTo.props.subscriptions) ||
-        travelTo.props.subscriptions;
 
       let props;
 
@@ -290,14 +283,12 @@ const Actions: StoreActions = {
           menuProps: {
             ...travelTo.props.menuProps,
             values: values,
-            subscriptions: observers,
           },
         };
       } else {
         props = {
           ...travelTo.props,
           values: values,
-          subscriptions: observers,
         };
       }
 

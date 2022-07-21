@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import { v4 } from 'uuid';
 import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
@@ -124,13 +125,21 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               applyValues: (parentValues) => {
                 if (props.passBackKey) {
                   const { name, ...args } = values;
+                  const nestedValues = {
+                    ...parentValues[props.passBackKey],
+                    [name]: args,
+                  };
+
+                  if (
+                    name !== props.values.name &&
+                    typeof props.values.name === 'string'
+                  ) {
+                    delete nestedValues[props.values.name];
+                  }
 
                   return {
                     ...parentValues,
-                    [props.passBackKey]: {
-                      ...parentValues[props.passBackKey],
-                      [name]: args,
-                    },
+                    [props.passBackKey]: nestedValues,
                   };
                 }
               },
@@ -140,7 +149,11 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
+              <TabbedMenu
+                tabs={tabs}
+                activeTab={props.activeTab || 0}
+                id={dataMapping.type}
+              >
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
@@ -181,12 +194,12 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     data: props.data,
                   })}
                 </div>
-                {dataMapping.parameters ? (
+                {dataMapping.parameters && (
                   <ParameterContainer
                     dataMapping={dataMapping}
                     values={formikProps.values}
                   />
-                ) : null}
+                )}
               </TabbedMenu>
 
               <Toast />

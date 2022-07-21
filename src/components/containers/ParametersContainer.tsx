@@ -2,8 +2,12 @@ import { FieldArray, useField } from 'formik';
 import GenerableMapping from '../../mappings/GenerableMapping';
 import { ParameterMapping } from '../../mappings/components/ParameterMapping';
 import { useStoreActions } from '../../state/Hooks';
-import { InspectorDefinitionMenu } from '../menus/definitions/InspectorDefinitionMenu';
+import {
+  InspectorDefinitionMenu,
+  InspectorDefinitionMenuNav,
+} from '../menus/definitions/InspectorDefinitionMenu';
 import { navSubTypeMenu } from '../menus/SubTypeMenu';
+import { type } from 'os';
 const ParameterContainer = (props: {
   dataMapping: GenerableMapping;
   values: any;
@@ -49,10 +53,27 @@ const ParameterContainer = (props: {
           </button>
           {props.values.parameters &&
             Object.entries(props.values.parameters).map(
-              ([name, parameter]: [string, any]) => (
-                <div
+              ([name, parameter]: [string, any], index) => (
+                <button
                   key={name}
-                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left hover:border-circle-black"
+                  onClick={() => {
+                    navigateTo({
+                      component: InspectorDefinitionMenuNav,
+                      props: {
+                        dataType: ParameterMapping,
+                        passBackKey: 'parameters',
+                        index,
+                        subtype: parameter.type,
+                        editing: true,
+                        values: { name, ...parameter },
+                        source: props.values.parameters
+                          ? Object.keys(props.values.parameters)
+                          : undefined,
+                      },
+                      values: props.values,
+                    });
+                  }}
                 >
                   <div className="flex">
                     <p className="font-bold">{name}</p>
@@ -71,7 +92,7 @@ const ParameterContainer = (props: {
                       Required
                     </p>
                   )}
-                </div>
+                </button>
               ),
             )}
         </div>
