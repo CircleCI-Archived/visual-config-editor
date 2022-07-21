@@ -28,10 +28,12 @@ const OrbImportsContainer = (props: OrbImportProps) => {
               namespace: orb.namespace,
               version: orb.version,
               description: orb.description,
+              logo_url: orb.logo_url,
             },
           });
         }}
       >
+        <img className="ml-1 mr-2 w-5 h-5" src={orb.logo_url} alt="" />
         <p className="text-circle-gray-400">{orb.namespace}/</p>
         {orb.name}
         <div className="ml-auto text-circle-gray-400">{orb.version}</div>
