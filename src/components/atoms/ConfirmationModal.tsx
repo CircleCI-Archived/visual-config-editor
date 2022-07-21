@@ -41,6 +41,7 @@ const ComfirmationModal = () => {
           <p>{dialogue.body}</p>
           <div className="action-group">
             <button
+              type="button"
               onClick={() => {
                 confirm.onConfirm();
                 updateConfirmation(undefined);
@@ -49,6 +50,7 @@ const ComfirmationModal = () => {
               Delete
             </button>
             <button
+              type="button"
               onClick={() => {
                 updateConfirmation(undefined);
               }}

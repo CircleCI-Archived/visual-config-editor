@@ -34,7 +34,7 @@ const getTypes = (): NodeTypesType =>
     {},
     ...dataMappings.map((component) =>
       component.mapping.node
-        ? { [component.mapping.type]: component.mapping.node.component }
+        ? { [component.mapping.key]: component.mapping.node.component }
         : null,
     ),
   );
@@ -249,7 +249,7 @@ const WorkflowPane = (props: ElementProps) => {
             data,
             connectable: true,
             dragHandle: '.node',
-            type: dragging.dataType.type,
+            type: dragging.dataType.key,
             position: { x: round(pos.x), y: round(pos.y) },
           };
 

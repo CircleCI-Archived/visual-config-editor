@@ -42,7 +42,7 @@ export const setWorkflowDefinition = (
 };
 
 export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
-  type: 'workflows',
+  key: 'workflows',
   store: {
     add: (actions) => actions.define_workflows,
     update: (actions) => actions.update_workflows,

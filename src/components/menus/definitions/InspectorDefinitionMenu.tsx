@@ -17,7 +17,8 @@ type InspectorDefinitionProps = DataModel & {
   index: number;
   source?: Array<any>;
   toast: boolean;
-  data?: any;
+  // The source of generable
+  readonly data?: any;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -34,12 +35,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         : dataMapping?.store.add(actions)) || actions.error,
   );
   const deleteDefintion = useStoreActions(
-    (actions) =>
-      (props.editing && dataMapping?.store.remove(actions)) || actions.error,
-  );
-
-  const removeWorkflowElement = useStoreActions(
-    (actions) => actions.removeWorkflowElement,
+    (actions) => dataMapping?.store.remove(actions) || actions.error,
   );
 
   const getIcon = (className: string) => {
@@ -93,7 +89,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           validate={(values) => {
             // TODO: define error type
             const errors: any = {};
-            const source = props.source || definitions[dataMapping.type];
+            const source = props.source || definitions[dataMapping.key];
             const dupIndex = Object.values(source).findIndex(
               (d) =>
                 (typeof d === 'string' ? d : d.value.name) ===
@@ -200,8 +196,6 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 ) : null}
               </TabbedMenu>
 
-              <Toast />
-
               <span className="border-b border-circle-gray-300 mt-auto" />
               <div className="display: flex	align-items: center justify-content: center">
                 <button
@@ -234,11 +228,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                           console.log('delete');
                           console.log(values);
 
-                          const newDefinition = dataMapping.transform(
-                            values,
-                            definitions,
-                          );
-                          deleteDefintion(newDefinition);
+                          deleteDefintion(props.data);
+                          navigateBack({
+                            distance: 1,
+                          });
                         },
                       });
                     }}
