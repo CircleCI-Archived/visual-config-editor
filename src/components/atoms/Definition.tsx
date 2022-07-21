@@ -20,6 +20,7 @@ export const flattenGenerable = (data: Generable, nested?: boolean) => {
   /**
    * Flattens the keys of the input.
    * Will nest under parameters if nested option is set
+   * For nested example, see WorkflowStage
    */
   return Object.entries(generated as Record<string, any>).map(([key, value]) =>
     nested

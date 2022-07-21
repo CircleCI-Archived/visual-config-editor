@@ -26,7 +26,7 @@ export const ExecutorMapping: InspectableMapping<
   reusable.ReusableExecutor,
   workflow.WorkflowJob
 > = {
-  type: 'executors',
+  key: 'executors',
   name: {
     singular: 'Executor',
     plural: 'Executors',
@@ -75,7 +75,7 @@ export const ExecutorMapping: InspectableMapping<
     update: (actions) => actions.update_executors,
     remove: (actions) => actions.delete_executors,
   },
-  dragTarget: JobMapping.type,
+  dragTarget: JobMapping.key,
   applyToNode: (data, { job, parameters }) => {
     let params = { ...parameters };
 

@@ -16,7 +16,7 @@ import {
 import InspectableMapping from '../InspectableMapping';
 
 export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
-  type: 'jobs',
+  key: 'jobs',
   name: {
     singular: 'Job',
     plural: 'Jobs',

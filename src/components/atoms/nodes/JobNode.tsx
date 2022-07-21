@@ -179,14 +179,14 @@ const JobNode: React.FunctionComponent<
         },
       )}
       onDragOver={(e) => {
-        if (dragging && dragging.dataType?.dragTarget === JobMapping.type) {
+        if (dragging && dragging.dataType?.dragTarget === JobMapping.key) {
           e.preventDefault();
         }
       }}
       onDrop={(e) => {
         if (
           dragging &&
-          dragging.dataType?.dragTarget === JobMapping.type &&
+          dragging.dataType?.dragTarget === JobMapping.key &&
           dragging.dataType.applyToNode
         ) {
           const applyToData = dragging.dataType.applyToNode(
@@ -194,7 +194,7 @@ const JobNode: React.FunctionComponent<
             props.data,
           );
 
-          if (JobMapping.type in applyToData) {
+          if (JobMapping.key in applyToData) {
             updateJob({ old: props.data.job, new: applyToData.job });
           }
 

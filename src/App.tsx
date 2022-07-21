@@ -7,9 +7,9 @@ import useWindowDimensions from './state/Hooks';
 import Store from './state/Store';
 
 export const store = createStore(Store);
+export const inspectorWidth = 320;
 
 const App = () => {
-  const inspectorWidth = 320;
   const appWidth = useWindowDimensions();
 
   return (
