@@ -20,6 +20,7 @@ type SelectFieldProps = SelectProps & {
   field: FieldInputProps<any>;
   meta: FieldMetaProps<any>;
   helper: FieldHelperProps<any>;
+  transform?: (value: any) => any;
 };
 
 const SelectField = ({
@@ -38,7 +39,9 @@ const SelectField = ({
       {...props}
       value={value || initialValue}
       onChange={(value) => {
-        setValue(value);
+        setValue(props.transform ? props.transform(value) : value);
+
+        console.log(value);
 
         props.onChange && props.onChange(value);
       }}
@@ -49,7 +52,7 @@ const SelectField = ({
 const Select = (props: SelectProps) => {
   const children = React.Children.toArray(props.children) as OptionElement[];
   const defaultSelected = children.findIndex(
-    (child) => child.props.value === props.value,
+    (child) => `${child.props.value}` === `${props.value}`,
   );
   const [selected, setSelected] = useState(defaultSelected);
 

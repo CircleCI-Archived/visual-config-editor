@@ -29,6 +29,7 @@ export const ParameterMapping: InspectableMapping<
     },
     enum: {
       name: 'new_enum_parameter',
+      enum: [''],
     },
   },
   transform: ({ name, ...values }) => {

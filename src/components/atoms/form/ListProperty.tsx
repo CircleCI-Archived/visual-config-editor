@@ -4,12 +4,14 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import CollapsibleList from '../../containers/CollapsibleList';
+import AddButton from '../AddButton';
 import { InspectorFieldProps } from './InspectorProperty';
 
 export type ListItemChildProps = {
   item: any;
   index: number;
   values: any;
+  setValue: (value: any) => void;
 };
 
 export type ListPropertyProps = InspectorFieldProps & {
@@ -18,6 +20,7 @@ export type ListPropertyProps = InspectorFieldProps & {
   description?: string;
   expanded?: boolean;
   emptyText?: string;
+  addButton?: boolean;
   listItem: (props: ListItemChildProps) => ReactElement;
 };
 
@@ -27,9 +30,15 @@ export type ListItemProps = {
   values?: any;
   arrayHelper: ArrayHelpers;
   children: ReactElement;
+  lastRemaining: boolean;
 };
 
-const ListItem = ({ index, arrayHelper, children }: ListItemProps) => {
+const ListItem = ({
+  index,
+  arrayHelper,
+  children,
+  lastRemaining,
+}: ListItemProps) => {
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, _) => (
@@ -43,15 +52,17 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             <DragListIcon className="w-4 h-6 py-1" color="#AAAAAA" />
           </div>
           {children}
-          <button
-            onClick={() => {
-              arrayHelper.remove(index);
-            }}
-            type="button"
-            className="my-auto"
-          >
-            <DeleteItemIcon className="w-3 h-3" color="#AAAAAA" />
-          </button>
+          {!lastRemaining && (
+            <button
+              onClick={() => {
+                arrayHelper.remove(index);
+              }}
+              type="button"
+              className="my-auto"
+            >
+              <DeleteItemIcon className="w-3 h-3" color="#AAAAAA" />
+            </button>
+          )}
         </div>
       )}
     </Draggable>
@@ -81,44 +92,57 @@ const ListProperty = ({
           {...field}
           name={props.name}
           render={(arrayHelper) => (
-            <DragDropContext
-              onDragEnd={(result) => {
-                if (result.destination) {
-                  arrayHelper.move(
-                    result.source.index,
-                    result.destination.index,
-                  );
-                }
-              }}
-            >
-              <Droppable droppableId="droppable">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="p-2 pr-0"
-                  >
-                    {field.value.map((item: any, index: number) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          index={index}
-                          arrayHelper={arrayHelper}
-                        >
-                          <ListChild
-                            item={item}
+            <>
+              <DragDropContext
+                onDragEnd={(result) => {
+                  if (result.destination) {
+                    arrayHelper.move(
+                      result.source.index,
+                      result.destination.index,
+                    );
+                  }
+                }}
+              >
+                <Droppable droppableId="droppable">
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className="p-2 pr-0 flex flex-col"
+                    >
+                      {field.value.map((item: any, index: number) => {
+                        return (
+                          <ListItem
+                            key={index}
+                            lastRemaining={field.value.length === 1}
                             index={index}
-                            values={values}
-                          />
-                        </ListItem>
-                      );
-                    })}
-
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                            arrayHelper={arrayHelper}
+                          >
+                            <ListChild
+                              setValue={(value) => {
+                                arrayHelper.replace(index, value);
+                              }}
+                              item={item}
+                              index={index}
+                              values={values}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                      {provided.placeholder}
+                      {props.addButton && (
+                        <AddButton
+                          className="ml-auto"
+                          onClick={() => {
+                            arrayHelper.push('');
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </>
           )}
         />
       ) : (

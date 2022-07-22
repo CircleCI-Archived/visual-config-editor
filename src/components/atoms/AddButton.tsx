@@ -4,6 +4,7 @@ import AddIcon from '../../icons/ui/AddIcon';
 const AddButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
+      type="button"
       {...props}
       className={'bg-circle-gray-300 h-10 w-14 rounded ' + props.className}
     >
