@@ -19,6 +19,7 @@ export type InspectorFieldProps = {
   required?: boolean;
   beEmpty?: boolean;
   placeholder?: string;
+  transform?: (value: any) => any;
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
   dependent?: (value: any) => ReactElement;
@@ -40,6 +41,7 @@ const getField = (
         field={field}
         helper={helper}
         placeholder={props.placeholder}
+        transform={props.transform}
         onChange={props.onChange}
         className={'w-full ' + props.className}
       >

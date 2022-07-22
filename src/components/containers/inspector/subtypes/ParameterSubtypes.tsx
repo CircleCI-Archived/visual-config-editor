@@ -32,7 +32,7 @@ const parameterSubtypes: ParameterTypes = {
     description: `A Boolean represents a true/false value. Such as "on" or "off".`,
 
     fields: (
-      <InspectorProperty name="default" as="select" label="Default Value">
+      <InspectorProperty name="default" as="select" transform={Boolean} label="Default Value">
         <option value={undefined}>No default</option>
         <option value="false">false</option>
         <option value="true">true</option>
