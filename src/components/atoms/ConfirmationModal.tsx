@@ -46,6 +46,14 @@ const ComfirmationModal = () => {
             <p>{dialogue.body}</p>
             <div className="action-group">
               <Button
+                variant="secondary"
+                onClick={() => {
+                  updateConfirmation(undefined);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
                 variant="dangerous"
                 onClick={() => {
                   confirm.onConfirm();
@@ -53,14 +61,6 @@ const ComfirmationModal = () => {
                 }}
               >
                 Delete
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  updateConfirmation(undefined);
-                }}
-              >
-                Cancel
               </Button>
             </div>
           </div>
