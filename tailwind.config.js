@@ -19,7 +19,8 @@ module.exports = {
         'circle-gray': {
           100: '#F7F7F7',
           200: '#F1F1F1',
-          300: '#E3E3E3',
+          250: '#EDEDED', // neutral
+          300: '#E3E3E3', // neutral button hover
           400: '#AAAAAA',
           500: '#6A6A6A',
           600: '#555555',
@@ -32,10 +33,15 @@ module.exports = {
           DEFAULT: '#048C43',
           light: '#84D69B',
         },
-        'circle-red': '#F24646',
+        'circle-red': {
+          DEFAULT: '#F24646',
+          dangerous: '#B5261F',
+          'dangerous-dark': '#960008',
+        },
         'circle-blue': {
           DEFAULT: '#0078CA',
           light: '#76CDFF',
+          dark: '#0062B0',
         },
         'circle-purple': {
           DEFAULT: '#8e62bd',

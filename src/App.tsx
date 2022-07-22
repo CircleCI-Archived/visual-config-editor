@@ -20,11 +20,11 @@ const App = () => {
           style={{ width: appWidth.width - inspectorWidth }}
         >
           <WorkflowsPane />
-          <ConfirmationModal />
           <EditorPane />
         </section>
         <NavigationPane width={inspectorWidth} />
       </section>
+      <ConfirmationModal />
     </StoreProvider>
   );
 };

@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik';
 import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import Toast from '../../atoms/Toast';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
@@ -197,37 +198,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               </TabbedMenu>
 
               <span className="border-b border-circle-gray-300 mt-auto" />
-              <div className="display: flex	align-items: center justify-content: center">
-                <button
-                  type="submit"
-                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-                >
-                  {props.editing ? 'Save' : 'Create'}{' '}
-                  {dataMapping?.name.singular}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigateBack({
-                      distance: 1,
-                    });
-                  }}
-                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-                >
-                  Cancel
-                </button>
-
+              <div className="flex flex-row ml-auto center py-6 mr-4">
                 {props.editing && (
-                  <button
+                  <Button
+                    variant="dangerous"
                     type="button"
-                    onClick={(values) => {
+                    onClick={() => {
                       updateConfirmation({
                         type: 'delete',
                         onConfirm: () => {
-                          console.log('delete');
-                          console.log(values);
-
                           deleteDefintion(props.data);
                           navigateBack({
                             distance: 1,
@@ -235,11 +214,25 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                         },
                       });
                     }}
-                    className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
                   >
                     Delete
-                  </button>
+                  </Button>
                 )}
+
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => {
+                    navigateBack({
+                      distance: 1,
+                    });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  {props.editing ? 'Save' : 'Create'}
+                </Button>
               </div>
             </Form>
           )}
