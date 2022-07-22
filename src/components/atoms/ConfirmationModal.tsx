@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import { Button } from './Button';
 import './new.css';
 
 export type ConfirmationType = 'save' | 'delete';
@@ -36,27 +37,32 @@ const ComfirmationModal = () => {
   return (
     <>
       {confirm && (
-        <div className="dialog">
-          <h3> {dialogue.header.replace('%s', 'step')}</h3>
-          <p>{dialogue.body}</p>
-          <div className="action-group">
-            <button
-              type="button"
-              onClick={() => {
-                confirm.onConfirm();
-                updateConfirmation(undefined);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                updateConfirmation(undefined);
-              }}
-            >
-              Cancel
-            </button>
+        <div
+          className="absolute left-0 top-0 w-full h-full z-50"
+          style={{ background: 'rgba(0,0,0,.5)' }}
+        >
+          <div className="dialog">
+            <h3> {dialogue.header.replace('%s', 'step')}</h3>
+            <p>{dialogue.body}</p>
+            <div className="action-group">
+              <Button
+                variant="dangerous"
+                onClick={() => {
+                  confirm.onConfirm();
+                  updateConfirmation(undefined);
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  updateConfirmation(undefined);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       )}
