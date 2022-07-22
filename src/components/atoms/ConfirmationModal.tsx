@@ -18,8 +18,8 @@ const confirmDialogue: ConfirmationDialogue = {
     buttonClass: '',
   },
   delete: {
-    header: 'Would you like to delete %s?',
-    body: '',
+    header: 'Are you sure?',
+    body: 'Do you really want to delete this definition? This process cannot be undone.',
     button: '',
     buttonClass: '',
   },

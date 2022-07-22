@@ -3,17 +3,18 @@ import { job } from '@circleci/circleci-config-sdk/dist/src/lib/Types';
 import { Form, Formik } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { NavigationComponent } from '../../../state/Store';
+import { DataModel, NavigationComponent } from '../../../state/Store';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
 import ParamListContainer from '../../containers/ParamListContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-type StepDefinitionProps = {
+type StepDefinitionProps = DataModel & {
   values?: Record<string, object>;
   editing?: boolean;
   index?: number;
+  readonly data?: any;
 } & SubTypeMenuPageProps<any>;
 
 const StepDefinitionMenu = (props: StepDefinitionProps) => {
@@ -35,8 +36,14 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         )?.value
       : (subtype as reusable.CustomCommand);
   }
+  const dataMapping = props.dataType;
+
   const updateConfirmation = useStoreActions(
     (actions) => actions.updateConfirmation,
+  );
+
+  const deleteDefintion = useStoreActions(
+    (actions) => dataMapping?.store.remove(actions) || actions.error,
   );
 
   return (
@@ -149,20 +156,6 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
               >
                 Cancel
               </button>
-              {props.editing && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    updateConfirmation({
-                      type: 'delete',
-                      onConfirm: () => alert('delete'),
-                    });
-                  }}
-                  className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-                >
-                  Delete
-                </button>
-              )}
             </div>
           </Form>
         )}
