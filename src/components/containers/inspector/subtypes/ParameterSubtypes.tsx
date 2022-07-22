@@ -41,10 +41,12 @@ const parameterSubtypes: ParameterTypes = {
   },
   integer: {
     text: 'Integer',
-    description: `Integers can be formatted using the familiar decimal notation.
-       Or have various formats such as having a leading “0x” to signal hexadecimal,
+    description: `A whole number.`,
+    /**
+     * Or have various formats such as having a leading “0x” to signal hexadecimal,
         a leading “0b” to indicate binary bits (base 2), or have leading “0” to signal an octal base.
-        The use of “:” allows expressing integers in base 60, which is convenient for time/angle values.`,
+        The use of “:” allows expressing integers in base 60, which is convenient for time/angle values.
+     */
 
     fields: (
       <InspectorProperty name="default" type="number" label="Default Value" />
