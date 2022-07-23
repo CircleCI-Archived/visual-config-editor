@@ -38,6 +38,7 @@ const ListItem = ({
   index,
   arrayHelper,
   children,
+  values,
   lastRemaining,
 }: ListItemProps) => {
   const updateConfirmation = useStoreActions(
@@ -61,6 +62,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
               onClick={() => {
                 updateConfirmation({
                   type: 'delete',
+                  labels: [`Step ${values.name}`],
                   onConfirm: () => arrayHelper.remove(index),
                 });
               }}

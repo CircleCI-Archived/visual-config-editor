@@ -17,7 +17,6 @@ import {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { store } from '../App';
-import { ConfirmationDialogue } from '../components/atoms/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
 import { JobMapping } from '../mappings/components/JobMapping';
@@ -54,6 +53,7 @@ export interface ToastModel {
 
 export interface ConfirmationModal {
   type: 'save' | 'delete';
+  labels: string[];
   onConfirm: () => void;
 }
 

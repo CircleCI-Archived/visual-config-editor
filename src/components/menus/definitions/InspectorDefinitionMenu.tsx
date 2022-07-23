@@ -3,7 +3,6 @@ import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
-import Toast from '../../atoms/Toast';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
@@ -217,6 +216,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     onClick={() => {
                       updateConfirmation({
                         type: 'delete',
+                        labels: [dataMapping.name.singular, props.data.name],
                         onConfirm: () => {
                           deleteDefintion(props.data);
                           navigateBack({
