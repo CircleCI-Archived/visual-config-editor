@@ -1,6 +1,5 @@
 import { orb, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
-import { WorkflowJobParameters } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow/types';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
 import { useStoreActions } from '../../../state/Hooks';
@@ -17,16 +16,7 @@ type WorkflowJobMenuProps = {
 const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   // const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  const updateConfirmation = useStoreActions(
-    (actions) => actions.updateConfirmation,
-  );
 
-  const onDelete = () => {
-    alert('delete');
-    navigateBack({
-      distance: 1,
-    });
-  };
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -103,18 +93,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  updateConfirmation({
-                    type: 'delete',
-                    onConfirm: () => onDelete(),
-                  });
-                }}
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-              >
-                Delete
-              </button>
+
               <button
                 type="submit"
                 className="text-white text-sm font-medium p-2 m-6 bg-circle-green duration:50 transition-all rounded-md2"

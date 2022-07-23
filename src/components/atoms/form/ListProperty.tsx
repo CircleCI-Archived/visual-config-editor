@@ -1,13 +1,11 @@
 import { ArrayHelpers, FieldArray, useField } from 'formik';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
-import ConfirmationModal from '../ConfirmationModal';
 import { InspectorFieldProps } from './InspectorProperty';
-import StepListItem from './StepListItem';
 
 export type ListItemChildProps = {
   item: any;
@@ -32,7 +30,7 @@ export type ListItemProps = {
   children: ReactElement;
 };
 
-const ListItem = ({ index, arrayHelper, children }: ListItemProps) => {
+const ListItem = ({ index, arrayHelper, children, values }: ListItemProps) => {
   const updateConfirmation = useStoreActions(
     (actions) => actions.updateConfirmation,
   );
@@ -53,6 +51,7 @@ bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             onClick={() => {
               updateConfirmation({
                 type: 'delete',
+                labels: [`Step ${values.name}`],
                 onConfirm: () => arrayHelper.remove(index),
               });
             }}
