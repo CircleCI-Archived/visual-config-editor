@@ -5,7 +5,6 @@ import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
-import Toast from '../../atoms/Toast';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
 import TabbedMenu from '../TabbedMenu';
@@ -70,7 +69,6 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           </Formik>
         </div>
       </TabbedMenu>
-      <Toast />
       <span className="border-b border-circle-gray-300" />
       <button
         className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"

@@ -16,6 +16,7 @@ import {
   XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
+import { store } from '../App';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
 import { JobMapping } from '../mappings/components/JobMapping';
@@ -47,6 +48,13 @@ export interface ToastModel {
   label: string;
   content: string;
   status: 'success' | 'failed' | 'warning';
+  timeout?: NodeJS.Timeout;
+}
+
+export interface ConfirmationModal {
+  type: 'save' | 'delete';
+  labels: string[];
+  onConfirm: () => void;
 }
 
 export interface WorkflowModel {
@@ -112,6 +120,8 @@ export type StoreModel = DefinitionsStoreModel & {
   previewToolbox: PreviewToolboxModel;
 
   toast?: ToastModel;
+  confirm?: ConfirmationModal;
+
   /** Data being dragged from definition */
   dragging?: DataModel;
   altAction?: boolean;
@@ -175,6 +185,7 @@ export type StoreActions = AllDefinitionActions & {
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
   navigateBack: Action<StoreModel, NavigationBack | void>;
+  onNavigate: ThunkOn<StoreActions, NavigationBack | void>;
 
   selectWorkflow: Action<StoreModel, string>;
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
@@ -191,7 +202,8 @@ export type StoreActions = AllDefinitionActions & {
   error: Action<StoreModel, any>;
 
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
-  clearToast: Action<StoreModel, void>;
+  setToast: Action<StoreModel, ToastModel | undefined | void>;
+  updateConfirmation: Action<StoreModel, ConfirmationModal | undefined>;
 };
 
 const Actions: StoreActions = {
@@ -301,9 +313,28 @@ const Actions: StoreActions = {
     } else {
       state.navigation = { component: DefinitionsMenu, props: {} };
     }
-
-    state.toast = payload?.toast;
   }),
+
+  onNavigate: thunkOn(
+    (actions) => actions.navigateBack,
+    (actions, thunk) => {
+      const state = store.getState();
+      const incomingToast = thunk.payload?.toast;
+      const currentToast = state.toast;
+
+      if (incomingToast) {
+        if (currentToast && currentToast.timeout) {
+          clearTimeout(currentToast.timeout);
+        }
+
+        const timeout = setTimeout(() => {
+          actions.setToast();
+        }, 3500);
+
+        actions.setToast({ ...incomingToast, timeout });
+      }
+    },
+  ),
 
   setDragging: action((state, payload) => {
     state.dragging = payload;
@@ -633,7 +664,7 @@ const Actions: StoreActions = {
     const stages = Object.values(state.definitions.workflows);
     const workflows = stages.map((stage) => {
       const jobs = stage.value.elements
-        .filter((element) => element.type === JobMapping.type)
+        .filter((element) => element.type === JobMapping.key)
         .map((element) => element.data);
 
       return new Workflow(stage.value.name, jobs);
@@ -686,8 +717,11 @@ const Actions: StoreActions = {
   updatePreviewToolBox: action((state, payload) => {
     state.previewToolbox = payload;
   }),
-  clearToast: action((state) => {
-    state.toast = undefined;
+  setToast: action((state, payload) => {
+    state.toast = payload ?? undefined;
+  }),
+  updateConfirmation: action((state, payload) => {
+    state.confirm = payload;
   }),
 };
 

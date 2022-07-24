@@ -1,9 +1,8 @@
 import { Form, Formik } from 'formik';
-import { v4 } from 'uuid';
 import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
-import Toast from '../../atoms/Toast';
+import { Button } from '../../atoms/Button';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
@@ -18,7 +17,8 @@ type InspectorDefinitionProps = DataModel & {
   index: number;
   source?: Array<any>;
   toast: boolean;
-  data?: any;
+  // The source of generable
+  readonly data?: any;
 } & SubTypeMenuPageProps<any>;
 
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
@@ -33,6 +33,9 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
       (props.editing
         ? dataMapping?.store.update(actions)
         : dataMapping?.store.add(actions)) || actions.error,
+  );
+  const deleteDefintion = useStoreActions(
+    (actions) => dataMapping?.store.remove(actions) || actions.error,
   );
 
   const getIcon = (className: string) => {
@@ -63,6 +66,9 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     tabs.push('PARAMETERS');
   }
 
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.updateConfirmation,
+  );
   return (
     <div className="h-full flex flex-col">
       <header>
@@ -83,7 +89,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           validate={(values) => {
             // TODO: define error type
             const errors: any = {};
-            const source = props.source || definitions[dataMapping.type];
+            const source = props.source || definitions[dataMapping.key];
             const dupIndex = Object.values(source).findIndex(
               (d) =>
                 (typeof d === 'string' ? d : d.value.name) ===
@@ -139,7 +145,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
 
                   return {
                     ...parentValues,
-                    [props.passBackKey]: nestedValues,
+                    [props.passBackKey]: {
+                      ...parentValues[props.passBackKey],
+                      [name]: args,
+                    },
                   };
                 }
               },
@@ -149,11 +158,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         >
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
-              <TabbedMenu
-                tabs={tabs}
-                activeTab={props.activeTab || 0}
-                id={dataMapping.type}
-              >
+              <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
@@ -194,27 +199,52 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     data: props.data,
                   })}
                 </div>
-                {dataMapping.parameters && (
+                {dataMapping.parameters ? (
                   <ParameterContainer
                     dataMapping={dataMapping}
                     values={formikProps.values}
                   />
-                )}
+                ) : null}
               </TabbedMenu>
 
-              <Toast />
-
               <span className="border-b border-circle-gray-300 mt-auto" />
-              <button
-                type="submit"
-                // onClick={() => {
-                //   setShow(true);
-                //   setTimeout(() => setShow(false), 1000);
-                // }}
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-              >
-                {props.editing ? 'Save' : 'Create'} {dataMapping?.name.singular}
-              </button>
+              <div className="flex flex-row ml-auto center py-6 mr-4">
+                {props.editing && (
+                  <Button
+                    variant="dangerous"
+                    type="button"
+                    onClick={() => {
+                      updateConfirmation({
+                        type: 'delete',
+                        labels: [dataMapping.name.singular, props.data.name],
+                        onConfirm: () => {
+                          deleteDefintion(props.data);
+                          navigateBack({
+                            distance: 1,
+                          });
+                        },
+                      });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
+
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => {
+                    navigateBack({
+                      distance: 1,
+                    });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  {props.editing ? 'Save' : 'Create'}
+                </Button>
+              </div>
             </Form>
           )}
         </Formik>

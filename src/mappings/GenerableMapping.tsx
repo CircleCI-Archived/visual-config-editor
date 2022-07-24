@@ -113,7 +113,7 @@ export default interface GenerableMapping<
   SubscriptionTypes extends DefinitionType = any,
 > {
   /**  String name type of component. Must be equal to index within registry. */
-  type: DefinitionType;
+  key: DefinitionType;
   subscriptions?: MappingSubscriptions<
     GenerableType,
     Subscriptions,

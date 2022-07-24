@@ -12,7 +12,7 @@ import InspectableMapping from '../InspectableMapping';
 export const ParameterMapping: InspectableMapping<
   CustomParameter<PipelineParameterLiteral>
 > = {
-  type: 'parameters',
+  key: 'parameters',
   name: {
     singular: 'Parameter',
     plural: 'Parameters',

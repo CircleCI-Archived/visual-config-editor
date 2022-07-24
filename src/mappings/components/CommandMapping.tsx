@@ -10,7 +10,7 @@ import {
 import InspectableMapping from '../InspectableMapping';
 
 export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
-  type: 'commands',
+  key: 'commands',
   name: {
     singular: 'Command',
     plural: 'Commands',

@@ -1,4 +1,5 @@
 import { createStore, StoreProvider } from 'easy-peasy';
+import ConfirmationModal from './components/atoms/ConfirmationModal';
 import EditorPane from './components/panes/EditorPane';
 import NavigationPane from './components/panes/NavigationPane';
 import WorkflowsPane from './components/panes/WorkflowsPane';
@@ -6,9 +7,9 @@ import useWindowDimensions from './state/Hooks';
 import Store from './state/Store';
 
 export const store = createStore(Store);
+export const inspectorWidth = 320;
 
 const App = () => {
-  const inspectorWidth = 320;
   const appWidth = useWindowDimensions();
 
   return (
@@ -23,6 +24,7 @@ const App = () => {
         </section>
         <NavigationPane width={inspectorWidth} />
       </section>
+      <ConfirmationModal />
     </StoreProvider>
   );
 };

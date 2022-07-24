@@ -18,10 +18,33 @@ export interface DefinitionsProps {
 }
 
 const DefinitionsContainer = (props: DefinitionsProps) => {
-  const items = useStoreState((store) => store.definitions[props.type.type]);
+  // the definitions of the current type of inspectable mapping
+  const definitions = useStoreState(
+    (store) => store.definitions[props.type.key],
+  );
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
+
+  /**
+   * Navigate to inspector definition menu,
+   * will go to a subtype page if the InspectableMapping type
+   * has subtypes defined.
+   */
+  const navigateToInspector = () => {
+    navigateTo(
+      props.type.subtypes
+        ? navSubTypeMenu({
+            typePage: props.type.subtypes?.component,
+            menuPage: InspectorDefinitionMenu,
+            menuProps: { dataType: props.type, index: -1 },
+          })
+        : {
+            component: InspectorDefinitionMenuNav,
+            props: { dataType: props.type, index: -1 },
+          },
+    );
+  };
 
   return (
     <div ref={ref} className="w-full p-4 pb-0">
@@ -34,20 +57,7 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
         onChange={props.onChange}
         titleExpanded={
           <button
-            onClick={() =>
-              navigateTo(
-                props.type.subtypes?.component
-                  ? navSubTypeMenu({
-                      typePage: props.type.subtypes?.component,
-                      menuPage: InspectorDefinitionMenu,
-                      menuProps: { dataType: props.type, index: -1 },
-                    })
-                  : {
-                      component: InspectorDefinitionMenuNav,
-                      props: { dataType: props.type, index: -1 },
-                    },
-              )
-            }
+            onClick={navigateToInspector}
             className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
           >
             New
@@ -56,8 +66,8 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
       >
         <div className="w-full pl-2 pt-2">
           <ComponentInfo type={props.type} />
-          {typeof items === 'object' && !Array.isArray(items) ? (
-            Object.entries(items).map(([name, definition], index) => (
+          {typeof definitions === 'object' && !Array.isArray(definitions) ? (
+            Object.entries(definitions).map(([name, definition], index) => (
               <Definition
                 data={definition.value}
                 key={name}

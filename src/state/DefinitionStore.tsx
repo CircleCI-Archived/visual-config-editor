@@ -176,7 +176,7 @@ export const subscribeToObservables = <G extends NamedGenerable>(
   mapping: GenerableMapping<G>,
   observer: G,
 ) => {
-  const type = mapping.type;
+  const type = mapping.key;
   let subscriptions: DefinitionSubscriptions[] = [];
   const observables = mapping.subscriptions
     ? Object.assign(
@@ -234,8 +234,8 @@ export const setDefinitions = <G extends NamedGenerable>(
   observers?: DefinitionSubscriptions,
   updateRecord?: (record: DefinitionRecord<G>) => void,
 ) => {
-  const defType = mapping.type;
-  const oldState = state.definitions[mapping.type];
+  const defType = mapping.key;
+  const oldState = state.definitions[mapping.key];
   const [otherObservables, subscriptions] = subscribeToObservables(
     state,
     mapping,
@@ -284,7 +284,7 @@ export const setDefinitions = <G extends NamedGenerable>(
 export const createDefinitionActions = <G extends NamedGenerable>(
   mapping: GenerableMapping<G>,
 ): Record<string, DefinitionAction<G>> => {
-  const defType = mapping.type;
+  const defType = mapping.key;
 
   return {
     [`define_${defType}`]: action((state, payload: G) => {
@@ -382,7 +382,7 @@ export const createSubscriptionThunks = <
 >(
   mapping: ObserverMapping<Observer>,
 ): Partial<Record<DefinitionType, DefinitionSubscriptionThunk>> => {
-  const observerType = mapping.type;
+  const observerType = mapping.key;
 
   return Object.assign(
     {},

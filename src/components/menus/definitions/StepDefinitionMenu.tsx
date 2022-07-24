@@ -2,17 +2,19 @@ import { reusable } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
-import { NavigationComponent } from '../../../state/Store';
+import { DataModel, NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
 import ParamListContainer from '../../containers/ParamListContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
-type StepDefinitionProps = {
+type StepDefinitionProps = DataModel & {
   values?: Record<string, object>;
   editing?: boolean;
   index?: number;
+  readonly data?: any;
 } & SubTypeMenuPageProps<any>;
 
 const StepDefinitionMenu = (props: StepDefinitionProps) => {
@@ -127,12 +129,22 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <button
-              type="submit"
-              className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-            >
-              Save Step
-            </button>
+            <div className="flex flex-row ml-auto center py-6 mr-4">
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => {
+                  navigateBack({
+                    distance: 1,
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {props.editing ? 'Save Step' : 'Create Step'}
+              </Button>
+            </div>
           </Form>
         )}
       </Formik>
