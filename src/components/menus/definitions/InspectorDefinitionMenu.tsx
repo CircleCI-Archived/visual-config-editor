@@ -82,7 +82,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   }
 
   const updateConfirmation = useStoreActions(
-    (actions) => actions.updateConfirmation,
+    (actions) => actions.triggerConfirmation,
   );
   return (
     <div className="h-full flex flex-col">
@@ -227,7 +227,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     type="button"
                     onClick={() => {
                       updateConfirmation({
-                        type: 'delete',
+                        modalDialogue: 'delete',
                         labels: [dataMapping.name.singular, props.data.name],
                         onConfirm: () => {
                           deleteDefinition(props.data);

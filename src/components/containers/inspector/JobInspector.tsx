@@ -41,6 +41,11 @@ const EmbeddedExecutor = ({
   definitions: DefinitionsModel;
 } & FormikValues) => {
   const defineExecutor = useStoreActions((actions) => actions.define_executors);
+  const updateConfirmation = useStoreActions(
+    (actions) => actions.triggerConfirmation,
+  );
+
+  const triggerToast = useStoreActions((actions) => actions.triggerToast);
   const embeddedHelper = useField({
     name: embeddedExecutor,
     ...props,
@@ -58,14 +63,31 @@ const EmbeddedExecutor = ({
           type="button"
           className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium  "
           onClick={() => {
-            if (!(data.executor instanceof executors.Executor)) {
-              return;
-            }
-
             const name = data.name + '-exec-export';
-            embeddedHelper.setValue(undefined);
-            defineExecutor(data.executor.asReusable(name));
-            executor.setValue(name);
+
+            updateConfirmation({
+              onConfirm: () => {
+                if (!(data.executor instanceof executors.Executor)) {
+                  return;
+                }
+
+                embeddedHelper.setValue(undefined);
+                defineExecutor(data.executor.asReusable(name));
+                executor.setValue(name);
+                triggerToast({
+                  label: name,
+                  content: 'has been exported.',
+                  status: 'success',
+                });
+              },
+              modalDialogue: {
+                body: 'Upon extracting this %s, a %s with the name %s will be created. This operation cannot be undone.',
+                button: 'Confirm',
+                buttonVariant: 'primary',
+                header: 'Confirm Executor Export',
+              },
+              labels: ['executor', 'reusable executor', name],
+            });
           }}
         >
           Export as Definition

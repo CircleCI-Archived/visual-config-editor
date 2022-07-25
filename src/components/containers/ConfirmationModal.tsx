@@ -3,14 +3,26 @@ import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button, ButtonVariant } from '../atoms/Button';
 
 export type ConfirmationType = 'save' | 'delete';
+export type ConfirmationDialogue = {
+  header: string;
+  body: string;
+  button: string;
+  buttonVariant: ButtonVariant;
+};
 
-export type ConfirmationDialogue = Record<
+export type ConfirmationModalModel = {
+  modalDialogue: ConfirmationType | ConfirmationDialogue;
+  labels: string[];
+  onConfirm: () => void;
+};
+
+export type ConfirmationDialogueTemplates = Record<
   ConfirmationType,
-  { header: string; body: string; button: string; buttonVariant: ButtonVariant }
+  ConfirmationDialogue
 >;
 
 const placeholder = '%s';
-const confirmDialogue: ConfirmationDialogue = {
+const confirmDialogue: ConfirmationDialogueTemplates = {
   save: {
     header: `Do you want to save changes to ${placeholder}?`,
     body: 'If you choose not to save, your changes will be lost.',
@@ -28,10 +40,13 @@ const confirmDialogue: ConfirmationDialogue = {
 const ConfirmationModal = () => {
   const confirm = useStoreState((state) => state.confirm);
   const updateConfirmation = useStoreActions(
-    (actions) => actions.updateConfirmation,
+    (actions) => actions.triggerConfirmation,
   );
 
-  const dialogue = confirmDialogue[confirm?.type || 'save'];
+  const dialogue =
+    typeof confirm?.modalDialogue === 'string'
+      ? confirmDialogue[confirm.modalDialogue]
+      : confirm?.modalDialogue;
   const dialogueBox = { x: 478, y: 250 };
   const closeHandler = () => {
     updateConfirmation(undefined);
@@ -56,7 +71,7 @@ const ConfirmationModal = () => {
   // implement dialog dictionary, make it pretty, functionality first bro, get components to delete
   return (
     <>
-      {confirm && (
+      {confirm && dialogue && (
         <div
           className="absolute left-0 top-0 w-full h-full z-50 flex"
           style={{ background: 'rgba(20,20,20,.8)' }}
@@ -86,14 +101,14 @@ const ConfirmationModal = () => {
                   Cancel
                 </Button>
                 <Button
-                  variant="dangerous"
+                  variant={dialogue.buttonVariant}
                   type="button"
                   onClick={() => {
                     confirm.onConfirm();
                     updateConfirmation(undefined);
                   }}
                 >
-                  Delete
+                  {dialogue.button}
                 </Button>
               </div>
             </div>

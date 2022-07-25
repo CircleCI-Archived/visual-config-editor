@@ -21,7 +21,7 @@ const NavigationPane = ({ width }: NavigationPaneProps) => {
     >
       <NavPage {...navigation.props} />
       <div
-        className="p-6 absolute bottom-0 right-0 my-10 pointer-events-none"
+        className="p-6 absolute bottom-0 right-0 my-20 pointer-events-none"
         style={{ width: inspectorWidth }}
       >
         <Toast />
