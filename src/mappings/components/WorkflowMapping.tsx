@@ -75,7 +75,9 @@ export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
     },
   },
   resolveObservables: (w) => ({
-    jobs: w.jobs.filter((job) => job instanceof workflow.WorkflowJob),
+    jobs: w.jobs.filter((job) => {
+      return job instanceof workflow.WorkflowJob;
+    }),
   }),
 };
 

@@ -1,8 +1,9 @@
-import { orb, reusable } from '@circleci/circleci-config-sdk';
+import { Job, orb, parsers, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
-import { useStoreActions } from '../../../state/Hooks';
+import { definitionsAsArray } from '../../../state/DefinitionStore';
+import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
@@ -11,12 +12,18 @@ import ParamListContainer from '../../containers/ParamListContainer';
 import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
-  source: WorkflowJob;
+  source: Job;
+  values: any;
+  id: string;
+  job: WorkflowJob;
 };
 
-const StagedJobMenu = ({ source }: WorkflowJobMenuProps) => {
+const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
-  // const navigateTo = useStoreActions((actions) => actions.navigateTo);
+  const definitions = useStoreState((state) => state.definitions);
+  const updateWorkflowElement = useStoreActions(
+    (actions) => actions.updateWorkflowElement,
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -26,30 +33,38 @@ const StagedJobMenu = ({ source }: WorkflowJobMenuProps) => {
       </header>
       <Formik
         initialValues={{
-          name: source.name,
-          parameters: { name: undefined, ...source.parameters },
+          parameters: { name: '', ...values.parameters },
         }}
-        enableReinitialize={true}
+        enableReinitialize
         onSubmit={(values) => {
-          source.parameters = values.parameters;
+          const update = parsers.parseWorkflowJob(
+            source.name,
+            values.parameters,
+            definitionsAsArray(definitions.jobs),
+          );
+
+          updateWorkflowElement({
+            id,
+            data: update,
+          });
 
           navigateBack({
             distance: 1,
           });
         }}
       >
-        {(formikProps) => (
+        {() => (
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
               <div className="p-6">
                 <InspectorProperty type="button" name="name" label="Source Job">
-                  <button
-                    className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
-      bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+                  <div
+                    className="w-full mb-2 p-2 text-sm  text-left text-circle-black 
+                  bg-circle-gray-200 border border-circle-gray-300 rounded-md2 flex flex-row"
                   >
                     <JobIcon className="ml-1 mr-2 w-5 h-5" />
                     <p className="leading-5">{source.name}</p>
-                  </button>
+                  </div>
                 </InspectorProperty>
                 <InspectorProperty
                   name="parameters.name"
@@ -71,11 +86,12 @@ const StagedJobMenu = ({ source }: WorkflowJobMenuProps) => {
                 >
                   Edit Filters
                 </button> */}
-                {(source.job instanceof reusable.ParameterizedJob ||
-                  source.job instanceof orb.OrbRef) && (
+
+                {(source instanceof reusable.ParameterizedJob ||
+                  source instanceof orb.OrbRef) && (
                   <ParamListContainer
                     parent="parameters"
-                    paramList={source.job.parameters}
+                    paramList={source.parameters}
                   ></ParamListContainer>
                 )}
               </div>
@@ -108,7 +124,7 @@ const StagedJobMenu = ({ source }: WorkflowJobMenuProps) => {
 const StagedJobMenuNav: NavigationComponent = {
   Component: StagedJobMenu,
   Label: (props: WorkflowJobMenuProps) => {
-    return <p>{props.source.parameters?.name || props.source.name}</p>;
+    return <p>{props.values.parameters?.name || props.source.name}</p>;
   },
   Icon: (props: WorkflowJobMenuProps) => {
     return <JobIcon className="w-6 h-8 py-2" />;
