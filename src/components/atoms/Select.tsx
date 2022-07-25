@@ -42,8 +42,6 @@ const SelectField = ({
       onChange={(value) => {
         setValue(props.transform ? props.transform(value) : value);
 
-        console.log(value);
-
         props.onChange && props.onChange(value);
       }}
     />

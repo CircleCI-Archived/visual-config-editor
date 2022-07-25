@@ -2,7 +2,14 @@ import { useStoreActions } from '../../../state/Hooks';
 import { StepDefinitionMenuNav } from '../../menus/definitions/StepDefinitionMenu';
 import { ListItemChildProps } from './ListProperty';
 
-const PreStepListItem = ({ item, index, values }: ListItemChildProps) => {
+export type AdjacentStepLiteral = 'pre-steps' | 'post-steps';
+
+const AdjacentStepListItem = ({
+  item,
+  index,
+  values,
+  type,
+}: ListItemChildProps & { type: AdjacentStepLiteral }) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const commandName = Object.keys(item)[0];
   const commandValues = item[commandName];
@@ -20,6 +27,9 @@ const PreStepListItem = ({ item, index, values }: ListItemChildProps) => {
               name: commandName,
               parameters: commandValues,
             },
+            getter: (values: any) => values.parameters[type],
+            setter: (values: any, value: any) =>
+              (values.parameters[type] = value),
             index,
           },
           values: {
@@ -33,4 +43,4 @@ const PreStepListItem = ({ item, index, values }: ListItemChildProps) => {
   );
 };
 
-export default PreStepListItem;
+export default AdjacentStepListItem;

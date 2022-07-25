@@ -115,6 +115,7 @@ const ListProperty = ({
                     }
                   }}
                 >
+                  {children}
                   <Droppable droppableId="droppable">
                     {(provided) => (
                       <div
@@ -158,11 +159,13 @@ const ListProperty = ({
             )}
           />
         ) : (
-          <p className="ml-2 font-medium text-sm text-circle-gray-500">
-            {emptyText}
-          </p>
+          <>
+            <p className="ml-2 font-medium text-sm text-circle-gray-500">
+              {emptyText}
+            </p>
+            {children}
+          </>
         )}
-        {children}
       </>
     </CollapsibleList>
   );

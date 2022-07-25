@@ -5,10 +5,16 @@ import JobIcon from '../../../icons/components/JobIcon';
 import { definitionsAsArray } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
+import AddButton from '../../atoms/AddButton';
 import { Button } from '../../atoms/Button';
+import AdjacentStepListItem from '../../atoms/form/AdjacentStepListItem';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
+import ListProperty from '../../atoms/form/ListProperty';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParamListContainer from '../../containers/ParamListContainer';
+import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
+import StepTypePageNav from '../definitions/subtypes/StepTypePage';
+import { navSubTypeMenu } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
@@ -18,9 +24,55 @@ type WorkflowJobMenuProps = {
   job: WorkflowJob;
 };
 
+const AdjacentSteps = ({
+  values,
+  label,
+  type,
+}: {
+  values: any;
+  label: string;
+  type: 'pre-steps' | 'post-steps';
+}) => {
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+
+  return (
+    <ListProperty
+      label={label}
+      name={`parameters.${type}`}
+      expanded
+      required
+      listItem={(input) => (
+        <AdjacentStepListItem {...input} values={values} type={type} />
+      )}
+      emptyText="No steps defined yet."
+    >
+      <AddButton
+        className="ml-auto flex"
+        onClick={() => {
+          navigateTo(
+            navSubTypeMenu(
+              {
+                typePage: StepTypePageNav,
+                menuPage: StepDefinitionMenu,
+                menuProps: {
+                  getter: (values: any) => values.parameters[type],
+                  setter: (values: any, value: any) =>
+                    (values.parameters[type] = value),
+                },
+              },
+              values,
+            ),
+          );
+        }}
+      />
+    </ListProperty>
+  );
+};
+
 const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const definitions = useStoreState((state) => state.definitions);
+
   const updateWorkflowElement = useStoreActions(
     (actions) => actions.updateWorkflowElement,
   );
@@ -33,13 +85,23 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
       </header>
       <Formik
         initialValues={{
-          parameters: { name: '', ...values.parameters },
+          parameters: {
+            name: '',
+            'pre-steps': [],
+            'post-steps': [],
+            ...values.parameters,
+          },
         }}
         enableReinitialize
         onSubmit={(values) => {
           const update = parsers.parseWorkflowJob(
             source.name,
-            values.parameters,
+            Object.assign(
+              {},
+              ...Object.entries(values.parameters).map(([key, value]) =>
+                value ? { [key]: value } : undefined,
+              ),
+            ),
             definitionsAsArray(definitions.jobs),
           );
 
@@ -89,11 +151,23 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
 
                 {(source instanceof reusable.ParameterizedJob ||
                   source instanceof orb.OrbRef) && (
-                  <ParamListContainer
-                    parent="parameters"
-                    paramList={source.parameters}
-                  ></ParamListContainer>
+                  <>
+                    <ParamListContainer
+                      parent="parameters"
+                      paramList={source.parameters}
+                    ></ParamListContainer>
+                  </>
                 )}
+                <AdjacentSteps
+                  values={values}
+                  label="Pre-steps"
+                  type="pre-steps"
+                />
+                <AdjacentSteps
+                  values={values}
+                  label="Post-steps"
+                  type="post-steps"
+                />
               </div>
             </TabbedMenu>
 

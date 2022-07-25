@@ -43,8 +43,6 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
       : (subtype as reusable.CustomCommand);
   }
 
-  console.log(valueGetter, valueSetter);
-
   return (
     <div className="h-full flex flex-col">
       <header>
