@@ -1,12 +1,17 @@
 import algoliasearch from 'algoliasearch/lite';
+import { useState } from 'react';
 import {
   Hits,
   HitsPerPage,
   InstantSearch,
   PaginationProps,
-  SearchBox,
+  useInstantSearch,
   usePagination,
+  useSearchBox,
+  UseSearchBoxProps,
 } from 'react-instantsearch-hooks-web';
+import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
+import Loading from '../../../icons/ui/Loading';
 import { useStoreActions } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import Card from '../../atoms/Card';
@@ -15,8 +20,6 @@ import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 import { OrbDefinitionMenuNav, OrbDefinitionProps } from './OrbDefinitionsMenu';
-import { useState } from 'react';
-import Loading from '../../../icons/svgs/loading.svg';
 
 type InspectorDefinitionProps = DataModel & {
   values: Record<string, object>;
@@ -32,28 +35,56 @@ const searchClient = algoliasearch(
 
 function Pagination(props: PaginationProps) {
   const { pages, refine } = usePagination(props);
+  const { results } = useInstantSearch();
 
   return (
-    <div className="flex flex-row mx-auto">
-      {pages.map((page) => (
-        <button
-          className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
-          key={page}
-          onClick={() => {
-            refine(page + 1);
-          }}
-        >
-          {page + 1}
-        </button>
-      ))}
-    </div>
+    <>
+      {results.hits.length > 0 && (
+        <div className="flex flex-row mx-auto">
+          {pages.map((page) => (
+            <button
+              className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
+              key={page}
+              onClick={() => {
+                refine(page + 1);
+              }}
+            >
+              {page + 1}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
+
+const SearchBox = (
+  props: UseSearchBoxProps & { className?: string; placeholder?: string },
+) => {
+  const { query, refine, clear } = useSearchBox(props);
+  const { results } = useInstantSearch();
+
+  return (
+    <>
+      <div className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row">
+        <input
+          value={query}
+          placeholder={props.placeholder}
+          className="pl-4 p-2 m-0 flex-grow"
+          onChange={(e) => refine(e.target.value)}
+        />
+        <button type="button" className="mx-4" onClick={() => clear()}>
+          <DeleteItemIcon className="w-3 h-3" />
+        </button>
+      </div>
+      {results.hits.length < 1 && <Loading className="flex m-auto mt-10" />}
+    </>
+  );
+};
 
 const OrbImportMenu = (props: InspectorDefinitionProps) => {
   const tabs = ['EXPLORE'];
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <div className="h-full flex flex-col">
@@ -65,43 +96,22 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
         </div>
       </header>
       <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
-        <div className="p-6">
+        <div className="p-6 h-full">
           <InstantSearch searchClient={searchClient} indexName="orbs-prod">
             {/* <RefinementList attribute="brand" /> */}
             <p className="font-bold leading-5 tracking-wide">Search Filters</p>
             <Select className="mt-2 w-full">
               <option>Recommended Orbs</option>
             </Select>
-            <SearchBox
-              placeholder="Search Orb Directory..."
-              classNames={{
-                form: 'my-2 rounded border border-circle-gray-300 px-2 hover:border-circle-gray-700',
-                input: 'p-2',
-                submit: 'p-2',
-              }}
-            />
+            <SearchBox placeholder="Search Orb Directory..." />
             <HitsPerPage
               hidden
               items={[{ value: 6, label: '', default: true }]}
             />
-            <div
-              style={{
-                display: isLoading ? 'flex' : 'none',
-                justifyContent: 'center',
-              }}
-            >
-              <img
-                src={Loading}
-                alt="loading wheel"
-                className="w-8 h-8 animate-spin"
-              />
-            </div>
             <Hits
               className="overflow-y-auto"
-              hitComponent={({ hit, sendEvent }) => {
+              hitComponent={({ hit }) => {
                 let values = hit as unknown as OrbDefinitionProps;
-
-                setIsLoading(false);
 
                 return (
                   <Card
@@ -127,14 +137,7 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
                     onClick={() => {
                       navigateTo({
                         component: OrbDefinitionMenuNav,
-                        props: {
-                          name: values.name,
-                          namespace: values.namespace,
-                          version: values.version,
-                          logo_url: values.logo_url,
-                          description: values.description,
-                          url: values.url,
-                        },
+                        props: values,
                       });
                     }}
                   />
@@ -146,7 +149,6 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
             </div>
           </InstantSearch>
         </div>
-        <div></div>
       </TabbedMenu>
     </div>
   );

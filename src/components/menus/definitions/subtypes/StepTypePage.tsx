@@ -7,6 +7,7 @@ import TabbedMenu from '../../TabbedMenu';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 import { mapDefinitions } from '../../../../state/DefinitionStore';
 import { reusable } from '@circleci/circleci-config-sdk';
+import Card from '../../../atoms/Card';
 
 const StepTypePage = (
   props: SubTypeSelectPageProps<string | CustomCommand>,
@@ -22,21 +23,31 @@ const StepTypePage = (
       </header>
       <TabbedMenu tabs={['BUILT-IN', 'COMMANDS', 'ORBS']}>
         <div className="p-6">
-          {Object.keys(commandSubtypes).map((subtype) => (
-            <button
-              key={subtype}
-              type="button"
-              className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+          {Object.entries(commandSubtypes).map(([name, subtype]) => (
+            <Card
+              key={name}
+              description={subtype.description}
+              title={subtype.name}
               onClick={() => {
-                props.setSubtype(subtype);
+                props.setSubtype(name);
               }}
-            >
-              <p className="font-bold">{commandSubtypes[subtype].name}</p>
-              <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                {commandSubtypes[subtype].description}
-              </p>
-            </button>
-            // <InspectorProperty name={command} label={commandProps[command].text} as="card" />
+              pinned={
+                <div>
+                  {subtype.docsLink && (
+                    <a
+                      className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                      href={subtype.docsLink}
+                      target="circleci_docs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      Learn More
+                    </a>
+                  )}
+                </div>
+              }
+            />
           ))}
         </div>
         <div className="p-6">
@@ -46,7 +57,7 @@ const StepTypePage = (
               <button
                 key={command.name}
                 type="button"
-                className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                 onClick={() => {
                   props.setSubtype(command);
                 }}

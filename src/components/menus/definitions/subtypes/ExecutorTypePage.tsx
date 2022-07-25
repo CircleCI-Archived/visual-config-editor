@@ -16,7 +16,7 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
         </div>
         <div className="flex border-b border-circle-gray-300 pl-6">
           <div
-            className={`text-sm tracking-wide px-3 py-3 font-bold text-center 'border-black border-b-4 border-black text-circle-black`}
+            className={`text-sm tracking-wide px-3 py-3 font-bold text-center border-b-4 border-black text-circle-black`}
           >
             TYPE
           </div>

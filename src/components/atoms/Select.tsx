@@ -13,6 +13,7 @@ type SelectProps = {
   onChange?: (value: any) => void;
   children: OptionElement[] | OptionElement;
   icon?: ReactElement;
+  borderless?: boolean;
 };
 
 type SelectFieldProps = SelectProps & {
@@ -58,10 +59,12 @@ const Select = (props: SelectProps) => {
 
   return (
     <DropdownContainer
-      className={
-        'rounded border border-circle-gray-300 px-2 shadow-sm hover:border-circle-gray-700 ' +
-        props.className
-      }
+      className={`rounded ${
+        props.borderless
+          ? 'border-transparent'
+          : ' border-circle-gray-300 shadow-sm'
+      } px-2 hover:border-circle-gray-700 border w-auto 
+        ${props.className}`}
     >
       <div className="flex flex-row">
         {props.icon}

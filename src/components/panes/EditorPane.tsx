@@ -1,15 +1,10 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { useRef } from 'react';
-import { useStoreActions, useStoreState } from '../../state/Hooks';
-import DropdownContainer from '../containers/DropdownContainer';
+import { useStoreState } from '../../state/Hooks';
 import { version } from '../../version.json';
-import { parsers } from '@circleci/circleci-config-sdk';
 
 const EditorPane = () => {
   const config = useStoreState((state) => state.config);
   const editingConfig = useStoreState((state) => state.editingConfig);
-  const loadConfig = useStoreActions((actions) => actions.loadConfig);
-  const inputFile = useRef<HTMLInputElement>(null);
 
   const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
@@ -35,28 +30,7 @@ const EditorPane = () => {
           CONFIG
         </div>
         <div className="p-2 ml-auto">
-          <input
-            type="file"
-            accept=".yml,.yaml"
-            ref={inputFile}
-            className="hidden"
-            onChange={(e) => {
-              if (!e.target.files) {
-                return;
-              }
-
-              e.target.files[0].text().then((yml) => {
-                let config;
-                try {
-                  config = parsers.parseConfig(yml);
-                } catch (e) {
-                  config = e as Error;
-                }
-                loadConfig(config);
-              });
-            }}
-          />
-          <DropdownContainer className="rounded-md bg-circle-gray-300 text-circle-black px-2 hover:bg-circle-gray-400">
+          {/* <DropdownContainer className="rounded-md bg-circle-gray-300 text-circle-black px-2 hover:bg-circle-gray-400">
             <p>•••</p>
             <div className="bg-white flex-col flex rounded shadow text-base">
               <button
@@ -72,7 +46,7 @@ const EditorPane = () => {
                 Save
               </button>
             </div>
-          </DropdownContainer>
+          </DropdownContainer> */}
         </div>
       </div>
       <div className="flex-1 overflow-hidden">

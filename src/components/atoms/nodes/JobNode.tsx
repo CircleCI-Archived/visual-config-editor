@@ -104,7 +104,7 @@ const JobNode: React.FunctionComponent<
     navigateTo({
       component: StagedJobMenuNav,
       props: {
-        source: workflowJob.job,
+        source: workflowJob,
         values: flattenGenerable(workflowJob, true),
         id: props.id,
       },

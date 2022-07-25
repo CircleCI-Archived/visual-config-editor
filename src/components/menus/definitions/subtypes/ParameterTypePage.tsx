@@ -1,6 +1,7 @@
 import ParameterIcon from '../../../../icons/components/ParameterIcon';
 import InspectableMapping from '../../../../mappings/InspectableMapping';
 import { NavigationComponent } from '../../../../state/Store';
+import Card from '../../../atoms/Card';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
 import {
   componentParametersSubtypes,
@@ -34,19 +35,30 @@ const ParameterTypePage = (
       <div className="p-6">
         {parameters?.types &&
           parameters.types.map((subtype: any) => (
-            <button
+            <Card
               key={subtype}
-              type="button"
-              className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+              description={parameterSubtypes[subtype].description}
+              title={parameterSubtypes[subtype].text}
               onClick={() => {
                 props.setSubtype(subtype);
               }}
-            >
-              <p className="font-bold">{parameterSubtypes[subtype]?.text}</p>
-              <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                {parameterSubtypes[subtype]?.description}
-              </p>
-            </button>
+              pinned={
+                <div>
+                  {parameterSubtypes[subtype].docsLink && (
+                    <a
+                      className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                      href={parameterSubtypes[subtype].docsLink}
+                      target="circleci_docs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      Learn More
+                    </a>
+                  )}
+                </div>
+              }
+            />
             // <InspectorProperty name={command} label={commandProps[command].text} as="card" />
           ))}
       </div>

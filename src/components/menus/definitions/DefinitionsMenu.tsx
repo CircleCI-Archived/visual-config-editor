@@ -1,40 +1,46 @@
+import { parsers } from '@circleci/circleci-config-sdk';
 import { Form, Formik } from 'formik';
+import { useRef } from 'react';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
+import { Footer } from '../../atoms/Footer';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
+import { WorkflowSelector } from '../../atoms/WorkflowSelector';
+import BreadCrumbs from '../../containers/BreadCrumbs';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
 import TabbedMenu from '../TabbedMenu';
 
 /**
- * @see
- * @returns
+ * The main menu for inspecting the app's contents.
  */
-
 const DefinitionsMenu = (props: { expanded: boolean[] }) => {
-  /* TODO: DETERMINE PARAMETERS
-  const parameters = useStoreState((state) => state.parameters); 
-  const defineParameter = useStoreActions((actions) => actions.defineParameter); */
-  // const generateConfig = useStoreActions((actions) => actions.generateConfig);
   const workflowGraphs = useStoreState((state) => state.definitions.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
+  const config = useStoreState((state) => state.config);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);
   const workflow = workflowGraphs[selectedWorkflow].value;
+  const inputFile = useRef<HTMLInputElement>(null);
+  const loadConfig = useStoreActions((actions) => actions.loadConfig);
 
   return (
-    <div className="h-full bg-white flex flex-col overflow-y-auto">
+    <div className="h-full bg-white flex flex-col">
       <header className="ml-4 mb-4 flex">
         <WorkflowIcon className="w-8 h-8 p-1 mr-1" />
         <h1 className="text-2xl font-bold">{workflow.name}</h1>
+        <WorkflowSelector />
       </header>
-
       <TabbedMenu tabs={['DEFINITIONS', 'PROPERTIES']}>
-        <div className="p-2 flex-1 h-full w-full flex-col">
-          <OrbImportsContainer></OrbImportsContainer>
+        <div
+          className="px-2 flex-1 w-full flex-col overflow-y-scroll"
+          style={{ height: 'calc(100vh - 200px)' }}
+        >
+          <OrbImportsContainer />
           {dataMappings.map((mapping, index) => {
             const dataType = mapping.mapping as InspectableMapping;
 
@@ -61,7 +67,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
             enableReinitialize
             onSubmit={(values) => {}}
           >
-            {(formikProps) => (
+            {(_) => (
               <Form className="flex flex-col flex-1">
                 <InspectorProperty label="Name" name="name" />
               </Form>
@@ -70,12 +76,48 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
         </div>
       </TabbedMenu>
       <span className="border-b border-circle-gray-300" />
-      <button
-        className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-        onClick={(e) => updateConfig()}
-      >
-        Generate Config
-      </button>
+      <Footer>
+        <input
+          type="file"
+          accept=".yml,.yaml"
+          ref={inputFile}
+          className="hidden"
+          onChange={(e) => {
+            if (!e.target.files) {
+              return;
+            }
+
+            e.target.files[0].text().then((yml) => {
+              let config;
+              try {
+                config = parsers.parseConfig(yml);
+              } catch (e) {
+                config = e as Error;
+              }
+              loadConfig(config);
+            });
+          }}
+        />
+        <Button
+          variant={config ? 'secondary' : 'primary'}
+          className=" w-min whitespace-nowrap"
+          onClick={(e) => {
+            inputFile.current?.click();
+            e.stopPropagation();
+          }}
+        >
+          Open Config
+        </Button>
+        {config && (
+          <Button
+            variant="primary"
+            className=" w-min whitespace-nowrap"
+            onClick={(e) => updateConfig()}
+          >
+            Generate Config
+          </Button>
+        )}
+      </Footer>
     </div>
   );
 };

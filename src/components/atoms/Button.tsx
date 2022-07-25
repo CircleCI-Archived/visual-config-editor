@@ -19,7 +19,7 @@ export const Button = ({
   return (
     <button
       {...props}
-      className={`text-sm font-medium py-2 px-4 mx-3 duration:50 transition-colors rounded-md2 ${className} ${styles[variant]}`}
+      className={`w-min whitespace-nowrap text-sm font-medium py-2 px-4 mx-3 duration:50 transition-colors rounded-md2 ${className} ${styles[variant]}`}
     >
       {props.children}
     </button>

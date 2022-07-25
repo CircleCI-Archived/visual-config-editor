@@ -99,7 +99,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             <TabbedMenu tabs={['PROPERTIES']}>
               <div className="p-6">
                 <button
-                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                  className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                   type="button"
                   onClick={() => {
                     props.selectSubtype();

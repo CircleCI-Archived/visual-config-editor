@@ -8,8 +8,11 @@ export interface CommandSubTypes {
     description?: string;
     summary?: (command: any) => ReactElement;
     fields: ReactElement;
+    docsLink: string;
   };
 }
+
+const sourceURL = 'https://circleci.com/docs/configuration-reference';
 
 const commandSubtypes: CommandSubTypes = {
   run: {
@@ -18,8 +21,9 @@ const commandSubtypes: CommandSubTypes = {
     summary: (command) => (
       <p className="inline">{command.parameters.command}</p>
     ),
+    docsLink: `${sourceURL}#run`,
     fields: (
-      <div>
+      <>
         <InspectorProperty
           label="Command"
           as="textarea"
@@ -46,11 +50,12 @@ const commandSubtypes: CommandSubTypes = {
           <option value="on_success">On Success</option>
           <option value="on_fail">On Fail</option>
         </InspectorProperty>
-      </div>
+      </>
     ),
   },
   checkout: {
     name: 'Checkout',
+    docsLink: `${sourceURL}#checkout`,
     description:
       'A special step used to check out source code to the configured path',
     fields: <InspectorProperty label="Path" name="parameters.path" />,
@@ -59,49 +64,48 @@ const commandSubtypes: CommandSubTypes = {
     name: 'Persist To Workspace',
     description:
       'Persist a temporary file to be used by another job in the workflow',
+    docsLink: `${sourceURL}#persisttoworkspace`,
     fields: (
-      <div>
+      <>
         <InspectorProperty label="Root" name="parameters.root" required />
         <InspectorProperty label="Path" name="parameters.path" required />
-      </div>
+      </>
     ),
   },
   attach_workspace: {
     name: 'Attach Workspace',
+    docsLink: `${sourceURL}#attachworkspace`,
     description: 'Attach the workflow’s workspace to the current container',
     fields: <InspectorProperty label="At" name="parameters.at" required />,
   },
   store_artifacts: {
     name: 'Store Artifacts',
+    docsLink: `${sourceURL}#storeartifacts`,
     description: 'Step to store artifacts such as logs and binaries',
     fields: (
-      <div>
-        Path
-        <Field
-          required
-          name="parameters.path"
-          className="p-1 w-full border-circle-light-blue border-2 rounded"
-        ></Field>
-        <br />
-        Destination
-        <Field
+      <>
+        <InspectorProperty label="Path" name="parameters.path" required />
+        <InspectorProperty
+          label="Destination"
           name="parameters.destination"
-          className="p-1 w-full border-circle-gray-300 border-2 rounded"
-        ></Field>
-      </div>
+          required
+        />
+      </>
     ),
   },
   store_test_results: {
     name: 'Store Test Results',
+    docsLink: `${sourceURL}#storetestresults`,
     description: 'Upload and store test results for a build',
     fields: <InspectorProperty label="Path" name="parameters.path" required />,
   },
   save_cache: {
     name: 'Save Cache',
+    docsLink: `${sourceURL}#savecache`,
     description:
       'Generates and stores a cache of a file or directory in object storage',
     fields: (
-      <div>
+      <>
         <InspectorProperty label="Path" name="parameters.path" required />
         <InspectorProperty label="Key" name="parameters.key" required />
         <InspectorProperty label="When" name="parameters.when" as="select">
@@ -110,7 +114,25 @@ const commandSubtypes: CommandSubTypes = {
           <option value="on_success">On Success</option>
           <option value="on_fail">On Fail</option>
         </InspectorProperty>
-      </div>
+      </>
+    ),
+  },
+  restore_cache: {
+    name: 'Restore Cache',
+    docsLink: `${sourceURL}#restorecache`,
+    description:
+      'Restores a previously saved cache based on a key. Cache needs to have been saved first for this key using Save Cache step.',
+    fields: (
+      <>
+        <InspectorProperty label="Path" name="parameters.path" required />
+        <InspectorProperty label="Key" name="parameters.key" required />
+        <InspectorProperty label="When" name="parameters.when" as="select">
+          <option value="undefined">Select When</option>
+          <option value="always">Always</option>
+          <option value="on_success">On Success</option>
+          <option value="on_fail">On Fail</option>
+        </InspectorProperty>
+      </>
     ),
   },
 };

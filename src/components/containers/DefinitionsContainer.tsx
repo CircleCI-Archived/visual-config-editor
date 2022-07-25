@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import InspectableMapping from '../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import AddButton from '../atoms/AddButton';
 import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
 import {
@@ -47,22 +48,16 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
   };
 
   return (
-    <div ref={ref} className="w-full p-4 pb-0">
+    <div ref={ref} className="w-full px-4 pb-0">
       {props.type.guide && guideStep === props.type.guide.step && (
         <GuideContainer target={ref}>{props.type.guide.info}</GuideContainer>
       )}
       <CollapsibleList
         title={props.type.name.plural}
         expanded={props.expanded}
+        className="py-4"
+        classNameExpanded="py-4 "
         onChange={props.onChange}
-        titleExpanded={
-          <button
-            onClick={navigateToInspector}
-            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-          >
-            New
-          </button>
-        }
       >
         <div className="w-full pl-2 pt-2">
           <ComponentInfo type={props.type} />
@@ -80,9 +75,10 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
               No {props.type.name.plural} found.
             </div>
           )}
+          <AddButton className="flex ml-auto" onClick={navigateToInspector} />
         </div>
       </CollapsibleList>
-      <div className="w-full p-2 border-b border-circle-gray-300"></div>
+      <div className="w-full border-b border-circle-gray-300"></div>
     </div>
   );
 };
