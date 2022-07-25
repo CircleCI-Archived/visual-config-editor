@@ -17,6 +17,7 @@ import {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { store } from '../App';
+import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
 import { JobMapping } from '../mappings/components/JobMapping';
@@ -41,7 +42,6 @@ export interface NavigationBack {
   distance?: number;
   applyValues?: (current: any) => any;
   applyObservers?: (current?: Array<DefinitionSubscriptions>) => any;
-  toast?: ToastModel;
 }
 
 export interface ToastModel {
@@ -51,12 +51,7 @@ export interface ToastModel {
   timeout?: NodeJS.Timeout;
 }
 
-export interface ConfirmationModal {
-  type: 'save' | 'delete';
-  labels: string[];
-  onConfirm: () => void;
-}
-
+export type WithToast<T> = T & { toast?: ToastModel };
 export interface WorkflowModel {
   name: string;
   id: string;
@@ -120,7 +115,7 @@ export type StoreModel = DefinitionsStoreModel & {
   previewToolbox: PreviewToolboxModel;
 
   toast?: ToastModel;
-  confirm?: ConfirmationModal;
+  confirm?: ConfirmationModalModel;
 
   /** Data being dragged from definition */
   dragging?: DataModel;
@@ -184,8 +179,8 @@ export type StoreActions = AllDefinitionActions & {
   setGuideStep: Action<StoreModel, number | undefined>;
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
-  navigateBack: Action<StoreModel, NavigationBack | void>;
-  onNavigate: ThunkOn<StoreActions, NavigationBack | void>;
+  navigateBack: Action<StoreModel, WithToast<NavigationBack> | void>;
+  onToastEvent: ThunkOn<StoreActions, WithToast<any> | ToastModel | void>;
 
   selectWorkflow: Action<StoreModel, string>;
   addWorkflowElement: Action<StoreModel, FlowElement<any>>;
@@ -203,7 +198,8 @@ export type StoreActions = AllDefinitionActions & {
 
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
   setToast: Action<StoreModel, ToastModel | undefined | void>;
-  updateConfirmation: Action<StoreModel, ConfirmationModal | undefined>;
+  triggerToast: Action<StoreModel, ToastModel | undefined | void>;
+  triggerConfirmation: Action<StoreModel, ConfirmationModalModel | undefined>;
 };
 
 const Actions: StoreActions = {
@@ -315,14 +311,16 @@ const Actions: StoreActions = {
     }
   }),
 
-  onNavigate: thunkOn(
-    (actions) => actions.navigateBack,
+  onToastEvent: thunkOn(
+    (actions) => [actions.navigateBack, actions.triggerToast],
     (actions, thunk) => {
       const state = store.getState();
-      const incomingToast = thunk.payload?.toast;
+      const incomingToast = ((thunk.payload &&
+        (thunk.payload as unknown as WithToast<any>).toast) ??
+        thunk.payload) as ToastModel;
       const currentToast = state.toast;
 
-      if (incomingToast) {
+      if (incomingToast?.content) {
         if (currentToast && currentToast.timeout) {
           clearTimeout(currentToast.timeout);
         }
@@ -720,7 +718,9 @@ const Actions: StoreActions = {
   setToast: action((state, payload) => {
     state.toast = payload ?? undefined;
   }),
-  updateConfirmation: action((state, payload) => {
+  // this is just to trigger the set toast action
+  triggerToast: action((_, __) => {}),
+  triggerConfirmation: action((state, payload) => {
     state.confirm = payload;
   }),
 };

@@ -42,7 +42,7 @@ const ListItem = ({
   lastRemaining,
 }: ListItemProps) => {
   const updateConfirmation = useStoreActions(
-    (actions) => actions.updateConfirmation,
+    (actions) => actions.triggerConfirmation,
   );
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
@@ -61,7 +61,7 @@ bg-white border border-circle-gray-300 hover:border-circle-black rounded-md2 fle
             <button
               onClick={() => {
                 updateConfirmation({
-                  type: 'delete',
+                  modalDialogue: 'delete',
                   labels: [`Step ${values.name}`],
                   onConfirm: () => arrayHelper.remove(index),
                 });
