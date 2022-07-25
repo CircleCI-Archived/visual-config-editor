@@ -12,7 +12,7 @@ const Card = ({ truncate, description, ...props }: CardProps) => {
     <div className="pb-4">
       <button
         type="button"
-        className="p-4 w-full border-circle-gray-300 border rounded text-left hover:border-circle-gray-700 max-h-36"
+        className="p-4 w-full border-circle-gray-300 border rounded text-left hover:border-circle-black max-h-36"
         onClick={props.onClick}
       >
         <div className="flex flex-row">

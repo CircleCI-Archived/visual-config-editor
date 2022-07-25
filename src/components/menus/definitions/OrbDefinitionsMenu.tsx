@@ -6,13 +6,15 @@ import {
   OrbImportManifest,
 } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useEffect, useState } from 'react';
-import Loading from '../../../icons/svgs/loading.svg';
+import Loading from '../../../icons/ui/Loading';
 import { typeToComponent } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import ComponentInfo from '../../atoms/ComponentInfo';
 import Definition from '../../atoms/Definition';
+import { Footer } from '../../atoms/Footer';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import CollapsibleList from '../../containers/CollapsibleList';
 
@@ -40,6 +42,7 @@ export type OrbDefinitionProps = {
   namespace: string;
   version: string;
   logo_url: string;
+  display: OrbDisplayMeta;
   description: string;
   url: string;
 };
@@ -61,9 +64,14 @@ const OrbDefinitionContainer = (props: {
   dataMapping: InspectableMapping;
   data: Record<string, OrbRef<AnyParameterLiteral>>;
 }) => {
-  return (
-    <div className="p-4 pt-4 pb-0">
-      <CollapsibleList expanded title={props.dataMapping.name.plural || ''}>
+  return Object.values(props.data).length > 0 ? (
+    <>
+      <CollapsibleList
+        expanded
+        className="py-4"
+        classNameExpanded="py-4"
+        title={props.dataMapping.name.plural || ''}
+      >
         <div className="p-2">
           <ComponentInfo type={props.dataMapping} />
           {Object.entries(props.data).map(([name, ref]) => (
@@ -71,8 +79,10 @@ const OrbDefinitionContainer = (props: {
           ))}
         </div>
       </CollapsibleList>
-      <div className="w-full p-2 border-b border-circle-gray-300"></div>
-    </div>
+      <span className="flex w-full border-b border-circle-gray-300"></span>
+    </>
+  ) : (
+    <></>
   );
 };
 
@@ -92,6 +102,7 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             manifest,
             props.version,
             props.logo_url,
+            props.description,
           ),
         );
       },
@@ -111,9 +122,16 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
         <div className="px-6 p-3">
           <div className="flex flex-row">
             <h2 className="text-circle-gray-400">{props.version}</h2>
-            <h2 className="flex ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium">
-              Documentation
-            </h2>
+            <a
+              className="flex ml-auto cursor-pointer tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+              href={orb?.display?.source_url}
+              target="circleci_docs"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              View on Dev Hub
+            </a>
           </div>
           <div className="flex flex-row mt-3">
             <img className="w-8 h-8 mx-1" src={props.logo_url} alt="" />
@@ -125,47 +143,48 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           <p className="mr-5 py-3 flex text-sm text-circle-gray-400">
             {props.description}
           </p>
-          {inProject ? (
-            <button className="text-circle-black bg-gray-200 rounded p-2 w-full hover:border-circle-red hover:bg-red-200 border ">
-              Imported
-            </button>
-          ) : (
-            <button
-              className="text-circle-black bg-gray-200 rounded p-2 w-full hover:border-gray-700 border"
-              onClick={() => {
-                if (orb) {
-                  importOrb(orb);
-                }
-              }}
-            >
-              Import
-            </button>
-          )}
         </div>
       </header>
       {orb ? (
-        <div className="p-2">
-          {orbDefinitions.map((component) => {
-            const mapping = typeToComponent(component);
+        <div className="px-2 h-full flex flex-col">
+          <div
+            className="flex flex-col overflow-y-scroll h-auto px-4"
+            style={{ height: `calc(100vh - 321px)` }}
+          >
+            {orbDefinitions.map((component) => {
+              const mapping = typeToComponent(component);
 
-            if (mapping) {
-              return (
-                <OrbDefinitionContainer
-                  dataMapping={mapping.mapping}
-                  data={orb[component]}
-                />
-              );
-            }
-            return <p>Error</p>;
-          })}
+              if (mapping) {
+                return (
+                  <OrbDefinitionContainer
+                    dataMapping={mapping.mapping}
+                    data={orb[component]}
+                  />
+                );
+              }
+              return <p>Error</p>;
+            })}
+          </div>
+          <Footer>
+            {inProject ? (
+              <Button variant="dangerous">Remove Orb from Config</Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  if (orb) {
+                    importOrb(orb);
+                  }
+                }}
+                variant="primary"
+              >
+                Import Orb
+              </Button>
+            )}
+          </Footer>
         </div>
       ) : (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <img
-            src={Loading}
-            alt="loading wheel"
-            className="w-8 h-8 animate-spin"
-          />
+        <div className="flex m-auto">
+          <Loading />
         </div>
       )}
     </div>

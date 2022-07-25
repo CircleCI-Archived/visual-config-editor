@@ -4,16 +4,17 @@ import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParamListContainer from '../../containers/ParamListContainer';
 import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
-  job: WorkflowJob;
+  source: WorkflowJob;
 };
 
-const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
+const StagedJobMenu = ({ source }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   // const navigateTo = useStoreActions((actions) => actions.navigateTo);
 
@@ -25,12 +26,12 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
       </header>
       <Formik
         initialValues={{
-          name: job.name,
-          parameters: { name: undefined, ...job.parameters },
+          name: source.name,
+          parameters: { name: undefined, ...source.parameters },
         }}
         enableReinitialize={true}
         onSubmit={(values) => {
-          job.parameters = values.parameters;
+          source.parameters = values.parameters;
 
           navigateBack({
             distance: 1,
@@ -47,13 +48,13 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
                   >
                     <JobIcon className="ml-1 mr-2 w-5 h-5" />
-                    <p className="leading-5">{job.name}</p>
+                    <p className="leading-5">{source.name}</p>
                   </button>
                 </InspectorProperty>
                 <InspectorProperty
                   name="parameters.name"
                   label="Name"
-                  placeholder={job.name}
+                  placeholder={source.name}
                 />
                 {/**
                   TODO: Replace with collapsible list
@@ -70,36 +71,32 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
                 >
                   Edit Filters
                 </button> */}
-                {(job.job instanceof reusable.ParameterizedJob ||
-                  job.job instanceof orb.OrbRef) && (
+                {(source.job instanceof reusable.ParameterizedJob ||
+                  source.job instanceof orb.OrbRef) && (
                   <ParamListContainer
                     parent="parameters"
-                    paramList={job.job.parameters}
+                    paramList={source.job.parameters}
                   ></ParamListContainer>
                 )}
               </div>
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <div className="display: flex	align-items: center justify-content: center">
-              <button
+            <div className="flex flex-row ml-auto center py-6 mr-4">
+              <Button
+                variant="secondary"
                 type="button"
                 onClick={() => {
                   navigateBack({
                     distance: 1,
                   });
                 }}
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-red duration:50 transition-all rounded-md2"
               >
                 Cancel
-              </button>
-
-              <button
-                type="submit"
-                className="text-white text-sm font-medium p-2 m-6 bg-circle-green duration:50 transition-all rounded-md2"
-              >
+              </Button>
+              <Button variant="primary" type="submit">
                 Save
-              </button>
+              </Button>
             </div>
           </Form>
         )}
@@ -111,7 +108,7 @@ const StagedJobMenu = ({ job }: WorkflowJobMenuProps) => {
 const StagedJobMenuNav: NavigationComponent = {
   Component: StagedJobMenu,
   Label: (props: WorkflowJobMenuProps) => {
-    return <p>{props.job.parameters?.name || props.job.name}</p>;
+    return <p>{props.source.parameters?.name || props.source.name}</p>;
   },
   Icon: (props: WorkflowJobMenuProps) => {
     return <JobIcon className="w-6 h-8 py-2" />;

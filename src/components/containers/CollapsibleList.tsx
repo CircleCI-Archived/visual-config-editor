@@ -13,9 +13,16 @@ export interface CollapsibleListProps {
 
 const CollapsibleList = (props: CollapsibleListProps) => {
   const [expanded, setExpanded] = useState(props.expanded || false);
+  const [hover, setHover] = useState(false);
 
   return (
-    <div className={props.classNameExpanded && expanded ? props.classNameExpanded : props.className}>
+    <div
+      className={`transition-all ${
+        props.classNameExpanded && expanded
+          ? props.classNameExpanded
+          : props.className
+      } ${hover ? 'bg-circle-gray-100 shadow-inner' : 'bg-white'}`}
+    >
       <div className="flex flex-row">
         <button
           onClick={(e) => {
@@ -26,6 +33,8 @@ const CollapsibleList = (props: CollapsibleListProps) => {
           }}
           type="button"
           className="flex flex-row flex-1"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
         >
           <ExpandIcon className="w-3 h-5 mr-3" expanded={expanded} />
           <p className="font-bold leading-5 tracking-wide">{props.title}</p>

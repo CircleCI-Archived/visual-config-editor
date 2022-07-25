@@ -6,7 +6,10 @@ const AddButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
     <button
       type="button"
       {...props}
-      className={'bg-circle-gray-300 h-10 w-14 rounded ' + props.className}
+      className={
+        'bg-circle-gray-300 hover:bg-circle-gray-400 transition-colors h-10 w-14 rounded ' +
+        props.className
+      }
     >
       <AddIcon className="m-auto"></AddIcon>
     </button>

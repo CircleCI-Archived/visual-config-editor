@@ -39,8 +39,8 @@ const TabbedMenu = (props: TabbedPaneProps) => {
             key={index}
             className={`text-sm tracking-wide px-3 py-3 font-bold text-center ${
               index === activeTab[tabKey]
-                ? 'border-black border-b-4 text-circle-black'
-                : 'text-circle-gray-600 mb-1'
+                ? 'border-circle-blue border-b-4 text-circle-black'
+                : 'text-circle-gray-600 mb-1 hover:text-circle-black'
             }`}
             onClick={() => {
               if (props.onChange) {

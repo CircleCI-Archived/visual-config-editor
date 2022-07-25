@@ -47,6 +47,9 @@ module.exports = {
           DEFAULT: '#8e62bd',
         },
       },
+      animation: {
+        'spin-slow': 'spin 3s linear infinite',
+      },
     },
   },
   variants: {

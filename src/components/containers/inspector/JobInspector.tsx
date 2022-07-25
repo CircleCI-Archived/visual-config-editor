@@ -8,6 +8,7 @@ import {
   mapDefinitions,
 } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
+import AddButton from '../../atoms/AddButton';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
@@ -163,28 +164,24 @@ const JobInspector = ({
         required
         listItem={StepListItem}
         emptyText="No steps defined yet."
-        titleExpanded={
-          <button
-            type="button"
-            onClick={() => {
-              navigateTo(
-                navSubTypeMenu(
-                  {
-                    typePage: StepTypePageNav,
-                    menuPage: StepDefinitionMenu,
-                    passThrough: { dataType: JobMapping },
-                  },
-                  props.values,
-                  subscriptions,
-                ),
-              );
-            }}
-            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-          >
-            New
-          </button>
-        }
-      ></ListProperty>
+      >
+        <AddButton
+          className="ml-auto flex"
+          onClick={() => {
+            navigateTo(
+              navSubTypeMenu(
+                {
+                  typePage: StepTypePageNav,
+                  menuPage: StepDefinitionMenu,
+                  passThrough: { dataType: JobMapping },
+                },
+                props.values,
+                subscriptions,
+              ),
+            );
+          }}
+        />
+      </ListProperty>
     </div>
   );
 };

@@ -18,7 +18,7 @@ const ParameterContainer = (props: {
     <FieldArray
       {...field}
       name="parameters"
-      render={(arrayHelpers) => (
+      render={(_) => (
         <div className="p-6 flex flex-col">
           <button
             type="button"
@@ -55,7 +55,7 @@ const ParameterContainer = (props: {
               ([name, parameter]: [string, any], index) => (
                 <button
                   key={name}
-                  className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left hover:border-circle-black"
+                  className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left hover:border-circle-black"
                   onClick={() => {
                     navigateTo({
                       component: InspectorDefinitionMenuNav,

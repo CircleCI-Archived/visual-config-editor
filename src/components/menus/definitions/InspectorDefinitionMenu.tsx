@@ -3,6 +3,7 @@ import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
+import { Footer } from '../../atoms/Footer';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParameterContainer from '../../containers/ParametersContainer';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
@@ -21,6 +22,19 @@ type InspectorDefinitionProps = DataModel & {
   readonly data?: any;
 } & SubTypeMenuPageProps<any>;
 
+/**
+ * The menu that allows for inspection (creation and editing) of a definition
+ * This is one of the more complex pieces of the VCE, as it handles
+ * the abstraction of all component's InspectableMapping properties,
+ * and parameterized components.
+ *
+ * The inspector menu opens from "New" button in the Definition
+ * container,
+ *
+ * Related:
+ * For Orb definitions see OrbDefinitionsMenu.tsx
+ * For Step definitions see StepDefinitionMenu.tsx
+ */
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
   const generateConfig = useStoreActions((actions) => actions.generateConfig);
@@ -34,10 +48,11 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
         ? dataMapping?.store.update(actions)
         : dataMapping?.store.add(actions)) || actions.error,
   );
-  const deleteDefintion = useStoreActions(
+  const deleteDefinition = useStoreActions(
     (actions) => dataMapping?.store.remove(actions) || actions.error,
   );
 
+  // TODO: useMemo for these functions?
   const getIcon = (className: string) => {
     let iconComponent = dataMapping?.components.icon;
 
@@ -162,7 +177,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
-                      <div className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left">
+                      <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left">
                         <p className="font-bold">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
@@ -175,7 +190,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                       </div>
                     ) : (
                       <button
-                        className="p-4 mb-4 w-full border-circle-gray-300 border-2 rounded text-left"
+                        className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                         type="button"
                         onClick={() => {
                           props.selectSubtype();
@@ -208,7 +223,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               </TabbedMenu>
 
               <span className="border-b border-circle-gray-300 mt-auto" />
-              <div className="flex flex-row ml-auto center py-6 mr-4">
+              <Footer>
                 {props.editing && (
                   <Button
                     variant="dangerous"
@@ -218,7 +233,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                         type: 'delete',
                         labels: [dataMapping.name.singular, props.data.name],
                         onConfirm: () => {
-                          deleteDefintion(props.data);
+                          deleteDefinition(props.data);
                           navigateBack({
                             distance: 1,
                           });
@@ -244,7 +259,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 <Button variant="primary" type="submit">
                   {props.editing ? 'Save' : 'Create'}
                 </Button>
-              </div>
+              </Footer>
             </Form>
           )}
         </Formik>

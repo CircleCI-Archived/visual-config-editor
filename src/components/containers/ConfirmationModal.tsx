@@ -1,6 +1,6 @@
 import DeleteItemIcon from '../../icons/ui/DeleteItemIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import { Button, ButtonVariant } from './Button';
+import { Button, ButtonVariant } from '../atoms/Button';
 
 export type ConfirmationType = 'save' | 'delete';
 

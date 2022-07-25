@@ -42,11 +42,13 @@ const OrbImportsContainer = (props: OrbImportProps) => {
   });
 
   return (
-    <div ref={ref} className="w-full p-4 pb-0">
+    <div ref={ref} className="w-full px-4 pb-0">
       <CollapsibleList
         title="Orbs"
         expanded={props.expanded}
         onChange={props.onChange}
+        className="py-4"
+        classNameExpanded="py-4"
         titleExpanded={
           <button
             onClick={() => {
@@ -72,7 +74,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
           )}
         </div>
       </CollapsibleList>
-      <div className="w-full p-2 border-b border-circle-gray-300"></div>
+      <span className="w-full flex border-b border-circle-gray-300" />
     </div>
   );
 };
