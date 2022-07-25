@@ -1,4 +1,3 @@
-import { Field } from 'formik';
 import { ReactElement } from 'react';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
 

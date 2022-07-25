@@ -10,7 +10,6 @@ import { Button } from '../../atoms/Button';
 import { Footer } from '../../atoms/Footer';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { WorkflowSelector } from '../../atoms/WorkflowSelector';
-import BreadCrumbs from '../../containers/BreadCrumbs';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
 import TabbedMenu from '../TabbedMenu';

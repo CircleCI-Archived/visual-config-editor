@@ -6,7 +6,6 @@ import {
   OrbImportManifest,
 } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useEffect, useState } from 'react';
-import { inspectorWidth } from '../../../App';
 import Loading from '../../../icons/ui/Loading';
 import { typeToComponent } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';

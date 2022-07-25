@@ -1,4 +1,4 @@
-import { Job, orb, parameters, reusable } from '@circleci/circleci-config-sdk';
+import { Job, parameters, reusable } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';

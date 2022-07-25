@@ -18,7 +18,7 @@ const ParameterContainer = (props: {
     <FieldArray
       {...field}
       name="parameters"
-      render={(arrayHelpers) => (
+      render={(_) => (
         <div className="p-6 flex flex-col">
           <button
             type="button"

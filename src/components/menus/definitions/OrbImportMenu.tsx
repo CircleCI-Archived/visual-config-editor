@@ -1,5 +1,4 @@
 import algoliasearch from 'algoliasearch/lite';
-import { useState } from 'react';
 import {
   Hits,
   HitsPerPage,

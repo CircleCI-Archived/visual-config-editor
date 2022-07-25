@@ -4,8 +4,6 @@ import ExpandIcon from '../../icons/ui/ExpandIcon';
 import { WorkflowStage } from '../../mappings/components/WorkflowMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import DropdownContainer from '../containers/DropdownContainer';
-import AddButton from './AddButton';
-import { Select } from './Select';
 
 export const WorkflowSelector = () => {
   const workflows = useStoreState((state) => state.definitions.workflows);
