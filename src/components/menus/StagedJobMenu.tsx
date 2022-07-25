@@ -11,7 +11,7 @@ import BreadCrumbs from '../containers/BreadCrumbs';
 import ParamListContainer from '../containers/ParamListContainer';
 import { StepDefinitionMenu } from './definitions/StepDefinitionMenu';
 import StepTypePageNav from './definitions/subtypes/StepTypePage';
-import StagedFilterMenuNav from './StagedFilterMenu';
+import StagedFilterMenuNav from './stage/StagedFilterMenu';
 import { navSubTypeMenu } from './SubTypeMenu';
 import TabbedMenu from './TabbedMenu';
 
