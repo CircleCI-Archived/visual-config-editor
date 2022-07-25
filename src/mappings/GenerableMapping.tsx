@@ -23,7 +23,7 @@ import InspectableMapping from './InspectableMapping';
  * Interface to add a circleci-config-sdk component to a data mapping.
  */
 export interface DataMapping {
-  type: string;
+  key: string;
   component: any[];
   mapping: InspectableMapping;
 }
@@ -35,7 +35,7 @@ export interface DataMapping {
 // Maybe add docs link to Executor and description as a key to each Mapping
 const dataMappings: DataMapping[] = [
   {
-    type: 'executors',
+    key: 'executors',
     component: [
       executors.DockerExecutor,
       executors.MacOSExecutor,
@@ -45,17 +45,17 @@ const dataMappings: DataMapping[] = [
     mapping: ExecutorMapping,
   },
   {
-    type: 'jobs',
+    key: 'jobs',
     component: [Job],
     mapping: JobMapping,
   },
   {
-    type: 'commands',
+    key: 'commands',
     component: [reusable.CustomCommand],
     mapping: CommandMapping,
   },
   {
-    type: 'parameters',
+    key: 'parameters',
     component: [parameters.CustomParameter],
     mapping: ParameterMapping,
   },
@@ -70,7 +70,7 @@ const componentToType = (data: any): GenerableMapping | undefined => {
   let foundType = undefined;
 
   dataMappings.forEach((mapping) => {
-    if (typeof data === 'string' && mapping.type === data) {
+    if (typeof data === 'string' && mapping.key === data) {
       foundType = mapping.mapping;
       return;
     } else {
@@ -87,7 +87,7 @@ const componentToType = (data: any): GenerableMapping | undefined => {
 };
 
 const typeToComponent = (componentType: string) => {
-  return dataMappings.find((mapping) => mapping.type === componentType);
+  return dataMappings.find((mapping) => mapping.key === componentType);
 };
 
 export { componentToType, typeToComponent, dataMappings };

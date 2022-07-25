@@ -388,8 +388,8 @@ export const createSubscriptionThunks = <
     {},
     ...Object.entries(mapping.subscriptions).map(
       ([observableType, subscription]) => ({
+        // assign the thunk subscription
         [`${observerType}_subscribes_to_${observableType}`]:
-          // create the thunk
           createObserverSubscription<Observer, Observables>(
             observableType as DefinitionType,
             observerType as DefinitionType,

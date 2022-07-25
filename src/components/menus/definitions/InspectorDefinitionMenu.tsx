@@ -160,10 +160,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
 
                   return {
                     ...parentValues,
-                    [props.passBackKey]: {
-                      ...parentValues[props.passBackKey],
-                      [name]: args,
-                    },
+                    [props.passBackKey]: nestedValues,
                   };
                 }
               },
@@ -214,12 +211,12 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     data: props.data,
                   })}
                 </div>
-                {dataMapping.parameters ? (
+                {dataMapping.parameters && (
                   <ParameterContainer
                     dataMapping={dataMapping}
                     values={formikProps.values}
                   />
-                ) : null}
+                )}
               </TabbedMenu>
 
               <span className="border-b border-circle-gray-300 mt-auto" />
