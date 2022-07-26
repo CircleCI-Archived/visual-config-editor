@@ -56,7 +56,6 @@ export const loadOrb = (orb: string, value?: OrbImport) => {
       ? 'http://localhost:3030'
       : 'https://temp-orb-manifest-endpoint.herokuapp.com';
 
-  console.log(orb);
   return fetch(`${endpoint}/orbs?orb=${orb}`).then(
     (resp) =>
       new Promise<{ orb: string | OrbImport; manifest: OrbImportManifest }>(
