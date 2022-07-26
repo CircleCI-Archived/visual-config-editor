@@ -13,7 +13,6 @@ export interface CollapsibleListProps {
 
 const CollapsibleList = (props: CollapsibleListProps) => {
   const [expanded, setExpanded] = useState(props.expanded || false);
-  const [hover, setHover] = useState(false);
 
   return (
     <div
@@ -21,7 +20,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
         props.classNameExpanded && expanded
           ? props.classNameExpanded
           : props.className
-      } ${hover ? 'bg-circle-gray-100 shadow-inner' : 'bg-white'}`}
+      }`}
     >
       <div className="flex flex-row">
         <button
@@ -32,13 +31,11 @@ const CollapsibleList = (props: CollapsibleListProps) => {
             props.onChange && props.onChange(newExpanded);
           }}
           type="button"
-          className="flex flex-row flex-1"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
+          className="flex hover:bg-circle-gray-300  border-white border px-2 rounded"
         >
-          <ExpandIcon className="w-3 h-5 mr-3" expanded={expanded} />
-          <p className="font-bold leading-5 tracking-wide">{props.title}</p>
+          <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />
         </button>
+        <p className="mx-2 font-bold leading-6 tracking-wide">{props.title}</p>
         {expanded && props.titleExpanded}
       </div>
       {expanded && <div className="ml-4">{props.children}</div>}
