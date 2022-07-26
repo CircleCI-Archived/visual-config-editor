@@ -1,7 +1,9 @@
 import { FocusScope } from 'react-aria';
+import { useOverlay, OverlayContainer, useModal } from '@react-aria/overlays';
 import DeleteItemIcon from '../../icons/ui/DeleteItemIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button, ButtonVariant } from '../atoms/Button';
+import { useRef } from 'react';
 
 export type ConfirmationType = 'save' | 'delete';
 export type ConfirmationDialogue = {
@@ -44,6 +46,8 @@ const ConfirmationModal = () => {
     (actions) => actions.triggerConfirmation,
   );
 
+  let { modalProps } = useModal();
+
   const dialogue =
     typeof confirm?.modalDialogue === 'string'
       ? confirmDialogue[confirm.modalDialogue]
@@ -74,59 +78,61 @@ const ConfirmationModal = () => {
     <>
       {confirm && dialogue && (
         <FocusScope contain autoFocus>
-          <div
-            className="absolute left-0 top-0 w-full h-full z-50 flex"
-            style={{ background: 'rgba(20,20,20,.8)' }}
-          >
+          <OverlayContainer>
             <div
-              className="bg-white w-min rounded absolute"
-              style={{
-                left: `calc(50% - ${dialogueBox.x / 2}px`,
-                top: `calc(50% - ${dialogueBox.y / 2}px`,
-              }}
+              className="absolute left-0 top-0 w-full h-full z-50 flex"
+              style={{ background: 'rgba(20,20,20,.8)' }}
             >
-              <div className="px-8 py-4">
-                <h3 className="font-extrabold py-4 text-2xl">
-                  {populatePlaceholders(dialogue.header)}
-                </h3>
-                <body className="w-96 h-20 pt-2">
-                  {populatePlaceholders(dialogue.body)}
-                </body>
-              </div>
-              <div className="border-t border-circle-gray-400 p-4 py-6 flex">
-                <div className="ml-auto">
-                  <Button
-                    aria-label="Cancel"
-                    variant="secondary"
-                    type="button"
-                    onClick={closeHandler}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    aria-label={dialogue.button}
-                    variant={dialogue.buttonVariant}
-                    type="button"
-                    onClick={() => {
-                      confirm.onConfirm();
-                      updateConfirmation(undefined);
-                    }}
-                  >
-                    {dialogue.button}
-                  </Button>
-                </div>
-              </div>
-              <button
-                className="absolute w-14 h-10 top-0 right-0 hover:bg-circle-gray-300 rounded"
-                onClick={closeHandler}
+              <div
+                className="bg-white w-min rounded absolute"
+                style={{
+                  left: `calc(50% - ${dialogueBox.x / 2}px`,
+                  top: `calc(50% - ${dialogueBox.y / 2}px`,
+                }}
               >
-                <DeleteItemIcon
-                  className="m-auto w-3 h-3"
-                  color="#555555"
-                ></DeleteItemIcon>
-              </button>
+                <div className="px-8 py-4">
+                  <h3 className="font-extrabold py-4 text-2xl">
+                    {populatePlaceholders(dialogue.header)}
+                  </h3>
+                  <body className="w-96 h-20 pt-2">
+                    {populatePlaceholders(dialogue.body)}
+                  </body>
+                </div>
+                <div className="border-t border-circle-gray-400 p-4 py-6 flex">
+                  <div className="ml-auto">
+                    <Button
+                      aria-label="Cancel"
+                      variant="secondary"
+                      type="button"
+                      onClick={closeHandler}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      aria-label={dialogue.button}
+                      variant={dialogue.buttonVariant}
+                      type="button"
+                      onClick={() => {
+                        confirm.onConfirm();
+                        updateConfirmation(undefined);
+                      }}
+                    >
+                      {dialogue.button}
+                    </Button>
+                  </div>
+                </div>
+                <button
+                  className="absolute w-14 h-10 top-0 right-0 hover:bg-circle-gray-300 rounded"
+                  onClick={closeHandler}
+                >
+                  <DeleteItemIcon
+                    className="m-auto w-3 h-3"
+                    color="#555555"
+                  ></DeleteItemIcon>
+                </button>
+              </div>
             </div>
-          </div>
+          </OverlayContainer>
         </FocusScope>
       )}
     </>
