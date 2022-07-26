@@ -200,6 +200,7 @@ export type StoreActions = AllDefinitionActions & {
   setToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerConfirmation: Action<StoreModel, ConfirmationModalModel | undefined>;
+  triggerConfigRefresh: ThunkOn<StoreActions, void>;
 };
 
 const Actions: StoreActions = {
@@ -723,6 +724,12 @@ const Actions: StoreActions = {
   triggerConfirmation: action((state, payload) => {
     state.confirm = payload;
   }),
+  triggerConfigRefresh: thunkOn(
+    (actions) => actions.importOrb,
+    (actions) => {
+      actions.generateConfig();
+    },
+  ),
 };
 
 const Store: StoreModel & StoreActions = {
