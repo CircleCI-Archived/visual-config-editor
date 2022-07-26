@@ -70,6 +70,7 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
       values,
       definitionsAsArray(definitions.commands),
       definitionsAsArray(definitions.executors),
+      definitionsAsArray(definitions.orbs),
     );
   },
   store: {

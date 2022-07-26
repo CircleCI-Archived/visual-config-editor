@@ -1,4 +1,4 @@
-import { Job, orb, parsers, reusable } from '@circleci/circleci-config-sdk';
+import { orb, parsers, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
 import JobIcon from '../../../icons/components/JobIcon';
@@ -18,10 +18,9 @@ import { navSubTypeMenu } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
-  source: Job;
+  source: WorkflowJob;
   values: any;
   id: string;
-  job: WorkflowJob;
 };
 
 const AdjacentSteps = ({
@@ -87,8 +86,6 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
         initialValues={{
           parameters: {
             name: '',
-            'pre-steps': [],
-            'post-steps': [],
             ...values.parameters,
           },
         }}
@@ -103,6 +100,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
               ),
             ),
             definitionsAsArray(definitions.jobs),
+            definitionsAsArray(definitions.orbs),
           );
 
           updateWorkflowElement({
@@ -149,12 +147,12 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   Edit Filters
                 </button> */}
 
-                {(source instanceof reusable.ParameterizedJob ||
-                  source instanceof orb.OrbRef) && (
+                {(source.job instanceof reusable.ParameterizedJob ||
+                  source.job instanceof orb.OrbRef) && (
                   <>
                     <ParamListContainer
                       parent="parameters"
-                      paramList={source.parameters}
+                      paramList={source.job.parameters}
                     ></ParamListContainer>
                   </>
                 )}

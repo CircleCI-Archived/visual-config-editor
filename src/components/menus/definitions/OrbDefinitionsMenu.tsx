@@ -1,6 +1,9 @@
 import { orb } from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { OrbRef } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+import {
+  OrbImport,
+  OrbRef,
+} from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import {
   OrbDisplayMeta,
   OrbImportManifest,
@@ -31,7 +34,7 @@ export class OrbImportWithMeta extends orb.OrbImport {
     description?: string,
     display?: OrbDisplayMeta,
   ) {
-    super(alias, namespace, orb, manifest, version, description, display);
+    super(alias, namespace, orb, version, manifest, description, display);
 
     this.logo_url = logo_url;
   }
@@ -47,13 +50,30 @@ export type OrbDefinitionProps = {
   url: string;
 };
 
-const loadOrb = (orb: string) => {
+export const loadOrb = (orb: string, value?: OrbImport) => {
   const endpoint =
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:3030'
       : 'https://temp-orb-manifest-endpoint.herokuapp.com';
 
-  return fetch(`${endpoint}/orbs?orb=${orb}`).then((res) => res.json());
+  return fetch(`${endpoint}/orbs?orb=${orb}`).then(
+    (resp) =>
+      new Promise<{ orb: string | OrbImport; manifest: OrbImportManifest }>(
+        (res, rej) => {
+          resp
+            .json()
+            .then((manifest) => {
+              res({
+                orb: value ?? orb,
+                manifest,
+              });
+            })
+            .catch((err) => {
+              rej(err);
+            });
+        },
+      ),
+  );
 };
 
 const orbDefinitions = ['jobs', 'commands', 'executors'] as Array<
@@ -93,7 +113,7 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
 
   useEffect(() => {
     loadOrb(`${props.namespace}/${props.name}@${props.version}`).then(
-      (manifest) => {
+      ({ manifest }) => {
         setOrb(
           new OrbImportWithMeta(
             props.name,
