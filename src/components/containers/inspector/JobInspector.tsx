@@ -1,4 +1,4 @@
-import { executors, Job } from '@circleci/circleci-config-sdk';
+import { executors, Job, orb } from '@circleci/circleci-config-sdk';
 import { FormikValues, useField } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
@@ -149,8 +149,15 @@ const JobInspector = ({
 
               setSubscriptions && setSubscriptions(subs);
             }}
-            dependent={(executorName) => {
-              const executor = definitions.executors[executorName]?.value;
+            dependent={(executorName: string) => {
+              const splitName = executorName?.split('/');
+              console.log(splitName);
+              const executor =
+                splitName.length === 1
+                  ? definitions.executors[executorName]?.value
+                  : definitions.orbs[splitName[0]].value.executors[
+                      splitName[1]
+                    ];
 
               return (
                 <>
@@ -171,11 +178,23 @@ const JobInspector = ({
               );
             }}
           >
-            {mapDefinitions(definitions.executors, (executor) => (
-              <option value={executor.name} key={executor.name}>
-                {executor.name}
-              </option>
-            ))}
+            {[
+              ...mapDefinitions(definitions.executors, (executor) => (
+                <option value={executor.name} key={executor.name}>
+                  {executor.name}
+                </option>
+              )),
+              ...mapDefinitions<orb.OrbImport>(
+                definitions.orbs,
+                (orb) =>
+                  orb.executors &&
+                  Object.values(orb.executors).map((executor) => (
+                    <option value={executor.name} key={executor.name}>
+                      {executor.name}
+                    </option>
+                  )),
+              ),
+            ]}
           </InspectorProperty>
         </>
       )}

@@ -386,7 +386,7 @@ const Actions: StoreActions = {
     const stagedJob = map.workflows[workflow.name];
 
     const elements = workflow.elements.filter((element) => {
-      const filtered = element.id === payload;
+      const filtered = element.id === payload || element.type === '';
 
       if (filtered) {
         if (element.type === 'jobs') {

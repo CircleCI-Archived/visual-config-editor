@@ -1,5 +1,6 @@
 import {
   Job,
+  orb,
   parsers,
   reusable,
   workflow,
@@ -51,20 +52,32 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
       );
     },
   },
-  resolveObservables: (job) => ({
-    executors:
-      job.executor instanceof reusable.ReusedExecutor
-        ? job.executor.executor
-        : undefined,
-    commands: job.steps.filter(
-      (command) => command instanceof reusable.ReusableCommand,
-    ),
-  }),
+  resolveObservables: (job) => {
+    console.log(job.executor);
+    return {
+      executors:
+        job.executor instanceof reusable.ReusedExecutor &&
+        job.executor.executor instanceof orb.OrbRef
+          ? job.executor.executor
+          : undefined,
+      commands: job.steps.filter(
+        (command) =>
+          command instanceof reusable.ReusableCommand &&
+          !command.name.includes('/'),
+      ),
+      orbs: job.steps.filter(
+        (command) =>
+          command instanceof reusable.ReusableCommand &&
+          command.name.includes('/'),
+      ),
+    };
+  },
   /**
    TODO: Implement this to pass transform method to
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
    */
   transform: ({ name, ...values }, definitions) => {
+    console.log(definitionsAsArray(definitions.orbs));
     return parsers.parseJob(
       name,
       values,
