@@ -74,19 +74,11 @@ export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
       return new WorkflowStage(w.name, w.id, jobs, w.when, elements);
     },
   },
-  resolveObservables: (w) => {
-    console.log(
-      w.jobs.filter((job) => {
-        return job instanceof workflow.WorkflowJob;
-      }),
-    );
-
-    return {
-      jobs: w.jobs.filter((job) => {
-        return job instanceof workflow.WorkflowJob;
-      }),
-    };
-  },
+  resolveObservables: (w) => ({
+    jobs: w.jobs.filter((job) => {
+      return job instanceof workflow.WorkflowJob;
+    }),
+  }),
 };
 
 export type WorkflowAction = DefinitionAction<WorkflowStage>;

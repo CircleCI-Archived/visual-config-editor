@@ -151,7 +151,6 @@ const JobInspector = ({
             }}
             dependent={(executorName: string) => {
               const splitName = executorName?.split('/');
-              console.log(splitName);
               const executor =
                 splitName.length === 1
                   ? definitions.executors[executorName]?.value
