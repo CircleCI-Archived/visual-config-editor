@@ -1,6 +1,7 @@
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { FormikValues } from 'formik';
 import { NodeProps } from 'react-flow-renderer';
+import { IconProps } from '../icons/IconProps';
 import {
   DefinitionsModel,
   DefinitionSubscriptions,
@@ -72,7 +73,7 @@ export default interface InspectableMapping<
   };
   components: {
     /** Icon Generable to render in definition */
-    icon?: React.FunctionComponent<any>;
+    icon?: React.FunctionComponent<IconProps>;
     /** Generable to render in definition */
     summary: React.FunctionComponent<{ data: GenerableType }>;
     /**
@@ -90,4 +91,10 @@ export default interface InspectableMapping<
       // data: ConfigDataType;
     ) => JSX.Element;
   };
+  requirements?: [
+    {
+      message: string;
+      test: (store: DefinitionsModel) => boolean;
+    },
+  ];
 }

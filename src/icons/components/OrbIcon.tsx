@@ -1,7 +1,7 @@
 import { IconProps } from '../IconProps';
 
 const OrbIcon = (props: IconProps) => (
-  <svg viewBox="0 0 20 20" className={props.className}>
+  <svg viewBox="0 0 20 20" className={props.className} fill={props.color}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

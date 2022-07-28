@@ -1,6 +1,10 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
+import OrbIcon from '../../icons/components/OrbIcon';
 import { mapDefinitions } from '../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
+import AddButton from '../atoms/AddButton';
+import ComponentInfo from '../atoms/ComponentInfo';
+import { Empty } from '../atoms/Empty';
 import { OrbDefinitionMenuNav } from '../menus/definitions/OrbDefinitionsMenu';
 import { OrbImportMenuNav } from '../menus/definitions/OrbImportMenu';
 import CollapsibleList from './CollapsibleList';
@@ -15,31 +19,37 @@ const OrbImportsContainer = (props: OrbImportProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   // const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
-  const orbDefinitions = mapDefinitions(items, (orb) => {
-    return (
-      <button
-        className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+  const hasDefinitions = Object.values(items).length > 0;
+  const orbDefinitions = useMemo(
+    () =>
+      mapDefinitions(items, (orb) => {
+        return (
+          <button
+            className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
-        onClick={() => {
-          navigateTo({
-            component: OrbDefinitionMenuNav,
-            props: {
-              name: orb.name,
-              namespace: orb.namespace,
-              version: orb.version,
-              description: orb.description,
-              logo_url: orb.logo_url,
-            },
-          });
-        }}
-      >
-        <img className="ml-1 mr-2 w-5 h-5" src={orb.logo_url} alt="" />
-        <p className="text-circle-gray-400">{orb.namespace}/</p>
-        {orb.name}
-        <div className="ml-auto text-circle-gray-400">{orb.version}</div>
-      </button>
-    );
-  });
+            onClick={() => {
+              navigateTo({
+                component: OrbDefinitionMenuNav,
+                props: {
+                  name: orb.name,
+                  namespace: orb.namespace,
+                  version: orb.version,
+                  description: orb.description,
+                  logo_url: orb.logo_url,
+                },
+              });
+            }}
+            key={orb.name}
+          >
+            <img className="ml-1 mr-2 w-5 h-5" src={orb.logo_url} alt="" />
+            <p className="text-circle-gray-400">{orb.namespace}/</p>
+            {orb.name}
+            <div className="ml-auto text-circle-gray-400">{orb.version}</div>
+          </button>
+        );
+      }),
+    [items, navigateTo],
+  );
 
   return (
     <div ref={ref} className="w-full px-4 pb-0">
@@ -49,18 +59,16 @@ const OrbImportsContainer = (props: OrbImportProps) => {
         onChange={props.onChange}
         className="py-4"
         classNameExpanded="py-4"
-        titleExpanded={
-          <button
+        pinned={
+          <AddButton
+            className="flex ml-auto"
             onClick={() => {
               navigateTo({
                 component: OrbImportMenuNav,
                 props: {},
               });
             }}
-            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-          >
-            Import
-          </button>
+          />
         }
       >
         <div className="w-full pl-2 pt-2">
@@ -68,9 +76,23 @@ const OrbImportsContainer = (props: OrbImportProps) => {
           {orbDefinitions.length > 0 ? (
             orbDefinitions
           ) : (
-            <div className="font-medium text-sm text-circle-gray-500">
-              No orbs imported.
-            </div>
+            <Empty
+              label={`No Imported Orbs`}
+              Logo={OrbIcon}
+              description={
+                <>
+                  <ComponentInfo
+                    docsInfo={{
+                      description:
+                        'Orbs are reusable snippets of code that help automate repeated processes.',
+                      link: 'https://circleci.com/docs/orb-intro',
+                    }}
+                  />
+                  <br />
+                  Import an orb by clicking the button above.
+                </>
+              }
+            />
           )}
         </div>
       </CollapsibleList>

@@ -8,6 +8,9 @@ import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 import { mapDefinitions } from '../../../../state/DefinitionStore';
 import { reusable } from '@circleci/circleci-config-sdk';
 import Card from '../../../atoms/Card';
+import { Empty } from '../../../atoms/Empty';
+import OrbIcon from '../../../../icons/components/OrbIcon';
+import CommandIcon from '../../../../icons/components/CommandIcon';
 
 const StepTypePage = (
   props: SubTypeSelectPageProps<string | CustomCommand>,
@@ -51,27 +54,40 @@ const StepTypePage = (
           ))}
         </div>
         <div className="p-6">
-          {mapDefinitions<reusable.CustomCommand>(
-            definitions.commands,
-            (command) => (
-              <button
-                key={command.name}
-                type="button"
-                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
-                onClick={() => {
-                  props.setSubtype(command);
-                }}
-              >
-                <p className="font-bold">{command.name}</p>
-                <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                  Command description will show here
-                </p>
-              </button>
-            ),
+          {Object.values(definitions.commands).length > 0 ? (
+            mapDefinitions<reusable.CustomCommand>(
+              definitions.commands,
+              (command) => (
+                <button
+                  key={command.name}
+                  type="button"
+                  className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
+                  onClick={() => {
+                    props.setSubtype(command);
+                  }}
+                >
+                  <p className="font-bold">{command.name}</p>
+                  <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                    Command description will show here
+                  </p>
+                </button>
+              ),
+            )
+          ) : (
+            <Empty
+              label="No Custom Commands"
+              Logo={CommandIcon}
+              description="Create a custom command to use it here"
+            />
           )}
         </div>
-        <div>User defined commands will show here</div>
-        <div>Predefined orb steps will show here</div>
+        <div className="p-6">
+          <Empty
+            label="No Imported Orbs"
+            Logo={OrbIcon}
+            description="Import an orb with commands, and they will be accessible here"
+          />
+        </div>
       </TabbedMenu>
     </div>
   );

@@ -29,7 +29,7 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
       expanded
       required
       listItem={FilterItem}
-      emptyText="filter "
+      empty="filter "
     ></ListProperty>
   );
 };

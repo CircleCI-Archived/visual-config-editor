@@ -43,7 +43,7 @@ const AdjacentSteps = ({
       listItem={(input) => (
         <AdjacentStepListItem {...input} values={values} type={type} />
       )}
-      emptyText="No steps defined yet."
+      empty="No steps defined yet."
     >
       <AddButton
         className="ml-auto flex"

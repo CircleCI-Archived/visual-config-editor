@@ -1,7 +1,10 @@
 import { FormikValues } from 'formik';
+import CommandIcon from '../../../icons/components/CommandIcon';
 import { CommandMapping } from '../../../mappings/components/CommandMapping';
 import { DefinitionsModel } from '../../../state/DefinitionStore';
 import { useStoreActions } from '../../../state/Hooks';
+import AddButton from '../../atoms/AddButton';
+import { Empty } from '../../atoms/Empty';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
@@ -9,37 +12,11 @@ import { StepDefinitionMenu } from '../../menus/definitions/StepDefinitionMenu';
 import StepTypePageNav from '../../menus/definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../../menus/SubTypeMenu';
 
-const NewButton = (
-  props: FormikValues & {
-    definitions: DefinitionsModel;
-  },
-) => {
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        navigateTo(
-          navSubTypeMenu(
-            {
-              typePage: StepTypePageNav,
-              menuPage: StepDefinitionMenu,
-              passThrough: { dataType: CommandMapping },
-            },
-            props.values,
-          ),
-        );
-      }}
-      className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-    >
-      New
-    </button>
-  );
-};
-
 const CommandInspector = (
   props: FormikValues & { definitions: DefinitionsModel },
 ) => {
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
+
   return (
     <div>
       <InspectorProperty
@@ -55,10 +32,35 @@ const CommandInspector = (
         values={props.values}
         expanded
         required
-        emptyText="No steps defined yet. At least one step is required."
+        empty={
+          <Empty
+            label="No Steps Yet"
+            Logo={CommandIcon}
+            description={
+              <>
+                Add a step by clicking the button above.
+                <br />
+                At least one step is required.
+              </>
+            }
+          />
+        }
         listItem={StepListItem}
-        titleExpanded={
-          <NewButton values={props.values} definitions={props.definitions} />
+        pinned={
+          <AddButton
+            onClick={() => {
+              navigateTo(
+                navSubTypeMenu(
+                  {
+                    typePage: StepTypePageNav,
+                    menuPage: StepDefinitionMenu,
+                    passThrough: { dataType: CommandMapping },
+                  },
+                  props.values,
+                ),
+              );
+            }}
+          />
         }
       />
     </div>
