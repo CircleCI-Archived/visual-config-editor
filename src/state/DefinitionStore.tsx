@@ -1,7 +1,14 @@
 import { Job, parameters, reusable } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
+import {
+  Action,
+  action,
+  ActionCreator,
+  TargetResolver,
+  ThunkOn,
+  thunkOn,
+} from 'easy-peasy';
 import { v4 } from 'uuid';
 import { store } from '../App';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
@@ -24,7 +31,7 @@ import {
   WorkflowStage,
 } from '../mappings/components/WorkflowMapping';
 import GenerableMapping from '../mappings/GenerableMapping';
-import { StoreModel, UpdateType } from './Store';
+import { StoreActions, StoreModel, UpdateType } from './Store';
 
 export type ParameterDefinition = 'parameters';
 export type JobsDefinition = 'jobs';
@@ -93,7 +100,7 @@ export type AllDefinitionActions = JobActions &
   WorkflowActions;
 
 export type DefinitionSubscriptionThunk = ThunkOn<
-  AllDefinitionActions,
+  StoreActions,
   UpdateType<NamedGenerable>
 >;
 
@@ -144,7 +151,7 @@ export const createSubscription = (
   const observableTarget = state.definitions[observableType][observable.name];
   const observerSub = { [observer.name]: 1 };
 
-  if (observableTarget.observers) {
+  if (observableTarget?.observers) {
     const otherObservers = observableTarget.observers;
 
     observableDefs[observableType][observable.name] = {
@@ -159,7 +166,7 @@ export const createSubscription = (
           }
         : { ...otherObservers, [observerType]: observerSub },
     };
-  } else {
+  } else if (observableTarget) {
     observableDefs[observableType][observable.name] = {
       ...observableTarget,
       observers: { [observerType]: observerSub },
@@ -340,9 +347,22 @@ const createObserverSubscription = <
   observableType: DefinitionType,
   observerType: DefinitionType,
   subscription: SubscriptionCallback<Observer, Observables>,
+  extra?: TargetResolver<StoreActions, {}>,
 ): DefinitionSubscriptionThunk => {
   return thunkOn(
-    (actions) => actions[`update_${observableType}`],
+    (actions, _) => {
+      const mainSub = actions[`update_${observableType}`];
+
+      if (!extra) {
+        return mainSub;
+      }
+
+      const extraActions = extra(actions, _);
+
+      return Array.isArray(extraActions)
+        ? [...extraActions, mainSub]
+        : [extraActions, mainSub];
+    },
     async (actions, target) => {
       const change = target.payload as unknown as UpdateType<Observables>;
       const name = change.new.name;
@@ -394,6 +414,7 @@ export const createSubscriptionThunks = <
             observableType as DefinitionType,
             observerType as DefinitionType,
             subscription,
+            // mapping.externalUpdates,
           ),
       }),
     ),

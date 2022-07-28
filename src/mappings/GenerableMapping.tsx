@@ -4,7 +4,7 @@ import {
   parameters,
   reusable,
 } from '@circleci/circleci-config-sdk';
-import { ActionCreator, Actions } from 'easy-peasy';
+import { ActionCreator, Actions, Target, TargetResolver } from 'easy-peasy';
 import { ReactElement } from 'react';
 import {
   DefinitionsStoreModel,
@@ -12,7 +12,7 @@ import {
   MappingSubscriptions,
   NamedGenerable,
 } from '../state/DefinitionStore';
-import Store, { StoreModel, UpdateType } from '../state/Store';
+import Store, { StoreActions, StoreModel, UpdateType } from '../state/Store';
 import { CommandMapping } from './components/CommandMapping';
 import { ExecutorMapping } from './components/ExecutorMapping';
 import { JobMapping } from './components/JobMapping';
@@ -144,6 +144,12 @@ export default interface GenerableMapping<
     ) => GenerableType;
     remove?: () => void;
   };
+  /**
+   * Store action resolver to watch other actions for changes.
+   */
+  externalUpdates?: (
+    actions: TargetResolver<StoreActions, {}>,
+  ) => Target | Target[];
   resolveObservables?: (
     generable: GenerableType,
   ) => Record<SubscriptionTypes, Subscriptions | Subscriptions[]>;

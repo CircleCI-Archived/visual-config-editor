@@ -2,7 +2,7 @@ import { ReactElement, useState } from 'react';
 import ExpandIcon from '../../icons/ui/ExpandIcon';
 
 export interface CollapsibleListProps {
-  title: string;
+  title: string | ReactElement;
   titleExpanded?: ReactElement;
   children: ReactElement;
   expanded?: boolean;
