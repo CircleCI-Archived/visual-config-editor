@@ -26,41 +26,11 @@ const ParameterContainer = (props: {
       name="parameters"
       render={(_) => (
         <div className="p-6 flex flex-col">
-          <AddButton
-            type="button"
-            className="mx-auto mb-4"
-            onClick={() => {
-              if (!ParameterMapping.subtypes) {
-                return;
-              }
-
-              navigateTo(
-                navSubTypeMenu(
-                  {
-                    typePage: ParameterMapping.subtypes.component,
-                    typeProps: { component: props.dataMapping },
-                    menuPage: InspectorDefinitionMenu,
-                    menuProps: {
-                      dataType: ParameterMapping,
-                      passBackKey: 'parameters',
-                      index: -1,
-                      source: props.values.parameters
-                        ? Object.keys(props.values.parameters)
-                        : undefined,
-                    },
-                  },
-                  props.values,
-                ),
-              );
-            }}
-          >
-            Add Parameter
-          </AddButton>
           {entries?.length > 0 ? (
             entries.map(([name, parameter]: [string, any], index) => (
               <button
                 key={name}
-                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left hover:border-circle-black"
+                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                 onClick={() => {
                   navigateTo({
                     component: InspectorDefinitionMenuNav,
@@ -106,6 +76,37 @@ const ParameterContainer = (props: {
               to implement dynamic functionality."
             />
           )}
+          <Button
+            type="button"
+            variant="primary"
+            className="mx-auto my-4"
+            onClick={() => {
+              if (!ParameterMapping.subtypes) {
+                return;
+              }
+
+              navigateTo(
+                navSubTypeMenu(
+                  {
+                    typePage: ParameterMapping.subtypes.component,
+                    typeProps: { component: props.dataMapping },
+                    menuPage: InspectorDefinitionMenu,
+                    menuProps: {
+                      dataType: ParameterMapping,
+                      passBackKey: 'parameters',
+                      index: -1,
+                      source: props.values.parameters
+                        ? Object.keys(props.values.parameters)
+                        : undefined,
+                    },
+                  },
+                  props.values,
+                ),
+              );
+            }}
+          >
+            Add Parameter
+          </Button>
         </div>
       )}
     />

@@ -27,8 +27,6 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);
   const workflow = workflowGraphs[selectedWorkflow].value;
-  const inputFile = useRef<HTMLInputElement>(null);
-  const loadConfig = useStoreActions((actions) => actions.loadConfig);
 
   return (
     <div className="h-full bg-white flex flex-col">
@@ -79,83 +77,6 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
       </TabbedMenu>
       <span className="border-b border-circle-gray-300" />
       <Footer>
-        <input
-          type="file"
-          accept=".yml,.yaml"
-          ref={inputFile}
-          className="hidden"
-          onChange={(e) => {
-            if (!e.target.files) {
-              return;
-            }
-
-            const setConfig = (
-              yml: string,
-              orbImports?: Record<string, OrbImport>,
-            ) => {
-              let config;
-              try {
-                config = parsers.parseConfig(yml, orbImports);
-              } catch (e) {
-                config = e as Error;
-              }
-              loadConfig(config);
-            };
-
-            e.target.files[0].text().then((yml) => {
-              const configBlob = parse(yml);
-
-              if ('orbs' in configBlob) {
-                const orbs = parsers.parseOrbImports(configBlob.orbs);
-
-                if (!orbs) {
-                  setConfig(yml);
-                  return;
-                }
-
-                Promise.all(
-                  // get a sneak of the orb imports so we can load the manifests
-                  orbs.map((orb) =>
-                    loadOrb(`${orb.namespace}/${orb.name}@${orb.version}`, orb),
-                  ),
-                ).then((manifests) => {
-                  const orbImports = Object.assign(
-                    {},
-                    ...manifests.map(({ orb, manifest }) => {
-                      if (typeof orb === 'string') {
-                        throw new Error(`Could not load orb ${orb}`);
-                      }
-
-                      return {
-                        [orb.alias]: new OrbImportWithMeta(
-                          orb.alias,
-                          orb.namespace,
-                          orb.name,
-                          manifest,
-                          orb.version,
-                          '',
-                          orb.description,
-                        ),
-                      };
-                    }),
-                  );
-
-                  setConfig(yml, orbImports);
-                });
-              }
-            });
-          }}
-        />
-        <Button
-          variant={config ? 'secondary' : 'primary'}
-          className=" w-min whitespace-nowrap"
-          onClick={(e) => {
-            inputFile.current?.click();
-            e.stopPropagation();
-          }}
-        >
-          Open Config
-        </Button>
         {config && (
           <Button
             variant="primary"
