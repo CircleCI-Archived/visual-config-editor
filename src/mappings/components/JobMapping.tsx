@@ -53,7 +53,6 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
     },
   },
   resolveObservables: (job) => {
-    console.log(job.executor);
     return {
       executors:
         job.executor instanceof reusable.ReusedExecutor &&
