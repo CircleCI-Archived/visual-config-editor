@@ -1,12 +1,14 @@
 import { orb, parsers, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
+import CommandIcon from '../../../icons/components/CommandIcon';
 import JobIcon from '../../../icons/components/JobIcon';
 import { definitionsAsArray } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import AddButton from '../../atoms/AddButton';
 import { Button } from '../../atoms/Button';
+import { Empty } from '../../atoms/Empty';
 import AdjacentStepListItem from '../../atoms/form/AdjacentStepListItem';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
@@ -38,33 +40,41 @@ const AdjacentSteps = ({
     <ListProperty
       label={label}
       name={`parameters.${type}`}
+      className="pb-4"
       expanded
       required
       listItem={(input) => (
         <AdjacentStepListItem {...input} values={values} type={type} />
       )}
-      empty="No steps defined yet."
-    >
-      <AddButton
-        className="ml-auto flex"
-        onClick={() => {
-          navigateTo(
-            navSubTypeMenu(
-              {
-                typePage: StepTypePageNav,
-                menuPage: StepDefinitionMenu,
-                menuProps: {
-                  getter: (values: any) => values.parameters[type],
-                  setter: (values: any, value: any) =>
-                    (values.parameters[type] = value),
+      empty={
+        <Empty
+          label={`No ${label} Yet`}
+          Logo={CommandIcon}
+          description="Add a step by clicking the button above"
+        />
+      }
+      pinned={
+        <AddButton
+          className="ml-auto flex"
+          onClick={() => {
+            navigateTo(
+              navSubTypeMenu(
+                {
+                  typePage: StepTypePageNav,
+                  menuPage: StepDefinitionMenu,
+                  menuProps: {
+                    getter: (values: any) => values.parameters[type],
+                    setter: (values: any, value: any) =>
+                      (values.parameters[type] = value),
+                  },
                 },
-              },
-              values,
-            ),
-          );
-        }}
-      />
-    </ListProperty>
+                values,
+              ),
+            );
+          }}
+        />
+      }
+    />
   );
 };
 

@@ -96,6 +96,7 @@ const ListProperty = ({
   return (
     <CollapsibleList
       title={label}
+      className={props.className}
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}
       pinned={props.pinned}

@@ -81,7 +81,15 @@ const DefinitionsContainer = ({
             )}
           </>
         }
-        titleExpanded={<>{hasDefinitions && <ComponentInfo type={type} />}</>}
+        titleExpanded={
+          <>
+            {hasDefinitions && (
+              <div className="p-4 px-8">
+                <ComponentInfo type={type} />
+              </div>
+            )}
+          </>
+        }
       >
         <div className="w-full pl-2 pt-2">
           {hasDefinitions ? (

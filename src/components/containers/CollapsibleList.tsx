@@ -42,7 +42,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
               {props.title}
             </p>
           </div>
-          {expanded && <p className="p-4 px-8">{props.titleExpanded}</p>}
+          {expanded && props.titleExpanded}
         </div>
         {expanded && props.pinned}
       </div>

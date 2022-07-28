@@ -92,12 +92,14 @@ const OrbDefinitionContainer = (props: {
         classNameExpanded="py-4"
         title={props.dataMapping.name.plural || ''}
       >
-        <div className="p-2">
-          <ComponentInfo type={props.dataMapping} />
+        <>
+          <div className="p-2">
+            <ComponentInfo type={props.dataMapping} />
+          </div>
           {Object.entries(props.data).map(([name, ref]) => (
             <Definition type={props.dataMapping} data={ref} index={-1} />
           ))}
-        </div>
+        </>
       </CollapsibleList>
       <span className="flex w-full border-b border-circle-gray-300"></span>
     </>

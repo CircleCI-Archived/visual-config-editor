@@ -19,7 +19,6 @@ const OrbImportsContainer = (props: OrbImportProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   // const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
-  const hasDefinitions = Object.values(items).length > 0;
   const orbDefinitions = useMemo(
     () =>
       mapDefinitions(items, (orb) => {
