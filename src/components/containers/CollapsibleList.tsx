@@ -24,7 +24,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
       }`}
     >
       <div className="flex flex-row">
-        <div className=" w-10/12">
+        <div className="w-10/12">
           <div className="flex flex-row">
             <button
               onClick={(e) => {
@@ -34,7 +34,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
                 props.onChange && props.onChange(newExpanded);
               }}
               type="button"
-              className={`flex hover:bg-circle-gray-300 border-white border rounded ${'px-1'}`}
+              className={`flex hover:bg-circle-gray-300 border-white border rounded px-1`}
             >
               <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />
             </button>

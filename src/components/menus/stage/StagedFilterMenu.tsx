@@ -1,3 +1,4 @@
+import { FilterParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
 import React, { useState } from 'react';
@@ -12,6 +13,7 @@ import TabbedMenu from '../TabbedMenu';
 
 type WorkflowJobMenuProps = {
   job: WorkflowJob;
+  values: any;
 };
 
 type FilterListProps = {
@@ -31,6 +33,29 @@ const FilterItem = ({ item, setValue }: ListItemChildProps) => {
   );
 };
 
+/**
+ * Create structure of branch filters,
+ * and ensure there are at least one empty value
+ * per target.
+ */
+const getInitialValues = (values: {
+  parameters?: { filters?: FilterParameter };
+}) => {
+  const current = values.parameters?.filters;
+  const branches = current?.branches;
+  const tags = current?.tags;
+
+  const initial = {
+    branches: {
+      only: branches?.only || [''],
+      ignore: branches?.ignore || [''],
+    },
+    tags: { only: tags?.only || [''], ignore: tags?.ignore || [''] },
+  };
+
+  return initial;
+};
+
 const FilterList = ({ type, values, target }: FilterListProps) => {
   return (
     <ListProperty
@@ -45,10 +70,13 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
     />
   );
 };
-const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
+
+const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const tabs = ['BRANCHES', 'TAGS'];
   const [target, setTarget] = useState(tabs[0].toLowerCase());
+
+  console.log(values);
 
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
@@ -57,20 +85,13 @@ const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
         {/* <WorkflowIcon className="w-8 h-8 p-1 mr-1" /> */}
         <div className="pl-6 pr-5">
           <h1 className="pt-3 text-2xl font-bold">Filters</h1>
-
           <div className=" py-3 flex text-sm text-circle-gray-500">
             A map defining rules for execution on specific branches or tags
           </div>
         </div>
       </header>
       <Formik
-        initialValues={{
-          branches: {
-            only: [''],
-            ignore: [''],
-          },
-          tags: { only: [''], ignore: [''] },
-        }}
+        initialValues={getInitialValues(values)}
         enableReinitialize
         onSubmit={(values) => {
           navigateBack({
@@ -90,13 +111,18 @@ const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
                 {},
                 // filter the the empty values from only and ignore lists
                 ...Object.entries(values)
-                  .map(([targetKey, target]) => ({
-                    [targetKey]: Object.entries(target).map(
-                      ([typeKey, type]) => ({
-                        [typeKey]: filterEmpty(type),
-                      }),
-                    ),
-                  }))
+                  .map(([targetKey, target]) => {
+                    return {
+                      [targetKey]: Object.entries(target).map(
+                        ([typeKey, type]) => {
+                          console.log(filterEmpty(type));
+                          return {
+                            [typeKey]: filterEmpty(type),
+                          };
+                        },
+                      ),
+                    };
+                  })
                   // filter out any target types that have no defined values
                   .filter((target) =>
                     Object.values(target).some(
@@ -106,7 +132,13 @@ const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
                   ),
               );
 
-              return { ...currentValues, filters };
+              return {
+                ...currentValues,
+                parameters: {
+                  ...currentValues.parameters,
+                  filters,
+                },
+              };
             },
           });
         }}
