@@ -1,7 +1,9 @@
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
 import React, { useState } from 'react';
+import { useStoreActions } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import ListProperty, {
   ListItemChildProps,
 } from '../../atoms/form/ListProperty';
@@ -16,8 +18,17 @@ type FilterListProps = {
   type: 'Only' | 'Ignore';
 } & FormikValues;
 
-const FilterItem = ({ item }: ListItemChildProps) => {
-  return <div>{item}</div>;
+const FilterItem = ({ item, setValue }: ListItemChildProps) => {
+  return (
+    <input
+      className="w-full h-full p-1"
+      defaultValue={item}
+      placeholder={'Filter string or regex'}
+      onBlur={(e) => {
+        setValue(e.target.value);
+      }}
+    />
+  );
 };
 
 const FilterList = ({ type, values, target }: FilterListProps) => {
@@ -30,11 +41,12 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
       required
       listItem={FilterItem}
       empty="filter "
-    ></ListProperty>
+      addButton
+    />
   );
 };
 const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
-  // const navigateBack = useStoreActions((actions) => actions.navigateBack);
+  const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const tabs = ['BRANCHES', 'TAGS'];
   const [target, setTarget] = useState(tabs[0].toLowerCase());
 
@@ -51,20 +63,63 @@ const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
           </div>
         </div>
       </header>
-      <TabbedMenu
-        tabs={tabs}
-        onChange={(index) => {
-          setTarget(tabs[index].toLowerCase());
+      <Formik
+        initialValues={{
+          branches: {
+            only: [''],
+            ignore: [''],
+          },
+          tags: { only: [''], ignore: [''] },
+        }}
+        enableReinitialize
+        onSubmit={(values) => {
+          navigateBack({
+            distance: 1,
+            applyValues: (currentValues) => {
+              const filterEmpty = (values: string[]) => {
+                const filtered = values
+                  .map((value) => value.trim())
+                  .filter((value) => value);
+
+                if (filtered.length > 0) {
+                  return filtered;
+                }
+              };
+
+              const filters = Object.assign(
+                {},
+                // filter the the empty values from only and ignore lists
+                ...Object.entries(values)
+                  .map(([targetKey, target]) => ({
+                    [targetKey]: Object.entries(target).map(
+                      ([typeKey, type]) => ({
+                        [typeKey]: filterEmpty(type),
+                      }),
+                    ),
+                  }))
+                  // filter out any target types that have no defined values
+                  .filter((target) =>
+                    Object.values(target).some(
+                      (type) =>
+                        type && Object.values(Object.values(type)[0])[0],
+                    ),
+                  ),
+              );
+
+              return { ...currentValues, filters };
+            },
+          });
         }}
       >
-        <div className="p-6">
-          <Formik
-            initialValues={{ branches: { only: ['main'] } }}
-            enableReinitialize
-            onSubmit={(values) => {}}
-          >
-            {(formikProps) => (
-              <Form className="flex flex-col flex-1">
+        {(formikProps) => (
+          <Form className="flex flex-col flex-1">
+            <TabbedMenu
+              tabs={tabs}
+              onChange={(index) => {
+                setTarget(tabs[index].toLowerCase());
+              }}
+            >
+              <div className="p-6">
                 <FilterList
                   type="Only"
                   {...formikProps}
@@ -75,19 +130,17 @@ const StagedFilterMenu = ({ job }: WorkflowJobMenuProps) => {
                   {...formikProps}
                   target={target}
                 ></FilterList>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </TabbedMenu>
+              </div>
+            </TabbedMenu>
 
-      <span className="border-b border-circle-gray-300" />
-      <button
-        className="text-white text-sm font-medium p-2 m-6 bg-circle-blue duration:50 transition-all rounded-md2"
-        onClick={(e) => {}} // TODO: implement
-      >
-        Save Filter
-      </button>
+            <div className="border-t border-circle-gray-300 p-6 flex">
+              <Button type="submit" className="ml-auto" variant="primary">
+                Save Filter
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };

@@ -18,6 +18,7 @@ import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
 import StepTypePageNav from '../definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
+import StagedFilterMenuNav from './StagedFilterMenu';
 
 type WorkflowJobMenuProps = {
   source: WorkflowJob;
@@ -80,6 +81,7 @@ const AdjacentSteps = ({
 
 const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const definitions = useStoreState((state) => state.definitions);
 
   const updateWorkflowElement = useStoreActions(
@@ -141,22 +143,19 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   label="Name"
                   placeholder={source.name}
                 />
-                {/**
-                  TODO: Replace with collapsible list
-                  <button
+                <button
                   type="button"
                   className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
                   onClick={() => {
                     navigateTo({
                       component: StagedFilterMenuNav,
-                      props: { job },
-                      origin: true,
+                      props: { source, values },
+                      values,
                     });
                   }}
                 >
                   Edit Filters
-                </button> */}
-
+                </button>
                 {(source.job instanceof reusable.ParameterizedJob ||
                   source.job instanceof orb.OrbRef) && (
                   <>
