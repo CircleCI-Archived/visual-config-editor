@@ -1,7 +1,7 @@
 import { IconProps } from '../IconProps';
 
 const ExecutorIcon = (props: IconProps & { type?: string }) => (
-  <svg viewBox="0 0 96 96" className={props.className}>
+  <svg viewBox="0 0 96 96" className={props.className} fill={props.color}>
     <g id="Layer_1" data-name="Layer 1">
       <path d="M85.93,30h-76a6,6,0,0,1-6-6V12a6,6,0,0,1,6-6h76a6,6,0,0,1,6,6V24A6,6,0,0,1,85.93,30Zm-76-20a2,2,0,0,0-2,2V24a2,2,0,0,0,2,2h76a2,2,0,0,0,2-2V12a2,2,0,0,0-2-2Z" />
       <path d="M85.93,90h-76a6,6,0,0,1-6-6V72a6,6,0,0,1,6-6h76a6,6,0,0,1,6,6V84A6,6,0,0,1,85.93,90Zm-76-20a2,2,0,0,0-2,2V84a2,2,0,0,0,2,2h76a2,2,0,0,0,2-2V72a2,2,0,0,0-2-2Z" />

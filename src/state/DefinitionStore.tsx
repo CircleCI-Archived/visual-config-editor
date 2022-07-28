@@ -117,10 +117,10 @@ export type DefinitionAction<G extends NamedGenerable> = Action<
 
 export const mapDefinitions = <G extends NamedGenerable>(
   definitions: DefinitionRecord<G>,
-  callback: (definition: G) => any,
+  callback: (definition: G, index: number) => any,
 ) => {
-  return Object.values(definitions).map((definition) =>
-    callback(definition.value),
+  return Object.values(definitions).map((definition, index) =>
+    callback(definition.value, index),
   );
 };
 

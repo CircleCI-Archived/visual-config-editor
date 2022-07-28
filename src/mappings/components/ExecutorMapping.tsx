@@ -114,7 +114,7 @@ export const ExecutorMapping: InspectableMapping<
   docsInfo: {
     description:
       'Technology/Environment which Jobs execute their steps inside of.',
-    link: 'https://circleci.com/docs/2.0/executor-types/',
+    link: 'https://circleci.com/docs/executor-types/',
   },
 };
 

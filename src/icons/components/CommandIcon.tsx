@@ -6,7 +6,7 @@ const CommandIcon = (props: IconProps) => (
     viewBox="0 0 24 24"
     className={props.className}
     fill="none"
-    stroke="black"
+    stroke={props.color || 'black'}
   >
     <path
       strokeLinecap="round"

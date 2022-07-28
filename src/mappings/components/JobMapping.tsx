@@ -93,8 +93,14 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   docsInfo: {
     description:
       'Collection of steps to be executed within the Executor environment.',
-    link: 'https://circleci.com/docs/2.0/concepts/#jobs',
+    link: 'https://circleci.com/docs/concepts/#jobs',
   },
+  requirements: [
+    {
+      message: 'You must define at least one executor before creating a job.',
+      test: (store) => Object.values(store.executors).length > 0,
+    },
+  ],
 };
 
 export type JobAction = DefinitionAction<Job>;

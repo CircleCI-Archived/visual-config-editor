@@ -1,9 +1,12 @@
+import { type } from 'os';
 import { useRef } from 'react';
 import InspectableMapping from '../../mappings/InspectableMapping';
+import { mapDefinitions, NamedGenerable } from '../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import AddButton from '../atoms/AddButton';
 import ComponentInfo from '../atoms/ComponentInfo';
 import Definition from '../atoms/Definition';
+import { Empty } from '../atoms/Empty';
 import {
   InspectorDefinitionMenu,
   InspectorDefinitionMenuNav,
@@ -18,14 +21,24 @@ export interface DefinitionsProps {
   onChange?: (expanded: boolean) => void;
 }
 
-const DefinitionsContainer = (props: DefinitionsProps) => {
+const DefinitionsContainer = ({
+  type,
+  expanded,
+  onChange,
+}: DefinitionsProps) => {
   // the definitions of the current type of inspectable mapping
-  const definitions = useStoreState(
-    (store) => store.definitions[props.type.key],
-  );
+  const definitions = useStoreState((store) => store.definitions);
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const guideStep = useStoreState((state) => state.guideStep);
   const ref = useRef(null);
+  const hasDefinitions = Object.values(definitions[type.key]).length > 0;
+  const requirements: string[] = [];
+
+  type.requirements?.forEach((requirement) => {
+    if (!requirement.test(definitions)) {
+      requirements.push(requirement.message);
+    }
+  });
 
   /**
    * Navigate to inspector definition menu,
@@ -34,48 +47,81 @@ const DefinitionsContainer = (props: DefinitionsProps) => {
    */
   const navigateToInspector = () => {
     navigateTo(
-      props.type.subtypes
+      type.subtypes
         ? navSubTypeMenu({
-            typePage: props.type.subtypes?.component,
+            typePage: type.subtypes?.component,
             menuPage: InspectorDefinitionMenu,
-            menuProps: { dataType: props.type, index: -1 },
+            menuProps: { dataType: type, index: -1 },
           })
         : {
             component: InspectorDefinitionMenuNav,
-            props: { dataType: props.type, index: -1 },
+            props: { dataType: type, index: -1 },
           },
     );
   };
 
   return (
     <div ref={ref} className="w-full px-4 pb-0">
-      {props.type.guide && guideStep === props.type.guide.step && (
-        <GuideContainer target={ref}>{props.type.guide.info}</GuideContainer>
+      {type.guide && guideStep === type.guide.step && (
+        <GuideContainer target={ref}>{type.guide.info}</GuideContainer>
       )}
       <CollapsibleList
-        title={props.type.name.plural}
-        expanded={props.expanded}
+        title={type.name.plural}
+        expanded={expanded}
         className="py-4"
         classNameExpanded="py-4 "
-        onChange={props.onChange}
+        onChange={onChange}
+        pinned={
+          <>
+            {requirements.length === 0 && (
+              <AddButton
+                className="flex ml-auto"
+                onClick={navigateToInspector}
+              />
+            )}
+          </>
+        }
+        titleExpanded={
+          <>
+            {hasDefinitions && (
+              <div className="p-4 px-8">
+                <ComponentInfo type={type} />
+              </div>
+            )}
+          </>
+        }
       >
         <div className="w-full pl-2 pt-2">
-          <ComponentInfo type={props.type} />
-          {typeof definitions === 'object' && !Array.isArray(definitions) ? (
-            Object.entries(definitions).map(([name, definition], index) => (
-              <Definition
-                data={definition.value}
-                key={name}
-                type={props.type}
-                index={index}
-              />
-            ))
+          {hasDefinitions ? (
+            mapDefinitions<NamedGenerable>(
+              definitions[type.key],
+              (definition, index) => (
+                <Definition
+                  data={definition}
+                  key={definition.name}
+                  type={type}
+                  index={index}
+                />
+              ),
+            )
           ) : (
-            <div className="font-medium text-sm text-circle-gray-500">
-              No {props.type.name.plural} found.
-            </div>
+            <Empty
+              label={`No Available ${type.name.plural}`}
+              Logo={type.components.icon}
+              description={
+                <>
+                  <ComponentInfo type={type} />
+                  <br />
+                  <br />
+                  {requirements.length > 0
+                    ? requirements
+                    : `Define a new ${type.name.singular} by clicking the button
+                  above.`}
+                  <br />
+                </>
+              }
+            />
           )}
-          <AddButton className="flex ml-auto" onClick={navigateToInspector} />
         </div>
       </CollapsibleList>
       <div className="w-full border-b border-circle-gray-300"></div>
