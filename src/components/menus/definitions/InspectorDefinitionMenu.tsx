@@ -175,7 +175,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   {dataMapping.subtypes &&
                     (props.editing ? (
                       <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left">
-                        <p className="font-bold">
+                        <p className="font-semibold">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
@@ -193,7 +193,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                           props.selectSubtype();
                         }}
                       >
-                        <p className="font-bold">
+                        <p className="font-semibold">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
