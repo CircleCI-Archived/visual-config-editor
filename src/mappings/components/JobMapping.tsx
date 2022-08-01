@@ -15,6 +15,8 @@ import {
   definitionsAsArray,
 } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
+import { UNDEFINED_COMMAND } from './CommandMapping';
+import { UNDEFINED_EXECUTOR } from './ExecutorMapping';
 
 export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   key: 'jobs',
@@ -30,11 +32,21 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   parameters: componentParametersSubtypes.job,
   subscriptions: {
     commands: (prev, cur: reusable.CustomCommand, j) => {
-      const steps = j.steps.map((step) =>
-        step instanceof reusable.ReusableCommand && step.name === prev.name
-          ? new reusable.ReusableCommand(cur, step.parameters)
-          : step,
-      );
+      let steps;
+
+      if (cur) {
+        steps = j.steps.map((step) =>
+          step instanceof reusable.ReusableCommand && step.name === prev.name
+            ? new reusable.ReusableCommand(cur, step.parameters)
+            : step,
+        );
+      } else {
+        steps = j.steps.filter((step) =>
+          step instanceof reusable.ReusableCommand
+            ? step.name !== prev.name
+            : true,
+        );
+      }
 
       return new reusable.ParameterizedJob(
         j.name,
@@ -46,29 +58,34 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
     executors: (_, cur, j) => {
       return new reusable.ParameterizedJob(
         j.name,
-        cur.reuse(),
+        cur?.reuse() || UNDEFINED_EXECUTOR,
         j instanceof reusable.ParameterizedJob ? j.parameters : undefined,
         j.steps,
       );
     },
   },
   resolveObservables: (job) => {
+    const reusedExecutor =
+      job.executor instanceof reusable.ReusedExecutor
+        ? job.executor.executor
+        : undefined;
+    const orbExec =
+      reusedExecutor instanceof orb.OrbRef ? reusedExecutor : undefined;
+
+    const orbCommands = job.steps.filter(
+      (command) =>
+        command instanceof reusable.ReusableCommand &&
+        command.name.includes('/'),
+    );
+
     return {
-      executors:
-        job.executor instanceof reusable.ReusedExecutor &&
-        job.executor.executor instanceof orb.OrbRef
-          ? job.executor.executor
-          : undefined,
+      executors: orbExec ? undefined : reusedExecutor,
       commands: job.steps.filter(
         (command) =>
           command instanceof reusable.ReusableCommand &&
           !command.name.includes('/'),
       ),
-      orbs: job.steps.filter(
-        (command) =>
-          command instanceof reusable.ReusableCommand &&
-          command.name.includes('/'),
-      ),
+      orbs: orbExec ? [orbExec, ...orbCommands] : orbCommands,
     };
   },
   /**
@@ -120,4 +137,5 @@ export type JobActions = {
   define_jobs: JobAction;
   update_jobs: JobAction;
   delete_jobs: JobAction;
+  cleanup_jobs: JobAction;
 };

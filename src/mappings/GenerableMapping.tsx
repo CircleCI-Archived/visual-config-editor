@@ -86,11 +86,11 @@ const componentToType = (data: any): GenerableMapping | undefined => {
   return foundType;
 };
 
-const typeToComponent = (componentType: string) => {
+const typeToMapping = (componentType: string) => {
   return dataMappings.find((mapping) => mapping.key === componentType);
 };
 
-export { componentToType, typeToComponent, dataMappings };
+export { componentToType, typeToMapping, dataMappings };
 
 export interface SubTypeMapping {
   text: string;
@@ -136,13 +136,14 @@ export default interface GenerableMapping<
     ) => GenerableType;
     onRemove?: () => void;
   };
-  overrides?: {
+  storeHooks?: {
     add?: (store: StoreModel, value: GenerableType) => void;
     update?: (
       store: StoreModel,
       value: UpdateType<GenerableType>,
     ) => GenerableType;
     remove?: () => void;
+    cleanup?: () => void;
   };
   /**
    * Store action resolver to watch other actions for changes.

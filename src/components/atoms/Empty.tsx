@@ -15,9 +15,9 @@ export const Empty = ({ label, Logo, description }: EmptyProps) => {
         {label}
       </h1>
       {description && (
-        <p className="text-sm text-center text-circle-gray-400">
+        <div className="text-sm text-center text-circle-gray-400">
           {description}
-        </p>
+        </div>
       )}
     </>
   );

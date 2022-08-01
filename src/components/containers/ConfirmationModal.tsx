@@ -31,7 +31,8 @@ const confirmDialogue: ConfirmationDialogueTemplates = {
   },
   delete: {
     header: `Delete ${placeholder} ${placeholder}?`,
-    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it.`,
+    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it. 
+    This definition has %s dependent components.`,
     button: 'Delete',
     buttonVariant: 'dangerous',
   },
@@ -47,7 +48,7 @@ const ConfirmationModal = () => {
     typeof confirm?.modalDialogue === 'string'
       ? confirmDialogue[confirm.modalDialogue]
       : confirm?.modalDialogue;
-  const dialogueBox = { x: 478, y: 250 };
+  const dialogueBox = { x: 478, y: 250 }; // TODO: make this dynamic
   const closeHandler = () => {
     updateConfirmation(undefined);
   };
@@ -59,12 +60,12 @@ const ConfirmationModal = () => {
     const parts = input.split(placeholder);
 
     return parts.map((part, index) => (
-      <>
+      <p key={index}>
         {part}
         {index !== parts.length - 1 && (
           <strong>{confirm?.labels[index]}</strong>
         )}
-      </>
+      </p>
     ));
   };
 
@@ -87,9 +88,9 @@ const ConfirmationModal = () => {
               <h3 className="font-extrabold py-4 text-2xl">
                 {populatePlaceholders(dialogue.header)}
               </h3>
-              <body className="w-96 h-20 pt-2">
+              <div className="w-96 h-20 pt-2">
                 {populatePlaceholders(dialogue.body)}
-              </body>
+              </div>
             </div>
             <div className="border-t border-circle-gray-400 p-4 py-6 flex">
               <div className="ml-auto">

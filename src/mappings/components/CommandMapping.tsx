@@ -1,4 +1,5 @@
 import { parsers, reusable } from '@circleci/circleci-config-sdk';
+import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Command';
 import CommandSummary from '../../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../../components/containers/inspector/CommandInspector';
 import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
@@ -8,6 +9,8 @@ import {
   definitionsAsArray,
 } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
+
+export const UNDEFINED_COMMAND = new reusable.CustomCommand('deleted command');
 
 export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   key: 'commands',
@@ -22,11 +25,21 @@ export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   parameters: componentParametersSubtypes.command,
   subscriptions: {
     commands: (prev, cur, c) => {
-      const steps = c.steps.map((step) =>
-        step instanceof reusable.ReusableCommand && step.name === prev.name
-          ? new reusable.ReusableCommand(cur, step.parameters)
-          : step,
-      );
+      let steps;
+
+      if (cur) {
+        steps = c.steps.map((step) =>
+          step instanceof reusable.ReusableCommand && step.name === prev.name
+            ? new reusable.ReusableCommand(cur, step.parameters)
+            : step,
+        );
+      } else {
+        steps = c.steps.filter((step) =>
+          step instanceof reusable.ReusableCommand
+            ? step.name !== prev.name
+            : true,
+        );
+      }
 
       return new reusable.CustomCommand(
         c.name,
@@ -72,4 +85,5 @@ export type CommandActions = {
   define_commands: CommandAction;
   update_commands: CommandAction;
   delete_commands: CommandAction;
+  cleanup_commands: CommandAction;
 };

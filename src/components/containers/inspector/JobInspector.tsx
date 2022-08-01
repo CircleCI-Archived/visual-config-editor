@@ -2,6 +2,7 @@ import { executors, Job, orb } from '@circleci/circleci-config-sdk';
 import { FormikValues, useField } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
+import { UNDEFINED_EXECUTOR } from '../../../mappings/components/ExecutorMapping';
 import { JobMapping } from '../../../mappings/components/JobMapping';
 import {
   DefinitionsModel,
@@ -57,46 +58,50 @@ const EmbeddedExecutor = ({
     ...props,
   })[2];
 
+  const deletedExecutor = data.executor === UNDEFINED_EXECUTOR;
+
   return (
     <>
       <div className="flex flex-row">
         <p className="font-bold leading-5 tracking-wide">Executor</p>
-        <button
-          type="button"
-          className="ml-auto tracking-wide leading-6 text-sm text-circle-blue font-medium  "
-          onClick={() => {
-            const name = data.name + '-exec-export';
+        {!deletedExecutor && (
+          <button
+            type="button"
+            className="ml-auto tracking-wide my-auto text-sm text-circle-blue font-medium  "
+            onClick={() => {
+              const name = data.name + '-exec-export';
 
-            updateConfirmation({
-              onConfirm: () => {
-                if (!(data.executor instanceof executors.Executor)) {
-                  return;
-                }
+              updateConfirmation({
+                onConfirm: () => {
+                  if (!(data.executor instanceof executors.Executor)) {
+                    return;
+                  }
 
-                embeddedHelper.setValue(undefined);
-                defineExecutor(data.executor.asReusable(name));
-                executor.setValue(name);
-                triggerToast({
-                  label: name,
-                  content: 'has been exported.',
-                  status: 'success',
-                });
-              },
-              modalDialogue: {
-                body: 'Upon extracting this %s, a %s with the name %s will be created. This operation cannot be undone.',
-                button: 'Confirm',
-                buttonVariant: 'primary',
-                header: 'Confirm Executor Export',
-              },
-              labels: ['executor', 'reusable executor', name],
-            });
-          }}
-        >
-          Export as Definition
-        </button>
+                  embeddedHelper.setValue(undefined);
+                  defineExecutor(data.executor.asReusable(name));
+                  executor.setValue(name);
+                  triggerToast({
+                    label: name,
+                    content: 'has been exported.',
+                    status: 'success',
+                  });
+                },
+                modalDialogue: {
+                  body: 'Upon extracting this %s, a %s with the name %s will be created. This operation cannot be undone.',
+                  button: 'Confirm',
+                  buttonVariant: 'primary',
+                  header: 'Confirm Executor Export',
+                },
+                labels: ['executor', 'reusable executor', name],
+              });
+            }}
+          >
+            Export as Definition
+          </button>
+        )}
       </div>
       <div className="px-3 py-2 my-2 bg-circle-gray-200 border w-full border-circle-gray-300 rounded flex flex-row">
-        Embedded {embeddedExecutor}
+        {deletedExecutor ? `Deleted Executor` : `Embedded ${embeddedExecutor}`}
         <button
           onClick={() => {
             embeddedHelper.setValue(undefined);
@@ -151,6 +156,10 @@ const JobInspector = ({
             }}
             dependent={(executorName: string) => {
               const splitName = executorName?.split('/');
+
+              if (!splitName) {
+                return <></>;
+              }
               const executor =
                 splitName.length === 1
                   ? definitions.executors[executorName]?.value

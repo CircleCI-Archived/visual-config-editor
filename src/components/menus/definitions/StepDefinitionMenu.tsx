@@ -85,18 +85,6 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
 
               return values;
             },
-            applyObservers: (current) => {
-              if (customCommand) {
-                const newDependency = {
-                  type: 'commands',
-                  name: customCommand.name,
-                };
-
-                return current ? [...current] : [newDependency];
-              }
-
-              return current;
-            },
           });
         }}
       >

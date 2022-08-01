@@ -40,8 +40,10 @@ import {
 
 export interface NavigationBack {
   distance?: number;
+  /**
+   * Apply
+   */
   applyValues?: (current: any) => any;
-  applyObservers?: (current?: Array<DefinitionSubscriptions>) => any;
 }
 
 export interface ToastModel {
@@ -146,11 +148,8 @@ export type UpdateDiff = {
 export interface UpdateType<Out, In = Out> {
   old: Out;
   new: In;
-  /**
-   * Used by Workflows to update WorkflowJobs
-   * Could be used to optimize subscriptions later.
-   */
-  diff?: UpdateDiff;
+  observers?: DefinitionSubscriptions;
+  res?: (value: unknown) => void;
 }
 
 export type StoreActions = AllDefinitionActions & {
