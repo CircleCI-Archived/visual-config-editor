@@ -68,4 +68,5 @@ export type ParameterActions = {
   define_parameters: ParameterAction;
   update_parameters: ParameterAction;
   delete_parameters: ParameterAction;
+  cleanup_parameters: ParameterAction;
 };

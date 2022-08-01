@@ -13,9 +13,9 @@ const ComponentInfo = ({
 
   return (
     <>
-      <p className="font-medium text-sm text-circle-gray-400">
+      <div className="font-medium text-sm text-circle-gray-400">
         {docInfo?.description}
-      </p>
+      </div>
       <a
         className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
         href={docInfo?.link}

@@ -87,4 +87,5 @@ export type WorkflowActions = {
   define_workflows: WorkflowAction;
   update_workflows: WorkflowAction;
   delete_workflows: WorkflowAction;
+  cleanup_workflows: WorkflowAction;
 };

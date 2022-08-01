@@ -1,4 +1,3 @@
-import { type } from 'os';
 import { useRef } from 'react';
 import InspectableMapping from '../../mappings/InspectableMapping';
 import { mapDefinitions, NamedGenerable } from '../../state/DefinitionStore';
