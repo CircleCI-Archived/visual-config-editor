@@ -23,8 +23,10 @@ const WorkflowsPane = () => {
     <div className="flex flex-col flex-nowrap flex-1">
       <header className="flex w-full bg-white h-16">
         <div className="p-2 flex flex-row my-auto w-full">
-          <Logo className="mx-2" />
-          <h1 className="text-xl font-bold">Visual Config Editor</h1>
+          <div className="my-auto flex flex-row">
+            <Logo className="mx-2" />
+            <h1 className="text-xl font-bold">Visual Config Editor</h1>
+          </div>
           <input
             type="file"
             accept=".yml,.yaml"

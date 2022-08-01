@@ -3,7 +3,6 @@ import ParameterIcon from '../../icons/components/ParameterIcon';
 import { ParameterMapping } from '../../mappings/components/ParameterMapping';
 import GenerableMapping from '../../mappings/GenerableMapping';
 import { useStoreActions } from '../../state/Hooks';
-import AddButton from '../atoms/AddButton';
 import { Button } from '../atoms/Button';
 import { Empty } from '../atoms/Empty';
 import {

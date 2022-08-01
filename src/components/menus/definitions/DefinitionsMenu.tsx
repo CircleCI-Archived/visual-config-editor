@@ -1,8 +1,4 @@
-import { parsers } from '@circleci/circleci-config-sdk';
-import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { Form, Formik } from 'formik';
-import { useRef } from 'react';
-import { parse } from 'yaml';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
 import { dataMappings } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';
@@ -15,7 +11,6 @@ import { WorkflowSelector } from '../../atoms/WorkflowSelector';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
 import TabbedMenu from '../TabbedMenu';
-import { loadOrb, OrbImportWithMeta } from './OrbDefinitionsMenu';
 
 /**
  * The main menu for inspecting the app's contents.
