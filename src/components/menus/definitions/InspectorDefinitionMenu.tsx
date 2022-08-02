@@ -111,7 +111,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     (actions) => actions.triggerConfirmation,
   );
   return (
-    <div className="h-full flex flex-col">
+    <div
+      aria-label="Inspector Definition Menu"
+      className="h-full flex flex-col"
+    >
       <header>
         <BreadCrumbs />
         <div className="ml-6 py-3 flex">

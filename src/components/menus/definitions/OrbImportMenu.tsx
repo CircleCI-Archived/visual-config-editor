@@ -65,7 +65,10 @@ const SearchBox = (
 
   return (
     <>
-      <div className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row">
+      <div
+        aria-label="Orbs Search Box"
+        className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
+      >
         <input
           value={query}
           placeholder={props.placeholder}

@@ -29,6 +29,7 @@ const ParameterContainer = (props: {
             entries.map(([name, parameter]: [string, any], index) => (
               <button
                 key={name}
+                aria-label="Parameter"
                 className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                 onClick={() => {
                   navigateTo({
@@ -76,6 +77,7 @@ const ParameterContainer = (props: {
             />
           )}
           <Button
+            aria-label="Add Parameter"
             type="button"
             variant="primary"
             className="mx-auto my-4"

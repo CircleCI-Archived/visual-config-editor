@@ -138,7 +138,7 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
   );
 
   return (
-    <div className="h-full flex flex-col">
+    <div aria-label="Orbs Defintion Menu" className="h-full flex flex-col">
       <header className="border-b border-circle-gray-300">
         <BreadCrumbs />
         <div className="px-6 p-3">

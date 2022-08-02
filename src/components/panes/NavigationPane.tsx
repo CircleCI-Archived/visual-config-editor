@@ -1,3 +1,4 @@
+import { FocusScope } from 'react-aria';
 import { inspectorWidth } from '../../App';
 import { useStoreState } from '../../state/Hooks';
 import Toast from '../atoms/Toast';
@@ -16,6 +17,7 @@ const NavigationPane = ({ width }: NavigationPaneProps) => {
 
   return (
     <div
+      aria-label="Navigation Pane"
       className="h-full border-l border-circle-gray-300 pt-6 bg-white flex flex-col overflow-y-hidden"
       style={{ width }}
     >

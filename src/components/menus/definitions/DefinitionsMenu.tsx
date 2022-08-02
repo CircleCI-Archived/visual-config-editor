@@ -24,7 +24,10 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const workflow = workflowGraphs[selectedWorkflow].value;
 
   return (
-    <div className="h-full bg-white flex flex-col">
+    <div
+      aria-label="Definitions Menu"
+      className="h-full bg-white flex flex-col"
+    >
       <header className="ml-4 mb-4 flex">
         <WorkflowIcon className="w-8 h-8 p-1 mr-1" />
         <h1 className="text-2xl font-bold">{workflow.name}</h1>
@@ -35,7 +38,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           className="px-2 flex-1 w-full flex-col overflow-y-scroll"
           style={{ height: 'calc(100vh - 200px)' }}
         >
-          <OrbImportsContainer />
+          <OrbImportsContainer aria-label="Orb Imports" />
           {dataMappings.map((mapping, index) => {
             const dataType = mapping.mapping as InspectableMapping;
 
@@ -75,6 +78,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
         {config && (
           <Button
             variant="primary"
+            aria-label="Generate Configuration"
             className=" w-min whitespace-nowrap"
             onClick={(e) => updateConfig()}
           >
