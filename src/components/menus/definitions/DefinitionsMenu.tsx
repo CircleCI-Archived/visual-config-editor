@@ -31,7 +31,10 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const loadConfig = useStoreActions((actions) => actions.loadConfig);
 
   return (
-    <div className="h-full bg-white flex flex-col">
+    <div
+      aria-label="Definitions Menu"
+      className="h-full bg-white flex flex-col"
+    >
       <header className="ml-4 mb-4 flex">
         <WorkflowIcon className="w-8 h-8 p-1 mr-1" />
         <h1 className="text-2xl font-bold">{workflow.name}</h1>

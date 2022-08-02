@@ -72,12 +72,9 @@ const ConfirmationModal = () => {
   //   }
   // };
 
-  const [userText, setUserText] = useState('');
-
   const handleUserKeyPress = useCallback((event) => {
-    const { key, keyCode } = event;
+    const { key } = event;
     if (key === 'Escape') {
-      setUserText((prevUserText) => `${prevUserText}${key}`);
       closeHandler();
     }
   }, []);
@@ -111,6 +108,7 @@ const ConfirmationModal = () => {
       {confirm && dialogue && (
         <FocusScope contain autoFocus>
           <div
+            aria-label="Confirmation Modal"
             className="absolute left-0 top-0 w-full h-full z-50 flex"
             style={{ background: 'rgba(20,20,20,.8)' }}
           >
