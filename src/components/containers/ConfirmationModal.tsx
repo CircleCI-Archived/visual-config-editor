@@ -1,9 +1,9 @@
-import { FocusScope } from 'react-aria';
+import { FocusScope, useFocusManager } from 'react-aria';
 import { useOverlay, OverlayContainer, useModal } from '@react-aria/overlays';
 import DeleteItemIcon from '../../icons/ui/DeleteItemIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button, ButtonVariant } from '../atoms/Button';
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useKeyboard } from 'react-aria';
 import React from 'react';
 
@@ -61,6 +61,33 @@ const ConfirmationModal = () => {
   const closeHandler = () => {
     updateConfirmation(undefined);
   };
+
+  // let onKeyDown = (e: { key: any }) => {
+  //   switch (e.key) {
+  //     case e.key === 'Escape':
+  //       console.log('test');
+
+  //       closeHandler();
+  //       break;
+  //   }
+  // };
+
+  const [userText, setUserText] = useState('');
+
+  const handleUserKeyPress = useCallback((event) => {
+    const { key, keyCode } = event;
+    if (key === 'Escape') {
+      setUserText((prevUserText) => `${prevUserText}${key}`);
+      closeHandler();
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleUserKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleUserKeyPress);
+    };
+  }, [handleUserKeyPress]);
 
   /**
    * Replace placeholders in the dialogue body with the provided confirmation values.
