@@ -1,5 +1,9 @@
 import { Form, Formik } from 'formik';
-import { DefinitionSubscriptions } from '../../../state/DefinitionStore';
+import InspectableMapping from '../../../mappings/InspectableMapping';
+import {
+  DefinitionsModel,
+  DefinitionSubscriptions,
+} from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
@@ -19,17 +23,39 @@ type InspectorDefinitionProps = DataModel & {
   source?: Array<any>;
   toast: boolean;
   // The source of generable
+  // modifying this would not be good
   readonly data?: any;
 } & SubTypeMenuPageProps<any>;
+
+const getDependencies = (
+  store: DefinitionsModel,
+  mapping: InspectableMapping,
+  name: string,
+): number => {
+  const definition = store[mapping.key][name];
+
+  if (!definition || !definition.observers) {
+    return 0;
+  }
+
+  let count = 0;
+
+  Object.values(definition.observers).forEach((observer) => {
+    count += Object.values(observer).reduce((acc, value) => acc + value);
+  });
+
+  return count;
+};
 
 /**
  * The menu that allows for inspection (creation and editing) of a definition
  * This is one of the more complex pieces of the VCE, as it handles
- * the abstraction of all component's InspectableMapping properties,
- * and parameterized components.
+ * the abstraction of all components registered with a InspectableMapping,
+ * also handles parameterized components.
  *
  * The inspector menu opens from "New" button in the Definition
- * container,
+ * container, or from the "Definition" atom, which edits an
+ * existing definition.
  *
  * Related:
  * For Orb definitions see OrbDefinitionsMenu.tsx
@@ -178,7 +204,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   {dataMapping.subtypes &&
                     (props.editing ? (
                       <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left">
-                        <p className="font-bold">
+                        <p className="font-semibold">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
@@ -196,7 +222,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                           props.selectSubtype();
                         }}
                       >
-                        <p className="font-bold">
+                        <p className="font-semibold">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
@@ -231,7 +257,15 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                     onClick={() => {
                       updateConfirmation({
                         modalDialogue: 'delete',
-                        labels: [dataMapping.name.singular, props.data.name],
+                        labels: [
+                          dataMapping.name.singular,
+                          props.data.name,
+                          getDependencies(
+                            definitions,
+                            dataMapping,
+                            props.data.name,
+                          ),
+                        ],
                         onConfirm: () => {
                           deleteDefinition(props.data);
                           navigateBack({

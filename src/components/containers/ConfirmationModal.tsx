@@ -36,7 +36,8 @@ const confirmDialogue: ConfirmationDialogueTemplates = {
   },
   delete: {
     header: `Delete ${placeholder} ${placeholder}?`,
-    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it.`,
+    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it. 
+    This definition has %s dependent components.`,
     button: 'Delete',
     buttonVariant: 'dangerous',
   },
@@ -57,7 +58,7 @@ const ConfirmationModal = () => {
     typeof confirm?.modalDialogue === 'string'
       ? confirmDialogue[confirm.modalDialogue]
       : confirm?.modalDialogue;
-  const dialogueBox = { x: 478, y: 250 };
+  const dialogueBox = { x: 478, y: 250 }; // TODO: make this dynamic
   const closeHandler = () => {
     updateConfirmation(undefined);
   };
@@ -93,12 +94,12 @@ const ConfirmationModal = () => {
     const parts = input.split(placeholder);
 
     return parts.map((part, index) => (
-      <>
+      <p key={index}>
         {part}
         {index !== parts.length - 1 && (
           <strong>{confirm?.labels[index]}</strong>
         )}
-      </>
+      </p>
     ));
   };
 
@@ -112,20 +113,33 @@ const ConfirmationModal = () => {
             className="absolute left-0 top-0 w-full h-full z-50 flex"
             style={{ background: 'rgba(20,20,20,.8)' }}
           >
-            <div
-              className="bg-white w-min rounded absolute"
-              style={{
-                left: `calc(50% - ${dialogueBox.x / 2}px`,
-                top: `calc(50% - ${dialogueBox.y / 2}px`,
-              }}
-            >
-              <div className="px-8 py-4">
-                <h3 className="font-extrabold py-4 text-2xl">
-                  {populatePlaceholders(dialogue.header)}
-                </h3>
-                <body className="w-96 h-20 pt-2">
-                  {populatePlaceholders(dialogue.body)}
-                </body>
+            <div className="px-8 py-4">
+              <h3 className="font-extrabold py-4 text-2xl">
+                {populatePlaceholders(dialogue.header)}
+              </h3>
+              <div className="w-96 h-20 pt-2">
+                {populatePlaceholders(dialogue.body)}
+              </div>
+            </div>
+            <div className="border-t border-circle-gray-400 p-4 py-6 flex">
+              <div className="ml-auto">
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={closeHandler}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant={dialogue.buttonVariant}
+                  type="button"
+                  onClick={() => {
+                    confirm.onConfirm();
+                    updateConfirmation(undefined);
+                  }}
+                >
+                  {dialogue.button}
+                </Button>
               </div>
               <div className="border-t border-circle-gray-400 p-4 py-6 flex">
                 <div className="ml-auto">

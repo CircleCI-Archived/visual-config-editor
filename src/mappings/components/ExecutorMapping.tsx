@@ -15,6 +15,13 @@ import { DefinitionAction } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
 import { JobMapping } from './JobMapping';
 
+/**
+ * If an executor gets deleted from a job, we replace it with this
+ * so that we can determine the executor is undefined
+ * in the job inspector
+ */
+export const UNDEFINED_EXECUTOR = new executors.DockerExecutor('');
+
 export type AnyExecutor =
   | executors.DockerExecutor
   | executors.MacOSExecutor
@@ -114,7 +121,7 @@ export const ExecutorMapping: InspectableMapping<
   docsInfo: {
     description:
       'Technology/Environment which Jobs execute their steps inside of.',
-    link: 'https://circleci.com/docs/2.0/executor-types/',
+    link: 'https://circleci.com/docs/executor-types/',
   },
 };
 
@@ -124,4 +131,5 @@ export type ExecutorActions = {
   define_executors: ExecutorAction;
   update_executors: ExecutorAction;
   delete_executors: ExecutorAction;
+  cleanup_executors: ExecutorAction;
 };

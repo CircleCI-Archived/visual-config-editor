@@ -56,7 +56,7 @@ export const ParameterMapping: InspectableMapping<
   docsInfo: {
     description:
       'Options to help describe and expand functionality of a job, command, or executor.',
-    link: 'https://circleci.com/docs/2.0/reusing-config/#using-the-parameters-declaration',
+    link: 'https://circleci.com/docs/reusing-config/#using-the-parameters-declaration',
   },
 };
 
@@ -68,4 +68,5 @@ export type ParameterActions = {
   define_parameters: ParameterAction;
   update_parameters: ParameterAction;
   delete_parameters: ParameterAction;
+  cleanup_parameters: ParameterAction;
 };

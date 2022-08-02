@@ -1,12 +1,14 @@
 import { orb, parsers, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
+import CommandIcon from '../../../icons/components/CommandIcon';
 import JobIcon from '../../../icons/components/JobIcon';
 import { definitionsAsArray } from '../../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import AddButton from '../../atoms/AddButton';
 import { Button } from '../../atoms/Button';
+import { Empty } from '../../atoms/Empty';
 import AdjacentStepListItem from '../../atoms/form/AdjacentStepListItem';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
@@ -16,6 +18,7 @@ import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
 import StepTypePageNav from '../definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
+import StagedFilterMenuNav from './StagedFilterMenu';
 
 type WorkflowJobMenuProps = {
   source: WorkflowJob;
@@ -38,38 +41,47 @@ const AdjacentSteps = ({
     <ListProperty
       label={label}
       name={`parameters.${type}`}
+      className="pb-4"
       expanded
       required
       listItem={(input) => (
         <AdjacentStepListItem {...input} values={values} type={type} />
       )}
-      emptyText="No steps defined yet."
-    >
-      <AddButton
-        className="ml-auto flex"
-        onClick={() => {
-          navigateTo(
-            navSubTypeMenu(
-              {
-                typePage: StepTypePageNav,
-                menuPage: StepDefinitionMenu,
-                menuProps: {
-                  getter: (values: any) => values.parameters[type],
-                  setter: (values: any, value: any) =>
-                    (values.parameters[type] = value),
+      empty={
+        <Empty
+          label={`No ${label} Yet`}
+          Logo={CommandIcon}
+          description="Add a step by clicking the button above"
+        />
+      }
+      pinned={
+        <AddButton
+          className="ml-auto flex"
+          onClick={() => {
+            navigateTo(
+              navSubTypeMenu(
+                {
+                  typePage: StepTypePageNav,
+                  menuPage: StepDefinitionMenu,
+                  menuProps: {
+                    getter: (values: any) => values.parameters[type],
+                    setter: (values: any, value: any) =>
+                      (values.parameters[type] = value),
+                  },
                 },
-              },
-              values,
-            ),
-          );
-        }}
-      />
-    </ListProperty>
+                values,
+              ),
+            );
+          }}
+        />
+      }
+    />
   );
 };
 
 const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
+  const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const definitions = useStoreState((state) => state.definitions);
 
   const updateWorkflowElement = useStoreActions(
@@ -131,22 +143,19 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   label="Name"
                   placeholder={source.name}
                 />
-                {/**
-                  TODO: Replace with collapsible list
-                  <button
+                <button
                   type="button"
                   className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
                   onClick={() => {
                     navigateTo({
                       component: StagedFilterMenuNav,
-                      props: { job },
-                      origin: true,
+                      props: { source, values },
+                      values,
                     });
                   }}
                 >
                   Edit Filters
-                </button> */}
-
+                </button>
                 {(source.job instanceof reusable.ParameterizedJob ||
                   source.job instanceof orb.OrbRef) && (
                   <>

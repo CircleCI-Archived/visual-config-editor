@@ -10,7 +10,7 @@ import {
 } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useEffect, useState } from 'react';
 import Loading from '../../../icons/ui/Loading';
-import { typeToComponent } from '../../../mappings/GenerableMapping';
+import { typeToMapping } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
@@ -92,12 +92,14 @@ const OrbDefinitionContainer = (props: {
         classNameExpanded="py-4"
         title={props.dataMapping.name.plural || ''}
       >
-        <div className="p-2">
-          <ComponentInfo type={props.dataMapping} />
+        <>
+          <div className="p-2">
+            <ComponentInfo type={props.dataMapping} />
+          </div>
           {Object.entries(props.data).map(([name, ref]) => (
             <Definition type={props.dataMapping} data={ref} index={-1} />
           ))}
-        </div>
+        </>
       </CollapsibleList>
       <span className="flex w-full border-b border-circle-gray-300"></span>
     </>
@@ -172,7 +174,7 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             style={{ height: `calc(100vh - 321px)` }}
           >
             {orbDefinitions.map((component) => {
-              const mapping = typeToComponent(component);
+              const mapping = typeToMapping(component);
 
               if (mapping) {
                 return (

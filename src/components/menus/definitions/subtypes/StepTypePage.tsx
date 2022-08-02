@@ -6,11 +6,19 @@ import { commandSubtypes } from '../../../containers/inspector/subtypes/CommandS
 import TabbedMenu from '../../TabbedMenu';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 import { mapDefinitions } from '../../../../state/DefinitionStore';
-import { reusable } from '@circleci/circleci-config-sdk';
+import { orb, reusable } from '@circleci/circleci-config-sdk';
 import Card from '../../../atoms/Card';
+import { Empty } from '../../../atoms/Empty';
+import OrbIcon from '../../../../icons/components/OrbIcon';
+import CommandIcon from '../../../../icons/components/CommandIcon';
+import CollapsibleList from '../../../containers/CollapsibleList';
+import { CommandParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { OrbImportWithMeta } from '../OrbDefinitionsMenu';
 
 const StepTypePage = (
-  props: SubTypeSelectPageProps<string | CustomCommand>,
+  props: SubTypeSelectPageProps<
+    string | CustomCommand | orb.OrbRef<CommandParameterLiteral>
+  >,
 ) => {
   const definitions = useStoreState((state) => state.definitions);
 
@@ -32,7 +40,7 @@ const StepTypePage = (
                 props.setSubtype(name);
               }}
               pinned={
-                <div>
+                <>
                   {subtype.docsLink && (
                     <a
                       className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
@@ -45,33 +53,82 @@ const StepTypePage = (
                       Learn More
                     </a>
                   )}
-                </div>
+                </>
               }
             />
           ))}
         </div>
         <div className="p-6">
-          {mapDefinitions<reusable.CustomCommand>(
-            definitions.commands,
-            (command) => (
-              <button
-                key={command.name}
-                type="button"
-                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
-                onClick={() => {
-                  props.setSubtype(command);
-                }}
-              >
-                <p className="font-bold">{command.name}</p>
-                <p className="text-sm mt-1 leading-4 text-circle-gray-500">
-                  Command description will show here
-                </p>
-              </button>
-            ),
+          {Object.values(definitions.commands).length > 0 ? (
+            mapDefinitions<reusable.CustomCommand>(
+              definitions.commands,
+              (command) => (
+                <button
+                  key={command.name}
+                  type="button"
+                  className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
+                  onClick={() => {
+                    props.setSubtype(command);
+                  }}
+                >
+                  <p className="font-bold">{command.name}</p>
+                  <p className="text-sm mt-1 leading-4 text-circle-gray-500">
+                    Command description will show here
+                  </p>
+                </button>
+              ),
+            )
+          ) : (
+            <Empty
+              label="No Custom Commands"
+              Logo={CommandIcon}
+              description="Create a custom command to use it here"
+            />
           )}
         </div>
-        <div>User defined commands will show here</div>
-        <div>Predefined orb steps will show here</div>
+        <div className="p-6">
+          {Object.values(definitions.orbs).length > 0 ? (
+            mapDefinitions<OrbImportWithMeta>(definitions.orbs, (orb) => (
+              <CollapsibleList
+                title={
+                  <div className="flex flex-row w-full">
+                    <img
+                      className="w-6 p-1 mr-2"
+                      src={orb.logo_url}
+                      alt={`${orb.name} logo`}
+                    />
+                    <p className="font-normal text-gray-500">
+                      {orb.namespace}/
+                    </p>
+                    {orb.name}
+                    <p className="font-normal flex ml-auto text-gray-400">
+                      {orb.version}
+                    </p>
+                  </div>
+                }
+              >
+                <div className="pt-2">
+                  {orb.commands &&
+                    Object.values(orb.commands)?.map((command) => (
+                      <Card
+                        title={command.name}
+                        key={command.name}
+                        onClick={() => {
+                          props.setSubtype(command);
+                        }}
+                      />
+                    ))}
+                </div>
+              </CollapsibleList>
+            ))
+          ) : (
+            <Empty
+              label="No Imported Orbs"
+              Logo={OrbIcon}
+              description="Import an orb with commands, and they will be accessible here"
+            />
+          )}
+        </div>
       </TabbedMenu>
     </div>
   );

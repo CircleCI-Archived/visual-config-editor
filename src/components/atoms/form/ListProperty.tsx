@@ -20,8 +20,9 @@ export type ListPropertyProps = InspectorFieldProps & {
   values?: any;
   description?: string;
   expanded?: boolean;
-  emptyText?: string;
+  empty?: string | ReactElement;
   addButton?: boolean;
+  pinned?: ReactElement;
   listItem: (props: ListItemChildProps) => ReactElement;
 };
 
@@ -62,7 +63,7 @@ bg-white border border-circle-gray-300 hover:border-circle-black rounded-md2 fle
               onClick={() => {
                 updateConfirmation({
                   modalDialogue: 'delete',
-                  labels: [`Step ${values.name}`],
+                  labels: ['step', `${values?.name}`],
                   onConfirm: () => arrayHelper.remove(index),
                 });
               }}
@@ -84,7 +85,7 @@ const ListProperty = ({
   label,
   values,
   description,
-  emptyText,
+  empty: emptyText,
   children,
   listItem,
   ...props
@@ -95,8 +96,10 @@ const ListProperty = ({
   return (
     <CollapsibleList
       title={label}
+      className={props.className}
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}
+      pinned={props.pinned}
     >
       <>
         {field.value?.length > 0 ? (

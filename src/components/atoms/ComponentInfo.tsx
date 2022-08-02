@@ -1,19 +1,29 @@
-import InspectableMapping from '../../mappings/InspectableMapping';
+import InspectableMapping, {
+  GenerableInfoType,
+} from '../../mappings/InspectableMapping';
 
-const ComponentInfo = (props: { type: InspectableMapping }) => {
+const ComponentInfo = ({
+  type,
+  docsInfo,
+}: {
+  type?: InspectableMapping;
+  docsInfo?: GenerableInfoType;
+}) => {
+  const docInfo = type?.docsInfo || docsInfo;
+
   return (
-    <div className="pb-4">
-      <p className="font-medium text-sm text-circle-gray-500">
-        {props.type.docsInfo.description}
-      </p>
+    <>
+      <div className="font-medium text-sm text-circle-gray-400">
+        {docInfo?.description}
+      </div>
       <a
         className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-        href={props.type.docsInfo.link}
+        href={docInfo?.link}
         target="circleci_docs"
       >
         Learn More
       </a>
-    </div>
+    </>
   );
 };
 

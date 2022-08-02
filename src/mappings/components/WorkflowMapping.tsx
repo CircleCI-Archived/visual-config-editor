@@ -62,14 +62,14 @@ export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
         return job;
       });
 
-      const elements = w.elements.map((node) =>
-        node.type === 'jobs' && node.data.job.name === prev.name
+      const elements = w.elements.map((node) => {
+        return node.type === 'jobs' && node.data.job.name === prev.name
           ? {
               ...node,
               data: updates[node.data.parameters.name || node.data.job.name],
             }
-          : node,
-      );
+          : node;
+      });
 
       return new WorkflowStage(w.name, w.id, jobs, w.when, elements);
     },
@@ -87,4 +87,5 @@ export type WorkflowActions = {
   define_workflows: WorkflowAction;
   update_workflows: WorkflowAction;
   delete_workflows: WorkflowAction;
+  cleanup_workflows: WorkflowAction;
 };

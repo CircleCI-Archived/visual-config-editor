@@ -1,7 +1,14 @@
 import { Job, parameters, reusable } from '@circleci/circleci-config-sdk';
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
-import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
+import {
+  Action,
+  action,
+  ActionCreator,
+  TargetResolver,
+  ThunkOn,
+  thunkOn,
+} from 'easy-peasy';
 import { v4 } from 'uuid';
 import { store } from '../App';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
@@ -23,8 +30,8 @@ import {
   WorkflowMapping,
   WorkflowStage,
 } from '../mappings/components/WorkflowMapping';
-import GenerableMapping from '../mappings/GenerableMapping';
-import { StoreModel, UpdateType } from './Store';
+import GenerableMapping, { typeToMapping } from '../mappings/GenerableMapping';
+import { StoreActions, StoreModel, UpdateType } from './Store';
 
 export type ParameterDefinition = 'parameters';
 export type JobsDefinition = 'jobs';
@@ -32,6 +39,12 @@ export type CommandDefinition = 'commands';
 export type ExecutorsDefinition = 'executors';
 export type WorkflowDefinition = 'workflows';
 
+/**
+ * All definition types that are registered to the
+ * definition store
+ * (orbs are currently handled by the main store for no
+ * specific reason TODO: handle orbs here)
+ */
 export type DefinitionType =
   | ParameterDefinition
   | JobsDefinition
@@ -41,13 +54,14 @@ export type DefinitionType =
 
 export type NamedGenerable = Generable & { name: string };
 
-/***
- * @param observers - a list of dependent components which observe
- * @param observables - a list of dependent components which observe
- * @param value - current value of this definition
+/**
+ * A wrapper object for a definition that contains the definition's value,
+ * and lists of incoming and outgoing definition subscriptions
  */
 export type Definition<G> = {
+  /** a list of dependent components which observe this definition */
   observers?: DefinitionSubscriptions;
+  /** a list of dependencies which this definition observes */
   observables?: DefinitionSubscriptions;
   value: G;
 };
@@ -93,7 +107,7 @@ export type AllDefinitionActions = JobActions &
   WorkflowActions;
 
 export type DefinitionSubscriptionThunk = ThunkOn<
-  AllDefinitionActions,
+  StoreActions,
   UpdateType<NamedGenerable>
 >;
 
@@ -117,10 +131,10 @@ export type DefinitionAction<G extends NamedGenerable> = Action<
 
 export const mapDefinitions = <G extends NamedGenerable>(
   definitions: DefinitionRecord<G>,
-  callback: (definition: G) => any,
+  callback: (definition: G, index: number) => any,
 ) => {
-  return Object.values(definitions).map((definition) =>
-    callback(definition.value),
+  return Object.values(definitions).map((definition, index) =>
+    callback(definition.value, index),
   );
 };
 
@@ -144,7 +158,7 @@ export const createSubscription = (
   const observableTarget = state.definitions[observableType][observable.name];
   const observerSub = { [observer.name]: 1 };
 
-  if (observableTarget.observers) {
+  if (observableTarget?.observers) {
     const otherObservers = observableTarget.observers;
 
     observableDefs[observableType][observable.name] = {
@@ -159,7 +173,7 @@ export const createSubscription = (
           }
         : { ...otherObservers, [observerType]: observerSub },
     };
-  } else {
+  } else if (observableTarget) {
     observableDefs[observableType][observable.name] = {
       ...observableTarget,
       observers: { [observerType]: observerSub },
@@ -285,20 +299,17 @@ export const createDefinitionActions = <G extends NamedGenerable>(
   mapping: GenerableMapping<G>,
 ): Record<string, DefinitionAction<G>> => {
   const defType = mapping.key;
+  const hooks = mapping.storeHooks;
 
   return {
     [`define_${defType}`]: action((state, payload: G) => {
       setDefinitions(state, mapping, payload);
-      mapping.overrides?.add &&
-        mapping.overrides?.add(state as StoreModel, payload);
 
-      if (!mapping?.subscriptions || !mapping.resolveObservables) {
-        return;
-      }
+      hooks?.add && hooks?.add(state as StoreModel, payload);
     }),
     [`update_${defType}`]: action((state, payload: UpdateType<G>) => {
-      const newDefinition = mapping.overrides?.update
-        ? mapping.overrides.update(state as StoreModel, payload)
+      const newDefinition = hooks?.update
+        ? hooks.update(state as StoreModel, payload)
         : payload.new;
       const oldState = state.definitions[defType];
       const oldDefinition = oldState[payload.old.name];
@@ -314,8 +325,19 @@ export const createDefinitionActions = <G extends NamedGenerable>(
           }
         },
       );
+
+      payload.res && payload.res(undefined);
     }),
-    [`delete_${defType}`]: action(
+    /**
+     * triggers a deletion of the definition
+     * but does not remove it from the store
+     * used to update & unsubscribe observers
+     */
+    [`delete_${defType}`]: action(() => {
+      hooks?.remove && hooks?.remove();
+    }),
+    // does the actual deletion of the definition
+    [`cleanup_${defType}`]: action(
       (state: DefinitionsStoreModel, payload: G) => {
         const newDefinitions = {
           ...state.definitions,
@@ -323,7 +345,7 @@ export const createDefinitionActions = <G extends NamedGenerable>(
 
         delete newDefinitions[defType][payload.name];
 
-        mapping.overrides?.remove && mapping.overrides?.remove();
+        hooks?.cleanup && hooks?.cleanup();
       },
     ),
   };
@@ -333,86 +355,126 @@ export const createDefinitionActions = <G extends NamedGenerable>(
  * Creates a thunk that watches the observable update action,
  * and updates the observer according to it's subscription
  */
-const createObserverSubscription = <
+const createObserverSubscriptions = <
   Observer extends NamedGenerable,
   Observables extends NamedGenerable,
 >(
   observableType: DefinitionType,
-  observerType: DefinitionType,
-  subscription: SubscriptionCallback<Observer, Observables>,
+  subType: 'update' | 'delete',
+  extra?: TargetResolver<StoreActions, {}>,
 ): DefinitionSubscriptionThunk => {
   return thunkOn(
-    (actions) => actions[`update_${observableType}`],
+    (actions, empty) => {
+      const mainSub: ActionCreator<any> =
+        actions[`${subType}_${observableType as DefinitionType}`];
+
+      if (!extra) {
+        return mainSub;
+      }
+
+      const extraActions = extra(actions, empty);
+
+      return Array.isArray(extraActions)
+        ? [...extraActions, mainSub]
+        : [extraActions, mainSub];
+    },
     async (actions, target) => {
-      const change = target.payload as unknown as UpdateType<Observables>;
-      const name = change.new.name;
+      const payload =
+        subType === 'delete'
+          ? { old: target.payload, new: undefined }
+          : target.payload;
+      const change = payload as unknown as UpdateType<Observables>;
+      // there won't be a new change if the observable is being deleted
+      const name = subType === 'update' ? change.new.name : change.old.name;
+
       const state = store.getState();
       const definitions = state.definitions;
-      const observerSubs = definitions[observableType][name].observers;
-      const observer = observerSubs ? observerSubs[observerType] : undefined;
 
-      if (!observer) {
+      const observerSubs = definitions[observableType][name].observers;
+      if (!observerSubs) {
         return;
       }
 
-      Object.entries(observer).forEach(([name, count]) => {
-        const definition = definitions[observerType][name];
-        const observer = definition?.value as unknown as Observer;
+      const updates: Promise<unknown>[] = [];
 
-        if (!observer) {
-          return;
-        }
+      Object.entries(observerSubs).forEach(([type, observers]) => {
+        const observerType = type as DefinitionType;
 
-        const observerUpdate = actions[
-          `update_${observerType}`
-        ] as unknown as ActionCreator<UpdateType<Observer>>;
+        observers &&
+          Object.entries(observers).forEach(([name, count]) => {
+            const definition = definitions[observerType][name];
+            const observer = definition?.value as unknown as Observer;
 
-        observerUpdate({
-          old: observer,
-          new: subscription(change.old, change.new, observer),
-        });
+            if (!observer) return;
+
+            const observerUpdate = actions[
+              `update_${observerType}`
+            ] as unknown as ActionCreator<UpdateType<Observer>>;
+
+            const subscriptions =
+              typeToMapping(observerType)?.mapping.subscriptions;
+
+            if (!subscriptions || !subscriptions[observableType]) return;
+
+            const subscription = subscriptions[observableType];
+
+            subscription &&
+              updates.push(
+                new Promise((res) => {
+                  observerUpdate({
+                    old: observer,
+                    new: subscription(change.old, change.new, observer),
+                    res,
+                  });
+                }),
+              );
+          });
       });
+
+      if (subType === 'delete') {
+        Promise.all(updates).then(() => {
+          const observerCleanup = actions[
+            `cleanup_${observableType}`
+          ] as unknown as ActionCreator<Observer>;
+          observerCleanup(change.old as unknown as Observer);
+        });
+      }
     },
   );
 };
 
-export const createSubscriptionThunks = <
-  Observer extends NamedGenerable,
-  Observables extends NamedGenerable,
+export const createObservableThunks = <
+  Observable extends NamedGenerable,
+  Observers extends NamedGenerable,
 >(
-  mapping: ObserverMapping<Observer>,
-): Partial<Record<DefinitionType, DefinitionSubscriptionThunk>> => {
-  const observerType = mapping.key;
+  mapping: ObserverMapping<Observable>,
+  observerTypes: Array<DefinitionType>,
+): Record<string, DefinitionSubscriptionThunk> => {
+  const key = mapping.key;
 
-  return Object.assign(
-    {},
-    ...Object.entries(mapping.subscriptions).map(
-      ([observableType, subscription]) => ({
-        // assign the thunk subscription
-        [`${observerType}_subscribes_to_${observableType}`]:
-          createObserverSubscription<Observer, Observables>(
-            observableType as DefinitionType,
-            observerType as DefinitionType,
-            subscription,
-          ),
-      }),
+  return {
+    // assign the thunk subscription
+    [`trigger_${key}_subscribers`]: createObserverSubscriptions<
+      Observable,
+      Observers
+    >(
+      key,
+      'update',
+      // mapping.externalUpdates,
     ),
-  );
+    [`trigger_${key}_unsubscriptions`]: createObserverSubscriptions<
+      Observable,
+      Observers
+    >(
+      key as DefinitionType,
+      'delete',
+      // mapping.externalUpdates,
+    ),
+  };
 };
 
 export const createDefinitionStore = (): AllDefinitionActions => {
   return {
-    // thunks - observe actions, and trigger subscriptions
-    ...createSubscriptionThunks<
-      Job,
-      reusable.CustomCommand | reusable.ReusableExecutor
-    >(JobMapping as ObserverMapping<Job>),
-    ...createSubscriptionThunks<reusable.CustomCommand, reusable.CustomCommand>(
-      CommandMapping as ObserverMapping<reusable.CustomCommand>,
-    ),
-    ...createSubscriptionThunks<WorkflowStage, reusable.CustomCommand | Job>(
-      WorkflowMapping as ObserverMapping<WorkflowStage>,
-    ),
     // actions - lifecycle for each definition
     ...(createDefinitionActions<reusable.CustomCommand>(
       CommandMapping,
@@ -427,6 +489,26 @@ export const createDefinitionStore = (): AllDefinitionActions => {
     ...(createDefinitionActions<WorkflowStage>(
       WorkflowMapping,
     ) as WorkflowActions),
+    /*
+     * Create thunks for each observable definition.
+     * Each type the action type is triggered,
+     * the subscription for each observer is fulfilled.
+     */
+    ...createObservableThunks<reusable.ReusableExecutor, Job>(
+      ExecutorMapping as ObserverMapping<reusable.ReusableExecutor>,
+      ['jobs'],
+    ),
+    ...createObservableThunks<
+      reusable.CustomCommand,
+      reusable.CustomCommand | Job
+    >(CommandMapping as ObserverMapping<reusable.CustomCommand>, [
+      'commands',
+      'jobs',
+    ]),
+    ...createObservableThunks<WorkflowStage, reusable.CustomCommand | Job>(
+      WorkflowMapping as ObserverMapping<WorkflowStage>,
+      ['jobs'],
+    ),
   };
 };
 

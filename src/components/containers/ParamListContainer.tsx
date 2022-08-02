@@ -19,6 +19,7 @@ const subtypes: ParamInspector = {
     return {
       className: 'w-full',
       type: 'number',
+      placeholder: parameter.defaultValue || 'No default value',
     };
   },
   enum: (parameter) => {
@@ -30,11 +31,12 @@ const subtypes: ParamInspector = {
       children: enumParam.enumValues.map((value) => (
         <option value={value}>{value}</option>
       )),
+      placeholder: 'No default option',
     };
   },
   string: (parameter) => {
     return {
-      placeholder: parameter.defaultValue as string,
+      placeholder: (parameter.defaultValue as string) || 'No default value',
     };
   },
   boolean: (parameter) => {

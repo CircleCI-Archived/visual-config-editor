@@ -40,8 +40,10 @@ import {
 
 export interface NavigationBack {
   distance?: number;
+  /**
+   * Apply
+   */
   applyValues?: (current: any) => any;
-  applyObservers?: (current?: Array<DefinitionSubscriptions>) => any;
 }
 
 export interface ToastModel {
@@ -146,11 +148,8 @@ export type UpdateDiff = {
 export interface UpdateType<Out, In = Out> {
   old: Out;
   new: In;
-  /**
-   * Used by Workflows to update WorkflowJobs
-   * Could be used to optimize subscriptions later.
-   */
-  diff?: UpdateDiff;
+  observers?: DefinitionSubscriptions;
+  res?: (value: unknown) => void;
 }
 
 export type StoreActions = AllDefinitionActions & {
@@ -386,7 +385,7 @@ const Actions: StoreActions = {
     const stagedJob = map.workflows[workflow.name];
 
     const elements = workflow.elements.filter((element) => {
-      const filtered = element.id === payload;
+      const filtered = element.id === payload || element.type === '';
 
       if (filtered) {
         if (element.type === 'jobs') {
