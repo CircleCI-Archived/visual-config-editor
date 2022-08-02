@@ -45,10 +45,6 @@ const confirmDialogue: ConfirmationDialogueTemplates = {
 
 const ConfirmationModal = () => {
   let [events, setEvents] = React.useState([]);
-  // let { keyboardProps } = useKeyboard({
-  //   onKeyDown: (e) => setEvents((events) => [`key down: ${e.key}`, ...events]),
-  //   onKeyUp: (e) => setEvents((events) => [`key up: ${e.key}`, ...events]),
-  // });
   const confirm = useStoreState((state) => state.confirm);
   const updateConfirmation = useStoreActions(
     (actions) => actions.triggerConfirmation,
@@ -62,16 +58,6 @@ const ConfirmationModal = () => {
   const closeHandler = () => {
     updateConfirmation(undefined);
   };
-
-  // let onKeyDown = (e: { key: any }) => {
-  //   switch (e.key) {
-  //     case e.key === 'Escape':
-  //       console.log('test');
-
-  //       closeHandler();
-  //       break;
-  //   }
-  // };
 
   const handleUserKeyPress = useCallback((event) => {
     const { key } = event;
