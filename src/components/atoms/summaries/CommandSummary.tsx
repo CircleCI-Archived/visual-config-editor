@@ -6,7 +6,8 @@ const CommandSummary: React.FunctionComponent<{ data: CustomCommand }> = (
 ) => {
   return (
     <div className="flex flex-row">
-      <CommandIcon className="ml-1 mr-2 w-5 h-5"/> {props.data.name}
+      <CommandIcon className="mr-4 w-6 h-6" />
+      <h3 className="my-auto">{props.data.name}</h3>
     </div>
   );
 };
