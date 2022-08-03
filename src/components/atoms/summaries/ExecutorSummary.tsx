@@ -5,8 +5,9 @@ const ExecutorSummary: React.FunctionComponent<{ data: ReusableExecutor }> = (
   props,
 ) => {
   return (
-    <div className="flex flex-row">
-      <ExecutorIcon className="ml-1 mr-2 w-5 h-5" /> {props.data.name}
+    <div className="flex flex-row ">
+      <ExecutorIcon className="mr-4 w-6 h-6" />
+      <h3 className="my-auto">{props.data.name}</h3>
     </div>
   );
 };

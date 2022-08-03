@@ -7,7 +7,8 @@ const ParameterSummary: React.FunctionComponent<{
 }> = (props) => {
   return (
     <div className="flex flex-row">
-      <ParameterIcon className="ml-1 mr-2 w-5 h-5" /> {props.data.name}
+      <ParameterIcon className="mr-4 w-6 h-6" />
+      <h3 className="my-auto">{props.data.name}</h3>
     </div>
   );
 };
