@@ -57,8 +57,8 @@ const getField = (
         {...field}
         {...props}
         className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-        border rounded-sm p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 hover:bg-white ${
-          !field.value && 'bg-circle-gray-50'
+        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${
+          !field.value && 'bg-circle-gray-100'
         } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
       ></Field>
     )
