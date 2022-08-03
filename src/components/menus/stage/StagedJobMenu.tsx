@@ -28,7 +28,7 @@ type WorkflowJobMenuProps = {
   id: string;
 };
 
-const FilterItem = ({ item, setValue }: ListItemChildProps) => {
+const ContextItem = ({ item, setValue }: ListItemChildProps) => {
   return (
     <input
       className="w-full h-full p-1"
@@ -56,7 +56,7 @@ const AdjacentSteps = ({
     <ListProperty
       label={label}
       name={`parameters.${type}`}
-      className="pb-4"
+      className="pb-8"
       expanded
       required
       listItem={(input) => (
@@ -114,6 +114,9 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
           parameters: {
             name: '',
             context: [''],
+            matrix: {
+              parameters: {},
+            },
             ...values.parameters,
           },
         }}
@@ -165,13 +168,12 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   values={values}
                   expanded
                   required
-                  listItem={FilterItem}
-                  empty="filter "
+                  listItem={ContextItem}
                   addButton
                 />
                 <button
                   type="button"
-                  className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-sm"
+                  className="mb-8 text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
                   onClick={() => {
                     navigateTo({
                       component: StagedFilterMenuNav,
@@ -184,12 +186,12 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 </button>
                 {(source.job instanceof reusable.ParameterizedJob ||
                   source.job instanceof orb.OrbRef) && (
-                  <>
-                    <ParamListContainer
-                      parent="parameters"
-                      paramList={source.job.parameters}
-                    ></ParamListContainer>
-                  </>
+                  <ParamListContainer
+                    parent="parameters"
+                    values={values}
+                    matrix
+                    paramList={source.job.parameters}
+                  ></ParamListContainer>
                 )}
                 <AdjacentSteps
                   values={values}

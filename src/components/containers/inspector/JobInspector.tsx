@@ -214,6 +214,10 @@ const JobInspector = ({
         expanded
         required
         listItem={StepListItem}
+        labels={(values: { name: string }): string[] => [
+          'Step',
+          `${values?.name || Object.keys(values)[0]}`,
+        ]}
         empty={
           <Empty
             label="No Steps Yet"

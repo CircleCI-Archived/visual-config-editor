@@ -1,11 +1,14 @@
 import { parameters } from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import InspectorProperty from '../atoms/form/InspectorProperty';
+import { MatrixProperty } from '../atoms/form/MatrixProperty';
 
 export type ParamListContainerProps = {
   paramList: parameters.CustomParametersList<AnyParameterLiteral>;
   parent?: string;
   props?: any;
+  values?: any;
+  matrix?: boolean;
 };
 
 type ParamInspector = {
@@ -58,19 +61,36 @@ const subtypes: ParamInspector = {
 const ParamListContainer = ({
   paramList,
   parent,
-  props,
+  values,
+  matrix,
+  ...props
 }: ParamListContainerProps) => {
   return (
     <>
       {paramList.parameters.map((parameter, index) => {
         return (
-          <InspectorProperty
-            {...props}
-            label={parameter.name}
-            key={index}
-            name={parent ? `${parent}.${parameter.name}` : parameter.name}
-            {...subtypes[parameter.type](parameter)}
-          />
+          <>
+            {matrix ? (
+              <MatrixProperty
+                {...props}
+                label={parameter.name}
+                key={index}
+                values={values}
+                namePrefix={parent}
+                name={parameter.name}
+                {...subtypes[parameter.type](parameter)}
+              />
+            ) : (
+              <InspectorProperty
+                {...props}
+                label={parameter.name}
+                values={values}
+                key={index}
+                name={parent ? `${parent}.${parameter.name}` : parameter.name}
+                {...subtypes[parameter.type](parameter)}
+              />
+            )}
+          </>
         );
       })}
     </>

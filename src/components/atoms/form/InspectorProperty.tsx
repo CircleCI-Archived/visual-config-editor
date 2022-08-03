@@ -24,6 +24,12 @@ export type InspectorFieldProps = {
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
   dependent?: (value: any) => ReactElement;
+  fieldprops?: [
+    FieldInputProps<any>,
+    FieldMetaProps<any>,
+    FieldHelperProps<any>,
+  ];
+  pinned?: ReactElement;
 };
 
 const getField = (
@@ -66,7 +72,7 @@ const getField = (
 };
 
 const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
-  const [field, meta, helper] = useField(props);
+  const [field, meta, helper] = useField(props) || props.fieldprops;
   const { touched, error, value } = meta;
 
   // Sync form value to the prop value on mount
