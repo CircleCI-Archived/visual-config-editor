@@ -11,7 +11,9 @@ import { Button } from '../../atoms/Button';
 import { Empty } from '../../atoms/Empty';
 import AdjacentStepListItem from '../../atoms/form/AdjacentStepListItem';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
-import ListProperty from '../../atoms/form/ListProperty';
+import ListProperty, {
+  ListItemChildProps,
+} from '../../atoms/form/ListProperty';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import ParamListContainer from '../../containers/ParamListContainer';
 import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
@@ -24,6 +26,19 @@ type WorkflowJobMenuProps = {
   source: WorkflowJob;
   values: any;
   id: string;
+};
+
+const FilterItem = ({ item, setValue }: ListItemChildProps) => {
+  return (
+    <input
+      className="w-full h-full p-1"
+      defaultValue={item}
+      placeholder={'Context name'}
+      onBlur={(e) => {
+        setValue(e.target.value);
+      }}
+    />
+  );
 };
 
 const AdjacentSteps = ({
@@ -98,6 +113,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
         initialValues={{
           parameters: {
             name: '',
+            context: [''],
             ...values.parameters,
           },
         }}
@@ -142,6 +158,16 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   name="parameters.name"
                   label="Name"
                   placeholder={source.name}
+                />
+                <ListProperty
+                  label="Contexts"
+                  name="parameters.context"
+                  values={values}
+                  expanded
+                  required
+                  listItem={FilterItem}
+                  empty="filter "
+                  addButton
                 />
                 <button
                   type="button"
