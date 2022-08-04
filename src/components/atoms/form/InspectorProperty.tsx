@@ -24,11 +24,6 @@ export type InspectorFieldProps = {
   onChange?: (e: any) => void;
   children?: ReactElement[] | ReactElement;
   dependent?: (value: any) => ReactElement;
-  fieldprops?: [
-    FieldInputProps<any>,
-    FieldMetaProps<any>,
-    FieldHelperProps<any>,
-  ];
   pinned?: ReactElement;
 };
 
@@ -71,8 +66,19 @@ const getField = (
   );
 };
 
-const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
-  const [field, meta, helper] = useField(props) || props.fieldprops;
+const InspectorProperty = (props: InspectorFieldProps) => {
+  const field = useField(props);
+  return <FieldlessInspectorProperty {...props} field={field} />;
+};
+
+export const FieldlessInspectorProperty = ({
+  label,
+  field,
+  ...props
+}: InspectorFieldProps & {
+  field: [FieldInputProps<any>, FieldMetaProps<any>, FieldHelperProps<any>];
+}) => {
+  const [input, meta, helper] = field;
   const { touched, error, value } = meta;
 
   // Sync form value to the prop value on mount
@@ -101,7 +107,7 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
             </span>
           )}
         </div>
-        {getField(props, field, meta, helper, error)}
+        {getField(props, input, meta, helper, error)}
         {touched && error && (
           <span className="text-sm text-circle-red">{error}</span>
         )}
