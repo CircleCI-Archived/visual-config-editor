@@ -1,0 +1,213 @@
+@font-face {
+    font-family: "
+ Inter"
+;
+
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "
+ Inter"
+;
+
+    font-weight: 400;
+}
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+    font-size: 16px;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role="list"
+],
+ol[role="list"
+] {
+    list-style: none;
+    padding: 0;
+}
+
+/* Set core root defaults */
+html:focus-within {
+    scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.6;
+}
+
+/* A elements that don'
+t have a class get default styles */
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+* {
+    font-family: "
+ Inter"
+;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: white;
+    --a1: rgba(0, 0, 0, );
+    --a2: rgba(0, 0, 0, );
+    --foreground: #000;
+    --shadow: 0px 0px 4px rgba(0, 0, 0, 0.377);
+    --unit: 8px;
+}
+
+
+
+html {
+    background: var(--background);
+}
+
+kbd {
+    font-family: monospace;
+    background: var(--a2);
+    padding: calc(var(--unit) * 0.5);
+    border-radius: calc(var(--unit) * 0.5);
+}
+
+a {
+    color: var(--foreground);
+    text-decoration: underline;
+    text-underline-position: under;
+}
+
+#carbonads * {
+    margin: initial;
+    padding: initial;
+}
+
+#carbonads {
+    margin-left: auto;
+    font-family: -apple-system, BlinkMacSystemFont, '
+ Segoe UI'
+, Roboto, Oxygen-Sans, Ubuntu, Cantarell, '
+ Helvetica Neue'
+, Helvetica, Arial, sans-serif;
+    position: sticky;
+    top: var(--unit);
+}
+
+@media (max-width: 676px) {
+    #carbonads {
+        margin: auto;
+    }
+}
+
+#carbonads {
+    display: flex;
+    max-width: 330px;
+    background-color: var(--background);
+    box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+#carbonads a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#carbonads a:hover {
+    color: inherit;
+}
+
+#carbonads span {
+    position: relative;
+    display: block;
+    overflow: hidden;
+}
+
+#carbonads .carbon-wrap {
+    display: flex;
+}
+
+#carbonads .carbon-img {
+    display: block;
+    margin: 0;
+    line-height: 1;
+}
+
+#carbonads .carbon-img img {
+    display: block;
+}
+
+#carbonads .carbon-text {
+    font-size: 13px;
+    padding: 10px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    text-align: left;
+}
+
+#carbonads .carbon-poweredby {
+    display: block;
+    padding: 6px 8px;
+    background: var(--background);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    font-size: 8px;
+    line-height: 1;
+    border-top-left-radius: 3px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

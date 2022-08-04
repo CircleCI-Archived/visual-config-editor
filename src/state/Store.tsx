@@ -7,6 +7,7 @@ import {
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
+import { stat } from 'fs';
 import { MutableRefObject } from 'react';
 import {
   ElementId,
@@ -74,6 +75,10 @@ export interface DataModel {
   dataType?: InspectableMapping;
 }
 
+export interface accessibilityBarModel {
+  type: 'navigation' | 'editor' | 'workflow' | undefined;
+}
+
 export interface NavigationModel extends NavigationStop {
   jumpedFrom?: NavigationStop;
   from?: NavigationModel;
@@ -114,6 +119,7 @@ export type StoreModel = DefinitionsStoreModel & {
   /** Staged Job Preview Toolbox state  */
   previewToolbox: PreviewToolboxModel;
 
+  accessibilityBar: accessibilityBarModel;
   toast?: ToastModel;
   confirm?: ConfirmationModalModel;
 
@@ -196,6 +202,10 @@ export type StoreActions = AllDefinitionActions & {
   generateConfig: Action<StoreModel, void | Partial<DefinitionsModel>>;
   error: Action<StoreModel, any>;
 
+  setAccesibilityPane: Action<
+    StoreModel,
+    'navigation' | 'editor' | 'workflow' | undefined
+  >;
   updatePreviewToolBox: Action<StoreModel, PreviewToolboxModel>;
   setToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerToast: Action<StoreModel, ToastModel | undefined | void>;
@@ -713,6 +723,12 @@ const Actions: StoreActions = {
     }
   }),
 
+  setAccesibilityPane: action(
+    (state, string: 'navigation' | 'editor' | 'workflow' | undefined) => {
+      state.accessibilityBar.type = string;
+      return;
+    },
+  ),
   updatePreviewToolBox: action((state, payload) => {
     state.previewToolbox = payload;
   }),
@@ -741,6 +757,7 @@ const Store: StoreModel & StoreActions = {
     component: DefinitionsMenu,
     props: { expanded: [true, true, false, false] },
   },
+  accessibilityBar: { type: undefined },
   previewToolbox: {
     filter: {
       type: 'branches',

@@ -10,10 +10,12 @@
     "autoprefixer": "^9",
     "easy-peasy": "^5.0.3",
     "formik": "^2.2.9",
+    "kbar": "^0.1.0-beta.36",
     "monaco-editor": "^0.29.1",
     "monaco-editor-webpack-plugin": "^5.0.0",
     "postcss": "^8",
     "react": "^17.0.2",
+    "react-aria": "3.17.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.7",
@@ -24,8 +26,7 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.4.3",
     "uuid": "^8.3.2",
-    "web-vitals": "^2.1.2",
-    "react-aria": "3.17.0"
+    "web-vitals": "^2.1.2"
   },
   "resolutions": {
     "@types/react": "^17.0.38"
@@ -57,17 +58,17 @@
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.6.2",
-    "@types/react-beautiful-dnd": "^13.1.2",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
     "@types/algoliasearch": "^4.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.35",
     "@types/react": "^17.0.24",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^17.0.9",
     "@types/react-tabs": "^2.3.3",
     "@types/uuid": "^8.3.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
     "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

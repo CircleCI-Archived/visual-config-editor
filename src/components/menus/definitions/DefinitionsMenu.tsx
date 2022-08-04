@@ -34,6 +34,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
     <div
       aria-label="Definitions Menu"
       className="h-full bg-white flex flex-col"
+      id="Definitions-Menu"
     >
       <header className="ml-4 mb-4 flex">
         <WorkflowIcon className="w-8 h-8 p-1 mr-1" />

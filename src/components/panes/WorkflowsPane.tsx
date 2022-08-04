@@ -1,28 +1,33 @@
+import { FocusScope } from 'react-aria';
 import Logo from '../../icons/ui/Logo';
 import { useStoreState } from '../../state/Hooks';
 import WorkflowPane from '../containers/WorkflowContainer';
 
-const WorkflowsPane = () => {
+const WorkflowsPane = (props: any) => {
   const workflows = useStoreState((state) => state.definitions.workflows);
   const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
 
   return (
     <div
+      id="Workflows Pane"
       arial-label="Workflows Pane"
       className="flex flex-col flex-nowrap flex-1"
+      ref={props.reference}
     >
-      <header className="flex w-full bg-white h-16">
-        <div className="p-2 flex flex-row my-auto">
-          <Logo className="mx-2" />
-          <h1 className="text-xl font-bold">Visual Config Editor</h1>
-        </div>
-      </header>
+      <FocusScope contain={false}>
+        <header className="flex w-full bg-white h-16">
+          <div className="p-2 flex flex-row my-auto">
+            <Logo className="mx-2" />
+            <h1 className="text-xl font-bold">Visual Config Editor</h1>
+          </div>
+        </header>
 
-      <WorkflowPane
-        workflow={workflows[selectedWorkflow].value}
-        bgClassName="bg-circle-gray-200"
-        className="border border-r-0 h-full border-b-0 border-circle-gray-300"
-      />
+        <WorkflowPane
+          workflow={workflows[selectedWorkflow].value}
+          bgClassName="bg-circle-gray-200"
+          className="border border-r-0 h-full border-b-0 border-circle-gray-300"
+        />
+      </FocusScope>
     </div>
   );
 };
