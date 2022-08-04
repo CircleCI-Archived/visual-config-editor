@@ -24,7 +24,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
       mapDefinitions(items, (orb) => {
         return (
           <button
-            className="w-full mb-2 p-2 text-sm cursor-pointer text-left text-circle-black 
+            className="w-full mb-2 p-4 py-2  text-sm cursor-pointer text-left text-circle-black 
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             onClick={() => {
               navigateTo({
@@ -40,10 +40,13 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             }}
             key={orb.name}
           >
-            <img className="ml-1 mr-2 w-5 h-5" src={orb.logo_url} alt="" />
-            <p className="text-circle-gray-400">{orb.namespace}/</p>
-            {orb.name}
-            <div className="ml-auto text-circle-gray-400">{orb.version}</div>
+            <img className="mr-4 w-6 h-6" src={orb.logo_url} alt="" />
+            <div className="flex flex-row w-full my-auto text-circle-black text-base">
+              {orb.alias}
+              <div className="flex ml-auto text-xs my-auto bg-circle-gray-300 rounded-full p-1 px-2">
+                {orb.namespace}/{orb.name}@{orb.version}
+              </div>
+            </div>
           </button>
         );
       }),

@@ -10,8 +10,8 @@ const JobSummary: React.FunctionComponent<{ data: Job }> = (props) => {
 
   return (
     <div className="flex flex-row">
-      <JobIcon className="ml-1 mr-2 w-5 h-5" />
-      <p className="leading-5">{props.data.name}</p>
+      <JobIcon className="mr-4 w-6 h-6" />
+      <h3 className="my-auto">{props.data.name}</h3>
       {stagedJobs && (
         <WorkflowIcon
           className="w-5 h-5 ml-auto"
