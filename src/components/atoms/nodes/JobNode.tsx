@@ -246,7 +246,7 @@ const JobNode: React.FunctionComponent<
         >
           <DeleteItemIcon
             className="w-3 cursor-pointer m-auto"
-            color={hovering['remove'] ? 'red' : '#AAAAAA'}
+            color={hovering['remove'] ? '#B5261F' : '#AAAAAA'}
           />
         </button>
       </div>
