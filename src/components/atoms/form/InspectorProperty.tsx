@@ -57,8 +57,8 @@ const getField = (
         {...field}
         {...props}
         className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${
-          !field.value && 'bg-circle-gray-100'
+        border rounded-sm p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 hover:bg-white ${
+          !field.value && 'bg-circle-gray-50'
         } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
       ></Field>
     )
@@ -79,7 +79,7 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
   return (
     <>
       <div
-        className={`${props.type === 'checkbox' && `flex flex-row`} mb-3 ${
+        className={`${props.type === 'checkbox' && `flex flex-row`} mb-4 ${
           props.className
         }`}
         hidden={props.hidden}
@@ -90,7 +90,7 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
           </p>
           <InfoIcon className="w-5 flex my-auto p-1" color="#6A6A6A" />
           {props.required && (
-            <span className="ml-auto tracking-wide leading-5 text-xs text-circle-black px-2 bg-circle-gray-300 rounded-full font-medium">
+            <span className="ml-auto tracking-wide leading-5 text-xs text-circle-black px-2 bg-circle-gray-300  rounded-full font-medium">
               required
             </span>
           )}

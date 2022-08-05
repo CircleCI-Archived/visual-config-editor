@@ -45,12 +45,13 @@ const ListItem = ({
   const updateConfirmation = useStoreActions(
     (actions) => actions.triggerConfirmation,
   );
+
   return (
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, _) => (
         <div
           className="w-full mb-2 p-1 px-3 text-sm 
-bg-white border border-circle-gray-300 hover:border-circle-black rounded-md2 flex flex-row"
+bg-white border border-circle-gray-300 hover:border-circle-black rounded-sm flex flex-row"
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -124,7 +125,7 @@ const ListProperty = ({
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="p-2 pr-0 flex flex-col"
+                        className="p-2 pr-0 flex flex-col "
                       >
                         {field.value.map((item: any, index: number) => {
                           return (

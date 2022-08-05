@@ -100,7 +100,7 @@ const EmbeddedExecutor = ({
           </button>
         )}
       </div>
-      <div className="px-3 py-2 my-2 bg-circle-gray-200 border w-full border-circle-gray-300 rounded flex flex-row">
+      <div className="px-3 py-2 my-2 bg-circle-gray-200 border w-full border-circle-gray-300 rounded-sm flex flex-row">
         {deletedExecutor ? `Deleted Executor` : `Embedded ${embeddedExecutor}`}
         <button
           onClick={() => {

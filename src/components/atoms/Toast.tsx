@@ -9,7 +9,7 @@ const Toast = () => {
       {toast && (
         <button
           className={
-            'flex flex-row text-white bg-circle-gray-700 p-3 w-full transition-opacity rounded'
+            'flex flex-row text-white bg-circle-gray-700 p-3 w-full rounded transition-opacity'
           }
           aria-label={toast?.label}
           onClick={() => {

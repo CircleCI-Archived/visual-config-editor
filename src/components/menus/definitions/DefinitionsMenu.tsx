@@ -38,7 +38,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           className="px-2 flex-1 w-full flex-col overflow-y-scroll"
           style={{ height: 'calc(100vh - 200px)' }}
         >
-          <OrbImportsContainer aria-label="Orb Imports" />
+          <OrbImportsContainer aria-label="Orb Imports" expanded />
           {dataMappings.map((mapping, index) => {
             const dataType = mapping.mapping as InspectableMapping;
 

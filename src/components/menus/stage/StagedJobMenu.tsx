@@ -148,7 +148,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 <InspectorProperty type="button" name="name" label="Source Job">
                   <div
                     className="w-full mb-2 p-2 text-sm  text-left text-circle-black 
-                  bg-circle-gray-200 border border-circle-gray-300 rounded-md2 flex flex-row"
+                  bg-circle-gray-200 border border-circle-gray-300 rounded-sm flex flex-row"
                   >
                     <JobIcon className="ml-1 mr-2 w-5 h-5" />
                     <p className="leading-5">{source.name}</p>
@@ -171,7 +171,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 />
                 <button
                   type="button"
-                  className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
+                  className=" text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-sm"
                   onClick={() => {
                     navigateTo({
                       component: StagedFilterMenuNav,

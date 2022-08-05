@@ -14,7 +14,7 @@ export default function PreviewToolbox() {
   };
 
   return (
-    <div className="absolute z-10 bg-white rounded m-2 p-4 shadow border border-circle-gray-300">
+    <div className="absolute z-10 bg-white rounded-sm m-2 p-4 shadow border border-circle-gray-300">
       <CollapsibleList title="Preview Toolbox">
         <div className="px-1 py-3">
           <div className="border-l border-circle-gray-300 px-3 py-1">

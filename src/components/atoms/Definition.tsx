@@ -48,7 +48,7 @@ const Definition = (props: {
   return (
     <button
       className="w-full mb-2 p-4 py-2 cursor-pointer text-left text-circle-black 
-      bg-white border border-circle-gray-300 rounded-md2 hover:border-gray-700 text-base"
+      bg-white border border-circle-gray-300 rounded-sm hover:border-gray-700 text-base"
       draggable="true"
       onDragStart={(e) => {
         const type = props.type;
