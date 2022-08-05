@@ -85,12 +85,12 @@ const InspectorProperty = ({ label, ...props }: InspectorFieldProps) => {
         hidden={props.hidden}
       >
         <div className="flex flex-row mb-2">
-          <p className="font-medium text-sm my-auto tracking-wide text-circle-black">
+          <p className="font-medium  text-sm my-auto text-circle-black">
             {label}
           </p>
           <InfoIcon className="w-5 flex my-auto p-1" color="#6A6A6A" />
           {props.required && (
-            <span className="ml-auto tracking-wide leading-5 text-xs text-circle-black px-2 bg-circle-gray-300  rounded-full font-medium">
+            <span className="ml-auto leading-5 text-xs text-circle-black px-2 bg-circle-gray-300 rounded-full font-medium">
               required
             </span>
           )}
