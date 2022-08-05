@@ -52,7 +52,6 @@ export const ExecutorMapping: InspectableMapping<
       name: 'new-machine-executor',
       machine: {
         image: 'ubuntu-2004:202111-01',
-        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -60,7 +59,6 @@ export const ExecutorMapping: InspectableMapping<
       name: 'new-macos-executor',
       macos: {
         xcode: '13.2.0',
-        parameters: {},
       },
       resource_class: 'medium',
     },
@@ -68,13 +66,14 @@ export const ExecutorMapping: InspectableMapping<
       name: 'new-windows-executor',
       machine: {
         image: 'windows-server-2019-vs2019:stable',
-        parameters: {},
       },
       resource_class: 'windows.medium',
     },
   },
   parameters: componentParametersSubtypes.executor,
   transform: ({ name, ...values }) => {
+    console.log(values);
+
     return parsers.parseReusableExecutor(name, values);
   },
   store: {
