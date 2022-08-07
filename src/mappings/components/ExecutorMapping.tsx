@@ -72,8 +72,6 @@ export const ExecutorMapping: InspectableMapping<
   },
   parameters: componentParametersSubtypes.executor,
   transform: ({ name, ...values }) => {
-    console.log(values);
-
     return parsers.parseReusableExecutor(name, values);
   },
   store: {
