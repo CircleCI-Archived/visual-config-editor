@@ -54,14 +54,6 @@ export interface ToastModel {
 }
 
 export type WithToast<T> = T & { toast?: ToastModel };
-export interface WorkflowModel {
-  name: string;
-  id: string;
-  /*
-   * the main thing being updated. every time we want to change an element in this array
-   */
-  elements: Elements<any>;
-}
 
 export interface PreviewToolboxModel {
   filter: {

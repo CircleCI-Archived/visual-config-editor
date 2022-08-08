@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Logo from '../../icons/ui/Logo';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button } from '../atoms/Button';
-import WorkflowPane from '../containers/WorkflowContainer';
+import WorkflowContainer from '../containers/WorkflowContainer';
 import {
   loadOrb,
   OrbImportWithMeta,
@@ -113,8 +113,8 @@ const WorkflowsPane = () => {
         </div>
       </header>
 
-      <WorkflowPane
-        workflow={workflows[selectedWorkflow].value}
+      <WorkflowContainer
+        workflow={selectedWorkflow}
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
       />

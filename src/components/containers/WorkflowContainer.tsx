@@ -16,16 +16,15 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/GenerableMapping';
-import { JobMapping } from '../../mappings/components/JobMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
-import { WorkflowModel } from '../../state/Store';
 import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
+import { JobMapping } from '../../mappings/components/JobMapping';
 
 export interface ElementProps {
   className?: string;
   bgClassName?: string;
-  workflow: WorkflowModel;
+  workflow: string;
 }
 
 const getTypes = (): NodeTypesType =>
@@ -38,7 +37,11 @@ const getTypes = (): NodeTypesType =>
     ),
   );
 
-const WorkflowPane = (props: ElementProps) => {
+const WorkflowContainer = ({
+  workflow,
+  bgClassName,
+  className,
+}: ElementProps) => {
   const importOrb = useStoreActions((actions) => actions.importOrb);
   const [transform, setTransform] = useState<FlowTransform>({
     x: 0,
@@ -46,12 +49,9 @@ const WorkflowPane = (props: ElementProps) => {
     zoom: 1,
   });
   const [cooldown, setCooldown] = useState(false);
-
   const elements = useStoreState(
-    (state) =>
-      state.definitions.workflows[state.selectedWorkflow].value.elements,
+    (state) => state.definitions.workflows[workflow].value.elements,
   );
-
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
   );
@@ -236,7 +236,7 @@ const WorkflowPane = (props: ElementProps) => {
           let data = dragging.data;
 
           if (nodeMapping.transform) {
-            data = nodeMapping.transform(data);
+            data = nodeMapping.transform(data, undefined, elements);
           }
 
           if (data.job instanceof orb.OrbRef) {
@@ -259,7 +259,7 @@ const WorkflowPane = (props: ElementProps) => {
       {/* <PreviewToolbox /> */}
       <ReactFlow
         elements={elements}
-        className={props.className}
+        className={ className}
         onMove={(e) => {
           setTransform(e || transform);
         }}
@@ -277,7 +277,7 @@ const WorkflowPane = (props: ElementProps) => {
           variant={BackgroundVariant.Dots}
           gap={gap}
           color="#A3A3A3"
-          className={props.bgClassName}
+          className={bgClassName}
           size={1}
         />
       </ReactFlow>
@@ -285,4 +285,4 @@ const WorkflowPane = (props: ElementProps) => {
   );
 };
 
-export default WorkflowPane;
+export default WorkflowContainer;

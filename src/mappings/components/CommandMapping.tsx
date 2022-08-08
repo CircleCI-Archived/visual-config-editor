@@ -1,5 +1,4 @@
 import { parsers, reusable } from '@circleci/circleci-config-sdk';
-import { Command } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Command';
 import CommandSummary from '../../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../../components/containers/inspector/CommandInspector';
 import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
@@ -9,8 +8,6 @@ import {
   definitionsAsArray,
 } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
-
-export const UNDEFINED_COMMAND = new reusable.CustomCommand('deleted command');
 
 export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   key: 'commands',
