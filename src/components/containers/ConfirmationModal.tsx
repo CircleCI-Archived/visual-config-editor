@@ -151,7 +151,7 @@ const ConfirmationModal = () => {
                 </div>
               </div>
               <button
-                className="absolute w-14 h-10 top-0 right-0 hover:bg-circle-gray-300 rounded"
+                className="absolute w-14 h-10 top-0 right-0 hover:bg-circle-gray-250 rounded"
                 onClick={closeHandler}
               >
                 <DeleteItemIcon

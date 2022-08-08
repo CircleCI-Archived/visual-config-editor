@@ -12,12 +12,12 @@ const Card = ({ truncate, description, ...props }: CardProps) => {
     <div className="pb-4">
       <button
         type="button"
-        className="p-4 w-full border-circle-gray-300 border rounded text-left hover:border-circle-black max-h-36"
+        className="p-4 w-full border-circle-gray-300 border rounded-sm text-left hover:border-circle-black max-h-36"
         onClick={props.onClick}
       >
         <div className="flex flex-row">
           {props.icon}
-          <p className="font-bold">{props.title}</p>
+          <p className="font-medium">{props.title}</p>
           <div className="ml-auto z-10">{props.pinned}</div>
         </div>
         {description && (

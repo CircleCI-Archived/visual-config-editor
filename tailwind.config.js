@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
+      },
       cursor: {
         'ew-resize': 'ew-resize',
         'ns-resize': 'ns-resize',
@@ -17,6 +20,7 @@ module.exports = {
       },
       colors: {
         'circle-gray': {
+          50: '#fbfbfb',
           100: '#F7F7F7',
           200: '#F1F1F1',
           250: '#EDEDED', // neutral

@@ -9,7 +9,7 @@ const StepListItem = ({ item, index, values }: ListItemChildProps) => {
 
   return (
     <button
-      className="flex-1 cursor-pointer text-left text-circle-black leading-6"
+      className="flex-1 cursor-pointer rounded-sm text-left text-circle-black leading-6"
       type="button"
       onClick={() => {
         navigateTo({

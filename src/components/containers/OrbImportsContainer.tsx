@@ -86,7 +86,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
                   <ComponentInfo
                     docsInfo={{
                       description:
-                        'Orbs are reusable snippets of code that help automate repeated processes.',
+                        'Orbs are curated snippets of config that help automate repeated processes.',
                       link: 'https://circleci.com/docs/orb-intro',
                     }}
                   />

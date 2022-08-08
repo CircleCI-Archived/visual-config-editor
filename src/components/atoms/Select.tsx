@@ -57,7 +57,7 @@ const Select = (props: SelectProps) => {
 
   return (
     <DropdownContainer
-      className={`rounded ${
+      className={`rounded-sm ${
         props.borderless
           ? 'border-transparent'
           : ' border-circle-gray-300 shadow-sm'

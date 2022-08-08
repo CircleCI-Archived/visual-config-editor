@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import EditIcon from '../../../icons/ui/EditIcon';
 import InspectableMapping from '../../../mappings/InspectableMapping';
 import {
   DefinitionsModel,
@@ -203,8 +204,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 <div className="p-6">
                   {dataMapping.subtypes &&
                     (props.editing ? (
-                      <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left">
-                        <p className="font-semibold">
+                      <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded-sm text-left">
+                        <p className="font-medium">
                           {dataMapping.subtypes.definitions[subtype]?.text}
                         </p>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
@@ -216,15 +217,18 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                       </div>
                     ) : (
                       <button
-                        className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
+                        className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded-sm text-left"
                         type="button"
                         onClick={() => {
                           props.selectSubtype();
                         }}
                       >
-                        <p className="font-semibold">
-                          {dataMapping.subtypes.definitions[subtype]?.text}
-                        </p>
+                        <div className="w-full flex flex-row">
+                          <p className="font-medium">
+                            {dataMapping.subtypes.definitions[subtype]?.text}
+                          </p>
+                          <EditIcon className="ml-auto flex w-4" />
+                        </div>
                         <p className="text-sm mt-1 leading-4 text-circle-gray-500">
                           {
                             dataMapping.subtypes.definitions[subtype]
