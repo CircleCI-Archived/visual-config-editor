@@ -67,7 +67,6 @@ const KBarList = (props: any) => {
         if (focus) {
           focus.click();
           focus.scrollIntoView();
-          console.log(focus);
         }
       },
     },
@@ -79,7 +78,7 @@ const KBarList = (props: any) => {
       keywords: 'yaml config',
 
       perform: () => {
-        const focus = document.getElementById('Editor Pane');
+        const focus = document.getElementById('Editor-Pane');
 
         if (focus) {
           focus.scrollIntoView();
@@ -99,7 +98,6 @@ const KBarList = (props: any) => {
         if (focus) {
           focus.click();
           focus.scrollIntoView();
-          console.log(focus);
         }
       },
     },

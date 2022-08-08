@@ -26,7 +26,7 @@ const EditorPane = (props: any) => {
 
   return (
     <div
-      id="Editor Pane"
+      id="Editor-Pane"
       aria-label="Editor Pane"
       className="bg-circle-gray-900 h-2/5 w-full flex flex-col"
     >
