@@ -24,7 +24,6 @@ import { JobMapping } from '../../mappings/components/JobMapping';
 export interface ElementProps {
   className?: string;
   bgClassName?: string;
-  workflow: string;
 }
 
 const getTypes = (): NodeTypesType =>
@@ -37,11 +36,7 @@ const getTypes = (): NodeTypesType =>
     ),
   );
 
-const WorkflowContainer = ({
-  workflow,
-  bgClassName,
-  className,
-}: ElementProps) => {
+const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
   const importOrb = useStoreActions((actions) => actions.importOrb);
   const [transform, setTransform] = useState<FlowTransform>({
     x: 0,
@@ -50,7 +45,8 @@ const WorkflowContainer = ({
   });
   const [cooldown, setCooldown] = useState(false);
   const elements = useStoreState(
-    (state) => state.definitions.workflows[workflow].value.elements,
+    (state) =>
+      state.definitions.workflows[state.selectedWorkflow].value.elements,
   );
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,
@@ -259,7 +255,7 @@ const WorkflowContainer = ({
       {/* <PreviewToolbox /> */}
       <ReactFlow
         elements={elements}
-        className={ className}
+        className={className}
         onMove={(e) => {
           setTransform(e || transform);
         }}

@@ -112,9 +112,7 @@ const WorkflowsPane = () => {
           </Button>
         </div>
       </header>
-
       <WorkflowContainer
-        workflow={selectedWorkflow}
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
       />
