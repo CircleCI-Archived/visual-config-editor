@@ -48,6 +48,23 @@ export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
     update: (actions) => actions.update_workflows,
     remove: (actions) => actions.delete_workflows,
   },
+  storeHooks: {
+    update: (state, values) => {
+      /**
+       * Handles the non-observable state of the workflow
+       */
+      if (values.old.name !== values.new.name) {
+        if (state.selectedWorkflow === values.old.name) {
+          state.selectedWorkflow = values.new.name;
+        }
+
+        state.stagedJobs.workflows[values.new.name] =
+          state.stagedJobs.workflows[values.old.name];
+      }
+
+      return values.new;
+    },
+  },
   subscriptions: {
     jobs: (prev: Job, cur: Job, w) => {
       const updates: Record<string, workflow.WorkflowJob> = {};
