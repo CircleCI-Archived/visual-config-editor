@@ -15,7 +15,6 @@ import {
   definitionsAsArray,
 } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
-import { UNDEFINED_COMMAND } from './CommandMapping';
 import { UNDEFINED_EXECUTOR } from './ExecutorMapping';
 
 export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
@@ -108,8 +107,26 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   },
   dragTarget: 'workflow',
   node: {
-    transform: (data, params) => {
-      return new workflow.WorkflowJob(data, params);
+    transform: (data, params, elements) => {
+      const stagedNames = new Set(
+        elements
+          ?.filter((element) => element.type === 'jobs')
+          .map((job) => job.data.parameters?.name || job.data.name),
+      );
+      let name = data.name;
+
+      if (stagedNames && stagedNames.has(name)) {
+        for (let i = 2; true; i++) {
+          const newName = `${name} (${i})`;
+
+          if (!stagedNames.has(newName)) {
+            name = newName;
+            break;
+          }
+        }
+      }
+
+      return new workflow.WorkflowJob(data, { name, ...params });
     },
     component: JobNode,
   },
