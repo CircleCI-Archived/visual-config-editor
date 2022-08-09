@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik';
 import WorkflowIcon from '../../../icons/components/WorkflowIcon';
+import { WorkflowStage } from '../../../mappings/components/WorkflowMapping';
 import { dataMappings } from '../../../mappings/GenerableMapping';
 import InspectableMapping from '../../../mappings/InspectableMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
@@ -17,11 +18,12 @@ import TabbedMenu from '../TabbedMenu';
  */
 const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const workflowGraphs = useStoreState((state) => state.definitions.workflows);
-  const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
+  const selectedWorkflowId = useStoreState((state) => state.selectedWorkflowId);
+  const updateWorkflow = useStoreActions((actions) => actions.update_workflows);
   const config = useStoreState((state) => state.config);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);
-  const workflow = workflowGraphs[selectedWorkflow].value;
+  const workflow = workflowGraphs[selectedWorkflowId].value;
 
   return (
     <div
@@ -58,34 +60,54 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
               />
             );
           })}
+          <Footer>
+            {config && (
+              <Button
+                variant="primary"
+                type="button"
+                aria-label="Generate Configuration"
+                className=" w-min whitespace-nowrap"
+                onClick={(e) => updateConfig()}
+              >
+                Generate Config
+              </Button>
+            )}
+          </Footer>
         </div>
         <div className="p-6">
           <Formik
             initialValues={{ name: workflow.name }}
             enableReinitialize
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              updateWorkflow({
+                old: workflow,
+                new: new WorkflowStage(
+                  values.name,
+                  workflow.id,
+                  workflow.jobs,
+                  workflow.when,
+                  workflow.elements,
+                ),
+              });
+            }}
           >
             {(_) => (
               <Form className="flex flex-col flex-1">
                 <InspectorProperty label="Name" name="name" />
+                <Footer>
+                  <Button
+                    variant="primary"
+                    aria-label="Generate Configuration"
+                    className=" w-min whitespace-nowrap"
+                  >
+                    Save Workflow
+                  </Button>
+                </Footer>
               </Form>
             )}
           </Formik>
         </div>
       </TabbedMenu>
-      <span className="border-b border-circle-gray-300" />
-      <Footer>
-        {config && (
-          <Button
-            variant="primary"
-            aria-label="Generate Configuration"
-            className=" w-min whitespace-nowrap"
-            onClick={(e) => updateConfig()}
-          >
-            Generate Config
-          </Button>
-        )}
-      </Footer>
     </div>
   );
 };
