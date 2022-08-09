@@ -1,4 +1,3 @@
-import { FocusScope } from 'react-aria';
 import { inspectorWidth } from '../../App';
 import { useStoreState } from '../../state/Hooks';
 import Toast from '../atoms/Toast';

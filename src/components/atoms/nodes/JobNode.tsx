@@ -37,7 +37,7 @@ const JobNode: React.FunctionComponent<
 > = (props) => {
   const elements = useStoreState(
     (state) =>
-      state.definitions.workflows[state.selectedWorkflow].value.elements,
+      state.definitions.workflows[state.selectedWorkflowId].value.elements,
   );
   const dragging = useStoreState((state) => state.dragging);
   // const setWorkflowElements = useStoreActions(

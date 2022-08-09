@@ -1,6 +1,7 @@
 import { parsers } from '@circleci/circleci-config-sdk';
 import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
 import { useRef } from 'react';
+import { parse } from 'yaml';
 import Logo from '../../icons/ui/Logo';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button } from '../atoms/Button';
@@ -9,12 +10,8 @@ import {
   loadOrb,
   OrbImportWithMeta,
 } from '../menus/definitions/OrbDefinitionsMenu';
-import { parse } from 'yaml';
 
 const WorkflowsPane = () => {
-  const workflows = useStoreState((state) => state.definitions.workflows);
-  const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
-
   const inputFile = useRef<HTMLInputElement>(null);
   const config = useStoreState((state) => state.config);
   const loadConfig = useStoreActions((actions) => actions.loadConfig);

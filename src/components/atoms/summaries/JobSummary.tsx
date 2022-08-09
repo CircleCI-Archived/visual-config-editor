@@ -5,7 +5,7 @@ import { useStoreState } from '../../../state/Hooks';
 
 const JobSummary: React.FunctionComponent<{ data: Job }> = (props) => {
   const stagedJobMap = useStoreState((state) => state.stagedJobs);
-  const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
+  const selectedWorkflow = useStoreState((state) => state.selectedWorkflowId);
   const stagedJobs = stagedJobMap.workflows[selectedWorkflow];
 
   return (

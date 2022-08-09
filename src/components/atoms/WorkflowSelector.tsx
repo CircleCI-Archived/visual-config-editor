@@ -7,7 +7,7 @@ import DropdownContainer from '../containers/DropdownContainer';
 
 export const WorkflowSelector = () => {
   const workflows = useStoreState((state) => state.definitions.workflows);
-  const selectedWorkflow = useStoreState((state) => state.selectedWorkflow);
+  const selectedWorkflow = useStoreState((state) => state.selectedWorkflowId);
 
   const selectWorkflow = useStoreActions((actions) => actions.selectWorkflow);
   const addWorkflow = useStoreActions((actions) => actions.define_workflows);

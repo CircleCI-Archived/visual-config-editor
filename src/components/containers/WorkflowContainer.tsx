@@ -46,7 +46,7 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
   const [cooldown, setCooldown] = useState(false);
   const elements = useStoreState(
     (state) =>
-      state.definitions.workflows[state.selectedWorkflow].value.elements,
+      state.definitions.workflows[state.selectedWorkflowId].value.elements,
   );
   const addWorkflowElement = useStoreActions(
     (actions) => actions.addWorkflowElement,

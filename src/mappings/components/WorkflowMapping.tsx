@@ -54,8 +54,8 @@ export const WorkflowMapping: GenerableMapping<WorkflowStage> = {
        * Handles the non-observable state of the workflow
        */
       if (values.old.name !== values.new.name) {
-        if (state.selectedWorkflow === values.old.name) {
-          state.selectedWorkflow = values.new.name;
+        if (state.selectedWorkflowId === values.old.name) {
+          state.selectedWorkflowId = values.new.name;
         }
 
         state.stagedJobs.workflows[values.new.name] =

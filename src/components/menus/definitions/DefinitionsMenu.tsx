@@ -18,9 +18,8 @@ import TabbedMenu from '../TabbedMenu';
  */
 const DefinitionsMenu = (props: { expanded: boolean[] }) => {
   const workflowGraphs = useStoreState((state) => state.definitions.workflows);
-  const selectedWorkflowId = useStoreState((state) => state.selectedWorkflow);
+  const selectedWorkflowId = useStoreState((state) => state.selectedWorkflowId);
   const updateWorkflow = useStoreActions((actions) => actions.update_workflows);
-  const selectWorkflow = useStoreActions((actions) => actions.selectWorkflow);
   const config = useStoreState((state) => state.config);
   const updateConfig = useStoreActions((actions) => actions.generateConfig);
   const persistProps = useStoreActions((actions) => actions.persistProps);

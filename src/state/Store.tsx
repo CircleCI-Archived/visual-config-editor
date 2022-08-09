@@ -129,7 +129,7 @@ export type StoreModel = DefinitionsStoreModel & {
     };
   };
   /** Currently selected workflow pane index */
-  selectedWorkflow: string;
+  selectedWorkflowId: string;
   errorMessage?: string;
 };
 
@@ -331,11 +331,11 @@ const Actions: StoreActions = {
   }),
 
   selectWorkflow: action((state, index) => {
-    state.selectedWorkflow = index;
+    state.selectedWorkflowId = index;
   }),
 
   addWorkflowElement: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
     const workflow = workflowDef.value;
 
     if (payload.type === 'jobs') {
@@ -371,7 +371,7 @@ const Actions: StoreActions = {
     workflow.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
     const workflow = workflowDef.value;
     const map = state.stagedJobs;
     const stagedJob = map.workflows[workflow.name];
@@ -414,7 +414,7 @@ const Actions: StoreActions = {
     });
   }),
   setWorkflowElements: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
     const workflow = workflowDef.value;
 
     setWorkflowDefinition(state, workflow.name, {
@@ -430,7 +430,7 @@ const Actions: StoreActions = {
     });
   }),
   updateWorkflowElement: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflow];
+    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
     const workflow = workflowDef.value;
 
     setWorkflowDefinition(state, workflow.name, {
@@ -646,7 +646,7 @@ const Actions: StoreActions = {
       ...state.definitions,
       workflows,
     };
-    state.selectedWorkflow = Object.keys(workflows)[0];
+    state.selectedWorkflowId = Object.keys(workflows)[0];
     state.stagedJobs = { workflows: workflowJobCounts };
     state.config = payload.generate();
   }),
@@ -724,7 +724,7 @@ const Actions: StoreActions = {
 };
 
 const Store: StoreModel & StoreActions = {
-  selectedWorkflow: 'build-and-deploy',
+  selectedWorkflowId: 'build-and-deploy',
   editingConfig: undefined,
   config: undefined,
   guideStep: 1,
