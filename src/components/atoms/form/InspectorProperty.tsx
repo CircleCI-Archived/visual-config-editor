@@ -74,6 +74,7 @@ const InspectorProperty = (props: InspectorFieldProps) => {
 export const FieldlessInspectorProperty = ({
   label,
   field,
+  pinned,
   ...props
 }: InspectorFieldProps & {
   field: [FieldInputProps<any>, FieldMetaProps<any>, FieldHelperProps<any>];
@@ -97,15 +98,18 @@ export const FieldlessInspectorProperty = ({
         hidden={props.hidden}
       >
         <div className="flex flex-row mb-2">
-          <p className="font-medium  text-sm my-auto text-circle-black">
+          <h3 className="font-medium  text-sm my-auto text-circle-black">
             {label}
-          </p>
+          </h3>
           <InfoIcon className="w-5 flex my-auto p-1" color="#6A6A6A" />
-          {props.required && (
-            <span className="ml-auto leading-5 text-xs text-circle-black px-2 bg-circle-gray-300 rounded-full font-medium">
-              required
-            </span>
-          )}
+          <div className="ml-auto ">
+            {props.required && (
+              <span className="leading-5 text-xs text-circle-black px-2 bg-circle-gray-300 rounded-full font-medium">
+                required
+              </span>
+            )}
+            {pinned}
+          </div>
         </div>
         {getField(props, input, meta, helper, error)}
         {touched && error && (

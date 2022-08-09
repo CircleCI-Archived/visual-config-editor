@@ -66,7 +66,7 @@ bg-white border border-circle-gray-300 hover:border-circle-black rounded-md2 fle
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <div className="ml-auto mr-3" {...provided.dragHandleProps}>
+          <div className="ml-auto mr-3 my-auto" {...provided.dragHandleProps}>
             <DragListIcon className="w-4 h-6 py-1" color="#AAAAAA" />
           </div>
           {children}
@@ -127,7 +127,7 @@ export const FieldlessListProperty = ({
   field: [FieldInputProps<any>, FieldMetaProps<any>, FieldHelperProps<any>];
   arrayHelper: FieldArrayRenderProps;
 }) => {
-  const [input, meta, helper] = field;
+  const [input, , helper] = field;
   const ListChild = listItem;
   return (
     <CollapsibleList
@@ -136,15 +136,17 @@ export const FieldlessListProperty = ({
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}
       pinned={
-        (props.addButton && (
-          <AddButton
-            className="ml-auto"
-            onClick={() => {
-              helper.setValue(input.value ? [...input.value, ''] : ['']);
-            }}
-          />
-        )) ||
-        props.pinned
+        <>
+          {props.addButton && (
+            <AddButton
+              className="ml-auto"
+              onClick={() => {
+                helper.setValue(input.value ? [...input.value, ''] : ['']);
+              }}
+            />
+          )}
+          {props.pinned}
+        </>
       }
     >
       {input.value?.length > 0 ? (

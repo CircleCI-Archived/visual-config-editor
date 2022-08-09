@@ -1,24 +1,11 @@
 import { FieldArray, useField } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Switch from '../../../icons/ui/Switch';
-import InspectorProperty, {
-  FieldlessInspectorProperty,
-} from './InspectorProperty';
-import ListProperty, {
-  FieldlessListProperty,
-  ListPropertyProps,
-} from './ListProperty';
+import { FieldlessInspectorProperty } from './InspectorProperty';
+import { FieldlessListProperty, ListPropertyProps } from './ListProperty';
 
 export type MatrixPropertyProps = ListPropertyProps & {
   namePrefix?: string;
-};
-
-export const MatrixSwitch = () => {
-  return (
-    <button>
-      <Switch className="w-6 h-6" />
-    </button>
-  );
 };
 
 export const MatrixProperty = ({
@@ -47,23 +34,6 @@ export const MatrixProperty = ({
   const [inputMatrix, , helperMatrix] = matrixField;
   const [isMatrix, setMatrix] = useState(matrix !== undefined);
 
-  console.log(matrix, isMatrix);
-
-  const callback = useCallback(() => {
-    if (isMatrix) {
-      console.log(inputMatrix.value, inputDef.value, 'a');
-      helperDef.setValue(inputMatrix.value ? inputMatrix.value[0] : '');
-      helperMatrix.setValue(undefined);
-      console.log(inputMatrix.value, inputDef.value, 'b');
-    } else {
-      console.log(inputMatrix.value, inputDef.value, 'c');
-      helperMatrix.setValue([inputDef.value ?? '']);
-      helperDef.setValue(undefined);
-      console.log(inputMatrix.value, inputDef.value, 'd');
-    }
-    setMatrix(!isMatrix);
-  }, [inputDef.value, inputMatrix.value, helperDef, helperMatrix, isMatrix]);
-
   const setValue = helperMatrix.setValue;
 
   useEffect(() => {
@@ -72,15 +42,32 @@ export const MatrixProperty = ({
     }
   }, [matrix, setValue, inputMatrix]);
 
-  return (
-    <>
+  const callback = useCallback(() => {
+    if (isMatrix) {
+      helperDef.setValue(inputMatrix.value ? inputMatrix.value[0] : '');
+      helperMatrix.setValue(undefined);
+    } else {
+      helperMatrix.setValue([inputDef.value ?? '']);
+      helperDef.setValue(undefined);
+    }
+    setMatrix(!isMatrix);
+  }, [inputDef.value, inputMatrix.value, helperDef, helperMatrix, isMatrix]);
+
+  const switchButton = useMemo(
+    () => (
       <button
         type="button"
         onClick={callback}
-        className="hover:bg-circle-gray-300 p-1 rounded transition-colors"
+        className="hover:bg-circle-gray-400 bg-circle-gray-300 p-1 rounded transition-colors w-8 h-8 ml-2"
       >
-        <Switch className="w-6 h-6" />
+        <Switch className="w-5 h-5 m-auto" />
       </button>
+    ),
+    [callback],
+  );
+
+  return (
+    <>
       {isMatrix ? (
         <FieldArray
           {...matrixField}
@@ -101,6 +88,7 @@ export const MatrixProperty = ({
               values={values}
               expanded
               addButton
+              pinned={switchButton}
               field={matrixField}
             />
           )}
@@ -110,6 +98,7 @@ export const MatrixProperty = ({
           label={label}
           name={namePrefix ? `${namePrefix}.${name}` : name}
           field={defaultField}
+          pinned={switchButton}
         />
       )}
     </>

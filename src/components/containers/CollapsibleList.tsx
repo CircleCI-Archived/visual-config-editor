@@ -38,7 +38,7 @@ const CollapsibleList = (props: CollapsibleListProps) => {
             >
               <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />
             </button>
-            <h1 className="mx-2 font-bold text-base leading-6 tracking-wide">
+            <h1 className="mx-2 font-medium text-base leading-6 tracking-wide">
               {props.title}
             </h1>
           </div>
