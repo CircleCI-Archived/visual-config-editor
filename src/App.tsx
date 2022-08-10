@@ -17,9 +17,6 @@ const App = () => {
 
   return (
     <StoreProvider store={store}>
-      <div className="z-50">
-        <KBarList reference={editorPane} />
-      </div>
       <section className="flex flex-row h-full text-circle-black ">
         <section
           className="flex flex-col flex-nowrap flex-1"
@@ -30,7 +27,9 @@ const App = () => {
         </section>
         <NavigationPane />
       </section>
-
+      <div className="z-50">
+        <KBarList reference={editorPane} />
+      </div>
       <ConfirmationModal />
     </StoreProvider>
   );

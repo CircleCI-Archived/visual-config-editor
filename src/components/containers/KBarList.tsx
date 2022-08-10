@@ -45,12 +45,12 @@ const groupNameStyle = {
 const KBarList = (props: any) => {
   const initialActions = [
     {
-      id: 'Navigation',
-      name: 'Navigation Pane',
+      id: 'Inspector',
+      name: 'Inspector Pane',
       shortcut: ['n'],
       keywords: 'core elements',
       section: 'Commands',
-      subtitle: 'This is the navigation pane.',
+      subtitle: 'Create and edit config components.',
       perform: () => {
         const focus = document.getElementById('Naviagtion-Pane');
 
@@ -60,7 +60,6 @@ const KBarList = (props: any) => {
         }
       },
     },
-
     {
       id: 'Editor',
       name: 'Editor Pane',
@@ -79,6 +78,7 @@ const KBarList = (props: any) => {
     {
       id: 'Workflow',
       name: 'Workflow Pane',
+      subtitle: 'Orchestrate your CI workflow.',
       shortcut: ['w'],
       keywords: 'jobs workflow',
 
@@ -93,15 +93,24 @@ const KBarList = (props: any) => {
     },
 
     createAction({
-      name: 'Documentation',
-      shortcut: ['d', 'h'],
-      keywords: 'sourcecode',
-      section: 'Help',
+      name: 'View Source',
+      subtitle: 'View the source on GitHub.',
+      shortcut: ['s'],
+      keywords: 'source code',
+      section: 'Links',
       perform: () =>
         window.open(
           'https://github.com/CircleCI-Public/visual-config-editor',
           '_blank',
         ),
+    }),
+    createAction({
+      name: 'Documentation',
+      shortcut: ['d', 'h'],
+      keywords: 'documentation help',
+      subtitle: 'Open CircleCI documentation homepage.',
+      section: 'Links',
+      perform: () => window.open('https://circleci.com/docs', '_blank'),
     }),
   ];
 
