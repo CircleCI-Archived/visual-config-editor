@@ -35,7 +35,9 @@ const BreadCrumbs = () => {
           curDepth > 0 && navigateBack({ distance: curDepth });
         }}
       >
-        {curDepth > 1 ? '...' : navAt.component.Label(navAt.props)}
+        {curDepth > 1
+          ? '...'
+          : navAt.component.Label(navAt.props, navigation.props)}
       </button>,
     );
 
