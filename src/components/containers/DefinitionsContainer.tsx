@@ -68,6 +68,7 @@ const DefinitionsContainer = ({
         title={type.name.plural}
         expanded={expanded}
         className="py-4"
+        titleFont="font-bold"
         classNameExpanded="py-4 "
         onChange={onChange}
         pinned={
@@ -105,18 +106,13 @@ const DefinitionsContainer = ({
             )
           ) : (
             <Empty
-              label={`No Available ${type.name.plural}`}
+              label={`No ${type.name.plural.toLowerCase()} yet`}
               Logo={type.components.icon}
               description={
                 <>
                   <ComponentInfo type={type} />
                   <br />
-                  <br />
-                  {requirements.length > 0
-                    ? requirements
-                    : `Define a new ${type.name.singular} by clicking the button
-                  above.`}
-                  <br />
+                  {requirements.length > 0 && requirements}
                 </>
               }
             />

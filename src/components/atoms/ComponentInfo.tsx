@@ -10,19 +10,23 @@ const ComponentInfo = ({
   docsInfo?: GenerableInfoType;
 }) => {
   const docInfo = type?.docsInfo || docsInfo;
+  const parts = docInfo?.description.split('%s');
 
   return (
     <>
-      <div className="font-medium text-sm text-circle-gray-400">
-        {docInfo?.description}
-      </div>
-      <a
-        className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-        href={docInfo?.link}
-        target="circleci_docs"
-      >
-        Learn More
-      </a>
+      {parts && (
+        <p className="font-normal text-sm text-circle-black">
+          {parts[0]}
+          <a
+            className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+            href={docInfo?.link}
+            target="circleci_docs"
+          >
+            {type?.name.singular}
+          </a>
+          {parts[1]}
+        </p>
+      )}
     </>
   );
 };

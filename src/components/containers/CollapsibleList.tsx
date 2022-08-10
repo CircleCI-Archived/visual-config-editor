@@ -4,6 +4,7 @@ import ExpandIcon from '../../icons/ui/ExpandIcon';
 export interface CollapsibleListProps {
   title: string | ReactElement;
   titleExpanded?: ReactElement;
+  titleFont?: string;
   children: ReactElement;
   expanded?: boolean;
   classNameExpanded?: string;
@@ -12,7 +13,7 @@ export interface CollapsibleListProps {
   pinned?: ReactElement;
 }
 
-const CollapsibleList = (props: CollapsibleListProps) => {
+const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
   const [expanded, setExpanded] = useState(props.expanded || false);
 
   return (
@@ -38,7 +39,11 @@ const CollapsibleList = (props: CollapsibleListProps) => {
             >
               <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />
             </button>
-            <h1 className="mx-2 font-medium text-base leading-6 tracking-wide">
+            <h1
+              className={`mx-2 ${
+                titleFont ? titleFont : 'font-medium'
+              } text-base leading-6 tracking-wide`}
+            >
               {props.title}
             </h1>
           </div>

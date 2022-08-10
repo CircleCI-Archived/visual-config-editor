@@ -137,7 +137,7 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   },
   docsInfo: {
     description:
-      'Collection of steps to be executed within the Executor environment.',
+      'A %s is a configured collection of steps to be executed within the Executor environment.',
     link: 'https://circleci.com/docs/concepts/#jobs',
   },
   requirements: [
