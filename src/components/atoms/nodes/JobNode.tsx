@@ -47,6 +47,7 @@ const JobNode: React.FunctionComponent<
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const setConnecting = useStoreActions((actions) => actions.setConnecting);
   const toolbox = useStoreState((state) => state.previewToolbox);
+  const selectedWorkflow = useStoreState((state) => state.selectedWorkflowId);
   const altAction = useStoreState((state) => state.altAction);
   const removeWorkflowElement = useStoreActions(
     (actions) => actions.removeWorkflowElement,
@@ -107,6 +108,7 @@ const JobNode: React.FunctionComponent<
         source: workflowJob,
         values: flattenGenerable(workflowJob, true),
         id: props.id,
+        overrideRoot: selectedWorkflow,
       },
       origin: true,
     });

@@ -11,6 +11,7 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { WorkflowSelector } from '../../atoms/WorkflowSelector';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
+import { StagedJobMenu } from '../stage/StagedJobMenu';
 import TabbedMenu from '../TabbedMenu';
 
 /**
@@ -114,7 +115,9 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
 
 const DefinitionsMenuNav: NavigationComponent = {
   Component: DefinitionsMenu,
-  Label: (props: { expanded: boolean[] }) => <p>Definitions</p>,
+  Label: (props: { expanded: boolean[] }, curProps) => (
+    <h4>{curProps.overrideRoot || 'Definitions'}</h4>
+  ),
 };
 
 export default DefinitionsMenuNav;
