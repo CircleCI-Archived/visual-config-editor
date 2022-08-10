@@ -51,16 +51,20 @@ const ConfirmationModal = () => {
       ? confirmDialogue[confirm.modalDialogue]
       : confirm?.modalDialogue;
   const dialogueBox = { x: 478, y: 250 }; // TODO: make this dynamic
-  const closeHandler = () => {
-    updateConfirmation(undefined);
-  };
 
-  const handleUserKeyPress = useCallback((event) => {
-    const { key } = event;
-    if (key === 'Escape') {
-      closeHandler();
-    }
-  }, []);
+  const closeHandler = useCallback(() => {
+    updateConfirmation(undefined);
+  }, [updateConfirmation]);
+
+  const handleUserKeyPress = useCallback(
+    (event) => {
+      const { key } = event;
+      if (key === 'Escape') {
+        closeHandler();
+      }
+    },
+    [closeHandler],
+  );
 
   useEffect(() => {
     window.addEventListener('keydown', handleUserKeyPress);

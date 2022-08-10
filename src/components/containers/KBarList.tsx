@@ -3,23 +3,16 @@ import './KBar.css';
 
 import {
   ActionId,
+  ActionImpl,
+  createAction,
   KBarAnimator,
-  KBarProvider,
   KBarPortal,
   KBarPositioner,
-  KBarSearch,
+  KBarProvider,
   KBarResults,
-  createAction,
+  KBarSearch,
   useMatches,
-  ActionImpl,
 } from 'kbar';
-import { useStoreActions } from '../../state/Hooks';
-import DefinitionsMenu from '../menus/definitions/DefinitionsMenu';
-import NavigationPane from '../panes/NavigationPane';
-import {
-  InspectorDefinitionMenu,
-  InspectorDefinitionMenuNav,
-} from '../menus/definitions/InspectorDefinitionMenu';
 
 const searchStyle = {
   padding: '12px 16px',
@@ -50,9 +43,6 @@ const groupNameStyle = {
 };
 
 const KBarList = (props: any) => {
-  // const setPane = useStoreActions((actions) => actions.setAccesibilityPane);
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
   const initialActions = [
     {
       id: 'Navigation',

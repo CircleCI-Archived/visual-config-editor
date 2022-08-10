@@ -1,11 +1,10 @@
 import ExecutorIcon from '../../../../icons/components/ExecutorIcon';
+import NewWindowIcon from '../../../../icons/ui/NewWindowIcon';
 import { NavigationComponent } from '../../../../state/Store';
+import Card from '../../../atoms/Card';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
 import { executorSubtypes } from '../../../containers/inspector/subtypes/ExecutorSubtypes';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
-import Card from '../../../atoms/Card';
-import NewWindowIcon from '../../../../icons/ui/NewWindowIcon';
-import InfoIcon from '../../../../icons/ui/InfoIcon';
 
 const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
   return (

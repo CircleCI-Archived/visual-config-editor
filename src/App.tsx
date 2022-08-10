@@ -1,22 +1,19 @@
 import { createStore, StoreProvider } from 'easy-peasy';
+import { useRef } from 'react';
 import ConfirmationModal from './components/containers/ConfirmationModal';
+import KBarList from './components/containers/KBarList';
 import EditorPane from './components/panes/EditorPane';
 import NavigationPane from './components/panes/NavigationPane';
 import WorkflowsPane from './components/panes/WorkflowsPane';
+import './index.css';
 import useWindowDimensions from './state/Hooks';
 import Store from './state/Store';
-import KBarList from './components/containers/KBarList';
-import './index.css';
-import React, { useRef } from 'react';
-import { workflow } from '@circleci/circleci-config-sdk';
 export const store = createStore(Store);
 export const inspectorWidth = 400;
 
 const App = () => {
   const appWidth = useWindowDimensions();
-  const workflowPane = useRef(null);
   const editorPane = useRef(null);
-  const navigationPane = useRef(null);
 
   return (
     <StoreProvider store={store}>
@@ -28,7 +25,7 @@ const App = () => {
           <WorkflowsPane />
           <EditorPane />
         </section>
-        <NavigationPane width={inspectorWidth} />
+        <NavigationPane />
       </section>
 
       <ConfirmationModal />
