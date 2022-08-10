@@ -113,7 +113,7 @@ const KBarList = (props: any) => {
       actions={initialActions}
     >
       <KBarPortal>
-        <KBarPositioner>
+        <KBarPositioner className="z-50">
           <KBarAnimator style={animatorStyle}>
             <KBarSearch style={searchStyle} />
             <RenderResults />
@@ -170,6 +170,7 @@ const ResultItem = React.forwardRef(
     return (
       <div
         ref={ref}
+        className="hello"
         style={{
           padding: '12px 16px',
           background: active ? 'var(--a1)' : 'transparent',

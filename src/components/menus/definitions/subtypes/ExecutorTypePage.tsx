@@ -1,5 +1,4 @@
 import ExecutorIcon from '../../../../icons/components/ExecutorIcon';
-import NewWindowIcon from '../../../../icons/ui/NewWindowIcon';
 import { NavigationComponent } from '../../../../state/Store';
 import Card from '../../../atoms/Card';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
@@ -33,23 +32,6 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
             onClick={() => {
               props.setSubtype(subtype);
             }}
-            pinned={
-              <div>
-                {executorSubtypes[subtype].docsLink && (
-                  <a
-                    className="tracking-wide flex flex-row hover:underline leading-6 text-xs text-circle-blue font-thin"
-                    href={executorSubtypes[subtype].docsLink}
-                    target="circleci_docs"
-                    aria-label={`Open ${subtype} documentation`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <NewWindowIcon className="w-4 my-auto" />
-                  </a>
-                )}
-              </div>
-            }
           />
         ))}
       </div>

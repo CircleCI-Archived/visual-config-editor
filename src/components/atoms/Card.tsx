@@ -17,7 +17,6 @@ const Card = ({ truncate, description, ...props }: CardProps) => {
           <div className="flex flex-row">
             {props.icon}
             <p className="font-medium">{props.title}</p>
-            <div className="ml-1 z-10">{props.pinned}</div>
           </div>
           {description && (
             <p className="text-sm mt-2 leading-4 text-circle-gray-500 overflow-ellipsis max-h-32 overflow-hidden">
@@ -27,14 +26,22 @@ const Card = ({ truncate, description, ...props }: CardProps) => {
             </p>
           )}
         </div>
-        <Button
-          type="button"
-          variant="secondary"
-          className="my-auto ml"
-          onClick={props.onClick}
-        >
-          Select
-        </Button>
+        <div className="flex flex-col px-2">
+          {props.pinned && (
+            <div className="ml-auto z-10 rounded ">{props.pinned}</div>
+          )}
+          <div className="flex-1 flex">
+            <Button
+              margin="0"
+              type="button"
+              variant="secondary"
+              className={'my-auto'}
+              onClick={props.onClick}
+            >
+              Select
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
