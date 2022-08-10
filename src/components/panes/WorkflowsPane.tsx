@@ -22,7 +22,7 @@ const WorkflowsPane = () => {
       className="flex flex-col flex-nowrap flex-1"
     >
       <header className="flex w-full bg-white h-16">
-        <div className="p-2 flex flex-row my-auto w-full">
+        <div id="Workflows-Pane" className="p-2 flex flex-row my-auto w-full">
           <div className="my-auto flex flex-row">
             <Logo className="mx-2" />
             <h1 className="text-xl font-bold">Visual Config Editor</h1>

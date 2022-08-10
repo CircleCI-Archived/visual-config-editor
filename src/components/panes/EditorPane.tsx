@@ -1,8 +1,9 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
+import { FocusScope } from 'react-aria';
 import { useStoreState } from '../../state/Hooks';
 import { version } from '../../version.json';
 
-const EditorPane = () => {
+const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
   const editingConfig = useStoreState((state) => state.editingConfig);
 
@@ -25,6 +26,7 @@ const EditorPane = () => {
 
   return (
     <div
+      id="Editor-Pane"
       aria-label="Editor Pane"
       className="bg-circle-gray-900 h-2/5 w-full flex flex-col"
     >
