@@ -22,7 +22,7 @@ const ParameterInspector = (
         value={props.subtype}
       />
       <InspectorProperty name="name" label="Name" required />
-      <InspectorProperty name="description" label="Description" />
+      <InspectorProperty name="description" label="Description" as="textarea" />
       {fields && (typeof fields === 'function' ? fields(props) : fields)}
     </div>
   );
