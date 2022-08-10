@@ -70,8 +70,7 @@ export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
     inspector: CommandInspector,
   },
   docsInfo: {
-    description:
-      'A command defines a sequence of steps to be executed in a job.',
+    description: 'A %s defines a sequence of steps to be executed in a job.',
     link: 'https://circleci.com/docs/reusing-config/#the-commands-key',
   },
 };

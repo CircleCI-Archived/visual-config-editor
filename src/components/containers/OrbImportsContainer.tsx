@@ -24,7 +24,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
       mapDefinitions(items, (orb) => {
         return (
           <button
-            className="w-full mb-2 p-4 py-2  text-sm cursor-pointer text-left text-circle-black 
+            className="w-full mb-2 p-4 py-2 text-sm cursor-pointer text-left text-circle-black 
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             onClick={() => {
               navigateTo({
@@ -59,6 +59,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
         title="Orbs"
         expanded={props.expanded}
         onChange={props.onChange}
+        titleFont="font-bold"
         className="py-4"
         classNameExpanded="py-4"
         pinned={
@@ -79,7 +80,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             orbDefinitions
           ) : (
             <Empty
-              label={`No Imported Orbs`}
+              label={`No imported orbs yet`}
               Logo={OrbIcon}
               description={
                 <>

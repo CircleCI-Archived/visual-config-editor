@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <StoreProvider store={store}>
-      <section className="flex flex-row h-full">
+      <section className="flex flex-row h-full text-circle-black ">
         <section
           className="flex flex-col flex-nowrap flex-1"
           style={{ width: appWidth.width - inspectorWidth }}

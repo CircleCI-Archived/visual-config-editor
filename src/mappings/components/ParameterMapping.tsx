@@ -54,8 +54,7 @@ export const ParameterMapping: InspectableMapping<
     inspector: ParameterInspector,
   },
   docsInfo: {
-    description:
-      'Options to help describe and expand functionality of a job, command, or executor.',
+    description: 'A %s is used by other components to expand functionality.',
     link: 'https://circleci.com/docs/reusing-config/#using-the-parameters-declaration',
   },
 };
