@@ -80,7 +80,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             orbDefinitions
           ) : (
             <Empty
-              label={`No Imported Orbs`}
+              label={`No imported orbs yet`}
               Logo={OrbIcon}
               description={
                 <>
