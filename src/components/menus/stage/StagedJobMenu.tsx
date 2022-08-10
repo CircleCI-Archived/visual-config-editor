@@ -9,6 +9,7 @@ import { NavigationComponent } from '../../../state/Store';
 import AddButton from '../../atoms/AddButton';
 import { Button } from '../../atoms/Button';
 import { Empty } from '../../atoms/Empty';
+import { Footer } from '../../atoms/Footer';
 import AdjacentStepListItem from '../../atoms/form/AdjacentStepListItem';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty, {
@@ -147,7 +148,10 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
         {() => (
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
-              <div className="p-6">
+              <div
+                className="p-6 overflow-y-auto"
+                style={{ height: 'calc(100vh - 230px)' }}
+              >
                 <InspectorProperty type="button" name="name" label="Source Job">
                   <div
                     className="w-full mb-2 p-2 text-sm  text-left text-circle-black 
@@ -207,7 +211,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <div className="flex flex-row ml-auto center py-6 mr-4">
+            <Footer>
               <Button
                 variant="secondary"
                 type="button"
@@ -222,7 +226,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
               <Button variant="primary" type="submit">
                 Save
               </Button>
-            </div>
+            </Footer>
           </Form>
         )}
       </Formik>
