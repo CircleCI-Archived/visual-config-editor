@@ -1,4 +1,5 @@
 import algoliasearch from 'algoliasearch/lite';
+import { useState } from 'react';
 import {
   Hits,
   HitsPerPage,
@@ -13,7 +14,9 @@ import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import Loading from '../../../icons/ui/Loading';
 import { useStoreActions } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
+import { Button } from '../../atoms/Button';
 import Card from '../../atoms/Card';
+import { Footer } from '../../atoms/Footer';
 import { Select } from '../../atoms/Select';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
@@ -33,24 +36,48 @@ const searchClient = algoliasearch(
 );
 
 function Pagination(props: PaginationProps) {
-  const { pages, refine } = usePagination(props);
+  const { pages, refine, nbPages } = usePagination(props);
   const { results } = useInstantSearch();
 
   return (
     <>
       {results.hits.length > 0 && (
-        <div className="flex flex-row mx-auto">
+        <div className="flex flex-row px-2">
+          <Button
+            variant="secondary"
+            margin="2"
+            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded-sm hover:border-gray-700"
+            onClick={() => {
+              refine(pages[0] - 1);
+            }}
+            disabled={pages[0] === 0}
+          >
+            {'<'}
+          </Button>
           {pages.map((page) => (
-            <button
-              className="w-9 h-9 border border-circle-gray-300 mx-1 rounded-sm hover:border-gray-700"
+            <Button
+              variant="secondary"
+              margin="2"
+              className="w-9 h-9 border border-circle-gray-300 mx-1 px-0 rounded-sm hover:border-gray-700"
               key={page}
               onClick={() => {
                 refine(page + 1);
               }}
             >
               {page + 1}
-            </button>
+            </Button>
           ))}
+          <Button
+            variant="secondary"
+            margin="2"
+            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded-sm hover:border-gray-700"
+            onClick={() => {
+              refine(pages[pages.length - 1] + 1);
+            }}
+            disabled={pages[pages.length - 1] + 1 === nbPages}
+          >
+            {'>'}
+          </Button>
         </div>
       )}
     </>
@@ -98,7 +125,7 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
         </div>
       </header>
       <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
-        <div className="p-6 h-full">
+        <div className="p-6">
           <InstantSearch searchClient={searchClient} indexName="orbs-prod">
             {/* <RefinementList attribute="brand" /> */}
             <p className="font-bold leading-5 tracking-wide">Search Filters</p>
@@ -111,7 +138,8 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
               items={[{ value: 6, label: '', default: true }]}
             />
             <Hits
-              className="overflow-y-auto"
+              className="overflow-y-auto mt-4"
+              style={{ height: 'calc(100vh - 420px)' }}
               hitComponent={({ hit }) => {
                 let values = hit as unknown as OrbDefinitionProps;
 
@@ -146,9 +174,10 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
                 );
               }}
             />
-            <div className="flex px-auto">
-              <Pagination padding={2}></Pagination>
-            </div>
+
+            <Footer centered>
+              <Pagination padding={1}></Pagination>
+            </Footer>
           </InstantSearch>
         </div>
       </TabbedMenu>

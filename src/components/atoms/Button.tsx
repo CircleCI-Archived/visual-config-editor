@@ -12,14 +12,20 @@ export type ButtonVariant = keyof typeof styles;
 export const Button = ({
   variant,
   className,
+  margin,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant: ButtonVariant;
+  margin?: string;
 }) => {
   return (
     <button
       {...props}
-      className={`w-min h-min whitespace-nowrap text-sm font-medium py-2 px-4 mx-3 duration:50 transition-colors rounded-md2 ${className} ${styles[variant]}`}
+      className={`${className} ${
+        margin ? `mx-${margin}` : 'mx-3'
+      } w-min h-min whitespace-nowrap text-sm font-medium py-2 px-4 duration:50 transition-colors rounded-md2 ${
+        styles[variant]
+      }`}
     >
       {props.children}
     </button>

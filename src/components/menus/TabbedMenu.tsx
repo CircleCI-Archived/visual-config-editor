@@ -11,6 +11,7 @@ export interface TabbedPaneProps {
   id?: string;
   children: React.ReactNode | React.ReactNode[];
   onChange?: (index: number) => void;
+  className?: string;
 }
 
 const TabbedMenu = (props: TabbedPaneProps) => {

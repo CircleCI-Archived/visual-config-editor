@@ -201,7 +201,10 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           {(formikProps) => (
             <Form className="flex flex-col flex-1">
               <TabbedMenu tabs={tabs} activeTab={props.activeTab || 0}>
-                <div className="p-6">
+                <div
+                  className="p-6 overflow-y-auto"
+                  style={{ height: 'calc(100vh - 220px)' }}
+                >
                   {dataMapping.subtypes &&
                     (props.editing ? (
                       <div className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded-sm text-left">
@@ -245,14 +248,18 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   })}
                 </div>
                 {dataMapping.parameters && (
-                  <ParameterContainer
-                    dataMapping={dataMapping}
-                    values={formikProps.values}
-                  />
+                  <div
+                    style={{ height: 'calc(100vh - 220px)' }}
+                    className="overflow-y-auto"
+                  >
+                    <ParameterContainer
+                      dataMapping={dataMapping}
+                      values={formikProps.values}
+                    />
+                  </div>
                 )}
               </TabbedMenu>
 
-              <span className="border-b border-circle-gray-300 mt-auto" />
               <Footer>
                 {props.editing && (
                   <Button
