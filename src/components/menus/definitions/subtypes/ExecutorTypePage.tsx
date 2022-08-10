@@ -4,6 +4,8 @@ import BreadCrumbs from '../../../containers/BreadCrumbs';
 import { executorSubtypes } from '../../../containers/inspector/subtypes/ExecutorSubtypes';
 import { SubTypeSelectPageProps } from '../../SubTypeMenu';
 import Card from '../../../atoms/Card';
+import NewWindowIcon from '../../../../icons/ui/NewWindowIcon';
+import InfoIcon from '../../../../icons/ui/InfoIcon';
 
 const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
   return (
@@ -26,6 +28,7 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
         {Object.keys(executorSubtypes).map((subtype) => (
           <Card
             key={subtype}
+            icon={<ExecutorIcon className="w-6 mr-2" type={subtype} />}
             description={executorSubtypes[subtype].description}
             title={executorSubtypes[subtype].text}
             onClick={() => {
@@ -35,14 +38,15 @@ const ExecutorTypePage = (props: SubTypeSelectPageProps<string>) => {
               <div>
                 {executorSubtypes[subtype].docsLink && (
                   <a
-                    className="ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
+                    className="tracking-wide flex flex-row hover:underline leading-6 text-xs text-circle-blue font-thin"
                     href={executorSubtypes[subtype].docsLink}
                     target="circleci_docs"
+                    aria-label={`Open ${subtype} documentation`}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
                   >
-                    Learn More
+                    <NewWindowIcon className="w-4 my-auto" />
                   </a>
                 )}
               </div>
