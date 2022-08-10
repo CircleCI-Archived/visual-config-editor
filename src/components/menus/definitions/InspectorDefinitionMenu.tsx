@@ -86,7 +86,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
     if (iconComponent) {
       let Icon = iconComponent;
 
-      return <Icon className={className} />;
+      return <Icon className={className} type={props.subtype} />;
     }
   };
 
