@@ -80,9 +80,12 @@ const AdjacentSteps = ({
                   typePage: StepTypePageNav,
                   menuPage: StepDefinitionMenu,
                   menuProps: {
-                    getter: (values: any) => values.parameters[type],
+                    getter: (values: any) =>
+                      values.parameters && values.parameters[type],
                     setter: (values: any, value: any) =>
-                      (values.parameters[type] = value),
+                      values.parameters
+                        ? (values.parameters[type] = value)
+                        : (values.parameters = { [type]: value }),
                   },
                 },
                 values,
@@ -118,16 +121,31 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
             matrix: {
               parameters: {},
             },
+
             ...values.parameters,
           },
         }}
         enableReinitialize
         onSubmit={(values) => {
+          const parameters = values.parameters;
+          const context = parameters.context
+            ? parameters.context.filter(Boolean)
+            : (undefined as string[] | undefined);
+          const matrix = parameters.matrix;
+          const newParameters = {
+            ...parameters,
+            context: context && context.length > 0 ? context : undefined,
+            matrix:
+              parameters.matrix && Object.keys(matrix).length > 0
+                ? matrix
+                : undefined,
+          };
+
           const update = parsers.parseWorkflowJob(
             source.name,
             Object.assign(
               {},
-              ...Object.entries(values.parameters).map(([key, value]) =>
+              ...Object.entries(newParameters).map(([key, value]) =>
                 value ? { [key]: value } : undefined,
               ),
             ),
