@@ -142,8 +142,16 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   },
   requirements: [
     {
-      message: 'You must define at least one executor before creating a job.',
-      test: (store) => Object.values(store.executors).length > 0,
+      message:
+        'You must define or import at least one executor before creating a job.',
+      test: (store) => {
+        const hasExecs = Object.values(store.executors).length > 0;
+        const orbWithExecs = Object.values(store.orbs).some(
+          (orb) => Object.values(orb.value.executors).length > 0,
+        );
+
+        return hasExecs || orbWithExecs;
+      },
     },
   ],
 };
