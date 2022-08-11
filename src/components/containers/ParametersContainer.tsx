@@ -43,7 +43,7 @@ const ParameterContainer = (props: {
                       values: { name, ...parameter },
                       source: props.values.parameters
                         ? Object.keys(props.values.parameters)
-                        : undefined,
+                        : [],
                     },
                     values: props.values,
                   });
@@ -98,7 +98,7 @@ const ParameterContainer = (props: {
                       index: -1,
                       source: props.values.parameters
                         ? Object.keys(props.values.parameters)
-                        : undefined,
+                        : [],
                     },
                   },
                   props.values,

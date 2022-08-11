@@ -134,7 +134,7 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
           validate={(values) => {
             // TODO: define error type
             const errors: any = {};
-            const source = props.source || definitions[dataMapping.key];
+            const source = props.source ?? definitions[dataMapping.key];
             const dupIndex = Object.values(source).findIndex(
               (d) =>
                 (typeof d === 'string' ? d : d.value.name) ===
