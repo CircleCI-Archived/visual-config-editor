@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './KBar.css';
 
 import {
   ActionId,
@@ -13,34 +12,6 @@ import {
   KBarSearch,
   useMatches,
 } from 'kbar';
-
-const searchStyle = {
-  padding: '12px 16px',
-  fontSize: '16px',
-  width: '100%',
-  boxSizing: 'border-box' as React.CSSProperties['boxSizing'],
-  outline: 'none',
-  border: 'none',
-  background: 'var(--background)',
-  color: 'var(--foreground)',
-};
-
-const animatorStyle = {
-  maxWidth: '600px',
-  width: '100%',
-  background: 'var(--background)',
-  color: 'var(--foreground)',
-  borderRadius: '8px',
-  overflow: 'hidden',
-  boxShadow: 'var(--shadow)',
-};
-
-const groupNameStyle = {
-  padding: '8px 16px',
-  fontSize: '10px',
-  textTransform: 'uppercase' as const,
-  opacity: 0.5,
-};
 
 const KBarList = (props: any) => {
   const initialActions = [
@@ -123,8 +94,8 @@ const KBarList = (props: any) => {
     >
       <KBarPortal>
         <KBarPositioner className="z-50">
-          <KBarAnimator style={animatorStyle}>
-            <KBarSearch style={searchStyle} />
+          <KBarAnimator className="px-3 bg-white rounded-lg py-4 w-1/2 box-border overflow-hidden">
+            <KBarSearch className="px-3 py-4 w-full mb-1" />
             <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
@@ -141,7 +112,9 @@ function RenderResults() {
       items={results}
       onRender={({ item, active }) =>
         typeof item === 'string' ? (
-          <div style={groupNameStyle}>{item}</div>
+          <div className="px-2 py-4 uppercase text-circle-gray-500 text-xs font-semibold">
+            {item}
+          </div>
         ) : (
           <ResultItem
             action={item}
@@ -179,27 +152,9 @@ const ResultItem = React.forwardRef(
     return (
       <div
         ref={ref}
-        className="hello"
-        style={{
-          padding: '12px 16px',
-          background: active ? 'var(--a1)' : 'transparent',
-          borderLeft: `2px solid ${
-            active ? 'var(--foreground)' : 'transparent'
-          }`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer',
-        }}
+        className="px-3 py-4 w-full justify-between flex items-center cursor-pointer hover:bg-circle-gray-100"
       >
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center',
-            fontSize: 14,
-          }}
-        >
+        <div className="flex gap-2 items-center text-sm">
           {action.icon && action.icon}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div>
@@ -218,9 +173,7 @@ const ResultItem = React.forwardRef(
                       style={{
                         marginRight: 8,
                       }}
-                    >
-                      &rsaquo;
-                    </span>
+                    ></span>
                   </React.Fragment>
                 ))}
               <span>{action.name}</span>
