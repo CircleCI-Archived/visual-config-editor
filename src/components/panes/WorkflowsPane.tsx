@@ -34,6 +34,7 @@ const WorkflowsPane = () => {
             className="hidden"
             onChange={(e) => {
               if (!e.target.files) {
+                console.error('File upload failed');
                 return;
               }
 
@@ -93,6 +94,8 @@ const WorkflowsPane = () => {
 
                     setConfig(yml, orbImports);
                   });
+                } else {
+                  setConfig(yml);
                 }
               });
             }}
