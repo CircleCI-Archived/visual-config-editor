@@ -1,5 +1,4 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { FocusScope } from 'react-aria';
 import { useStoreState } from '../../state/Hooks';
 import { version } from '../../version.json';
 

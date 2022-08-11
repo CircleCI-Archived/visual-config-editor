@@ -11,7 +11,6 @@ import InspectorProperty from '../../atoms/form/InspectorProperty';
 import { WorkflowSelector } from '../../atoms/WorkflowSelector';
 import DefinitionsContainer from '../../containers/DefinitionsContainer';
 import OrbImportsContainer from '../../containers/OrbImportsContainer';
-import { StagedJobMenu } from '../stage/StagedJobMenu';
 import TabbedMenu from '../TabbedMenu';
 
 /**

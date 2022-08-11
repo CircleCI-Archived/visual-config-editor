@@ -1,5 +1,4 @@
 import algoliasearch from 'algoliasearch/lite';
-import { useState } from 'react';
 import {
   Hits,
   HitsPerPage,
@@ -145,19 +144,21 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
 
                 return (
                   <Card
-                    truncate={140}
+                    truncate={120}
                     icon={
-                      <img
-                        src={
-                          (hit.logo_url as string) ||
-                          'https://circleci.com/developer/orb-logos/community.png'
-                        }
-                        className="w-6 h-6 mr-2 mb-2"
-                        alt=""
-                      ></img>
+                      <div className="rounded-full bg-white shadow mr-2 mb-2 flex w-6 h-6 p-px">
+                        <img
+                          src={
+                            (hit.logo_url as string) ||
+                            'https://circleci.com/developer/orb-logos/community.png'
+                          }
+                          className="rounded-full my-auto bg-white"
+                          alt={`${hit.name} logo` || 'Orb Logo'}
+                        />
+                      </div>
                     }
                     pinned={
-                      <p className="text-circle-gray-400 text-sm">
+                      <p className="bg-circle-gray-300 rounded-full text-xs p-px my-auto px-2">
                         {hit.version as string}
                       </p>
                     }

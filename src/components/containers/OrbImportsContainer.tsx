@@ -43,7 +43,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             <img className="mr-4 w-6 h-6" src={orb.logo_url} alt="" />
             <div className="flex flex-row w-full my-auto text-circle-black text-base">
               {orb.alias}
-              <div className="flex ml-auto text-xs my-auto bg-circle-gray-300 rounded-full p-1 px-2">
+              <div className="flex ml-auto text-xs my-auto bg-circle-gray-300 rounded-full p-px px-2">
                 {orb.namespace}/{orb.name}@{orb.version}
               </div>
             </div>

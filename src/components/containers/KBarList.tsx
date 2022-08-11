@@ -3,23 +3,16 @@ import './KBar.css';
 
 import {
   ActionId,
+  ActionImpl,
+  createAction,
   KBarAnimator,
-  KBarProvider,
   KBarPortal,
   KBarPositioner,
-  KBarSearch,
+  KBarProvider,
   KBarResults,
-  createAction,
+  KBarSearch,
   useMatches,
-  ActionImpl,
 } from 'kbar';
-import { useStoreActions } from '../../state/Hooks';
-import DefinitionsMenu from '../menus/definitions/DefinitionsMenu';
-import NavigationPane from '../panes/NavigationPane';
-import {
-  InspectorDefinitionMenu,
-  InspectorDefinitionMenuNav,
-} from '../menus/definitions/InspectorDefinitionMenu';
 
 const searchStyle = {
   padding: '12px 16px',
@@ -50,17 +43,14 @@ const groupNameStyle = {
 };
 
 const KBarList = (props: any) => {
-  // const setPane = useStoreActions((actions) => actions.setAccesibilityPane);
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
-
   const initialActions = [
     {
-      id: 'Navigation',
-      name: 'Navigation Pane',
+      id: 'Inspector',
+      name: 'Inspector Pane',
       shortcut: ['n'],
       keywords: 'core elements',
       section: 'Commands',
-      subtitle: 'This is the navigation pane.',
+      subtitle: 'Create and edit config components.',
       perform: () => {
         const focus = document.getElementById('Naviagtion-Pane');
 
@@ -70,7 +60,6 @@ const KBarList = (props: any) => {
         }
       },
     },
-
     {
       id: 'Editor',
       name: 'Editor Pane',
@@ -89,6 +78,7 @@ const KBarList = (props: any) => {
     {
       id: 'Workflow',
       name: 'Workflow Pane',
+      subtitle: 'Orchestrate your CI workflow.',
       shortcut: ['w'],
       keywords: 'jobs workflow',
 
@@ -103,15 +93,24 @@ const KBarList = (props: any) => {
     },
 
     createAction({
-      name: 'Documentation',
-      shortcut: ['d', 'h'],
-      keywords: 'sourcecode',
-      section: 'Help',
+      name: 'View Source',
+      subtitle: 'View the source on GitHub.',
+      shortcut: ['s'],
+      keywords: 'source code',
+      section: 'Links',
       perform: () =>
         window.open(
           'https://github.com/CircleCI-Public/visual-config-editor',
           '_blank',
         ),
+    }),
+    createAction({
+      name: 'Documentation',
+      shortcut: ['d', 'h'],
+      keywords: 'documentation help',
+      subtitle: 'Open CircleCI documentation homepage.',
+      section: 'Links',
+      perform: () => window.open('https://circleci.com/docs', '_blank'),
     }),
   ];
 
@@ -123,7 +122,7 @@ const KBarList = (props: any) => {
       actions={initialActions}
     >
       <KBarPortal>
-        <KBarPositioner>
+        <KBarPositioner className="z-50">
           <KBarAnimator style={animatorStyle}>
             <KBarSearch style={searchStyle} />
             <RenderResults />
@@ -180,6 +179,7 @@ const ResultItem = React.forwardRef(
     return (
       <div
         ref={ref}
+        className="hello"
         style={{
           padding: '12px 16px',
           background: active ? 'var(--a1)' : 'transparent',
