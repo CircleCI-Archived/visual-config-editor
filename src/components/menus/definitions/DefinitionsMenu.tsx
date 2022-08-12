@@ -91,7 +91,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
               });
             }}
           >
-            {(_) => (
+            {(formikProps) => (
               <Form className="flex flex-col flex-1">
                 <InspectorProperty label="Name" name="name" />
                 <Footer>
@@ -99,6 +99,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
                     variant="primary"
                     aria-label="Generate Configuration"
                     className=" w-min whitespace-nowrap"
+                    disabled={!formikProps.dirty}
                   >
                     Save Workflow
                   </Button>

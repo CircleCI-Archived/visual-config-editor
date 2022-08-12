@@ -163,7 +163,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
           });
         }}
       >
-        {() => (
+        {(formikProps) => (
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
               <div
@@ -241,7 +241,11 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
               >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={!formikProps.dirty}
+              >
                 Save
               </Button>
             </Footer>
