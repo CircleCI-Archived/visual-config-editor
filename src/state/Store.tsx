@@ -9,6 +9,7 @@ import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
 import { MutableRefObject } from 'react';
 import {
+  Connection,
   ElementId,
   Elements,
   FlowElement,
@@ -377,29 +378,31 @@ const Actions: StoreActions = {
     const stagedJob = map.workflows[workflow.name];
 
     const elements = workflow.elements.filter((element) => {
-      const filtered = element.id === payload || element.type === '';
+      if (element.type === 'requires') {
+        const connection = element as Connection;
 
-      if (filtered) {
-        if (element.type === 'jobs') {
-          const workflowJob = element.data as WorkflowJobAbstract;
-          const name = workflowJob.name;
-          const sameSourceJobs = stagedJob[name];
-
-          if (sameSourceJobs) {
-            stagedJob[name]--;
-
-            if (stagedJob[name] === 0) {
-              delete stagedJob[name];
-            }
-
-            state.stagedJobs = { workflows: map.workflows };
-          }
+        if (connection.source === payload || connection.target === payload) {
+          return false;
         }
       }
 
-      // TODO: determine if there are any more of the same job type in the workflow.
-      // Requires name duplication to be fully logical
-      return !filtered;
+      if (element.type === 'jobs' && element.id === payload) {
+        const workflowJob = element.data as WorkflowJobAbstract;
+        const name = workflowJob.name;
+        const sameSourceJobs = stagedJob[name];
+
+        if (sameSourceJobs) {
+          stagedJob[name]--;
+
+          if (stagedJob[name] === 0) {
+            delete stagedJob[name];
+          }
+
+          state.stagedJobs = { workflows: map.workflows };
+        }
+      }
+
+      return element.id !== payload;
     });
 
     setWorkflowDefinition(state, workflow.name, {
