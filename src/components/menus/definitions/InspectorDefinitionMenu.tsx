@@ -301,7 +301,11 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 >
                   Cancel
                 </Button>
-                <Button variant="primary" type="submit">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={!formikProps.dirty}
+                >
                   {props.editing ? 'Save' : 'Create'}
                 </Button>
               </Footer>

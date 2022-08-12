@@ -135,7 +135,11 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
               >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={!formikProps.dirty}
+              >
                 {props.editing ? 'Save Step' : 'Create Step'}
               </Button>
             </div>

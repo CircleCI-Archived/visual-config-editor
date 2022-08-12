@@ -1,10 +1,18 @@
 import { ButtonHTMLAttributes } from 'react';
 
 const styles = {
-  dangerous:
-    'bg-circle-red-dangerous hover:bg-circle-red-dangerous-dark text-white',
-  secondary: 'bg-circle-gray-250 hover:bg-circle-gray-300 text-circle-gray',
-  primary: 'bg-circle-blue hover:bg-circle-blue-dark text-white',
+  dangerous: {
+    default: 'bg-circle-red-dangerous text-white',
+    active: 'hover:bg-circle-red-dangerous-dark ',
+  },
+  secondary: {
+    default: 'bg-circle-gray-250 text-circle-gray',
+    active: 'hover:bg-circle-gray-300',
+  },
+  primary: {
+    default: 'bg-circle-blue  text-white',
+    active: 'hover:bg-circle-blue-dark',
+  },
 };
 
 export type ButtonVariant = keyof typeof styles;
@@ -24,8 +32,9 @@ export const Button = ({
       className={`${className} ${
         margin ? `mx-${margin}` : 'mx-3'
       } w-min h-min whitespace-nowrap text-sm font-medium py-2 px-4 duration:50 transition-colors rounded-md2 ${
-        styles[variant]
-      }`}
+        styles[variant].default
+      }
+      ${props.disabled ? 'opacity-50 cursor-default' : styles[variant].active}`}
     >
       {props.children}
     </button>

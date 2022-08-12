@@ -166,7 +166,12 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
             </TabbedMenu>
 
             <div className="border-t border-circle-gray-300 p-6 flex">
-              <Button type="submit" className="ml-auto" variant="primary">
+              <Button
+                type="submit"
+                className="ml-auto"
+                variant="primary"
+                disabled={!formikProps.dirty}
+              >
                 Save Filter
               </Button>
             </div>
