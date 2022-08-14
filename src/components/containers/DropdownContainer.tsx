@@ -1,33 +1,47 @@
-import React, { ReactChild, useEffect, useRef, useState } from 'react';
+import React, { ReactChild, RefObject, useCallback, useEffect, useRef, useState } from 'react';
+
+const getDropDownStyle = (buttonRef: RefObject<HTMLButtonElement>, contentsRef: RefObject<HTMLDivElement>, alignLeft?: boolean, padding?: number) => {
+  if (!buttonRef.current || !contentsRef.current) {
+    return {
+      left: 0,
+      top: 0,
+      minWidth: 0,
+    };
+  }
+
+  const main = buttonRef.current?.getBoundingClientRect();
+  const contents = contentsRef.current?.getBoundingClientRect();
+
+  return {
+    left: main.x + (alignLeft ? -contents.width + main.width : 0),
+    top: main.y + main.height + (padding || 4),
+    minWidth: main.width,
+  }
+}
 
 const DropdownContainer = (props: {
   className?: string;
   space?: number;
+  alignLeft?: boolean;
   children: ReactChild[] | ReactChild;
 }) => {
   const [isExtended, setExtended] = useState(false);
-  const [pos, setPos] = useState({ left: 0, top: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const contentsRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState(getDropDownStyle(buttonRef, contentsRef, props.alignLeft, props.space));
+
+  const clickListener = useCallback(() => {
+    setExtended(false);
+  }, [])
 
   useEffect(() => {
-    if (!buttonRef.current || !contentsRef.current) {
-      return;
+    setPos(getDropDownStyle(buttonRef, contentsRef, props.alignLeft, props.space));
+    window.addEventListener('click', clickListener);
+
+    return () => {
+      window.removeEventListener('click', clickListener);
     }
-
-    const main = buttonRef.current.getBoundingClientRect();
-    const contents = contentsRef.current.getBoundingClientRect();
-
-    setPos({
-      left: main.x - contents.width + main.width,
-      top: main.y + main.height + (props.space || 4),
-    });
-
-    // hide the box when a click event fires
-    window.addEventListener('click', () => {
-      setExtended(false);
-    });
-  }, [isExtended, props.space]);
+  }, [isExtended, clickListener, props.alignLeft, props.space]);
 
   const [first, ...children] = React.Children.toArray(props.children);
 
