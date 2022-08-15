@@ -63,8 +63,8 @@ const ListItem = ({
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, _) => (
         <div
-          className="w-full mb-4 p-1 px-3 text-sm 
-bg-white border border-circle-gray-300 hover:border-circle-black rounded-md2 flex flex-row"
+          className="w-full mb-2 p-1 px-3
+bg-white border border-circle-gray-300 hover:border-circle-black rounded flex flex-row"
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -102,6 +102,7 @@ const ListProperty = (props: ListPropertyProps) => {
     <FieldArray
       {...field}
       name={props.name}
+      
       render={(arrayHelper) => (
         <FieldlessListProperty
           {...props}
@@ -131,6 +132,7 @@ export const FieldlessListProperty = ({
 }) => {
   const [input, , helper] = field;
   const ListChild = listItem;
+  
   return (
     <CollapsibleList
       title={
@@ -212,9 +214,9 @@ export const FieldlessListProperty = ({
         </DragDropContext>
       ) : (
         <>
-          <p className="ml-2 font-medium text-sm text-circle-gray-500">
+          <div className="ml-2 font-medium text-sm text-circle-gray-500">
             {emptyText}
-          </p>
+          </div>
           {children}
         </>
       )}
