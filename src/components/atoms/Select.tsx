@@ -57,7 +57,7 @@ const Select = (props: SelectProps) => {
 
   return (
     <DropdownContainer
-      className={`rounded-sm ${
+      className={`rounded ${
         props.borderless
           ? 'border-transparent'
           : ' border-circle-gray-300 shadow-sm'
@@ -79,11 +79,11 @@ const Select = (props: SelectProps) => {
           <ExpandIcon className="w-3 h-5 mr-3 ml-3" expanded={true} />
         </div>
       </div>
-      <div className={'bg-white py-2 shadow-lg ' + props.dropdownClassName}>
+      <div className={'bg-white py-2 shadow-lg flex flex-col ' + props.dropdownClassName}>
         {children.map((child, i) => {
           return (
             <button
-              className={`px-3 py-1 text-left w-full hover:bg-circle-gray-200 ${
+              className={`px-3 py-1 text-left hover:bg-circle-gray-200 ${
                 i > 0 && 'border-t border-circle-gray-300'
               }`}
               key={i}

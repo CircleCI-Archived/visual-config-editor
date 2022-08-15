@@ -45,7 +45,7 @@ function Pagination(props: PaginationProps) {
           <Button
             variant="secondary"
             margin="2"
-            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded-sm hover:border-gray-700"
+            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
             onClick={() => {
               refine(pages[0] - 1);
             }}
@@ -57,7 +57,7 @@ function Pagination(props: PaginationProps) {
             <Button
               variant="secondary"
               margin="2"
-              className="w-9 h-9 border border-circle-gray-300 mx-1 px-0 rounded-sm hover:border-gray-700"
+              className="w-9 h-9 border border-circle-gray-300 mx-1 px-0 rounded hover:border-gray-700"
               key={page}
               onClick={() => {
                 refine(page + 1);
@@ -69,7 +69,7 @@ function Pagination(props: PaginationProps) {
           <Button
             variant="secondary"
             margin="2"
-            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded-sm hover:border-gray-700"
+            className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
             onClick={() => {
               refine(pages[pages.length - 1] + 1);
             }}
@@ -93,7 +93,7 @@ const SearchBox = (
     <>
       <div
         aria-label="Orbs Search Box"
-        className="my-2 rounded-sm border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
+        className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
       >
         <input
           value={query}

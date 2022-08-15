@@ -2,6 +2,7 @@ import { FocusScope } from 'react-aria';
 import { inspectorWidth } from '../../App';
 import { useStoreState } from '../../state/Hooks';
 import Toast from '../atoms/Toast';
+import ToolTip from '../atoms/Tooltip';
 
 interface NavigationPaneProps {
   width: number;
@@ -13,6 +14,7 @@ interface NavigationPaneProps {
  */
 const NavigationPane = (props: any, { width }: NavigationPaneProps) => {
   const navigation = useStoreState((state) => state.navigation);
+  const tooltip = useStoreState((state) => state.tooltip);
   const NavPage = navigation.component.Component;
 
   return (
@@ -31,6 +33,11 @@ const NavigationPane = (props: any, { width }: NavigationPaneProps) => {
           style={{ width: inspectorWidth }}
         >
           <Toast />
+          {tooltip && (
+            <ToolTip target={tooltip.ref} facing={tooltip.facing}>
+              <p>{tooltip.description}</p>
+            </ToolTip>
+          )}
         </div>
       </div>
     </FocusScope>

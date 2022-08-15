@@ -13,14 +13,14 @@ export const WorkflowSelector = () => {
   const addWorkflow = useStoreActions((actions) => actions.define_workflows);
 
   return (
-    <DropdownContainer className="rounded-md mx-3 my-auto px-2 border border-circle-gray-300 hover:bg-circle-gray-250">
+    <DropdownContainer alignLeft className="rounded-md mx-3 my-auto px-2 border border-circle-gray-300 hover:bg-circle-gray-250">
       <ExpandIcon className="w-3 h-6" expanded={true} />
-      <div className="rounded-sm border border-circle-gray-300 p-2 z-30 bg-white flex flex-col">
+      <div className="rounded border border-circle-gray-300 p-2 z-30 bg-white flex flex-col">
         {Object.keys(workflows).map((workflow) => (
           <button
             value={workflow}
             key={workflow}
-            className={`rounded-sm flex w-full hover:bg-circle-gray-250 border-b border-circle-gray-300 p-2`}
+            className={`rounded flex w-full hover:bg-circle-gray-250 border-b border-circle-gray-300 p-2`}
             type="button"
             onClick={(e) =>
               workflow !== selectedWorkflow && selectWorkflow(workflow)

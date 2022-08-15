@@ -16,6 +16,7 @@ import ListProperty, {
   ListItemChildProps,
 } from '../../atoms/form/ListProperty';
 import BreadCrumbs from '../../containers/BreadCrumbs';
+import { FilterPreviewContainer } from '../../containers/FilterPreviewContainer';
 import ParamListContainer from '../../containers/ParamListContainer';
 import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
 import StepTypePageNav from '../definitions/subtypes/StepTypePage';
@@ -57,8 +58,9 @@ const AdjacentSteps = ({
     <ListProperty
       label={label}
       name={`parameters.${type}`}
-      className="pb-8"
+      className="pb-4"
       expanded
+      titleFont="font-medium text-sm"
       required
       listItem={(input) => (
         <AdjacentStepListItem {...input} values={values} type={type} />
@@ -100,7 +102,6 @@ const AdjacentSteps = ({
 
 const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
-  const navigateTo = useStoreActions((actions) => actions.navigateTo);
   const definitions = useStoreState((state) => state.definitions);
 
   const updateWorkflowElement = useStoreActions(
@@ -173,7 +174,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 <InspectorProperty type="button" name="name" label="Source Job">
                   <div
                     className="w-full mb-2 p-2 text-sm  text-left text-circle-black 
-                  bg-circle-gray-200 border border-circle-gray-300 rounded-sm flex flex-row"
+                  bg-circle-gray-200 border border-circle-gray-300 rounded flex flex-row"
                   >
                     <JobIcon className="ml-1 mr-2 w-5 h-5" />
                     <p className="leading-5">{source.name}</p>
@@ -186,6 +187,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 />
                 <ListProperty
                   label="Contexts"
+                  titleFont="font-medium text-sm"
                   name="parameters.context"
                   values={values}
                   expanded
@@ -193,19 +195,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                   listItem={ContextItem}
                   addButton
                 />
-                <button
-                  type="button"
-                  className="mb-8 text-sm font-medium p-2 w-full bg-circle-gray-200 duration:50 transition-all rounded-md2"
-                  onClick={() => {
-                    navigateTo({
-                      component: StagedFilterMenuNav,
-                      props: { source, values },
-                      values,
-                    });
-                  }}
-                >
-                  Edit Filters
-                </button>
+                <FilterPreviewContainer source={source} values={values} />
                 {(source.job instanceof reusable.ParameterizedJob ||
                   source.job instanceof orb.OrbRef) && (
                   <ParamListContainer
@@ -227,7 +217,6 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 />
               </div>
             </TabbedMenu>
-
             <span className="border-b border-circle-gray-300 mt-auto" />
             <Footer>
               <Button
@@ -244,7 +233,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
               <Button
                 variant="primary"
                 type="submit"
-                disabled={!formikProps.dirty}
+                // disabled={!formikProps.dirty}
               >
                 Save
               </Button>

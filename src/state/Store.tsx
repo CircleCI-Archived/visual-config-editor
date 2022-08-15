@@ -7,7 +7,7 @@ import {
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
-import { MutableRefObject } from 'react';
+import { MutableRefObject, RefObject } from 'react';
 import {
   Connection,
   ElementId,
@@ -69,6 +69,12 @@ export interface DataModel {
   dataType?: InspectableMapping;
 }
 
+export interface InfoToolTip {
+  description: string;
+  ref: RefObject<any>;
+  facing?: 'top' | 'bottom' | 'left' | 'right';
+}
+
 export interface NavigationModel extends NavigationStop {
   jumpedFrom?: NavigationStop;
   from?: NavigationModel;
@@ -111,6 +117,7 @@ export type StoreModel = DefinitionsStoreModel & {
 
   toast?: ToastModel;
   confirm?: ConfirmationModalModel;
+  tooltip?: InfoToolTip;
 
   /** Data being dragged from definition */
   dragging?: DataModel;
@@ -160,11 +167,11 @@ export type StoreActions = AllDefinitionActions & {
   updateConnecting: Action<
     StoreModel,
     | {
-        ref?: MutableRefObject<any>;
-        id: SetConnectionId;
-        pos?: XYPosition;
-        name?: string;
-      }
+      ref?: MutableRefObject<any>;
+      id: SetConnectionId;
+      pos?: XYPosition;
+      name?: string;
+    }
     | undefined
   >;
 
@@ -193,6 +200,8 @@ export type StoreActions = AllDefinitionActions & {
   triggerToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerConfirmation: Action<StoreModel, ConfirmationModalModel | undefined>;
   triggerConfigRefresh: ThunkOn<StoreActions, void>;
+  
+  updateTooltip: Action<StoreModel, InfoToolTip | undefined>;
 };
 
 const Actions: StoreActions = {
@@ -248,12 +257,12 @@ const Actions: StoreActions = {
         payload.origin && root
           ? root
           : {
-              ...curNav,
-              props: {
-                ...curNav.props,
-                values: payload.values,
-              },
+            ...curNav,
+            props: {
+              ...curNav.props,
+              values: payload.values,
             },
+          },
     };
   }),
 
@@ -685,8 +694,8 @@ const Actions: StoreActions = {
     const parameterList =
       pipelineParameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-            pipelineParameters,
-          )
+          pipelineParameters,
+        )
         : undefined;
 
     const config = new Config(
@@ -714,7 +723,7 @@ const Actions: StoreActions = {
     state.toast = payload ?? undefined;
   }),
   // this is just to trigger the set toast action
-  triggerToast: action((_, __) => {}),
+  triggerToast: action((_, __) => { }),
   triggerConfirmation: action((state, payload) => {
     state.confirm = payload;
   }),
@@ -724,6 +733,9 @@ const Actions: StoreActions = {
       actions.generateConfig();
     },
   ),
+  updateTooltip: action((state, payload) => {
+    state.tooltip = payload;
+  }),
 };
 
 const Store: StoreModel & StoreActions = {
