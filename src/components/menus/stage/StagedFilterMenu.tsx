@@ -61,7 +61,6 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
 
   useEffect(() => {
     value = values?.[target]?.[type.toLowerCase()];
-    console.log(value, target);
   }, [target, type, values]);
 
   return (
