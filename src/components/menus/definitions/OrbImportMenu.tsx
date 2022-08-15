@@ -86,7 +86,7 @@ function Pagination(props: PaginationProps) {
 const SearchBox = (
   props: UseSearchBoxProps & { className?: string; placeholder?: string },
 ) => {
-  const { query, refine, clear } = useSearchBox(props);
+  const { refine, clear } = useSearchBox(props);
   const { results } = useInstantSearch();
 
   return (
@@ -96,7 +96,6 @@ const SearchBox = (
         className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
       >
         <input
-          value={query}
           placeholder={props.placeholder}
           className="pl-4 p-2 m-0 flex-grow"
           onChange={(e) => refine(e.target.value)}
