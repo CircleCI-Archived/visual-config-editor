@@ -113,7 +113,7 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
           ?.filter((element) => element.type === 'jobs')
           .map((job) => job.data.parameters?.name || job.data.name),
       );
-      let name = data.name;
+      let name;
 
       if (stagedNames && stagedNames.has(name)) {
         for (let i = 2; true; i++) {
