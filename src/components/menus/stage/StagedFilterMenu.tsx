@@ -1,12 +1,11 @@
 import { FilterParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
-import React, { useEffect, useState } from 'react';
 import { useStoreActions } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
 import ListProperty, {
-  ListItemChildProps,
+  ListItemChildProps
 } from '../../atoms/form/ListProperty';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import TabbedMenu from '../TabbedMenu';
@@ -57,13 +56,6 @@ const getInitialValues = (values: {
 };
 
 const FilterList = ({ type, values, target }: FilterListProps) => {
-  let value = values?.[target]?.[type];
-
-  useEffect(() => {
-    value = values?.[target]?.[type.toLowerCase()];
-    console.log(value, target);
-  }, [target, type, values]);
-
   return (
     <ListProperty
       label={type}
@@ -80,13 +72,6 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
 const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const tabs = ['BRANCHES', 'TAGS'];
-  const [target, setTarget] = useState(tabs[0].toLowerCase());
-  let initValues = getInitialValues(values);
-
-  useEffect(() => {
-    initValues = getInitialValues(values);
-  }, [values]);
-
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
       <header>
@@ -100,7 +85,7 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
         </div>
       </header>
       <Formik
-        initialValues={initValues}
+        initialValues={getInitialValues(values)}
         enableReinitialize
         onSubmit={(values) => {
           navigateBack({
@@ -142,12 +127,7 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
       >
         {(formikProps) => (
           <Form className="flex flex-col flex-1">
-            <TabbedMenu
-              tabs={tabs}
-              onChange={(index) => {
-                setTarget(tabs[index].toLowerCase());
-              }}
-            >
+            <TabbedMenu tabs={tabs}>
               {['branches', 'tags'].map((target) => (
                 <div className="p-6" key={target}>
                   <FilterList

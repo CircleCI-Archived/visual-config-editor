@@ -99,7 +99,7 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
                     variant="primary"
                     aria-label="Generate Configuration"
                     className=" w-min whitespace-nowrap"
-                    disabled={!formikProps.dirty}
+                    // disabled={!formikProps.dirty}
                   >
                     Save Workflow
                   </Button>

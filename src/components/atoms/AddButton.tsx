@@ -4,7 +4,6 @@ import AddIcon from '../../icons/ui/AddIcon';
 const AddButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
-
       type="button"
       {...props}
       className={

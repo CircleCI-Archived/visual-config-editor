@@ -3,10 +3,9 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldMetaProps,
-  useField,
+  useField
 } from 'formik';
 import { ReactElement, useEffect } from 'react';
-import InfoIcon from '../../../icons/ui/InfoIcon';
 import { Info } from '../Info';
 import { SelectField } from '../Select';
 

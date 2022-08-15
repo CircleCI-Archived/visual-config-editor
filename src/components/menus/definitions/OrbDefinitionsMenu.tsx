@@ -97,7 +97,7 @@ const OrbDefinitionContainer = (props: {
             <ComponentInfo type={props.dataMapping} />
           </div>
           {Object.entries(props.data).map(([name, ref]) => (
-            <Definition type={props.dataMapping} data={ref} index={-1} />
+            <Definition key={name} type={props.dataMapping} data={ref} index={-1} />
           ))}
         </>
       </CollapsibleList>
@@ -179,6 +179,7 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
               if (mapping) {
                 return (
                   <OrbDefinitionContainer
+                    key={component}
                     dataMapping={mapping.mapping}
                     data={orb[component]}
                   />

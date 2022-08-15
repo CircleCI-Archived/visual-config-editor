@@ -9,14 +9,12 @@ export type EmptyProps = {
 
 export const Empty = ({ label, Logo, description }: EmptyProps) => {
   return (
-    <>
-      <div>
-        {Logo && <Logo className="w-5 h-5 mx-auto" color="#161616" />}
-        <h2 className="text-sm font-bold text-center p-1">{label}</h2>
-        {description && (
-          <div className="text-sm text-center ">{description}</div>
-        )}
-      </div>
-    </>
+    <div>
+      {Logo && <Logo className="w-5 h-5 mx-auto" color="#161616" />}
+      <h2 className="text-sm font-bold text-center text-circle-black p-1">{label}</h2>
+      {description && (
+        <div className="text-sm text-center text-circle-black">{description}</div>
+      )}
+    </div>
   );
 };
