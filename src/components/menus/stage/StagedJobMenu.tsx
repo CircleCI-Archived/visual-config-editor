@@ -22,7 +22,6 @@ import { StepDefinitionMenu } from '../definitions/StepDefinitionMenu';
 import StepTypePageNav from '../definitions/subtypes/StepTypePage';
 import { navSubTypeMenu } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
-import StagedFilterMenuNav from './StagedFilterMenu';
 
 type WorkflowJobMenuProps = {
   source: WorkflowJob;

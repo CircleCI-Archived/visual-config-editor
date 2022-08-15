@@ -62,7 +62,13 @@ const DropdownContainer = (props: {
         window.removeEventListener('click', clickListener);
       };
     }
-  }, [isExtended, clickListener, props.alignLeft, props.space]);
+  }, [
+    isExtended,
+    clickListener,
+    props.alignLeft,
+    props.space,
+    props.dontCollapse,
+  ]);
 
   const [first, ...children] = React.Children.toArray(props.children);
 

@@ -1,7 +1,6 @@
 import {
   MutableRefObject,
   ReactElement,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -42,7 +41,7 @@ const ToolTip = ({ target, facing, children }: ToolTipProps) => {
   const [pos, setPos] = useState(getPos(ref.current, target.current, facing));
   useEffect(() => {
     setPos(getPos(ref.current, target.current, facing));
-  }, [target, ref.current]);
+  }, [target, ref, facing]);
 
   return (
     <div style={pos} ref={ref} className="fixed flex z-30 flex-col">
