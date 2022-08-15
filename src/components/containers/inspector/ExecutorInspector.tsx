@@ -29,7 +29,7 @@ const ExecutorInspector = (
       >
         {executorSubtypes[props.subtype]?.resourceClasses?.map(
           (resourceClass: any) => (
-            <option value={resourceClass} key={resourceClass}>
+            <option value={resourceClass} key={resourceClass} className='w-min'>
               {resourceClass}
             </option>
           ),

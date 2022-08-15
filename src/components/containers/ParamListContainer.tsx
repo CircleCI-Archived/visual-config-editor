@@ -77,6 +77,7 @@ const ParamListContainer = ({
                 key={index}
                 values={values}
                 namePrefix={parent}
+                description={parameter.description}
                 name={parameter.name}
                 {...subtypes[parameter.type](parameter)}
               />
@@ -84,6 +85,7 @@ const ParamListContainer = ({
               <InspectorProperty
                 {...props}
                 label={parameter.name}
+                description={parameter.description}
                 values={values}
                 key={index}
                 name={parent ? `${parent}.${parameter.name}` : parameter.name}

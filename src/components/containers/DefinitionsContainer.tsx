@@ -48,14 +48,14 @@ const DefinitionsContainer = ({
     navigateTo(
       type.subtypes
         ? navSubTypeMenu({
-            typePage: type.subtypes?.component,
-            menuPage: InspectorDefinitionMenu,
-            menuProps: { dataType: type, index: -1 },
-          })
+          typePage: type.subtypes?.component,
+          menuPage: InspectorDefinitionMenu,
+          menuProps: { dataType: type, index: -1 },
+        })
         : {
-            component: InspectorDefinitionMenuNav,
-            props: { dataType: type, index: -1 },
-          },
+          component: InspectorDefinitionMenuNav,
+          props: { dataType: type, index: -1 },
+        },
     );
   };
 
@@ -72,14 +72,11 @@ const DefinitionsContainer = ({
         classNameExpanded="py-4 "
         onChange={onChange}
         pinned={
-          <>
-            {requirements.length === 0 && (
-              <AddButton
-                className="flex ml-auto"
-                onClick={navigateToInspector}
-              />
-            )}
-          </>
+          <AddButton
+            disabled={requirements.length > 0}
+            className="flex ml-auto"
+            onClick={navigateToInspector}
+          />
         }
         titleExpanded={
           <>

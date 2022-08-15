@@ -48,6 +48,7 @@ const CommandInspector = (
         listItem={StepListItem}
         pinned={
           <AddButton
+            className='ml-auto flex'
             onClick={() => {
               navigateTo(
                 navSubTypeMenu(

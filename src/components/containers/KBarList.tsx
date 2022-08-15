@@ -42,7 +42,6 @@ const KBarList = (props: any) => {
 
         if (focus) {
           focus.scrollIntoView();
-          console.log(focus);
         }
       },
     },

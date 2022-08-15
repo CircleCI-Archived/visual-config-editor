@@ -1,4 +1,3 @@
-import { types } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import BranchIcon from '../../icons/ui/BranchIcon';
 import EditIcon from '../../icons/ui/EditIcon';
@@ -75,8 +74,8 @@ export const FilterPreviewContainer = ({
     <CollapsibleList
       title={'Filters'}
       expanded
-      titleFont='font-medium text-sm'
-      className='mb-4'
+      titleFont="font-medium text-sm"
+      className="mb-4"
       pinned={
         <button
           type="button"

@@ -30,7 +30,7 @@ const ParameterContainer = (props: {
               <button
                 key={name}
                 aria-label="Parameter"
-                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded-sm text-left"
+                className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                 onClick={() => {
                   navigateTo({
                     component: InspectorDefinitionMenuNav,

@@ -1,7 +1,6 @@
 import { FilterParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
-import React, { useEffect, useState } from 'react';
 import { useStoreActions } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
