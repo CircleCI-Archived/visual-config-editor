@@ -39,9 +39,12 @@ const getPos = (
 const ToolTip = ({ target, facing, children }: ToolTipProps) => {
   const ref = useRef(null);
   const [pos, setPos] = useState(getPos(ref.current, target.current, facing));
+  const cur = ref.current;
+  const targetCur = target.current;
+
   useEffect(() => {
-    setPos(getPos(ref.current, target.current, facing));
-  }, [target, ref, facing]);
+    setPos(getPos(cur, targetCur, facing));
+  }, [targetCur, cur, facing]);
 
   return (
     <div style={pos} ref={ref} className="fixed flex z-30 flex-col">

@@ -136,7 +136,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
             ...parameters,
             context: context && context.length > 0 ? context : undefined,
             matrix:
-              parameters.matrix && Object.keys(matrix).length > 0
+              parameters.matrix?.parameters && Object.keys(matrix.parameters).length > 0
                 ? matrix
                 : undefined,
           };
