@@ -78,7 +78,9 @@ export const MatrixProperty = ({
           }
           render={(arrayHelper) => (
             <FieldlessListProperty
+              description={props.description}
               label={label}
+              titleFont='font-medium text-sm'
               name={
                 namePrefix
                   ? `${namePrefix}.matrix.parameters.${name}`
@@ -96,6 +98,7 @@ export const MatrixProperty = ({
       ) : (
         <FieldlessInspectorProperty
           label={label}
+          description={props.description}
           name={namePrefix ? `${namePrefix}.${name}` : name}
           field={defaultField}
           pinned={switchButton}

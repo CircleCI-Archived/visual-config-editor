@@ -14,6 +14,7 @@ import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
 import AddButton from '../AddButton';
+import { Info } from '../Info';
 import { InspectorFieldProps } from './InspectorProperty';
 
 export type ListItemChildProps = {
@@ -29,6 +30,7 @@ export type ListPropertyProps = InspectorFieldProps & {
   description?: string;
   expanded?: boolean;
   empty?: string | ReactElement;
+  titleFont?: string;
   addButton?: boolean;
   pinned?: ReactElement;
   listItem?: (props: ListItemChildProps) => ReactElement;
@@ -131,7 +133,13 @@ export const FieldlessListProperty = ({
   const ListChild = listItem;
   return (
     <CollapsibleList
-      title={label}
+      title={
+        <div className='flex flex-row'>
+          {label}
+          {description && <Info description={description} />}
+        </div>
+      }
+      titleFont={props.titleFont}
       className={props.className}
       titleExpanded={props.titleExpanded}
       expanded={props.expanded}

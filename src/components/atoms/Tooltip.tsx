@@ -1,38 +1,63 @@
-import { MutableRefObject, ReactElement, useEffect, useState } from 'react';
+import {
+  MutableRefObject,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import ToolTipPointerIcon from '../../icons/ui/ToolTipPointerIcon';
 
+export type Direction = 'top' | 'bottom' | 'left' | 'right';
 export interface ToolTipProps {
   target: MutableRefObject<any>;
-  pointerColor?: string;
-  pointerClass?: string;
-  offsetX?: number;
-  offsetY?: number;
-  centered?: boolean;
   facing?: 'top' | 'bottom' | 'left' | 'right';
   children: ReactElement;
 }
 
-const ToolTip = (props: ToolTipProps) => {
-  const [pos, setPos] = useState({ left: 0, top: 0 });
+const getPos = (
+  tooltip: HTMLElement | null,
+  target: HTMLElement | null,
+  facing?: Direction,
+) => {
+  const tipRect = tooltip?.getBoundingClientRect();
+  const rect = target?.getBoundingClientRect();
+  let width = 240;
+  let values = {};
 
-  const updatePos = () => {
-    const rect = props.target.current.getBoundingClientRect();
+  if (tipRect && rect) {
+    if (facing === 'bottom') {
+      values = {
+        top: rect.y - tipRect?.height + 4,
+        left: rect.x - width / 2 + rect.width / 2,
+      };
+    }
+  }
 
-    setPos({ left: rect.x - rect.width - 32, top: rect.y + 6 });
-  };
+  return { ...values, width };
+};
 
+const ToolTip = ({ target, facing, children }: ToolTipProps) => {
+  const ref = useRef(null);
+  const [pos, setPos] = useState(getPos(ref.current, target.current, facing));
   useEffect(() => {
-    updatePos();
-  });
+    setPos(getPos(ref.current, target.current, facing));
+  }, [target, ref.current]);
 
   return (
-    <div style={pos} className="fixed flex z-10">
-      {props.children}
-      <ToolTipPointerIcon
-        color="#FFFFFF"
-        className="h-3 mt-4"
-        direction="right"
-      />
+    <div style={pos} ref={ref} className="fixed flex z-30 flex-col">
+      {ref.current && (
+        <>
+          <div className="text-white bg-circle-gray-750 text-sm rounded p-2">
+            {children}
+          </div>
+          <ToolTipPointerIcon
+            color="#343434"
+            className="h-3"
+            direction={facing || 'right'}
+          />
+        </>
+      )}
     </div>
   );
 };

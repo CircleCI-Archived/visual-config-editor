@@ -41,8 +41,8 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
             </button>
             <h1
               className={`mx-2 ${
-                titleFont ? titleFont : 'font-medium'
-              } text-base leading-6 tracking-wide`}
+                titleFont ? titleFont : 'font-medium text-base'
+              } leading-6 tracking-wide`}
             >
               {props.title}
             </h1>
