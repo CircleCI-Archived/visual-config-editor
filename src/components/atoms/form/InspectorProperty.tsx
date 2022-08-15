@@ -7,6 +7,7 @@ import {
 } from 'formik';
 import { ReactElement, useEffect } from 'react';
 import InfoIcon from '../../../icons/ui/InfoIcon';
+import { Info } from '../Info';
 import { SelectField } from '../Select';
 
 export type InspectorFieldProps = {
@@ -18,6 +19,7 @@ export type InspectorFieldProps = {
   hidden?: boolean;
   className?: string;
   required?: boolean;
+  description?: string;
   beEmpty?: boolean;
   placeholder?: string;
   transform?: (value: any) => any;
@@ -58,9 +60,8 @@ const getField = (
         {...field}
         {...props}
         className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${
-          !field.value && 'bg-circle-gray-100'
-        } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
+        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${!field.value && 'bg-circle-gray-100'
+          } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
       ></Field>
     )
   );
@@ -74,6 +75,7 @@ const InspectorProperty = (props: InspectorFieldProps) => {
 export const FieldlessInspectorProperty = ({
   label,
   field,
+  description,
   pinned,
   ...props
 }: InspectorFieldProps & {
@@ -92,16 +94,15 @@ export const FieldlessInspectorProperty = ({
   return (
     <>
       <div
-        className={`${props.type === 'checkbox' && `flex flex-row`} mb-4 ${
-          props.className
-        }`}
+        className={`${props.type === 'checkbox' && `flex flex-row`} mb-4 ${props.className
+          }`}
         hidden={props.hidden}
       >
         <div className="flex flex-row mb-2">
-          <h3 className="font-medium  text-sm my-auto text-circle-black">
+          <h3 className="font-medium text-sm my-auto text-circle-black">
             {label}
           </h3>
-          <InfoIcon className="w-5 flex my-auto p-1" color="#6A6A6A" />
+          {description && <Info description={description} />}
           <div className="ml-auto ">
             {props.required && (
               <span className="leading-5 text-xs text-circle-black px-2 bg-circle-gray-300 rounded-full font-medium">
