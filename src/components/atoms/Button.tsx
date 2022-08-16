@@ -6,11 +6,15 @@ const styles = {
     active: 'hover:bg-circle-red-dangerous-dark ',
   },
   secondary: {
-    default: 'bg-circle-gray-250 text-circle-gray',
+    default: 'bg-circle-gray-250',
     active: 'hover:bg-circle-gray-300',
   },
+  flat: {
+    default: 'text-circle-gray-400',
+    active: 'hover:bg-circle-gray-300 text-white',
+  },
   primary: {
-    default: 'bg-circle-blue  text-white',
+    default: 'bg-circle-blue text-white',
     active: 'hover:bg-circle-blue-dark',
   },
 };
