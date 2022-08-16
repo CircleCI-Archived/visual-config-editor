@@ -16,7 +16,7 @@ const AdjacentStepListItem = ({
 
   return (
     <button
-      className="flex-1 cursor-pointer text-left rounded-sm text-circle-black leading-6"
+      className="flex-1 cursor-pointer text-left rounded text-circle-black leading-6"
       type="button"
       onClick={() => {
         navigateTo({

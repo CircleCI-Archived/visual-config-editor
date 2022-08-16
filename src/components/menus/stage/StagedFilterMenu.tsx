@@ -1,7 +1,7 @@
 import { FilterParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStoreActions } from '../../../state/Hooks';
 import { NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
@@ -65,7 +65,6 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
       expanded
       required
       listItem={FilterItem}
-      empty="filter "
       addButton
     />
   );
@@ -74,9 +73,6 @@ const FilterList = ({ type, values, target }: FilterListProps) => {
 const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const tabs = ['BRANCHES', 'TAGS'];
-  const [target, setTarget] = useState(tabs[0].toLowerCase());
-
-  console.log(values);
 
   return (
     <div className="h-full bg-white flex flex-col overflow-y-auto">
@@ -97,46 +93,34 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
           navigateBack({
             distance: 1,
             applyValues: (currentValues) => {
-              const filterEmpty = (values: string[]) => {
-                const filtered = values
-                  .map((value) => value.trim())
-                  .filter((value) => value);
+              const strip = (list: string[]) => {
+                const filtered = list.filter((item) => item);
 
-                if (filtered.length > 0) {
-                  return filtered;
-                }
+                return filtered.length > 0 ? filtered : undefined;
               };
-
-              const filters = Object.assign(
-                {},
-                // filter the the empty values from only and ignore lists
-                ...Object.entries(values)
-                  .map(([targetKey, target]) => {
-                    return {
-                      [targetKey]: Object.entries(target).map(
-                        ([typeKey, type]) => {
-                          console.log(filterEmpty(type));
-                          return {
-                            [typeKey]: filterEmpty(type),
-                          };
-                        },
-                      ),
-                    };
-                  })
-                  // filter out any target types that have no defined values
-                  .filter((target) =>
-                    Object.values(target).some(
-                      (type) =>
-                        type && Object.values(Object.values(type)[0])[0],
-                    ),
-                  ),
-              );
+              const branches = {
+                only: strip(values.branches.only),
+                ignore: strip(values.branches.ignore),
+              };
+              const hasBranches =
+                branches.only?.length || branches.ignore?.length;
+              const tags = {
+                only: strip(values.tags.only),
+                ignore: strip(values.tags.ignore),
+              };
+              const hasTags = tags.only?.length || tags.ignore?.length;
 
               return {
                 ...currentValues,
                 parameters: {
                   ...currentValues.parameters,
-                  filters,
+                  filters:
+                    hasBranches || hasTags
+                      ? {
+                          branches: hasBranches ? branches : undefined,
+                          tags: hasTags ? tags : undefined,
+                        }
+                      : undefined,
                 },
               };
             },
@@ -145,24 +129,21 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
       >
         {(formikProps) => (
           <Form className="flex flex-col flex-1">
-            <TabbedMenu
-              tabs={tabs}
-              onChange={(index) => {
-                setTarget(tabs[index].toLowerCase());
-              }}
-            >
-              <div className="p-6">
-                <FilterList
-                  type="Only"
-                  {...formikProps}
-                  target={target}
-                ></FilterList>
-                <FilterList
-                  type="Ignore"
-                  {...formikProps}
-                  target={target}
-                ></FilterList>
-              </div>
+            <TabbedMenu tabs={tabs}>
+              {['branches', 'tags'].map((target) => (
+                <div className="p-6" key={target}>
+                  <FilterList
+                    type="Only"
+                    {...formikProps}
+                    target={target}
+                  ></FilterList>
+                  <FilterList
+                    type="Ignore"
+                    {...formikProps}
+                    target={target}
+                  ></FilterList>
+                </div>
+              ))}
             </TabbedMenu>
 
             <div className="border-t border-circle-gray-300 p-6 flex">
@@ -170,7 +151,7 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
                 type="submit"
                 className="ml-auto"
                 variant="primary"
-                disabled={!formikProps.dirty}
+                // disabled={!formikProps.dirty}
               >
                 Save Filter
               </Button>
