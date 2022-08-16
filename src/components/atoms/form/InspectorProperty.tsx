@@ -6,7 +6,6 @@ import {
   useField,
 } from 'formik';
 import { ReactElement, useEffect } from 'react';
-import InfoIcon from '../../../icons/ui/InfoIcon';
 import { Info } from '../Info';
 import { SelectField } from '../Select';
 
@@ -16,6 +15,7 @@ export type InspectorFieldProps = {
   as?: string;
   type?: string;
   value?: any;
+  labelClassName?: string;
   hidden?: boolean;
   className?: string;
   required?: boolean;
@@ -60,8 +60,9 @@ const getField = (
         {...field}
         {...props}
         className={`${props.type !== 'checkbox' ? 'w-full' : 'ml-auto'} 
-        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${!field.value && 'bg-circle-gray-100'
-          } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
+        border rounded p-2 px-4 shadow-sm hover:border-circle-black placeholder-circle-gray-500 ${
+          !field.value && 'bg-circle-gray-100'
+        } ${error ? 'border-circle-red' : 'border-circle-gray-300'}`}
       ></Field>
     )
   );
@@ -94,11 +95,12 @@ export const FieldlessInspectorProperty = ({
   return (
     <>
       <div
-        className={`${props.type === 'checkbox' && `flex flex-row`} mb-4 ${props.className
-          }`}
+        className={`${props.type === 'checkbox' && `flex flex-row`} mb-4 ${
+          props.className
+        }`}
         hidden={props.hidden}
       >
-        <div className="flex flex-row mb-2">
+        <div className={`flex flex-row mb-2 ${props.labelClassName}`}>
           <h3 className="font-medium text-sm my-auto text-circle-black">
             {label}
           </h3>

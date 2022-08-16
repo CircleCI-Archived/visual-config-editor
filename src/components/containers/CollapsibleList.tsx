@@ -25,8 +25,8 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
       }`}
     >
       <div className="flex flex-row">
-        <div className="w-10/12 mb-auto">
-          <div className="flex flex-row">
+        <div className="w-10/12 my-auto">
+          <div className="flex flex-row h-8">
             <button
               onClick={(e) => {
                 const newExpanded = !expanded;

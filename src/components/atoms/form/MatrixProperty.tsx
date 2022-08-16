@@ -98,6 +98,7 @@ export const MatrixProperty = ({
       ) : (
         <FieldlessInspectorProperty
           label={label}
+          labelClassName="h-8"
           description={props.description}
           name={namePrefix ? `${namePrefix}.${name}` : name}
           field={defaultField}

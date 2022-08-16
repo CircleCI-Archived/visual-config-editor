@@ -126,7 +126,13 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
         }
       }
 
-      return new workflow.WorkflowJob(data, { name, ...params });
+      const newParams = params || {};
+
+      if (name !== data.name) {
+        newParams.name = name;
+      }
+
+      return new workflow.WorkflowJob(data, newParams);
     },
     component: JobNode,
   },

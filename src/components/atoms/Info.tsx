@@ -1,4 +1,4 @@
-import { createRef, forwardRef, useRef } from 'react';
+import { useRef } from 'react';
 import InfoIcon from '../../icons/ui/InfoIcon';
 import { useStoreActions } from '../../state/Hooks';
 
@@ -11,7 +11,7 @@ export const Info = ({ description }: { description: string }) => {
       ref={ref}
       className="my-auto flex ml-1"
       onMouseEnter={() => {
-        updateTooltip({ description, ref, facing: 'bottom'});
+        updateTooltip({ description, ref, facing: 'bottom' });
       }}
       onMouseLeave={() => updateTooltip(undefined)}
     >

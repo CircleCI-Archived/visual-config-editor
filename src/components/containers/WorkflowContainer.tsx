@@ -20,6 +20,7 @@ import { useStoreActions, useStoreState } from '../../state/Hooks';
 import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
 import { JobMapping } from '../../mappings/components/JobMapping';
+import PreviewToolbox from './PreviewToolbox';
 
 export interface ElementProps {
   className?: string;
@@ -252,7 +253,7 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
         }
       }}
     >
-      {/* <PreviewToolbox /> */}
+      <PreviewToolbox />
       <ReactFlow
         elements={elements}
         className={className}

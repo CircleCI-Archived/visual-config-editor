@@ -86,10 +86,17 @@ const JobNode: React.FunctionComponent<
   if (filters && toolbox.filter.preview && filters[toolbox.filter.type]) {
     const jobFilter = filters[toolbox.filter.type];
     const pattern = toolbox.filter.pattern;
-    const ignoreFilter = jobFilter?.ignore?.includes(pattern);
-    const onlyFilter = jobFilter?.only?.includes(pattern);
 
-    filtered = ignoreFilter || !onlyFilter;
+    try {
+      const ignoreFilter = jobFilter?.ignore?.some((value) =>
+        value.match(pattern),
+      );
+      const onlyFilter = jobFilter?.only?.some((value) => value.match(pattern));
+
+      filtered = ignoreFilter || !onlyFilter;
+    } catch (e) {
+      console.warn('Invalid regex pattern');
+    }
   }
 
   const jobIcon = (isApproval: boolean = false) => {

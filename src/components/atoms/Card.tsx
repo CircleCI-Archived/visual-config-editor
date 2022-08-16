@@ -12,7 +12,7 @@ export interface CardProps {
 const Card = ({ truncate, description, ...props }: CardProps) => {
   return (
     <div className="pb-4">
-      <div className="p-4 w-full pr-1 border-circle-gray-300 border rounded-sm text-left  max-h-36 flex flex-row">
+      <div className="p-4 w-full pr-1 border-circle-gray-300 border rounded text-left  max-h-36 flex flex-row">
         <div className="flex flex-col flex-1">
           <div className="flex flex-row">
             {props.icon}
