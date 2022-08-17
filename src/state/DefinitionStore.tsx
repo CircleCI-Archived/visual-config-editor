@@ -5,6 +5,7 @@ import {
   Action,
   action,
   ActionCreator,
+  Actions,
   TargetResolver,
   ThunkOn,
   thunkOn,
@@ -471,6 +472,29 @@ export const createObservableThunks = <
       // mapping.externalUpdates,
     ),
   };
+};
+
+export const generateLifeCycleMatrix = (actions: Actions<StoreActions>) => {
+  const lifeCycles = ['define', 'update', 'cleanup'];
+  const types: DefinitionType[] = [
+    'parameters',
+    'commands',
+    'jobs',
+    'executors',
+    'workflows',
+  ];
+
+  const matrix: ActionCreator<any>[] = [];
+
+  lifeCycles.forEach((lifecycle) => {
+    matrix.push(
+      ...types.map(
+        (type) => actions[`${lifecycle}_${type}` as keyof AllDefinitionActions],
+      ),
+    );
+  });
+
+  return matrix;
 };
 
 export const createDefinitionStore = (): AllDefinitionActions => {

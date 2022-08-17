@@ -64,7 +64,6 @@ const getDependencies = (
  */
 const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
   const definitions = useStoreState((state) => state.definitions);
-  const generateConfig = useStoreActions((actions) => actions.generateConfig);
   const navigateBack = useStoreActions((actions) => actions.navigateBack);
   const setGuideStep = useStoreActions((actions) => actions.setGuideStep);
   const guideStep = useStoreState((state) => state.guideStep);
@@ -195,7 +194,6 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 }
               },
             });
-            generateConfig();
           }}
         >
           {(formikProps) => (
