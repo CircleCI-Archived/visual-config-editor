@@ -54,7 +54,7 @@ export const loadOrb = (orb: string, value?: OrbImport) => {
   const endpoint =
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:3030'
-      : 'https://temp-orb-manifest-endpoint.herokuapp.com';
+      : 'https://orb-indexer-proxy.herokuapp.com';
 
   return fetch(`${endpoint}/orbs?orb=${orb}`).then(
     (resp) =>
@@ -97,7 +97,12 @@ const OrbDefinitionContainer = (props: {
             <ComponentInfo type={props.dataMapping} />
           </div>
           {Object.entries(props.data).map(([name, ref]) => (
-            <Definition key={name} type={props.dataMapping} data={ref} index={-1} />
+            <Definition
+              key={name}
+              type={props.dataMapping}
+              data={ref}
+              index={-1}
+            />
           ))}
         </>
       </CollapsibleList>
