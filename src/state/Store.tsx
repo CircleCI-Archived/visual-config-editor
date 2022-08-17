@@ -36,6 +36,7 @@ import {
   DefinitionStore,
   DefinitionSubscriptions,
   DefinitionType,
+  generateLifeCycleMatrix,
   NamedGenerable,
 } from './DefinitionStore';
 
@@ -167,11 +168,11 @@ export type StoreActions = AllDefinitionActions & {
   updateConnecting: Action<
     StoreModel,
     | {
-      ref?: MutableRefObject<any>;
-      id: SetConnectionId;
-      pos?: XYPosition;
-      name?: string;
-    }
+        ref?: MutableRefObject<any>;
+        id: SetConnectionId;
+        pos?: XYPosition;
+        name?: string;
+      }
     | undefined
   >;
 
@@ -200,7 +201,7 @@ export type StoreActions = AllDefinitionActions & {
   triggerToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerConfirmation: Action<StoreModel, ConfirmationModalModel | undefined>;
   triggerConfigRefresh: ThunkOn<StoreActions, void>;
-  
+
   updateTooltip: Action<StoreModel, InfoToolTip | undefined>;
 };
 
@@ -257,12 +258,12 @@ const Actions: StoreActions = {
         payload.origin && root
           ? root
           : {
-            ...curNav,
-            props: {
-              ...curNav.props,
-              values: payload.values,
+              ...curNav,
+              props: {
+                ...curNav.props,
+                values: payload.values,
+              },
             },
-          },
     };
   }),
 
@@ -694,8 +695,8 @@ const Actions: StoreActions = {
     const parameterList =
       pipelineParameters.length > 0
         ? new parameters.CustomParametersList<PipelineParameterLiteral>(
-          pipelineParameters,
-        )
+            pipelineParameters,
+          )
         : undefined;
 
     const config = new Config(
@@ -723,12 +724,19 @@ const Actions: StoreActions = {
     state.toast = payload ?? undefined;
   }),
   // this is just to trigger the set toast action
-  triggerToast: action((_, __) => { }),
+  triggerToast: action((_, __) => {}),
   triggerConfirmation: action((state, payload) => {
     state.confirm = payload;
   }),
   triggerConfigRefresh: thunkOn(
-    (actions) => actions.importOrb,
+    (actions) => [
+      actions.importOrb,
+      ...generateLifeCycleMatrix(actions),
+      actions.addWorkflowElement,
+      actions.setWorkflowElements,
+      actions.removeWorkflowElement,
+      actions.updateWorkflowElement,
+    ],
     (actions) => {
       actions.generateConfig();
     },
