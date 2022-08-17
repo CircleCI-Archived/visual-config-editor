@@ -24,7 +24,6 @@ export default function PreviewToolbox() {
 
   return (
     <DropdownContainer
-      className="absolute p-2 z-50"
       space={-2}
       dontCollapse
       onClick={() => {
