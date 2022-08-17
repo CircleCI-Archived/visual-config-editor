@@ -21,6 +21,8 @@ import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
 import { JobMapping } from '../../mappings/components/JobMapping';
 import PreviewToolbox from './PreviewToolbox';
+import { ExternalLinks } from './ExternalLinks';
+import HeaderMenu from './HeaderMenu';
 
 export interface ElementProps {
   className?: string;
@@ -253,7 +255,7 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
         }
       }}
     >
-      <PreviewToolbox />
+      <HeaderMenu />
       <ReactFlow
         elements={elements}
         className={className}
