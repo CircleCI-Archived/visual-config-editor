@@ -35,7 +35,7 @@ const ContextItem = ({ item, setValue }: ListItemChildProps) => {
       className="w-full h-full p-1"
       defaultValue={item}
       placeholder={'Context name'}
-      onBlur={(e) => {
+      onChange={(e) => {
         setValue(e.target.value);
       }}
     />
@@ -136,7 +136,8 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
             ...parameters,
             context: context && context.length > 0 ? context : undefined,
             matrix:
-              parameters.matrix?.parameters && Object.keys(matrix.parameters).length > 0
+              parameters.matrix?.parameters &&
+              Object.keys(matrix.parameters).length > 0
                 ? matrix
                 : undefined,
           };

@@ -25,7 +25,7 @@ const FilterItem = ({ item, setValue }: ListItemChildProps) => {
       className="w-full h-full p-1"
       defaultValue={item}
       placeholder={'Filter string or regex'}
-      onBlur={(e) => {
+      onChange={(e) => {
         setValue(e.target.value);
       }}
     />
