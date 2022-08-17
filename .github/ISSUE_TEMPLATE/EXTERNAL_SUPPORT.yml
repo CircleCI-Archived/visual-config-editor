@@ -8,3 +8,10 @@ body:
   - type: markdown
     attributes:
       value: "If you are unable to open a GitHub issue, allow us to help! Contact CircleCI support via email and we will create a ticket for you. support@circleci.com."
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: "Confirmation: This issue will be automatically deleted if accidentally submitted. If you are able to open an issue on GitHub, please use a different template."
+      description: I understand this will be removed.
+      options:
+        - label: I understand this will be removed.
