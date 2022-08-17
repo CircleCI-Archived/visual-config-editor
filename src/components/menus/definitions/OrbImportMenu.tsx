@@ -1,4 +1,5 @@
 import algoliasearch from 'algoliasearch/lite';
+import { useState } from 'react';
 import {
   Hits,
   HitsPerPage,
@@ -87,6 +88,7 @@ const SearchBox = (
   props: UseSearchBoxProps & { className?: string; placeholder?: string },
 ) => {
   const { refine, clear } = useSearchBox(props);
+  const [value, setValue] = useState('');
   const { results } = useInstantSearch();
 
   return (
@@ -96,11 +98,22 @@ const SearchBox = (
         className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
       >
         <input
+          value={value}
           placeholder={props.placeholder}
           className="pl-4 p-2 m-0 flex-grow"
-          onChange={(e) => refine(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            refine(e.target.value);
+          }}
         />
-        <button type="button" className="mx-4" onClick={() => clear()}>
+        <button
+          type="button"
+          className="mx-4"
+          onClick={() => {
+            setValue('');
+            clear();
+          }}
+        >
           <DeleteItemIcon className="w-3 h-3" />
         </button>
       </div>
@@ -127,9 +140,9 @@ const OrbImportMenu = (props: InspectorDefinitionProps) => {
           <InstantSearch searchClient={searchClient} indexName="orbs-prod">
             {/* <RefinementList attribute="brand" /> */}
             <p className="font-bold leading-5 tracking-wide">Search Filters</p>
-            <Select className="mt-2 w-full">
-              <option>Recommended Orbs</option>
-            </Select>
+            {/* <Select className="mt-2 w-full">
+              <option>Recommended Orbs</option> TODO: implement select for recommended orbs
+            </Select> */}
             <SearchBox placeholder="Search Orb Directory..." />
             <HitsPerPage
               hidden

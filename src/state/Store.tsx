@@ -472,9 +472,8 @@ const Actions: StoreActions = {
   }),
 
   unimportOrb: action((state, payload) => {
-    // state.definitions.orbs = state.definitions.orbs.filter(
-    //   (orb) => orb.name !== payload.name && orb.namespace !== payload.namespace,
-    // );
+    state.definitions.orbs = { ...state.definitions.orbs };
+    delete state.definitions.orbs[payload.alias];
   }),
 
   error: action((state, payload) => {
@@ -724,18 +723,19 @@ const Actions: StoreActions = {
     state.toast = payload ?? undefined;
   }),
   // this is just to trigger the set toast action
-  triggerToast: action((_, __) => {}),
+  triggerToast: action(() => {}),
   triggerConfirmation: action((state, payload) => {
     state.confirm = payload;
   }),
   triggerConfigRefresh: thunkOn(
     (actions) => [
       actions.importOrb,
-      ...generateLifeCycleMatrix(actions),
+      actions.unimportOrb,
       actions.addWorkflowElement,
       actions.setWorkflowElements,
       actions.removeWorkflowElement,
       actions.updateWorkflowElement,
+      ...generateLifeCycleMatrix(actions),
     ],
     (actions) => {
       actions.generateConfig();

@@ -23,6 +23,7 @@ import CollapsibleList from '../../containers/CollapsibleList';
 
 export class OrbImportWithMeta extends orb.OrbImport {
   logo_url: string;
+  url: string;
 
   constructor(
     alias: string,
@@ -31,12 +32,14 @@ export class OrbImportWithMeta extends orb.OrbImport {
     manifest: OrbImportManifest,
     version: string,
     logo_url: string,
+    url: string,
     description?: string,
     display?: OrbDisplayMeta,
   ) {
     super(alias, namespace, orb, version, manifest, description, display);
 
     this.logo_url = logo_url;
+    this.url = url;
   }
 }
 
@@ -116,11 +119,13 @@ const OrbDefinitionContainer = (props: {
 const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
   const orbs = useStoreState((state) => state.definitions.orbs);
   const importOrb = useStoreActions((actions) => actions.importOrb);
+  const unimportOrb = useStoreActions((actions) => actions.unimportOrb);
   const [orb, setOrb] = useState<OrbImportWithMeta>();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    loadOrb(`${props.namespace}/${props.name}@${props.version}`).then(
-      ({ manifest }) => {
+    loadOrb(`${props.namespace}/${props.name}@${props.version}`)
+      .then(({ manifest }) => {
         setOrb(
           new OrbImportWithMeta(
             props.name,
@@ -129,11 +134,14 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             manifest,
             props.version,
             props.logo_url,
+            props.url,
             props.description,
           ),
         );
-      },
-    );
+      })
+      .catch(() => {
+        setError(true);
+      });
   }, [setOrb, props]);
 
   const inProject = Object.values(orbs).find(
@@ -151,8 +159,8 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             <h2 className="text-circle-gray-400">{props.version}</h2>
             <a
               className="flex ml-auto cursor-pointer tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium"
-              href={orb?.display?.source_url}
-              target="circleci_docs"
+              href={orb?.url}
+              target="circleci_devhub"
               onClick={(e) => {
                 e.stopPropagation();
               }}
@@ -195,7 +203,16 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           </div>
           <Footer>
             {inProject ? (
-              <Button variant="dangerous">Remove Orb from Config</Button>
+              <Button
+                onClick={() => {
+                  if (orb) {
+                    unimportOrb(orb);
+                  }
+                }}
+                variant="dangerous"
+              >
+                Remove Orb from Config
+              </Button>
             ) : (
               <Button
                 onClick={() => {
@@ -210,6 +227,11 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             )}
           </Footer>
         </div>
+      ) : error ? (
+        <p className="font-medium pl-3 py-4 text-circle-red-dangerous">
+          Error loading orb. It likely uses an advanced feature not yet
+          supported. Sorry for the inconvenience!
+        </p>
       ) : (
         <div className="flex m-auto">
           <Loading />
