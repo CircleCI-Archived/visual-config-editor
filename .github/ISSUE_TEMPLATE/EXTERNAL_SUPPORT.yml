@@ -1,0 +1,10 @@
+
+name: "\U0001f4e7 External Support"
+description: Unable to open an issue? Contact support@circleci.com.
+title: 'DO NOT SUBMIT'
+labels: [email]
+# assignees: ''
+body:
+  - type: markdown
+    attributes:
+      value: "If you are unable to open a GitHub issue, allow us to help! Contact CircleCI support via email and we will create a ticket for you. support@circleci.com."
