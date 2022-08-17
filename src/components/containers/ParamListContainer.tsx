@@ -1,5 +1,6 @@
 import { parameters } from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
+import { Fragment } from 'react';
 import InspectorProperty from '../atoms/form/InspectorProperty';
 import { MatrixProperty } from '../atoms/form/MatrixProperty';
 
@@ -68,13 +69,13 @@ const ParamListContainer = ({
   return (
     <>
       {paramList.parameters.map((parameter, index) => {
+        console.log(subtypes[parameter.type](parameter));
         return (
-          <>
+          <Fragment key={index}>
             {matrix ? (
               <MatrixProperty
                 {...props}
                 label={parameter.name}
-                key={index}
                 values={values}
                 namePrefix={parent}
                 description={parameter.description}
@@ -87,12 +88,11 @@ const ParamListContainer = ({
                 label={parameter.name}
                 description={parameter.description}
                 values={values}
-                key={index}
                 name={parent ? `${parent}.${parameter.name}` : parameter.name}
                 {...subtypes[parameter.type](parameter)}
               />
             )}
-          </>
+          </Fragment>
         );
       })}
     </>

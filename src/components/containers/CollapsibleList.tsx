@@ -35,6 +35,7 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
                 props.onChange && props.onChange(newExpanded);
               }}
               type="button"
+              style={{ width: 22, height: 22 }}
               className={`flex hover:bg-circle-gray-250 border-white border rounded px-1`}
             >
               <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />

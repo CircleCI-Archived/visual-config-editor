@@ -93,11 +93,16 @@ const OrbDefinitionContainer = (props: {
         title={props.dataMapping.name.plural || ''}
       >
         <>
-          <div className="p-2">
+          <div className="p-2 mb-2">
             <ComponentInfo type={props.dataMapping} />
           </div>
           {Object.entries(props.data).map(([name, ref]) => (
-            <Definition key={name} type={props.dataMapping} data={ref} index={-1} />
+            <Definition
+              key={name}
+              type={props.dataMapping}
+              data={ref}
+              index={-1}
+            />
           ))}
         </>
       </CollapsibleList>
