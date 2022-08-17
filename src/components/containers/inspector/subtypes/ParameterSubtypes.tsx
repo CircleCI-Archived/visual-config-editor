@@ -75,7 +75,7 @@ const parameterSubtypes: ParameterTypes = {
               className="w-full h-full p-1"
               defaultValue={props.item}
               placeholder="Enum Value Option"
-              onBlur={(e) => {
+              onChange={(e) => {
                 props.setValue(e.target.value);
               }}
             />
