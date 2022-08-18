@@ -1,4 +1,3 @@
-import algoliasearch from 'algoliasearch/lite';
 import { useState } from 'react';
 import {
   Hits,
@@ -10,6 +9,7 @@ import {
   useSearchBox,
   UseSearchBoxProps,
 } from 'react-instantsearch-hooks-web';
+import { searchClient } from '../../../App';
 import DeleteItemIcon from '../../../icons/ui/DeleteItemIcon';
 import Loading from '../../../icons/ui/Loading';
 import { useStoreActions } from '../../../state/Hooks';
@@ -29,10 +29,7 @@ type InspectorDefinitionProps = DataModel & {
   activeTab?: number;
 } & SubTypeMenuPageProps<any>;
 
-const searchClient = algoliasearch(
-  'U0RXNGRK45',
-  '798b0e1407310a2b54b566250592b3fd',
-);
+
 
 function Pagination(props: PaginationProps) {
   const { pages, refine, nbPages } = usePagination(props);
@@ -94,7 +91,7 @@ const SearchBox = (
     <>
       <div
         aria-label="Orbs Search Box"
-        className="my-2 rounded border w-fullborder-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
+        className="my-2 rounded border w-full border-circle-gray-300 hover:border-circle-gray-700 flex flex-row"
       >
         <input
           value={value}

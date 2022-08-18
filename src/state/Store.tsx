@@ -18,7 +18,7 @@ import {
   XYPosition,
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
-import { store } from '../App';
+import { searchClient, store } from '../App';
 import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
@@ -658,7 +658,7 @@ const Actions: StoreActions = {
       parameterList?.parameters.forEach(defineParameter);
 
       if (orbs) {
-        Object.values(orbs).forEach((orb) => {
+        Object.values(orbs).forEach(async (orb) => {
           const manifest = manifests ? manifests[orb.alias] : undefined;
 
           if (!manifest) {
@@ -666,6 +666,8 @@ const Actions: StoreActions = {
             return;
           }
 
+          const agindex = searchClient.initIndex("orbs-prod")
+          const agdata = await agindex.findObject<{logo_url: string, url: string}>(hit => hit.objectID === `${orb.namespace}/${orb.name}`)
           actions.importOrb(
             new OrbImportWithMeta(
               orb.alias,
@@ -673,8 +675,8 @@ const Actions: StoreActions = {
               orb.name,
               manifest,
               orb.version,
-              'https://circleci.com/developer/orb-logos/community.png',
-              `https://circleci.com/developer/orbs/orb/${orb.namespace}/${orb.name}?version=${orb.version}`,
+              agdata.object.logo_url,
+              `${agdata.object.url}?version=${orb.version}`,
               orb.description,
               orb.display,
             ),
