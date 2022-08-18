@@ -60,6 +60,20 @@ const commandSubtypes: CommandSubTypes = {
       'A special step used to check out source code to the configured path',
     fields: <InspectorProperty label="Path" name="parameters.path" />,
   },
+  add_ssh_keys: {
+    name: 'Add SSH Keys',
+    docsLink: `${sourceURL}#checkout`,
+    description:
+      'A special step used to check out source code to the configured path',
+    fields: (
+      <ListProperty
+        addButton
+        expanded
+        label="Fingerprints"
+        name="parameters.fingerprints"
+      />
+    ),
+  },
   persist_to_workspace: {
     name: 'Persist To Workspace',
     description:
