@@ -673,8 +673,10 @@ const Actions: StoreActions = {
               orb.name,
               manifest,
               orb.version,
-              '',
-              '',
+              'https://circleci.com/developer/orb-logos/community.png',
+              `https://circleci.com/developer/orbs/orb/${orb.namespace}/${orb.name}?version=${orb.version}`,
+              orb.description,
+              orb.display,
             ),
           );
         });
