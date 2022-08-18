@@ -6,6 +6,7 @@ import {
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
+import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { Action, action, ActionCreator, ThunkOn, thunkOn } from 'easy-peasy';
 import { MutableRefObject, RefObject } from 'react';
 import {
@@ -192,7 +193,10 @@ export type StoreActions = AllDefinitionActions & {
   importOrb: Action<StoreModel, OrbImportWithMeta>;
   unimportOrb: Action<StoreModel, OrbImportWithMeta>;
 
-  loadConfig: Action<StoreModel, Config | Error>;
+  loadConfig: Action<
+    StoreModel,
+    { config: Config; manifests?: Record<string, OrbImportManifest> } | Error
+  >;
   loadDefinitions: ThunkOn<StoreActions, Config | Error>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionsModel>>;
   error: Action<StoreModel, any>;
@@ -368,7 +372,6 @@ const Actions: StoreActions = {
       }
 
       jobs = jobs.concat(jobData);
-      console.log(jobs);
 
       state.stagedJobs = { workflows: stagedJobs };
     }
@@ -414,8 +417,6 @@ const Actions: StoreActions = {
           state.stagedJobs = { workflows: map.workflows };
         }
 
-        console.log(jobs, payload);
-
         jobs = jobs.filter(
           (job) =>
             !(job instanceof workflow.WorkflowJob) || job.job.name !== payload,
@@ -436,8 +437,6 @@ const Actions: StoreActions = {
     const jobs = payload
       .filter((element) => element.type === JobMapping.key)
       .map((element) => element.data);
-
-    console.log(jobs);
 
     setWorkflowDefinition(state, workflow.name, {
       ...workflowDef,
@@ -644,19 +643,42 @@ const Actions: StoreActions = {
   loadDefinitions: thunkOn(
     (actions) => actions.loadConfig,
     async (actions, target) => {
-      const config = target.payload;
-
-      if (config instanceof Error) {
+      if (target.payload instanceof Error) {
         return;
       }
 
-      const { parameters: parameterList, ...rest } = config;
+      const config = target.payload.config;
+      const manifests = target.payload.manifests;
+      const { parameters: parameterList, orbs, ...rest } = config;
       const defineAction = (type: DefinitionType) =>
         actions[`define_${type}`] as unknown as ActionCreator<NamedGenerable>;
 
       const defineParameter = defineAction('parameters');
 
       parameterList?.parameters.forEach(defineParameter);
+
+      if (orbs) {
+        Object.values(orbs).forEach((orb) => {
+          const manifest = manifests ? manifests[orb.alias] : undefined;
+
+          if (!manifest) {
+            console.warn(`Orb ${orb.alias} is not defined in the manifests.`);
+            return;
+          }
+
+          actions.importOrb(
+            new OrbImportWithMeta(
+              orb.alias,
+              orb.namespace,
+              orb.name,
+              manifest,
+              orb.version,
+              '',
+              '',
+            ),
+          );
+        });
+      }
 
       type NonParameterType = Exclude<DefinitionType, 'parameters'>;
 
@@ -679,6 +701,7 @@ const Actions: StoreActions = {
       return;
     }
 
+    const config = payload.config;
     const nodeWidth = 250; // Make this dynamic
     const nodeHeight = 60; // Make this dynamic
 
@@ -694,7 +717,7 @@ const Actions: StoreActions = {
     const workflowJobCounts: Record<string, Record<string, number>> = {};
     const workflows = Object.assign(
       {},
-      ...payload.workflows.map((flow) => {
+      ...config.workflows.map((flow) => {
         const sourceJobCounts: Record<string, number> = {};
         const jobTable: Record<string, workflow.WorkflowJobAbstract> = {};
         const requiredJobs: Record<string, boolean> = {};
@@ -821,7 +844,7 @@ const Actions: StoreActions = {
     };
     state.selectedWorkflowId = Object.keys(workflows)[0];
     state.stagedJobs = { workflows: workflowJobCounts };
-    state.config = payload.generate();
+    state.config = config.generate();
   }),
   generateConfig: action((state, payload) => {
     const defs = state.definitions;

@@ -108,7 +108,6 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
           connecting.intent === 'creating' &&
           source.id.connectionNodeId !== target.id.connectionNodeId
         ) {
-          console.log('yeo');
           setWorkflowElements(
             addEdge(
               {

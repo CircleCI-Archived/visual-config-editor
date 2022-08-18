@@ -1,5 +1,5 @@
 import { parsers } from '@circleci/circleci-config-sdk';
-import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useRef } from 'react';
 import { parse } from 'yaml';
 import OpenIcon from '../../icons/ui/OpenIcon';
@@ -27,15 +27,18 @@ export const OpenConfig = () => {
 
           const setConfig = (
             yml: string,
-            orbImports?: Record<string, OrbImport>,
+            orbImports?: Record<string, OrbImportManifest>,
           ) => {
-            let config;
+            let parseResult;
             try {
-              config = parsers.parseConfig(yml, orbImports);
+              parseResult = {
+                config: parsers.parseConfig(yml, orbImports),
+                manifests: orbImports,
+              };
             } catch (e) {
-              config = e as Error;
+              parseResult = e as Error;
             }
-            loadConfig(config);
+            loadConfig(parseResult);
           };
 
           e.target.files[0].text().then((yml) => {
@@ -47,54 +50,32 @@ export const OpenConfig = () => {
                 return;
               }
 
-              const orbRegex = /^(.*)\/(.*)@(([0-9]+)(\.[0-9]+)?(\.[0-9]+)?)$/;
-              console.log(configBlob.orbs);
               const orbPromises = Object.entries(configBlob.orbs).map(
                 ([alias, stanza]) => {
-                  if (typeof stanza !== 'string') {
-                    throw new Error('Malformed orb import stanza');
+                  const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
+
+                  if (!parsedOrb) {
+                    throw new Error(`Could not parse orb ${alias}`);
                   }
 
-                  const match = stanza.match(orbRegex);
-
-                  console.log(match);
-
-                  if (!match) {
-                    throw new Error('Malformed orb import stanza');
-                  }
-
-                  const [, namespace, orb, version] = match;
-
-                  return loadOrb(
-                    `${namespace}/${orb}@${version}`,
-                    undefined,
-                    alias,
-                  );
+                  return loadOrb(stanza as string, parsedOrb, alias);
                 },
               );
 
-              console.log(orbPromises);
+              Promise.all(orbPromises).then((loadedOrbs) => {
+                const orbImports: Record<string, OrbImportManifest> =
+                  Object.assign(
+                    {},
+                    ...loadedOrbs.map(({ orb, manifest, alias }) => {
+                      if (!alias) {
+                        throw new Error(`Could not load orb ${orb}`);
+                      }
 
-              Promise.all(
-                // get a sneak of the orb imports so we can load the manifests
-                orbPromises,
-              ).then((loadedOrbs) => {
-                console.log(loadedOrbs);
-
-                const orbImports = Object.assign(
-                  {},
-                  ...loadedOrbs.map(({ orb, manifest, alias }) => {
-                    if (!alias) {
-                      throw new Error(`Could not load orb ${orb}`);
-                    }
-
-                    return {
-                      [alias]: manifest,
-                    };
-                  }),
-                );
-
-                console.log(orbImports);
+                      return {
+                        [alias]: manifest,
+                      };
+                    }),
+                  );
 
                 setConfig(yml, orbImports);
               });
