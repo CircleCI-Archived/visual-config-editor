@@ -24,17 +24,21 @@ export default function PreviewToolbox() {
 
   return (
     <DropdownContainer
-      space={-2}
+      space={4}
       dontCollapse
+      alignLeft
       onClick={() => {
         setExpanded(!expanded);
       }}
     >
-      <div className="bg-white rounded py-2 px-3 flex flex-row hover:bg-circle-gray-300">
-        <FilterIcon className="w-6" />
-        <ExpandIcon expanded={expanded} className="w-4 ml-2" />
+      <div
+        className=" bg-circle-gray-250 rounded py-2 px-3 flex flex-row hover:bg-circle-gray-300 "
+        style={{ marginLeft: 0 }}
+      >
+        <FilterIcon className="w-6 mr-2" />
+        <ExpandIcon expanded={expanded} className="w-4" />
       </div>
-      <div className="ml-2 bg-white w-64 rounded">
+      <div className="bg-white w-64 rounded border-circle-gray-300 border shadow-sm">
         <div className="p-4">
           <h4 className="text-sm font-medium">Filter Target</h4>
           <Select

@@ -17,7 +17,6 @@ import { DataModel, NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
 import Card from '../../atoms/Card';
 import { Footer } from '../../atoms/Footer';
-import { Select } from '../../atoms/Select';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { SubTypeMenuPageProps } from '../SubTypeMenu';
 import TabbedMenu from '../TabbedMenu';
