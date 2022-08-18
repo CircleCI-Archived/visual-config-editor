@@ -40,14 +40,14 @@ const EditorPane = (props: any) => {
           <Button
             variant={'secondary'}
             disabled={!config}
-            className="w-min whitespace-nowrap flex ml-auto w-10"
+            className="whitespace-nowrap flex ml-auto w-10"
             onClick={() => {
               if (config) {
                 navigator.clipboard.writeText(configYAML(config));
               }
             }}
           >
-            <CopyIcon className="w-4 " color={config ? '#161616' : '#FFFFFF'} />
+            <CopyIcon className="w-4" color={config ? '#161616' : '#FFFFFF'} />
           </Button>
           <OpenConfig />
         </div>

@@ -90,6 +90,7 @@ export const OpenConfig = () => {
       />
       <Button
         variant={config ? 'secondary' : 'primary'}
+        margin="2"
         className="w-10 whitespace-nowrap flex ml-auto"
         onClick={(e) => {
           inputFile.current?.click();
