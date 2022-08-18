@@ -21,6 +21,7 @@ import { store } from '../App';
 import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
+import { JobMapping } from '../mappings/components/JobMapping';
 import {
   setWorkflowDefinition,
   WorkflowStage,
@@ -347,47 +348,49 @@ const Actions: StoreActions = {
 
   addWorkflowElement: action((state, payload) => {
     const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-    const workflow = workflowDef.value;
+    const wf = workflowDef.value;
+    let jobs = wf.jobs;
 
     if (payload.type === 'jobs') {
       const jobData = payload.data as WorkflowJobAbstract;
       const jobName = jobData.name;
       const stagedJobs = state.stagedJobs.workflows;
-      let curWorkflow = stagedJobs[workflow.name];
+      let curWorkflow = stagedJobs[wf.name];
 
-      if (workflow.name in state.stagedJobs.workflows) {
+      if (wf.name in state.stagedJobs.workflows) {
         if (!curWorkflow[jobName]) {
           curWorkflow[jobName] = 1;
         } else {
           curWorkflow[jobName]++;
         }
       } else {
-        stagedJobs[workflow.name] = { [jobName]: 1 };
+        stagedJobs[wf.name] = { [jobName]: 1 };
       }
+
+      jobs = jobs.concat(jobData);
+      console.log(jobs);
 
       state.stagedJobs = { workflows: stagedJobs };
     }
 
-    setWorkflowDefinition(state, workflow.name, {
+    setWorkflowDefinition(state, wf.name, {
       ...workflowDef,
-      value: new WorkflowStage(
-        workflow.name,
-        workflow.id,
-        workflow.jobs,
-        workflow.when,
-        [...workflow.elements, payload],
-      ),
+      value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, [
+        ...wf.elements,
+        payload,
+      ]),
     });
 
-    workflow.elements.push(payload);
+    wf.elements.push(payload);
   }),
   removeWorkflowElement: action((state, payload) => {
     const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-    const workflow = workflowDef.value;
+    const wf = workflowDef.value;
     const map = state.stagedJobs;
-    const stagedJob = map.workflows[workflow.name];
+    const stagedJob = map.workflows[wf.name];
+    let jobs = wf.jobs;
 
-    const elements = workflow.elements.filter((element) => {
+    const elements = wf.elements.filter((element) => {
       if (element.type === 'requires') {
         const connection = element as Connection;
 
@@ -410,25 +413,31 @@ const Actions: StoreActions = {
 
           state.stagedJobs = { workflows: map.workflows };
         }
+
+        console.log(jobs, payload);
+
+        jobs = jobs.filter(
+          (job) =>
+            !(job instanceof workflow.WorkflowJob) || job.job.name !== payload,
+        );
       }
 
       return element.id !== payload;
     });
 
-    setWorkflowDefinition(state, workflow.name, {
+    setWorkflowDefinition(state, wf.name, {
       ...workflowDef,
-      value: new WorkflowStage(
-        workflow.name,
-        workflow.id,
-        workflow.jobs,
-        workflow.when,
-        elements,
-      ),
+      value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
     });
   }),
   setWorkflowElements: action((state, payload) => {
     const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
     const workflow = workflowDef.value;
+    const jobs = payload
+      .filter((element) => element.type === JobMapping.key)
+      .map((element) => element.data);
+
+    console.log(jobs);
 
     setWorkflowDefinition(state, workflow.name, {
       ...workflowDef,
@@ -436,7 +445,7 @@ const Actions: StoreActions = {
       value: new WorkflowStage(
         workflow.name,
         workflow.id,
-        workflow.jobs,
+        jobs,
         workflow.when,
         payload,
       ),
@@ -911,13 +920,6 @@ const Store: StoreModel & StoreActions = {
       'build-and-deploy': {},
     },
   },
-  // workflows: [
-  //   {
-  //     name: 'build-and-test',
-  //     elements: [],
-  //     id: v4(),
-  //   },
-  // ],
   ...Actions,
 };
 

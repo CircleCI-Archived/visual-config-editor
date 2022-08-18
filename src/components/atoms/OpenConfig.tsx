@@ -5,10 +5,7 @@ import { parse } from 'yaml';
 import OpenIcon from '../../icons/ui/OpenIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button } from '../atoms/Button';
-import {
-  loadOrb,
-  OrbImportWithMeta,
-} from '../menus/definitions/OrbDefinitionsMenu';
+import { loadOrb } from '../menus/definitions/OrbDefinitionsMenu';
 
 export const OpenConfig = () => {
   const inputFile = useRef<HTMLInputElement>(null);
@@ -57,25 +54,18 @@ export const OpenConfig = () => {
                 orbs.map((orb) =>
                   loadOrb(`${orb.namespace}/${orb.name}@${orb.version}`, orb),
                 ),
-              ).then((manifests) => {
+              ).then((loadedOrbs) => {
+                console.log(loadedOrbs);
+
                 const orbImports = Object.assign(
                   {},
-                  ...manifests.map(({ orb, manifest }) => {
+                  ...loadedOrbs.map(({ orb, manifest }) => {
                     if (typeof orb === 'string') {
                       throw new Error(`Could not load orb ${orb}`);
                     }
 
                     return {
-                      [orb.alias]: new OrbImportWithMeta(
-                        orb.alias,
-                        orb.namespace,
-                        orb.name,
-                        manifest,
-                        orb.version,
-                        '',
-                        '', // TODO: implement refetching of url
-                        orb.description,
-                      ),
+                      [orb.alias]: manifest,
                     };
                   }),
                 );
