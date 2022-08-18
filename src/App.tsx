@@ -1,3 +1,4 @@
+import algoliasearch from 'algoliasearch';
 import { createStore, StoreProvider } from 'easy-peasy';
 import { useRef } from 'react';
 import ConfirmationModal from './components/containers/ConfirmationModal';
@@ -10,6 +11,11 @@ import useWindowDimensions from './state/Hooks';
 import Store from './state/Store';
 export const store = createStore(Store);
 export const inspectorWidth = 400;
+
+export const searchClient = algoliasearch(
+  'U0RXNGRK45',
+  '798b0e1407310a2b54b566250592b3fd',
+);
 
 const App = () => {
   const appWidth = useWindowDimensions();
