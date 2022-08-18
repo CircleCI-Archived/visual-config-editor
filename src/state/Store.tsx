@@ -442,22 +442,76 @@ const Actions: StoreActions = {
       ),
     });
   }),
+  // TODO: refactor and handle by DefinitionStore
   updateWorkflowElement: action((state, payload) => {
     const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-    const workflow = workflowDef.value;
+    const wf = workflowDef.value;
+    const newName = payload.data.parameters?.name || payload.data.name;
+    const changedName = newName !== payload.data.name;
 
-    setWorkflowDefinition(state, workflow.name, {
+    const elements = wf.elements.map((element) => {
+      if (element.id === payload.id) {
+        return {
+          ...element,
+          ...payload,
+          id: newName,
+        };
+      } else if (element.type === 'requires' && changedName) {
+        const connection = element as Connection;
+
+        if (connection.source === payload.id) {
+          return {
+            ...element,
+            source: newName,
+            sourceHandle: `${newName}_source`,
+          };
+        } else if (connection.target === payload.id) {
+          return {
+            ...element,
+            target: newName,
+            targetHandle: `${newName}_target`,
+          };
+        }
+      }
+
+      return element;
+    });
+
+    // TODO: optimize this
+    const jobs = wf.jobs.map((staged) => {
+      if (staged.name === payload.id) {
+        return payload.data;
+      }
+
+      if (staged.parameters?.requires && changedName) {
+        const requires = staged.parameters.requires.map((req) => {
+          if (req === payload.id) {
+            return newName;
+          } else {
+            return req;
+          }
+        });
+
+        if (staged instanceof workflow.WorkflowJob) {
+          return new workflow.WorkflowJob(staged.job, {
+            ...staged.parameters,
+            requires,
+          });
+        }
+
+        return new workflow.WorkflowJobApproval(staged.name, {
+          ...staged.parameters,
+          requires,
+        });
+      }
+
+      return staged;
+    });
+
+    setWorkflowDefinition(state, wf.name, {
       ...workflowDef,
 
-      value: new WorkflowStage(
-        workflow.name,
-        workflow.id,
-        workflow.jobs,
-        workflow.when,
-        workflow.elements.map((e) =>
-          e.id === payload.id ? { ...e, data: payload.data } : e,
-        ),
-      ),
+      value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
     });
   }),
 
@@ -663,15 +717,6 @@ const Actions: StoreActions = {
     state.config = payload.generate();
   }),
   generateConfig: action((state, payload) => {
-    const stages = Object.values(state.definitions.workflows);
-    const workflows = stages.map((stage) => {
-      const jobs = stage.value.elements
-        .filter((element) => element.type === JobMapping.key)
-        .map((element) => element.data);
-
-      return new Workflow(stage.value.name, jobs);
-    });
-
     const defs = state.definitions;
     // This is a merged config preview. TODO: Refactor merging process.
     const merge = (cur: any, update: any) =>
@@ -701,7 +746,7 @@ const Actions: StoreActions = {
     const config = new Config(
       false,
       merge(defArrays.jobs, payloadArrays?.jobs),
-      workflows,
+      merge(defArrays.workflows, payloadArrays?.workflows),
       merge(defArrays.executors, payloadArrays?.executors),
       merge(defArrays.commands, payloadArrays?.commands),
       parameterList,
