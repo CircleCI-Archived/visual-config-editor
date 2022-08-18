@@ -69,7 +69,6 @@ const ParamListContainer = ({
   return (
     <>
       {paramList.parameters.map((parameter, index) => {
-        console.log(subtypes[parameter.type](parameter));
         return (
           <Fragment key={index}>
             {matrix ? (
