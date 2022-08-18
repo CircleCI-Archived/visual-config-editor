@@ -42,33 +42,59 @@ export const OpenConfig = () => {
             const configBlob = parse(yml);
 
             if ('orbs' in configBlob) {
-              const orbs = parsers.parseOrbImports(configBlob.orbs);
-
-              if (!orbs) {
+              if (!configBlob.orbs) {
                 setConfig(yml);
                 return;
               }
 
+              const orbRegex = /^(.*)\/(.*)@(([0-9]+)(\.[0-9]+)?(\.[0-9]+)?)$/;
+              console.log(configBlob.orbs);
+              const orbPromises = Object.entries(configBlob.orbs).map(
+                ([alias, stanza]) => {
+                  if (typeof stanza !== 'string') {
+                    throw new Error('Malformed orb import stanza');
+                  }
+
+                  const match = stanza.match(orbRegex);
+
+                  console.log(match);
+
+                  if (!match) {
+                    throw new Error('Malformed orb import stanza');
+                  }
+
+                  const [, namespace, orb, version] = match;
+
+                  return loadOrb(
+                    `${namespace}/${orb}@${version}`,
+                    undefined,
+                    alias,
+                  );
+                },
+              );
+
+              console.log(orbPromises);
+
               Promise.all(
                 // get a sneak of the orb imports so we can load the manifests
-                orbs.map((orb) =>
-                  loadOrb(`${orb.namespace}/${orb.name}@${orb.version}`, orb),
-                ),
+                orbPromises,
               ).then((loadedOrbs) => {
                 console.log(loadedOrbs);
 
                 const orbImports = Object.assign(
                   {},
-                  ...loadedOrbs.map(({ orb, manifest }) => {
-                    if (typeof orb === 'string') {
+                  ...loadedOrbs.map(({ orb, manifest, alias }) => {
+                    if (!alias) {
                       throw new Error(`Could not load orb ${orb}`);
                     }
 
                     return {
-                      [orb.alias]: manifest,
+                      [alias]: manifest,
                     };
                   }),
                 );
+
+                console.log(orbImports);
 
                 setConfig(yml, orbImports);
               });
