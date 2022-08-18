@@ -53,7 +53,7 @@ export type OrbDefinitionProps = {
   url: string;
 };
 
-export const loadOrb = (orb: string, value?: OrbImport) => {
+export const loadOrb = (orb: string, value?: OrbImport, alias?: string) => {
   const endpoint =
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:3030'
@@ -61,21 +61,24 @@ export const loadOrb = (orb: string, value?: OrbImport) => {
 
   return fetch(`${endpoint}/orbs?orb=${orb}`).then(
     (resp) =>
-      new Promise<{ orb: string | OrbImport; manifest: OrbImportManifest }>(
-        (res, rej) => {
-          resp
-            .json()
-            .then((manifest) => {
-              res({
-                orb: value ?? orb,
-                manifest,
-              });
-            })
-            .catch((err) => {
-              rej(err);
+      new Promise<{
+        orb: string | OrbImport;
+        manifest: OrbImportManifest;
+        alias?: string;
+      }>((res, rej) => {
+        resp
+          .json()
+          .then((manifest) => {
+            res({
+              orb: value ?? orb,
+              manifest,
+              alias,
             });
-        },
-      ),
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      }),
   );
 };
 

@@ -240,7 +240,7 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
           }
 
           const workflowNode: Node<any> = {
-            id: v4(),
+            id: data.parameters?.name || data.name || v4(),
             data,
             connectable: true,
             dragHandle: '.node',

@@ -1,14 +1,11 @@
 import { parsers } from '@circleci/circleci-config-sdk';
-import { OrbImport } from '@circleci/circleci-config-sdk/dist/src/lib/Orb';
+import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useRef } from 'react';
 import { parse } from 'yaml';
 import OpenIcon from '../../icons/ui/OpenIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { Button } from '../atoms/Button';
-import {
-  loadOrb,
-  OrbImportWithMeta,
-} from '../menus/definitions/OrbDefinitionsMenu';
+import { loadOrb } from '../menus/definitions/OrbDefinitionsMenu';
 
 export const OpenConfig = () => {
   const inputFile = useRef<HTMLInputElement>(null);
@@ -30,55 +27,55 @@ export const OpenConfig = () => {
 
           const setConfig = (
             yml: string,
-            orbImports?: Record<string, OrbImport>,
+            orbImports?: Record<string, OrbImportManifest>,
           ) => {
-            let config;
+            let parseResult;
             try {
-              config = parsers.parseConfig(yml, orbImports);
+              parseResult = {
+                config: parsers.parseConfig(yml, orbImports),
+                manifests: orbImports,
+              };
             } catch (e) {
-              config = e as Error;
+              parseResult = e as Error;
             }
-            loadConfig(config);
+            loadConfig(parseResult);
           };
 
           e.target.files[0].text().then((yml) => {
             const configBlob = parse(yml);
 
             if ('orbs' in configBlob) {
-              const orbs = parsers.parseOrbImports(configBlob.orbs);
-
-              if (!orbs) {
+              if (!configBlob.orbs) {
                 setConfig(yml);
                 return;
               }
 
-              Promise.all(
-                // get a sneak of the orb imports so we can load the manifests
-                orbs.map((orb) =>
-                  loadOrb(`${orb.namespace}/${orb.name}@${orb.version}`, orb),
-                ),
-              ).then((manifests) => {
-                const orbImports = Object.assign(
-                  {},
-                  ...manifests.map(({ orb, manifest }) => {
-                    if (typeof orb === 'string') {
-                      throw new Error(`Could not load orb ${orb}`);
-                    }
+              const orbPromises = Object.entries(configBlob.orbs).map(
+                ([alias, stanza]) => {
+                  const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
 
-                    return {
-                      [orb.alias]: new OrbImportWithMeta(
-                        orb.alias,
-                        orb.namespace,
-                        orb.name,
-                        manifest,
-                        orb.version,
-                        '',
-                        '', // TODO: implement refetching of url
-                        orb.description,
-                      ),
-                    };
-                  }),
-                );
+                  if (!parsedOrb) {
+                    throw new Error(`Could not parse orb ${alias}`);
+                  }
+
+                  return loadOrb(stanza as string, parsedOrb, alias);
+                },
+              );
+
+              Promise.all(orbPromises).then((loadedOrbs) => {
+                const orbImports: Record<string, OrbImportManifest> =
+                  Object.assign(
+                    {},
+                    ...loadedOrbs.map(({ orb, manifest, alias }) => {
+                      if (!alias) {
+                        throw new Error(`Could not load orb ${orb}`);
+                      }
+
+                      return {
+                        [alias]: manifest,
+                      };
+                    }),
+                  );
 
                 setConfig(yml, orbImports);
               });

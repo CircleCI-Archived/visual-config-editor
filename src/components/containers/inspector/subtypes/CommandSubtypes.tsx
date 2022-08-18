@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import InspectorProperty from '../../../atoms/form/InspectorProperty';
+import ListProperty from '../../../atoms/form/ListProperty';
 
 export interface CommandSubTypes {
   [command: string]: {
@@ -67,7 +68,14 @@ const commandSubtypes: CommandSubTypes = {
     fields: (
       <>
         <InspectorProperty label="Root" name="parameters.root" required />
-        <InspectorProperty label="Path" name="parameters.path" required />
+        <ListProperty
+          expanded
+          value={['']}
+          label="Paths"
+          addButton
+          name="parameters.paths"
+          required
+        />
       </>
     ),
   },
