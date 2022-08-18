@@ -24,6 +24,7 @@ const commandSubtypes: CommandSubTypes = {
     docsLink: `${sourceURL}#run`,
     fields: (
       <>
+        <InspectorProperty label="Name" name="parameters.name" />
         <InspectorProperty
           label="Command"
           as="textarea"

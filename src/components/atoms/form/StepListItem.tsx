@@ -4,8 +4,9 @@ import { ListItemChildProps } from './ListProperty';
 
 const StepListItem = ({ item, index, values }: ListItemChildProps) => {
   const navigateTo = useStoreActions((actions) => actions.navigateTo);
-  const commandName = Object.keys(item)[0];
-  const commandValues = item[commandName];
+  const commandName = typeof item === 'string' ? item : Object.keys(item)[0];
+  const commandValues =
+    typeof item === 'object' ? item[commandName] : undefined;
 
   return (
     <button
@@ -26,7 +27,9 @@ const StepListItem = ({ item, index, values }: ListItemChildProps) => {
         });
       }}
     >
-      {commandName}
+      {commandValues && 'name' in commandValues
+        ? commandValues.name
+        : commandName}
     </button>
   );
 };
