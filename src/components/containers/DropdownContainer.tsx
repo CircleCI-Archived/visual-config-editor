@@ -14,11 +14,7 @@ const getDropDownStyle = (
   padding?: number,
 ) => {
   if (!buttonRef.current || !contentsRef.current) {
-    return {
-      left: 0,
-      top: 0,
-      minWidth: 0,
-    };
+    return undefined;
   }
 
   const main = buttonRef.current?.getBoundingClientRect();
@@ -42,9 +38,14 @@ const DropdownContainer = (props: {
   const [isExtended, setExtended] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const contentsRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState(
-    getDropDownStyle(buttonRef, contentsRef, props.alignLeft, props.space),
-  );
+  const [pos, setPos] = useState<
+    | {
+        left: number;
+        top: number;
+        minWidth: number;
+      }
+    | undefined
+  >(undefined);
 
   const clickListener = useCallback(() => {
     setExtended(false);
@@ -90,8 +91,9 @@ const DropdownContainer = (props: {
       {isExtended && (
         <div
           ref={contentsRef}
+          hidden={!pos}
           className="fixed w-max h-max z-20 flex flex-col"
-          style={pos}
+          style={{ ...pos, marginLeft: 0 }}
         >
           {children}
         </div>

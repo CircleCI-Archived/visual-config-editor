@@ -135,13 +135,19 @@ const componentParametersSubtypes: ComponentParameterMapping = {
       'boolean',
       'integer',
       'enum',
-      'executor',
-      'steps',
+      /*'executor',
+      'steps',*/
       'env_var_name',
     ],
   },
   command: {
-    types: ['string', 'boolean', 'integer', 'enum', 'steps', 'env_var_name'],
+    types: [
+      'string',
+      'boolean',
+      'integer',
+      'enum',
+      /*'steps',*/ 'env_var_name',
+    ],
   },
 };
 

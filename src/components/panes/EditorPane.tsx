@@ -1,6 +1,9 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
+import CopyIcon from '../../icons/ui/CopyIcon';
 import { useStoreState } from '../../state/Hooks';
 import { version } from '../../version.json';
+import { Button } from '../atoms/Button';
+import { OpenConfig } from '../atoms/OpenConfig';
 
 const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
@@ -30,27 +33,23 @@ const EditorPane = (props: any) => {
       className="bg-circle-gray-900 h-2/5 w-full flex flex-col"
     >
       <div className="border-b text-xl border-circle-gray-800 font-bold flex flex-row">
-        <div className="ml-4 border-b-4 px-3 py-3 w-max text-sm tracking-wide font-bold text-white border-white">
+        <div className="ml-4 border-b-4 px-3 py-2 pt-4 w-max text-sm tracking-wide font-bold text-white border-white">
           CONFIG
         </div>
-        <div className="p-2 ml-auto">
-          {/* <DropdownContainer className="rounded-md bg-circle-gray-300 text-circle-black px-2 hover:bg-circle-gray-400">
-            <p>•••</p>
-            <div className="bg-white flex-col flex rounded shadow text-base">
-              <button
-                className="border-b border-circle-gray-300 pl-3 pr-8 text-left hover:bg-circle-gray-300"
-                onClick={(e) => {
-                  inputFile.current?.click();
-                  e.stopPropagation();
-                }}
-              >
-                Open
-              </button>
-              <button className="border-b border-circle-gray-300 pl-3 pr-8 text-left hover:bg-circle-gray-300">
-                Save
-              </button>
-            </div>
-          </DropdownContainer> */}
+        <div className="p-2 ml-auto flex flex-row">
+          <Button
+            variant={'secondary'}
+            disabled={!config}
+            className="whitespace-nowrap flex ml-auto w-10"
+            onClick={() => {
+              if (config) {
+                navigator.clipboard.writeText(configYAML(config));
+              }
+            }}
+          >
+            <CopyIcon className="w-4" color={config ? '#161616' : '#FFFFFF'} />
+          </Button>
+          <OpenConfig />
         </div>
       </div>
       <div className="flex-1 overflow-hidden">

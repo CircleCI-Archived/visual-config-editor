@@ -16,13 +16,10 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { v4 } from 'uuid';
 import { dataMappings } from '../../mappings/GenerableMapping';
+import { JobMapping } from '../../mappings/components/JobMapping';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import ConnectionLine from '../atoms/ConnectionLine';
 import Edge from '../atoms/Edge';
-import { JobMapping } from '../../mappings/components/JobMapping';
-import PreviewToolbox from './PreviewToolbox';
-import { ExternalLinks } from './ExternalLinks';
-import HeaderMenu from './HeaderMenu';
 
 export interface ElementProps {
   className?: string;
@@ -255,7 +252,6 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
         }
       }}
     >
-      <HeaderMenu />
       <ReactFlow
         elements={elements}
         className={className}
