@@ -203,7 +203,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                     values={values}
                     matrix
                     paramList={source.job.parameters}
-                  ></ParamListContainer>
+                 />
                 )}
                 <AdjacentSteps
                   values={values}

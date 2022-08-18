@@ -132,7 +132,13 @@ const commandSubtypes: CommandSubTypes = {
     fields: (
       <>
         <InspectorProperty label="Path" name="parameters.path" required />
-        <InspectorProperty label="Key" name="parameters.key" required />
+        <ListProperty
+          addButton
+          expanded
+          label="Keys"
+          name="parameters.keys"
+          required
+        />
         <InspectorProperty label="When" name="parameters.when" as="select">
           <option value="undefined">Select When</option>
           <option value="always">Always</option>
