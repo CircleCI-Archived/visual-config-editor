@@ -1,8 +1,8 @@
 import {
   Config,
+  Job,
   parameters,
   workflow,
-  Workflow,
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
@@ -21,7 +21,6 @@ import { store } from '../App';
 import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
-import { JobMapping } from '../mappings/components/JobMapping';
 import {
   setWorkflowDefinition,
   WorkflowStage,
@@ -187,6 +186,7 @@ export type StoreActions = AllDefinitionActions & {
   removeWorkflowElement: Action<StoreModel, string>;
   updateWorkflowElement: Action<StoreModel, { id: string; data: any }>;
   setWorkflowElements: Action<StoreModel, Elements<any>>;
+  observeWorkflowSources: ThunkOn<StoreActions, UpdateType<Job>>;
 
   importOrb: Action<StoreModel, OrbImportWithMeta>;
   unimportOrb: Action<StoreModel, OrbImportWithMeta>;
@@ -514,7 +514,105 @@ const Actions: StoreActions = {
       value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
     });
   }),
+  observeWorkflowSources: thunkOn(
+    (actions) => actions.update_jobs,
+    (actions, thunk) => {
+      const state = store.getState();
+      const payload = thunk.payload;
 
+      Object.values(state.definitions.workflows).forEach((workflowDef) => {
+        const wf = workflowDef.value;
+        const change = payload as unknown as UpdateType<Job>;
+        const oldName = change.old.name;
+        const newName = change.new.name;
+        const changedName = oldName !== newName;
+
+        const elements = wf.elements.map((element) => {
+          if (element.type === 'jobs' && element.data.job.name === oldName) {
+            const wfJob = element.data as workflow.WorkflowJob;
+
+            return {
+              ...element,
+              data: new workflow.WorkflowJob(
+                change.new,
+                wfJob.parameters,
+                wfJob.pre_steps,
+                wfJob.post_steps,
+              ),
+              id: newName,
+            };
+          } else if (element.type === 'requires' && changedName) {
+            const connection = element as Connection;
+
+            if (connection.source === oldName) {
+              return {
+                ...element,
+                source: newName,
+                sourceHandle: `${newName}_source`,
+              };
+            } else if (connection.target === oldName) {
+              return {
+                ...element,
+                target: newName,
+                targetHandle: `${newName}_target`,
+              };
+            }
+          }
+
+          return element;
+        });
+
+        // TODO: optimize this
+        const jobs = wf.jobs.map((staged) => {
+          if (
+            staged.name === oldName &&
+            staged instanceof workflow.WorkflowJob
+          ) {
+            return new workflow.WorkflowJob(
+              change.new,
+              staged.parameters,
+              staged.pre_steps,
+              staged.post_steps,
+            );
+          }
+
+          if (staged.parameters?.requires && changedName) {
+            const requires = staged.parameters.requires.map((req) => {
+              if (req === oldName) {
+                return newName;
+              } else {
+                return req;
+              }
+            });
+
+            if (staged instanceof workflow.WorkflowJob) {
+              return new workflow.WorkflowJob(
+                staged.job,
+                {
+                  ...staged.parameters,
+                  requires,
+                },
+                staged.pre_steps,
+                staged.post_steps,
+              );
+            }
+
+            return new workflow.WorkflowJobApproval(staged.name, {
+              ...staged.parameters,
+              requires,
+            });
+          }
+
+          return staged;
+        });
+
+        actions.update_workflows({
+          old: wf,
+          new: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
+        });
+      });
+    },
+  ),
   importOrb: action((state, payload) => {
     const orb = state.definitions.orbs[payload.name];
     if (!orb) {
