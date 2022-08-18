@@ -51,10 +51,10 @@ export default function PreviewToolbox() {
             <option value="branches">Branch</option>
             <option value="tags">Tag</option>
           </Select>
-          <h4 className="text-sm font-medium">Value</h4>
+          <h4 className="text-sm font-medium">Sample</h4>
           <input
             className="bg-white rounded p-2 px-4 w-full mt-1 shadow-sm border border-circle-gray-300"
-            placeholder="^.*$"
+            placeholder={`Sample ${toolbox.filter.type.toLowerCase()}`}
             value={filter}
             onChange={(e) => {
               setFilter(e.target.value);

@@ -85,13 +85,15 @@ const JobNode: React.FunctionComponent<
 
   if (filters && toolbox.filter.preview && filters[toolbox.filter.type]) {
     const jobFilter = filters[toolbox.filter.type];
-    const pattern = toolbox.filter.pattern;
+    const sample = toolbox.filter.pattern;
 
     try {
-      const ignoreFilter = jobFilter?.ignore?.some((value) =>
-        value.match(pattern),
+      const ignoreFilter = jobFilter?.ignore?.some((pattern) =>
+        sample.match(pattern),
       );
-      const onlyFilter = jobFilter?.only?.some((value) => value.match(pattern));
+      const onlyFilter = jobFilter?.only
+        ? jobFilter?.only?.some((pattern) => sample.match(pattern))
+        : true;
 
       filtered = ignoreFilter || !onlyFilter;
     } catch (e) {
