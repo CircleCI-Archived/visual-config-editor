@@ -63,6 +63,8 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
           <Footer>
             {config && (
               <Button
+                title="Generate Config"
+                ariaLabel="Generate Config"
                 variant="primary"
                 type="button"
                 aria-label="Generate Configuration"
@@ -97,7 +99,8 @@ const DefinitionsMenu = (props: { expanded: boolean[] }) => {
                 <Footer>
                   <Button
                     variant="primary"
-                    aria-label="Generate Configuration"
+                    ariaLabel="Generate Configuration"
+                    title="Generate Config"
                     className=" w-min whitespace-nowrap"
                     // disabled={!formikProps.dirty}
                   >

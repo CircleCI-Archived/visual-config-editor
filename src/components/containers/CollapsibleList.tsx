@@ -1,5 +1,6 @@
 import { ReactElement, useState } from 'react';
 import ExpandIcon from '../../icons/ui/ExpandIcon';
+import { Button } from '../atoms/Button';
 
 export interface CollapsibleListProps {
   title: string | ReactElement;
@@ -27,8 +28,10 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
       <div className="flex flex-row">
         <div className="w-10/12 my-auto">
           <div className="flex flex-row h-8">
-            <button
-              onClick={(e) => {
+            <Button
+              title="Expand"
+              ariaLabel="Expand"
+              onClick={() => {
                 const newExpanded = !expanded;
 
                 setExpanded(newExpanded);
@@ -36,10 +39,10 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
               }}
               type="button"
               style={{ width: 22, height: 22 }}
-              className={`flex hover:bg-circle-gray-250 border-white border rounded px-1`}
+              className={`flex items-center hover:bg-circle-gray-250 border-white border mx-0 px-0 py-0 rounded`}
             >
-              <ExpandIcon className="w-3 h-5 mx-auto" expanded={expanded} />
-            </button>
+              <ExpandIcon className="w-3 h-5 m-1 mx-auto" expanded={expanded} />
+            </Button>
             <h1
               className={`mx-2 ${
                 titleFont ? titleFont : 'font-medium text-base'

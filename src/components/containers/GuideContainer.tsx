@@ -1,6 +1,7 @@
 import { MutableRefObject } from 'react';
 import InfoIcon from '../../icons/ui/InfoIcon';
 import { useStoreState } from '../../state/Hooks';
+import { Button } from '../atoms/Button';
 import ToolTip from '../atoms/Tooltip';
 
 export interface GuideContainerProps {
@@ -24,9 +25,9 @@ const GuideContainer = (props: GuideContainerProps) => {
               {props.children}
             </div>
             <div className="w-full flex flex-row pt-2">
-              <button className=" ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium">
+              <Button className=" ml-auto tracking-wide hover:underline leading-6 text-sm text-circle-blue font-medium" ariaLabel="Dismiss" title="Dismiss">
                 Dismiss
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -40,6 +40,8 @@ function Pagination(props: PaginationProps) {
       {results.hits.length > 0 && (
         <div className="flex flex-row px-2">
           <Button
+            title="Previous"
+            ariaLabel="Previous"
             variant="secondary"
             margin="2"
             className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"
@@ -52,6 +54,8 @@ function Pagination(props: PaginationProps) {
           </Button>
           {pages.map((page) => (
             <Button
+              ariaLabel={'page ' + page}
+              title={'page ' + page}
               variant="secondary"
               margin="2"
               className="w-9 h-9 border border-circle-gray-300 mx-1 px-0 rounded hover:border-gray-700"
@@ -64,6 +68,8 @@ function Pagination(props: PaginationProps) {
             </Button>
           ))}
           <Button
+            ariaLabel="next"
+            title="next"
             variant="secondary"
             margin="2"
             className="w-9 h-9 border border-circle-gray-300 mx-1 rounded hover:border-gray-700"

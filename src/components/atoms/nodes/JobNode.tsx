@@ -10,6 +10,7 @@ import PlusIcon from '../../../icons/ui/PlusIcon';
 import { JobMapping } from '../../../mappings/components/JobMapping';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
+import { Button } from '../Button';
 import { flattenGenerable } from '../Definition';
 
 const ConnectorIcon = (props: { filled: boolean; subtraction?: boolean }) => {
@@ -215,7 +216,9 @@ const JobNode: React.FunctionComponent<
         }
       }}
     >
-      <button
+      <Button
+        title="Make connection"
+        ariaLabel="Make connection"
         className={`opacity-${
           hovering['handles'] && !hovering['node'] && !connecting?.start
             ? 100
@@ -227,7 +230,7 @@ const JobNode: React.FunctionComponent<
         onDragStart={startConnecting('target')}
       >
         <ConnectorIcon filled={hovering['requires']} subtraction={altAction} />
-      </button>
+      </Button>
 
       <div
         className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer ${
@@ -242,11 +245,18 @@ const JobNode: React.FunctionComponent<
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
-        <button className="flex w-full" onClick={viewJobProperties}>
+        <Button
+          className="flex w-full"
+          onClick={viewJobProperties}
+          title={props.data.parameters?.name || props.data.name}
+          ariaLabel={props.data.parameters?.name || props.data.name}
+        >
           {jobIcon(props.data.parameters?.type === 'approval')}
           {props.data.parameters?.name || props.data.name}
-        </button>
-        <button
+        </Button>
+        <Button
+          title="Delete job"
+          ariaLabel="Delete job"
           className={`my-auto
           opacity-${hovering['node'] ? 100 : 0}
           transition-opacity duration-150 w-8 h-full flex`}
@@ -259,10 +269,12 @@ const JobNode: React.FunctionComponent<
             className="w-3 cursor-pointer m-auto"
             color={hovering['remove'] ? '#B5261F' : '#AAAAAA'}
           />
-        </button>
+        </Button>
       </div>
 
-      <button
+      <Button
+        title="Make connection"
+        ariaLabel="Make connection"
         className={`opacity-${
           hovering['handles'] && !hovering['node'] && !connecting?.start
             ? 100
@@ -280,7 +292,7 @@ const JobNode: React.FunctionComponent<
           filled={hovering['requiredBy']}
           subtraction={altAction}
         />
-      </button>
+      </Button>
 
       <Handle
         type="source"

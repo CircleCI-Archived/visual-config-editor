@@ -3,6 +3,7 @@ import OrbIcon from '../../icons/components/OrbIcon';
 import { mapDefinitions } from '../../state/DefinitionStore';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import AddButton from '../atoms/AddButton';
+import { Button } from '../atoms/Button';
 import ComponentInfo from '../atoms/ComponentInfo';
 import { Empty } from '../atoms/Empty';
 import { OrbDefinitionMenuNav } from '../menus/definitions/OrbDefinitionsMenu';
@@ -23,8 +24,10 @@ const OrbImportsContainer = (props: OrbImportProps) => {
     () =>
       mapDefinitions(items, (orb) => {
         return (
-          <button
-            className="w-full mb-2 p-4 py-2 text-sm cursor-pointer text-left text-circle-black 
+          <Button
+            title={orb.namespace + '/' + orb.name}
+            ariaLabel={orb.namespace + '/' + orb.name}
+            className="w-full mb-2 p-4 py-2 text-sm cursor-pointer text-left text-circle-black
       bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
             onClick={() => {
               navigateTo({
@@ -47,7 +50,7 @@ const OrbImportsContainer = (props: OrbImportProps) => {
                 {orb.namespace}/{orb.name}@{orb.version}
               </div>
             </div>
-          </button>
+          </Button>
         );
       }),
     [items, navigateTo],

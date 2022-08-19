@@ -1,6 +1,7 @@
 import { FieldArray, useField } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Switch from '../../../icons/ui/Switch';
+import { Button } from '../Button';
 import { FieldlessInspectorProperty } from './InspectorProperty';
 import { FieldlessListProperty, ListPropertyProps } from './ListProperty';
 
@@ -55,13 +56,15 @@ export const MatrixProperty = ({
 
   const switchButton = useMemo(
     () => (
-      <button
+      <Button
+        title="Make matrix"
+        ariaLabel="Make matrix"
         type="button"
         onClick={callback}
         className="hover:bg-circle-gray-400 bg-circle-gray-300 p-1 rounded transition-colors w-8 h-8 ml-2"
       >
         <Switch className="w-5 h-5 m-auto" />
-      </button>
+      </Button>
     ),
     [callback],
   );

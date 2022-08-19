@@ -2,6 +2,7 @@ import { FieldHelperProps, FieldInputProps, FieldMetaProps } from 'formik';
 import React, { OptionHTMLAttributes, ReactElement, useState } from 'react';
 import ExpandIcon from '../../icons/ui/ExpandIcon';
 import DropdownContainer from '../containers/DropdownContainer';
+import { Button } from './Button';
 
 type OptionElement = ReactElement<OptionHTMLAttributes<HTMLHtmlElement>>;
 
@@ -61,7 +62,7 @@ const Select = (props: SelectProps) => {
         props.borderless
           ? 'border-transparent'
           : ' border-circle-gray-300 shadow-sm'
-      } px-2 hover:border-circle-gray-700 border w-auto 
+      } px-2 hover:border-circle-gray-700 border w-auto
         ${props.className}`}
     >
       <div className="flex flex-row">
@@ -79,10 +80,16 @@ const Select = (props: SelectProps) => {
           <ExpandIcon className="w-3 h-5 mr-3 ml-3" expanded={true} />
         </div>
       </div>
-      <div className={'bg-white py-2 shadow-lg flex flex-col ' + props.dropdownClassName}>
+      <div
+        className={
+          'bg-white py-2 shadow-lg flex flex-col ' + props.dropdownClassName
+        }
+      >
         {children.map((child, i) => {
           return (
-            <button
+            <Button
+              ariaLabel="Select"
+              title="Select"
               className={`px-3 py-1 text-left hover:bg-circle-gray-200 ${
                 i > 0 && 'border-t border-circle-gray-300'
               }`}
@@ -96,7 +103,7 @@ const Select = (props: SelectProps) => {
               }}
             >
               {child.props.children}
-            </button>
+            </Button>
           );
         })}
       </div>

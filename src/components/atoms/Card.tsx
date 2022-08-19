@@ -32,6 +32,8 @@ const Card = ({ truncate, description, ...props }: CardProps) => {
           )}
           <div className="flex-1 flex">
             <Button
+              ariaLabel='Select'
+              title="Select"
               margin="0"
               type="button"
               variant="secondary"

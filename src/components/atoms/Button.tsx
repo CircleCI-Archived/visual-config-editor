@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 
+
 const styles = {
   dangerous: {
     default: 'bg-circle-red-dangerous text-white',
@@ -21,24 +22,33 @@ const styles = {
 
 export type ButtonVariant = keyof typeof styles;
 
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  ariaLabel: string;
+  variant?: ButtonVariant;
+  title: string;
+  margin?: string;
+  ref?: React.Ref<HTMLButtonElement>;
+}
+
 export const Button = ({
   variant,
+  ariaLabel,
   className,
+  title,
   margin,
+  ref,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant: ButtonVariant;
-  margin?: string;
-}) => {
+}: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
+  const sDefault = variant ? styles[variant].default : '';
+  const sActive = variant ? styles[variant].active : '';
   return (
     <button
       {...props}
-      className={`${className} ${
-        margin ? `mx-${margin}` : 'mx-3'
-      } w-min h-min whitespace-nowrap text-sm font-medium py-2 px-4 duration:50 transition-colors rounded-md2 ${
-        styles[variant].default
-      }
-      ${props.disabled ? 'opacity-50 cursor-default' : styles[variant].active}`}
+      title={title}
+      {... ref ? { ref } : {}}
+      aria-label={ariaLabel}
+      className={`${className} w-min h-min p-2 mx-2 whitespace-nowrap text-sm font-medium duration:50 transition-colors rounded-md2 ${sDefault}
+      ${props.disabled ? 'opacity-50 cursor-default' : sActive}`}
     >
       {props.children}
     </button>

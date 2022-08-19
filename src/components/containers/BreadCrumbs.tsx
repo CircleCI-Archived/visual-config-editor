@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import BreadCrumbArrowIcon from '../../icons/ui/BreadCrumbArrowIcon';
 import { useStoreActions, useStoreState } from '../../state/Hooks';
 import { NavigationModel } from '../../state/Store';
+import { Button } from '../atoms/Button';
 
 const BreadCrumbs = () => {
   const navigation = useStoreState((state) => state.navigation);
@@ -24,7 +25,9 @@ const BreadCrumbs = () => {
     }
 
     components.push(
-      <button
+      <Button
+        title="Back"
+        ariaLabel="Back"
         className={
           curDepth === 0
             ? 'font-medium text-black ml-1 cursor-default whitespace-nowrap'
@@ -38,7 +41,7 @@ const BreadCrumbs = () => {
         {curDepth > 1
           ? '...'
           : navAt.component.Label(navAt.props, navigation.props)}
-      </button>,
+      </Button>,
     );
 
     if (navAt.component.Icon) {

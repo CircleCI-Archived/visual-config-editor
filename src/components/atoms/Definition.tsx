@@ -8,6 +8,7 @@ import {
 import InspectableMapping from '../../mappings/InspectableMapping';
 import { useStoreActions } from '../../state/Hooks';
 import { InspectorDefinitionMenuNav } from '../menus/definitions/InspectorDefinitionMenu';
+import { Button } from './Button';
 
 export const flattenGenerable = (data: Generable, nested?: boolean) => {
   // this generated object should always have a single key
@@ -46,10 +47,12 @@ const Definition = (props: {
   const setDragging = useStoreActions((actions) => actions.setDragging);
 
   return (
-    <button
-      className="w-full mb-2 p-4 py-2 cursor-pointer text-left text-circle-black 
+    <Button
+      className="w-full mb-2 p-4 py-2 cursor-pointer text-left text-circle-black
       bg-white border border-circle-gray-300 rounded-md2 hover:border-gray-700 text-base"
       draggable="true"
+      title={props.type.name.singular}
+      ariaLabel={props.type.name.singular}
       onDragStart={(e) => {
         const type = props.type;
 
@@ -77,7 +80,7 @@ const Definition = (props: {
       }}
     >
       <Summary data={props.data} />
-    </button>
+    </Button>
   );
 };
 

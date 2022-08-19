@@ -3,6 +3,7 @@ import BranchIcon from '../../icons/ui/BranchIcon';
 import EditIcon from '../../icons/ui/EditIcon';
 import TagIcon from '../../icons/ui/TagIcon';
 import { useStoreActions } from '../../state/Hooks';
+import { Button } from '../atoms/Button';
 import StagedFilterMenuNav from '../menus/stage/StagedFilterMenu';
 import CollapsibleList from './CollapsibleList';
 
@@ -77,7 +78,9 @@ export const FilterPreviewContainer = ({
       titleFont="font-medium text-sm"
       className="mb-4"
       pinned={
-        <button
+        <Button
+          title="Edit Filters"
+          ariaLabel="Edit Filters"
           type="button"
           className={`bg-circle-gray-300 transition-colors h-8 w-8 rounded hover:bg-circle-gray-400 ml-auto`}
           onClick={() => {
@@ -89,7 +92,7 @@ export const FilterPreviewContainer = ({
           }}
         >
           <EditIcon className="m-auto w-4"></EditIcon>
-        </button>
+        </Button>
       }
     >
       <>

@@ -33,7 +33,7 @@ const confirmDialogue: ConfirmationDialogueTemplates = {
   },
   delete: {
     header: `Delete ${placeholder} ${placeholder}?`,
-    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it. 
+    body: `When you delete the ${placeholder} named ${placeholder}, it will be removed from each component that uses it.
     This definition has %s dependent components.`,
     button: 'Delete',
     buttonVariant: 'dangerous',
@@ -117,6 +117,8 @@ const ConfirmationModal = () => {
               <div className="border-t border-circle-gray-400 p-4 py-6 flex">
                 <div className="ml-auto">
                   <Button
+                    title='Cancel'
+                    ariaLabel="Cancel"
                     variant="secondary"
                     type="button"
                     onClick={closeHandler}
@@ -124,6 +126,8 @@ const ConfirmationModal = () => {
                     Cancel
                   </Button>
                   <Button
+                    title={dialogue.button}
+                    ariaLabel={dialogue.button}
                     variant={dialogue.buttonVariant}
                     type="button"
                     onClick={() => {
@@ -134,7 +138,9 @@ const ConfirmationModal = () => {
                     {dialogue.button}
                   </Button>
                 </div>
-                <button
+                <Button
+                  title='Delete'
+                  ariaLabel='Delete'
                   className="absolute w-14 h-10 top-0 right-0 hover:bg-circle-gray-300 rounded"
                   onClick={closeHandler}
                 >
@@ -142,7 +148,7 @@ const ConfirmationModal = () => {
                     className="m-auto w-3 h-3"
                     color="#555555"
                   ></DeleteItemIcon>
-                </button>
+                </Button>
               </div>
             </div>
           </FocusScope>

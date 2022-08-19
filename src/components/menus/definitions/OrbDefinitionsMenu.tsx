@@ -207,6 +207,8 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
           <Footer>
             {inProject ? (
               <Button
+                title='Remove orb'
+                ariaLabel='Remove orb'
                 onClick={() => {
                   if (orb) {
                     unimportOrb(orb);
@@ -218,6 +220,8 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
               </Button>
             ) : (
               <Button
+                title='Import orb'
+                ariaLabel='Import orb'
                 onClick={() => {
                   if (orb) {
                     importOrb(orb);

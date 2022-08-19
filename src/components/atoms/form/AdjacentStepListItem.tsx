@@ -1,5 +1,6 @@
 import { useStoreActions } from '../../../state/Hooks';
 import { StepDefinitionMenuNav } from '../../menus/definitions/StepDefinitionMenu';
+import { Button } from '../Button';
 import { ListItemChildProps } from './ListProperty';
 
 export type AdjacentStepLiteral = 'pre-steps' | 'post-steps';
@@ -15,7 +16,9 @@ const AdjacentStepListItem = ({
   const commandValues = item[commandName];
 
   return (
-    <button
+    <Button
+      title={commandName}
+      ariaLabel={commandName}
       className="flex-1 cursor-pointer text-left rounded text-circle-black leading-6"
       type="button"
       onClick={() => {
@@ -39,7 +42,7 @@ const AdjacentStepListItem = ({
       }}
     >
       {commandName}
-    </button>
+    </Button>
   );
 };
 

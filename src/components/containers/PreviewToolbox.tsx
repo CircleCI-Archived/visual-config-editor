@@ -63,6 +63,8 @@ export default function PreviewToolbox() {
         </div>
         <div className="border-t border-circle-gray-300 py-4 px-1 flex">
           <Button
+            title="set filter"
+            ariaLabel="set filter"
             className="ml-auto"
             variant="flat"
             type="button"
@@ -74,6 +76,8 @@ export default function PreviewToolbox() {
             Clear
           </Button>
           <Button
+            title="update filter"
+            ariaLabel="update filter"
             variant="primary"
             type="button"
             onClick={() => {

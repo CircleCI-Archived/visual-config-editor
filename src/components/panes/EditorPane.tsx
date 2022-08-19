@@ -41,6 +41,8 @@ const EditorPane = (props: any) => {
             variant={'secondary'}
             disabled={!config}
             className="whitespace-nowrap flex ml-auto w-10"
+            title="Copy Config YAML"
+            ariaLabel='Copy Config YAML'
             onClick={() => {
               if (config) {
                 navigator.clipboard.writeText(configYAML(config));

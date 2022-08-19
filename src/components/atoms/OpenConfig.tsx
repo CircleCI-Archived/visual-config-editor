@@ -86,6 +86,8 @@ export const OpenConfig = () => {
         }}
       />
       <Button
+        title='Open config.yml file'
+        ariaLabel='Open config.yml file'
         variant={config ? 'secondary' : 'primary'}
         margin="2"
         className="w-10 whitespace-nowrap flex ml-auto"

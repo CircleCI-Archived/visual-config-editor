@@ -147,6 +147,8 @@ const StagedFilterMenu = ({ job, values }: WorkflowJobMenuProps) => {
 
             <div className="border-t border-circle-gray-300 p-6 flex">
               <Button
+                title='Save filter'
+                ariaLabel='Save filter'
                 type="submit"
                 className="ml-auto"
                 variant="primary"

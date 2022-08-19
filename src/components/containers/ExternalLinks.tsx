@@ -14,7 +14,7 @@ export const ExternalLinks = () => {
   ];
   return (
     <DropdownContainer alignLeft>
-      <div className="flex rounded-md px-4 h-10 items-center justify-center border bg-circle-gray-250 hover:bg-circle-gray-300">
+      <div className="flex rounded-md h-10 items-center justify-center border bg-circle-gray-250 hover:bg-circle-gray-300">
         <MoreIcon className="w-5 my-auto flex" />
       </div>
       <div className="rounded border border-circle-gray-300 p-2 z-30 bg-white flex flex-col">

@@ -14,6 +14,7 @@ import DragListIcon from '../../../icons/ui/DragItemIcon';
 import { useStoreActions } from '../../../state/Hooks';
 import CollapsibleList from '../../containers/CollapsibleList';
 import AddButton from '../AddButton';
+import { Button } from '../Button';
 import { Info } from '../Info';
 import { InspectorFieldProps } from './InspectorProperty';
 
@@ -75,7 +76,9 @@ border border-circle-gray-300 hover:border-circle-black shadow-sm rounded flex f
           </div>
           {children}
           {!lastRemaining && (
-            <button
+            <Button
+              title='Delete Item'
+              ariaLabel='Delete Item'
               onClick={() => {
                 updateConfirmation({
                   modalDialogue: 'delete',
@@ -87,7 +90,7 @@ border border-circle-gray-300 hover:border-circle-black shadow-sm rounded flex f
               className="my-auto"
             >
               <DeleteItemIcon className="w-3 h-3" color="#AAAAAA" />
-            </button>
+            </Button>
           )}
         </div>
       )}

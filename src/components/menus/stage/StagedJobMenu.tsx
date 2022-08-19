@@ -173,7 +173,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
               >
                 <InspectorProperty type="button" name="name" label="Source Job">
                   <div
-                    className="w-full mb-2 p-2 text-sm  text-left text-circle-black 
+                    className="w-full mb-2 p-2 text-sm  text-left text-circle-black
                   bg-circle-gray-200 border border-circle-gray-300 rounded flex flex-row"
                   >
                     <JobIcon className="ml-1 mr-2 w-5 h-5" />
@@ -220,6 +220,8 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
             <span className="border-b border-circle-gray-300 mt-auto" />
             <Footer>
               <Button
+                ariaLabel='Cancel'
+                title='Cancel'
                 variant="secondary"
                 type="button"
                 onClick={() => {
@@ -231,6 +233,8 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 Cancel
               </Button>
               <Button
+                ariaLabel='Save'
+                title='Save'
                 variant="primary"
                 type="submit"
                 // disabled={!formikProps.dirty}

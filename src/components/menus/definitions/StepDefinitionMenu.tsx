@@ -125,6 +125,8 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             <span className="border-b border-circle-gray-300 mt-auto" />
             <div className="flex flex-row ml-auto center py-6 mr-4">
               <Button
+                ariaLabel="Back"
+                title="Back"
                 variant="secondary"
                 type="button"
                 onClick={() => {
@@ -136,6 +138,8 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
                 Cancel
               </Button>
               <Button
+                ariaLabel="Save"
+                title="Save"
                 variant="primary"
                 type="submit"
                 // disabled={!formikProps.dirty}

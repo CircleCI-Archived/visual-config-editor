@@ -261,6 +261,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
               <Footer>
                 {props.editing && (
                   <Button
+                    ariaLabel='Delete'
+                    title='Delete'
                     variant="dangerous"
                     type="button"
                     onClick={() => {
@@ -289,6 +291,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                 )}
 
                 <Button
+                  ariaLabel='Cancel'
+                  title='Cancel'
                   variant="secondary"
                   type="button"
                   onClick={() => {
@@ -300,6 +304,8 @@ const InspectorDefinitionMenu = (props: InspectorDefinitionProps) => {
                   Cancel
                 </Button>
                 <Button
+                  ariaLabel='Save'
+                  title='Save'
                   variant="primary"
                   type="submit"
                   // disabled={!formikProps.dirty}

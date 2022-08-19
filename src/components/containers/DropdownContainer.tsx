@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { Button } from '../atoms/Button';
 
 const getDropDownStyle = (
   buttonRef: RefObject<HTMLButtonElement>,
@@ -75,7 +76,9 @@ const DropdownContainer = (props: {
 
   return (
     <>
-      <button
+      <Button
+        title={isExtended ? 'Hide' : 'Show'}
+        ariaLabel={isExtended ? 'Hide' : 'Show'}
         className={props.className}
         ref={buttonRef}
         type="button"
@@ -87,7 +90,7 @@ const DropdownContainer = (props: {
         }}
       >
         {first}
-      </button>
+      </Button>
       {isExtended && (
         <div
           ref={contentsRef}

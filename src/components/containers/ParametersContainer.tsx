@@ -27,9 +27,10 @@ const ParameterContainer = (props: {
         <div className="p-6 flex flex-col">
           {entries?.length > 0 ? (
             entries.map(([name, parameter]: [string, any], index) => (
-              <button
+              <Button
                 key={name}
-                aria-label="Parameter"
+                ariaLabel="Parameter"
+                title="Parameter"
                 className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                 onClick={() => {
                   navigateTo({
@@ -66,18 +67,19 @@ const ParameterContainer = (props: {
                     Required
                   </p>
                 )}
-              </button>
+              </Button>
             ))
           ) : (
             <Empty
               label="No Parameters Yet"
               Logo={ParameterIcon}
-              description="Add a parameter by clicking the button above 
+              description="Add a parameter by clicking the button above
               to implement dynamic functionality."
             />
           )}
           <Button
-            aria-label="Add Parameter"
+            title="Add Parameter"
+            ariaLabel="Add Parameter"
             type="button"
             variant="primary"
             className="mx-auto my-4"

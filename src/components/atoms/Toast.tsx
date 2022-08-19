@@ -1,4 +1,5 @@
 import { useStoreState, useStoreActions } from '../../state/Hooks';
+import { Button } from './Button';
 
 const Toast = () => {
   const toast = useStoreState((state) => state.toast);
@@ -7,11 +8,12 @@ const Toast = () => {
   return (
     <>
       {toast && (
-        <button
+        <Button
+          title={toast?.label}
           className={
             'flex flex-row text-white bg-circle-gray-700 p-3 w-full rounded transition-opacity'
           }
-          aria-label={toast?.label}
+          ariaLabel={toast?.label}
           onClick={() => {
             setToast();
           }}
@@ -20,7 +22,7 @@ const Toast = () => {
             {toast?.label}
           </p>
           <p className="my-auto">{toast?.content}</p>
-        </button>
+        </Button>
       )}
     </>
   );
