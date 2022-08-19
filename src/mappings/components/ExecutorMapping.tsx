@@ -51,14 +51,14 @@ export const ExecutorMapping: InspectableMapping<
     machine: {
       name: 'new-machine-executor',
       machine: {
-        image: 'ubuntu-2004:202111-01',
+        image: 'ubuntu-2204:2022.07.1',
       },
       resource_class: 'medium',
     },
     macos: {
       name: 'new-macos-executor',
       macos: {
-        xcode: '13.2.0',
+        xcode: '14.0.0',
       },
       resource_class: 'medium',
     },
@@ -117,7 +117,7 @@ export const ExecutorMapping: InspectableMapping<
   },
   docsInfo: {
     description:
-      'An %s technology or environment which Jobs execute their steps inside of.',
+      'An %s is a technology or environment in which Jobs execute their steps inside of.',
     link: 'https://circleci.com/docs/executor-types/',
   },
 };
