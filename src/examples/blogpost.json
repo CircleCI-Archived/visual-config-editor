@@ -1,0 +1,33 @@
+{
+  "version": 2.1,
+  "setup": false,
+  "jobs": {},
+  "workflows": {
+    "build-and-deploy": {
+      "jobs": [
+        {
+          "node/test": {
+            "run-command": "test:unit",
+            "pkg-manager": "yarn"
+          }
+        },
+        {
+          "heroku/deploy-via-git": {
+            "context": ["cfd-deploy"],
+            "requires": ["node/test"],
+            "filters": {
+              "branches": {
+                "only": ["main"]
+              }
+            },
+            "app-name": "cfd-sample"
+          }
+        }
+      ]
+    }
+  },
+  "orbs": {
+    "node": "circleci/node@5.0.2",
+    "heroku": "circleci/heroku@1.2.6"
+  }
+}

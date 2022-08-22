@@ -1,6 +1,7 @@
 import algoliasearch from 'algoliasearch';
 import { createStore, StoreProvider } from 'easy-peasy';
 import { useRef } from 'react';
+import Toast from './components/atoms/Toast';
 import ToolTip from './components/atoms/Tooltip';
 import ConfirmationModal from './components/containers/ConfirmationModal';
 import KBarList from './components/containers/KBarList';

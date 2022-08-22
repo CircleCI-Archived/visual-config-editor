@@ -1,5 +1,5 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CopyIcon from '../../icons/ui/CopyIcon';
 import {
   useConfigParser,
@@ -9,10 +9,12 @@ import {
 import { version } from '../../version.json';
 import { Button } from '../atoms/Button';
 import { OpenConfig } from '../atoms/OpenConfig';
+import templates from '../../examples';
 
 const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
-  const error = useStoreState((state) => state.errorMessage);
+  const error = useStoreState((state) => state.configError);
+  const [example, setExample] = useState<string | undefined>(undefined);
   const editingConfig = useStoreState((state) => state.editingConfig);
   const loadConfig = useStoreActions((actions) => actions.loadConfig);
   const parseConfig = useConfigParser();
@@ -20,16 +22,22 @@ const EditorPane = (props: any) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    if (params.has('config')) {
-      const queryConfig = params.get('config');
+    if (params.has('example') && !example) {
+      const queryConfig = params.get('example');
 
-      console.log(queryConfig);
+      if (!queryConfig) {
+        return;
+      }
 
-      if (queryConfig) {
-        parseConfig(queryConfig, loadConfig);
+      setExample(queryConfig);
+
+      if (queryConfig in templates) {
+        const template = templates[queryConfig as keyof typeof templates];
+
+        parseConfig(JSON.stringify(template, null, 2), loadConfig);
       }
     }
-  });
+  }, [example, loadConfig, parseConfig]);
 
   const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');

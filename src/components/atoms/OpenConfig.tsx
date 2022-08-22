@@ -27,60 +27,7 @@ export const OpenConfig = () => {
           }
 
           e.target.files[0].text().then((yml) => {
-<<<<<<< HEAD
-            const configBlob = parse(yml);
-
-            if ('orbs' in configBlob) {
-              if (!configBlob.orbs) {
-                setConfig(yml);
-                return;
-              }
-
-              const orbPromises = Object.entries(configBlob.orbs).map(
-                ([alias, stanza]) => {
-                  const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
-
-                  if (!parsedOrb) {
-                    const parseError = new Error(
-                      `Could not parse orb ${alias}`,
-                    );
-
-                    loadConfig(parseError);
-                    throw parseError;
-                  }
-
-                  return loadOrb(stanza as string, parsedOrb, alias);
-                },
-              );
-
-              Promise.all(orbPromises).then((loadedOrbs) => {
-                const orbImports: Record<string, OrbImportManifest> =
-                  Object.assign(
-                    {},
-                    ...loadedOrbs.map(({ orb, manifest, alias }) => {
-                      if (!alias) {
-                        const parseError = new Error(
-                          `Could not parse orb ${orb}, no alias`,
-                        );
-
-                        loadConfig(parseError);
-                        throw parseError;
-                      }
-
-                      return {
-                        [alias]: manifest,
-                      };
-                    }),
-                  );
-
-                setConfig(yml, orbImports);
-              });
-            } else {
-              setConfig(yml);
-            }
-=======
             parseConfig(yml, loadConfig);
->>>>>>> 5bab370... feat: added loadable config from query
           });
         }}
       />
