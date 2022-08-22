@@ -55,7 +55,12 @@ export const OpenConfig = () => {
                   const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
 
                   if (!parsedOrb) {
-                    throw new Error(`Could not parse orb ${alias}`);
+                    const parseError = new Error(
+                      `Could not parse orb ${alias}`,
+                    );
+
+                    loadConfig(parseError);
+                    throw parseError;
                   }
 
                   return loadOrb(stanza as string, parsedOrb, alias);
@@ -68,7 +73,12 @@ export const OpenConfig = () => {
                     {},
                     ...loadedOrbs.map(({ orb, manifest, alias }) => {
                       if (!alias) {
-                        throw new Error(`Could not load orb ${orb}`);
+                        const parseError = new Error(
+                          `Could not parse orb ${orb}, no alias`,
+                        );
+
+                        loadConfig(parseError);
+                        throw parseError;
                       }
 
                       return {

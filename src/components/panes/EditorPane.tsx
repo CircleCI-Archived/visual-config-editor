@@ -7,6 +7,7 @@ import { OpenConfig } from '../atoms/OpenConfig';
 
 const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
+  const error = useStoreState((state) => state.errorMessage);
   const editingConfig = useStoreState((state) => state.editingConfig);
 
   const configYAML = (yml: string) => {
@@ -25,6 +26,8 @@ const EditorPane = (props: any) => {
 
     return yml;
   };
+
+  const editorText = error || (config && configYAML(config));
 
   return (
     <div
@@ -64,8 +67,8 @@ const EditorPane = (props: any) => {
           <Editor
             theme="vs-dark"
             wrapperProps={{ className: 'flex-1 flex-grow' }}
-            language="yaml"
-            value={config && configYAML(config)}
+            language={config ? 'yaml' : 'terminal'}
+            value={editorText}
           />
         )}
       </div>
