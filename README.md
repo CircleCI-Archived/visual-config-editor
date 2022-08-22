@@ -4,21 +4,16 @@
 [![CircleCI](https://img.shields.io/circleci/build/gh/CircleCI-Public/visual-config-editor/main?logo=circleci)](https://app.circleci.com/pipelines/github/CircleCI-Public/visual-config-editor)
 
 Generate your CircleCI configuration files by building a visual map of your
-project's workflows.
+project's workflows. No YAML? No problem.
 
-## We've gone GA! 🎉
-
-Key features for the VCE have been implemented, bringing us to the general
-availability phase of this project. These features include:
+The core features of the VCE include:
 
 - Config Definition Creation, Editing
 - Visual Workflow Orchestration
 - Public Orb Support
-- Config Loading\*
+- Circularly Load Configs Created With the VCE
 
 [Read more about introduction of the VCE](https://circleci.com/blog/visual-config-editor/)
-
-##### \* Support for config loading is limited to all features currently supported in the VCE. Any config created in the VCE should be parsable. Config features that fail to circularly parse should be reported.
 
 #
 
