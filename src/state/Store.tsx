@@ -142,7 +142,7 @@ export type StoreModel = DefinitionsStoreModel & {
   };
   /** Currently selected workflow pane index */
   selectedWorkflowId: string;
-  errorMessage?: string;
+  configError?: string;
 };
 
 export type UpdateDiff = {
@@ -714,11 +714,13 @@ const Actions: StoreActions = {
 
   loadConfig: action((state, payload) => {
     if (payload instanceof Error) {
-      state.errorMessage = payload.message;
+      state.configError = payload.message;
 
       console.error(payload);
       return;
     }
+
+    state.configError = '';
 
     const config = payload.config;
     const nodeWidth = 250; // Make this dynamic

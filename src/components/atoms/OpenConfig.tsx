@@ -1,16 +1,17 @@
-import { parsers } from '@circleci/circleci-config-sdk';
-import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { useRef } from 'react';
-import { parse } from 'yaml';
 import OpenIcon from '../../icons/ui/OpenIcon';
-import { useStoreActions, useStoreState } from '../../state/Hooks';
+import {
+  useConfigParser,
+  useStoreActions,
+  useStoreState,
+} from '../../state/Hooks';
 import { Button } from '../atoms/Button';
-import { loadOrb } from '../menus/definitions/OrbDefinitionsMenu';
 
 export const OpenConfig = () => {
   const inputFile = useRef<HTMLInputElement>(null);
   const config = useStoreState((state) => state.config);
   const loadConfig = useStoreActions((actions) => actions.loadConfig);
+  const parseConfig = useConfigParser();
 
   return (
     <>
@@ -25,73 +26,8 @@ export const OpenConfig = () => {
             return;
           }
 
-          const setConfig = (
-            yml: string,
-            orbImports?: Record<string, OrbImportManifest>,
-          ) => {
-            let parseResult;
-            try {
-              parseResult = {
-                config: parsers.parseConfig(yml, orbImports),
-                manifests: orbImports,
-              };
-            } catch (e) {
-              parseResult = e as Error;
-            }
-            loadConfig(parseResult);
-          };
-
           e.target.files[0].text().then((yml) => {
-            const configBlob = parse(yml);
-
-            if ('orbs' in configBlob) {
-              if (!configBlob.orbs) {
-                setConfig(yml);
-                return;
-              }
-
-              const orbPromises = Object.entries(configBlob.orbs).map(
-                ([alias, stanza]) => {
-                  const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
-
-                  if (!parsedOrb) {
-                    const parseError = new Error(
-                      `Could not parse orb ${alias}`,
-                    );
-
-                    loadConfig(parseError);
-                    throw parseError;
-                  }
-
-                  return loadOrb(stanza as string, parsedOrb, alias);
-                },
-              );
-
-              Promise.all(orbPromises).then((loadedOrbs) => {
-                const orbImports: Record<string, OrbImportManifest> =
-                  Object.assign(
-                    {},
-                    ...loadedOrbs.map(({ orb, manifest, alias }) => {
-                      if (!alias) {
-                        const parseError = new Error(
-                          `Could not parse orb ${orb}, no alias`,
-                        );
-
-                        loadConfig(parseError);
-                        throw parseError;
-                      }
-
-                      return {
-                        [alias]: manifest,
-                      };
-                    }),
-                  );
-
-                setConfig(yml, orbImports);
-              });
-            } else {
-              setConfig(yml);
-            }
+            parseConfig(yml, loadConfig);
           });
         }}
       />
