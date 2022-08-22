@@ -16,6 +16,8 @@ availability phase of this project. These features include:
 - Public Orb Support
 - Config Loading\*
 
+[Read more about introduction of the VCE](https://circleci.com/blog/visual-config-editor/)
+
 ##### \* Support for config loading is limited to all features currently supported in the VCE. Any config created in the VCE should be parsable. Config features that fail to circularly parse should be reported.
 
 #
