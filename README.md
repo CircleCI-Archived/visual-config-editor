@@ -6,9 +6,24 @@
 Generate your CircleCI configuration files by building a visual map of your
 project's workflows.
 
-This project is currently early preview. Features are subject to changes.
+## We've gone GA! 🎉
 
-**[Try it out](https://circleci-public.github.io/visual-config-editor/)** for yourself! Fork the repo and **[contribute](CONTRIBUTING.md)** to help us make this amazing!
+Key features for the VCE have been implemented, bringing us to the general
+availability phase of this project. These features include:
+
+- Config Definition Creation, Editing
+- Visual Workflow Orchestration
+- Public Orb Support
+- Config Loading\*
+
+##### \* Support for config loading is limited to all features currently supported in the VCE. Any config created in the VCE should be parsable. Config features that fail to circularly parse should be reported.
+
+#
+
+**[Try it out](https://circleci-public.github.io/visual-config-editor/)** for
+yourself! Fork the repo and **[contribute](CONTRIBUTING.md)** to help us make
+this amazing! [Join our discord](https://discord.gg/Vx8wMGdtce) and discuss work
+in progress!
 
 ## Preview
 
@@ -36,31 +51,20 @@ $ yarn start-docker
 
 **Install**
 
-Using npm:
-
-```shell
-$ npm install
-```
-
 Using yarn:
 
 ```shell
 $ yarn install
 ```
 
-After installing your dependencies, ensure are using the proper version of node by running NVM:
+After installing your dependencies, ensure are using the proper version of node
+by running NVM:
 
 ```shell
 $ nvm use
 ```
 
 **Start dev server**
-
-Using npm:
-
-```shell
-$ npm run start
-```
 
 Using yarn:
 
@@ -131,9 +135,12 @@ workflows:
 
 ## Contributing
 
-This repository welcomes community contributions! See our [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on configuring your development environment and how to submit quality pull requests.
+This repository welcomes community contributions! See our
+[CONTRIBUTING.md](CONTRIBUTING.md) for guidance on configuring your development
+environment and how to submit quality pull requests.
 
 ## Built with
 
 [CircleCI Config SDK](https://github.com/CircleCI-Public/circleci-config-sdk-ts)
-****
+
+---
