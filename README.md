@@ -54,8 +54,8 @@ Using yarn:
 $ yarn install
 ```
 
-After installing your dependencies, ensure are using the proper version of node
-by running NVM:
+After installing your dependencies, ensure you are using the proper version of
+node by running NVM:
 
 ```shell
 $ nvm use
