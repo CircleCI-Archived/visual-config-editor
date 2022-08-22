@@ -52,6 +52,8 @@ export interface NavigationBack {
 export interface ToastModel {
   label: string;
   content: string;
+  link?: { url: string; label: string };
+  duration?: number;
   status: 'success' | 'failed' | 'warning';
   timeout?: NodeJS.Timeout;
 }
@@ -335,7 +337,7 @@ const Actions: StoreActions = {
 
         const timeout = setTimeout(() => {
           actions.setToast();
-        }, 3500);
+        }, incomingToast.duration || 3500);
 
         actions.setToast({ ...incomingToast, timeout });
       }
@@ -644,6 +646,16 @@ const Actions: StoreActions = {
     (actions) => actions.loadConfig,
     async (actions, target) => {
       if (target.payload instanceof Error) {
+        actions.triggerToast({
+          label: 'Config',
+          content: 'failed to load.',
+          link: {
+            label: 'Report an issue.',
+            url: 'https://github.com/CircleCI-Public/visual-config-editor/issues',
+          },
+          duration: 25000,
+          status: 'failed',
+        });
         return;
       }
 
@@ -666,8 +678,11 @@ const Actions: StoreActions = {
             return;
           }
 
-          const agindex = searchClient.initIndex("orbs-prod")
-          const agdata = await agindex.findObject<{logo_url: string, url: string}>(hit => hit.objectID === `${orb.namespace}/${orb.name}`)
+          const agindex = searchClient.initIndex('orbs-prod');
+          const agdata = await agindex.findObject<{
+            logo_url: string;
+            url: string;
+          }>((hit) => hit.objectID === `${orb.namespace}/${orb.name}`);
           actions.importOrb(
             new OrbImportWithMeta(
               orb.alias,
