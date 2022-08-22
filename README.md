@@ -4,11 +4,23 @@
 [![CircleCI](https://img.shields.io/circleci/build/gh/CircleCI-Public/visual-config-editor/main?logo=circleci)](https://app.circleci.com/pipelines/github/CircleCI-Public/visual-config-editor)
 
 Generate your CircleCI configuration files by building a visual map of your
-project's workflows.
+project's workflows. No YAML? No problem.
 
-This project is currently early preview. Features are subject to changes.
+The core features of the VCE include:
 
-**[Try it out](https://circleci-public.github.io/visual-config-editor/)** for yourself! Fork the repo and **[contribute](CONTRIBUTING.md)** to help us make this amazing!
+- Config Definition Creation, Editing
+- Visual Workflow Orchestration
+- Public Orb Support
+- Circularly Load Configs Created With the VCE
+
+[Read more about introduction of the VCE](https://circleci.com/blog/visual-config-editor/)
+
+#
+
+**[Try it out](https://circleci-public.github.io/visual-config-editor/)** for
+yourself! Fork the repo and **[contribute](CONTRIBUTING.md)** to help us make
+this amazing! [Join our discord](https://discord.gg/Vx8wMGdtce) and discuss work
+in progress!
 
 ## Preview
 
@@ -36,31 +48,20 @@ $ yarn start-docker
 
 **Install**
 
-Using npm:
-
-```shell
-$ npm install
-```
-
 Using yarn:
 
 ```shell
 $ yarn install
 ```
 
-After installing your dependencies, ensure are using the proper version of node by running NVM:
+After installing your dependencies, ensure you are using the proper version of
+node by running NVM:
 
 ```shell
 $ nvm use
 ```
 
 **Start dev server**
-
-Using npm:
-
-```shell
-$ npm run start
-```
 
 Using yarn:
 
@@ -131,9 +132,12 @@ workflows:
 
 ## Contributing
 
-This repository welcomes community contributions! See our [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on configuring your development environment and how to submit quality pull requests.
+This repository welcomes community contributions! See our
+[CONTRIBUTING.md](CONTRIBUTING.md) for guidance on configuring your development
+environment and how to submit quality pull requests.
 
 ## Built with
 
 [CircleCI Config SDK](https://github.com/CircleCI-Public/circleci-config-sdk-ts)
-****
+
+---
