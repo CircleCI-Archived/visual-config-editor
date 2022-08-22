@@ -1,6 +1,11 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
+import { useEffect } from 'react';
 import CopyIcon from '../../icons/ui/CopyIcon';
-import { useStoreState } from '../../state/Hooks';
+import {
+  useConfigParser,
+  useStoreActions,
+  useStoreState,
+} from '../../state/Hooks';
 import { version } from '../../version.json';
 import { Button } from '../atoms/Button';
 import { OpenConfig } from '../atoms/OpenConfig';
@@ -9,6 +14,22 @@ const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
   const error = useStoreState((state) => state.errorMessage);
   const editingConfig = useStoreState((state) => state.editingConfig);
+  const loadConfig = useStoreActions((actions) => actions.loadConfig);
+  const parseConfig = useConfigParser();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('config')) {
+      const queryConfig = params.get('config');
+
+      console.log(queryConfig);
+
+      if (queryConfig) {
+        parseConfig(queryConfig, loadConfig);
+      }
+    }
+  });
 
   const configYAML = (yml: string) => {
     const matchSDKComment = yml?.match('# SDK Version: .*\n');
