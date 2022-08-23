@@ -262,6 +262,7 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
         nodeTypes={getTypes()}
         edgeTypes={{ requires: Edge }}
         snapToGrid={true}
+        minZoom={0.1}
         connectionMode={ConnectionMode.Loose}
         connectionLineComponent={
           ConnectionLine as React.ComponentType<ConnectionLineComponentProps>
