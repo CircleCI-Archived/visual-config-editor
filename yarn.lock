@@ -1204,10 +1204,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@circleci/circleci-config-sdk@v0.9.0-alpha.15":
-  version "0.9.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.9.0-alpha.15.tgz#34c124f10b27c4fadab2251171ccb3c0d615d320"
-  integrity sha512-8v+dKnIHWy05mdyyKd8/UQlX8cXSbYe1+F9a3yC9Jqhj8vvAwcpPRuvFCacxTguPJn5lGIMDUV3ic0pSMsjihw==
+"@circleci/circleci-config-sdk@v0.9.0-alpha.16":
+  version "0.9.0-alpha.16"
+  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.9.0-alpha.16.tgz#4a6669b8aeea5fe6f8f1fb9bebeae6fb4989f094"
+  integrity sha512-MKp1INEh7Rb0Mr46e6bLf+NsTyobl9IzmaQVDh7k0ul6Aez6gVE85IylY0MEsuUvyqjXZe9+99A5NGQ0K5cZnQ==
   dependencies:
     ajv "^8.8.2"
     ajv-merge-patch "^5.0.1"
