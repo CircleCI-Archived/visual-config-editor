@@ -172,7 +172,13 @@ const OrbDefinitionsMenu = (props: OrbDefinitionProps) => {
             </a>
           </div>
           <div className="flex flex-row mt-3">
-            <img className="w-8 h-8 mx-1" src={props.logo_url} alt="" />
+            <div className="rounded-full bg-white shadow flex w-8 h-8 p-px">
+              <img
+                className="rounded-full my-auto"
+                src={props.logo_url}
+                alt=""
+              />
+            </div>
             <h1 className="ml-2 text-xl font-thin text-circle-gray-500">
               {props.namespace}/
             </h1>
@@ -250,7 +256,11 @@ const OrbDefinitionMenuNav: NavigationComponent = {
     return <p>{props.name}</p>;
   },
   Icon: (props: OrbDefinitionProps) => {
-    return <img className="w-4 h-4 mx-1" src={props.logo_url} alt="" />;
+    return (
+      <div className="w-4 h-4 rounded-full flex shadow">
+        <img className="my-auto" src={props.logo_url} alt="" />
+      </div>
+    );
   },
 };
 
