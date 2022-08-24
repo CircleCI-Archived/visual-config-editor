@@ -11,6 +11,7 @@ export interface CollapsibleListProps {
   className?: string;
   onChange?: (expanded: boolean) => void;
   pinned?: ReactElement;
+  alwaysShowPinned?: boolean;
 }
 
 const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
@@ -50,7 +51,7 @@ const CollapsibleList = ({ titleFont, ...props }: CollapsibleListProps) => {
           </div>
           {expanded && props.titleExpanded}
         </div>
-        {expanded && props.pinned}
+        {(expanded || props.alwaysShowPinned) && props.pinned}
       </div>
       {expanded && <div className="ml-4">{props.children}</div>}
     </div>

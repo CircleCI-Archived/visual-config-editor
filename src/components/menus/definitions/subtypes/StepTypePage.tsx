@@ -90,6 +90,12 @@ const StepTypePage = (
           {Object.values(definitions.orbs).length > 0 ? (
             mapDefinitions<OrbImportWithMeta>(definitions.orbs, (orb) => (
               <CollapsibleList
+                pinned={
+                  <p className="font-normal flex ml-auto text-gray-400">
+                    {orb.version}
+                  </p>
+                }
+                alwaysShowPinned
                 title={
                   <div className="flex flex-row w-full">
                     <img
@@ -101,9 +107,6 @@ const StepTypePage = (
                       {orb.namespace}/
                     </p>
                     {orb.name}
-                    <p className="font-normal flex ml-auto text-gray-400">
-                      {orb.version}
-                    </p>
                   </div>
                 }
               >
