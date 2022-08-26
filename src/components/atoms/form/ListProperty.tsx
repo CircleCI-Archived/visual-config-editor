@@ -135,8 +135,6 @@ export const FieldlessListProperty = ({
   const [input, , helper] = field;
   const ListChild = listItem;
 
-  console.log(input);
-
   return (
     <CollapsibleList
       title={
