@@ -30,7 +30,7 @@ const StepTypePage = (
         <h1 className="ml-6 text-2xl py-3 font-bold">Step Type</h1>
       </header>
       <TabbedMenu tabs={['BUILT-IN', 'COMMANDS', 'ORBS']}>
-        <div className="p-6">
+        <div className="p-6 flex-col overflow-y-scroll">
           {Object.entries(commandSubtypes).map(([name, subtype]) => (
             <Card
               key={name}
@@ -58,7 +58,7 @@ const StepTypePage = (
             />
           ))}
         </div>
-        <div className="p-6">
+        <div className="p-6 flex-col overflow-y-scroll">
           {Object.values(definitions.commands).length > 0 ? (
             mapDefinitions<reusable.CustomCommand>(
               definitions.commands,
@@ -86,7 +86,7 @@ const StepTypePage = (
             />
           )}
         </div>
-        <div className="p-6">
+        <div className="p-6 overflow-y-scroll">
           {Object.values(definitions.orbs).length > 0 ? (
             mapDefinitions<OrbImportWithMeta>(definitions.orbs, (orb) => (
               <CollapsibleList

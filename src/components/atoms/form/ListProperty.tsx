@@ -63,10 +63,11 @@ const ListItem = ({
     <Draggable key={index} draggableId={`${index}`} index={index}>
       {(provided, _) => (
         <div
-          className={`w-full mb-2 p-1 px-3
+          className={`w-full mb-2 p-1 pl-3
 border border-circle-gray-300 hover:border-circle-black shadow-sm rounded flex flex-row ${
             children ? 'bg-white' : 'bg-circle-gray-300'
           }`}
+          style={{ minHeight: '40px' }}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -84,9 +85,9 @@ border border-circle-gray-300 hover:border-circle-black shadow-sm rounded flex f
                 });
               }}
               type="button"
-              className="my-auto"
+              className="my-auto mx-2"
             >
-              <DeleteItemIcon className="w-3 h-3" color="#AAAAAA" />
+              <DeleteItemIcon className=" w-3 h-3" color="#AAAAAA" />
             </button>
           )}
         </div>
@@ -134,6 +135,8 @@ export const FieldlessListProperty = ({
   const [input, , helper] = field;
   const ListChild = listItem;
 
+  console.log(input);
+
   return (
     <CollapsibleList
       title={
@@ -160,7 +163,7 @@ export const FieldlessListProperty = ({
         </>
       }
     >
-      {input.value?.length > 0 ? (
+      {input?.value?.length > 0 ? (
         <DragDropContext
           onDragEnd={(result) => {
             if (result.destination) {
@@ -174,7 +177,7 @@ export const FieldlessListProperty = ({
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="p-2 pr-0 flex flex-col"
+                className="pl-3 py-2 flex flex-col"
               >
                 {input.value.map((item: any, index: number) => {
                   return (

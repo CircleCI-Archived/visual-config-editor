@@ -21,8 +21,9 @@ type FilterListProps = {
 
 const FilterItem = ({ item, setValue }: ListItemChildProps) => {
   return (
-    <input
-      className="w-full h-full p-1"
+    <textarea
+      className="w-full pl-1 py-1"
+      rows={1}
       defaultValue={item}
       placeholder={'Filter string or regex'}
       onChange={(e) => {

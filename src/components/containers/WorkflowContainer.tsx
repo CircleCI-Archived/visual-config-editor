@@ -224,8 +224,8 @@ const WorkflowContainer = ({ bgClassName, className }: ElementProps) => {
 
         if (dragging?.dataType?.dragTarget === 'workflow' && nodeMapping) {
           const pos = {
-            x: e.clientX - gap - transform.x,
-            y: e.clientY - gap * 3 - transform.y,
+            x: e.clientX - 80 - transform.x,
+            y: e.clientY - 120 - transform.y,
           };
           const round = (val: number) =>
             Math.floor(val / transform.zoom / gap) * gap;

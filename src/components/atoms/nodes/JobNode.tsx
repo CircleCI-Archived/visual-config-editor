@@ -12,6 +12,17 @@ import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { StagedJobMenuNav } from '../../menus/stage/StagedJobMenu';
 import { flattenGenerable } from '../Definition';
 
+const formatPattern = (pattern: string) => {
+  if (!pattern.startsWith('^')) {
+    pattern = `^${pattern}`;
+  }
+  if (!pattern.endsWith('$')) {
+    pattern = `${pattern}$`;
+  }
+
+  return pattern;
+};
+
 const ConnectorIcon = (props: { filled: boolean; subtraction?: boolean }) => {
   return (
     <>
@@ -89,10 +100,12 @@ const JobNode: React.FunctionComponent<
 
     try {
       const ignoreFilter = jobFilter?.ignore?.some((pattern) =>
-        sample.match(pattern),
+        sample.match(formatPattern(pattern)),
       );
       const onlyFilter = jobFilter?.only
-        ? jobFilter?.only?.some((pattern) => sample.match(pattern))
+        ? jobFilter?.only?.some((pattern) =>
+            sample.match(formatPattern(pattern)),
+          )
         : true;
 
       filtered = ignoreFilter || !onlyFilter;
