@@ -21,11 +21,12 @@ const OrbImportsContainer = (props: OrbImportProps) => {
   const ref = useRef(null);
   const orbDefinitions = useMemo(
     () =>
+    
       mapDefinitions(items, (orb) => {
         return (
           <button
             className="w-full mb-2 p-4 py-2 text-sm cursor-pointer text-left text-circle-black 
-      bg-white border border-circle-gray-300 rounded-md2 flex flex-row"
+      bg-white border border-circle-gray-300 rounded-md2 flex flex-row hover:border-black"
             onClick={() => {
               navigateTo({
                 component: OrbDefinitionMenuNav,
@@ -40,7 +41,10 @@ const OrbImportsContainer = (props: OrbImportProps) => {
             }}
             key={orb.name}
           >
-            <img className="mr-4 w-6 h-6" src={orb.logo_url} alt="" />
+            <div className='w-6 h-6 flex mr-4 rounded-full shadow-sm'>
+
+            <img className="my-auto" src={orb.logo_url} alt="" />
+            </div>
             <div className="flex flex-row w-full my-auto text-circle-black text-base">
               {orb.alias}
               <div className="flex ml-auto text-xs my-auto bg-circle-gray-300 rounded-full p-px px-2">

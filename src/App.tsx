@@ -22,16 +22,16 @@ export const searchClient = algoliasearch(
 const Pinned = () => {
   const tooltip = useStoreState((state) => state.tooltip);
   return (
-    <div
-      className="p-6 fixed bottom-0 right-0 my-20"
-      style={{ width: inspectorWidth, zIndex: 0 }}
-    >
-      <Toast />
+    <div className="z-40 fixed">
       {tooltip && (
         <ToolTip target={tooltip.ref} facing={tooltip.facing}>
           <p>{tooltip.description}</p>
         </ToolTip>
       )}
+      <Toast
+        className="p-6 fixed bottom-0 right-0 my-20"
+        style={{ width: inspectorWidth }}
+      />
     </div>
   );
 };

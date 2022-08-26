@@ -15,7 +15,7 @@ export type InspectorFieldProps = {
   as?: string;
   type?: string;
   value?: any;
-  labelClassName?: string;
+  labelStyle?: string;
   hidden?: boolean;
   className?: string;
   required?: boolean;
@@ -100,7 +100,7 @@ export const FieldlessInspectorProperty = ({
         }`}
         hidden={props.hidden}
       >
-        <div className={`flex flex-row mb-2 ${props.labelClassName}`}>
+        <div className={`flex flex-row mb-2 ${props.labelStyle}`}>
           <h3 className="font-medium text-sm my-auto text-circle-black">
             {label}
           </h3>

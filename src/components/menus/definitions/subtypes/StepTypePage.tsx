@@ -30,7 +30,7 @@ const StepTypePage = (
         <h1 className="ml-6 text-2xl py-3 font-bold">Step Type</h1>
       </header>
       <TabbedMenu tabs={['BUILT-IN', 'COMMANDS', 'ORBS']}>
-        <div className="p-6">
+        <div className="p-6 flex-col overflow-y-scroll">
           {Object.entries(commandSubtypes).map(([name, subtype]) => (
             <Card
               key={name}
@@ -58,7 +58,7 @@ const StepTypePage = (
             />
           ))}
         </div>
-        <div className="p-6">
+        <div className="p-6 flex-col overflow-y-scroll">
           {Object.values(definitions.commands).length > 0 ? (
             mapDefinitions<reusable.CustomCommand>(
               definitions.commands,
@@ -86,10 +86,16 @@ const StepTypePage = (
             />
           )}
         </div>
-        <div className="p-6">
+        <div className="p-6 overflow-y-scroll">
           {Object.values(definitions.orbs).length > 0 ? (
             mapDefinitions<OrbImportWithMeta>(definitions.orbs, (orb) => (
               <CollapsibleList
+                pinned={
+                  <p className="font-normal flex ml-auto text-gray-400">
+                    {orb.version}
+                  </p>
+                }
+                alwaysShowPinned
                 title={
                   <div className="flex flex-row w-full">
                     <img
@@ -101,9 +107,6 @@ const StepTypePage = (
                       {orb.namespace}/
                     </p>
                     {orb.name}
-                    <p className="font-normal flex ml-auto text-gray-400">
-                      {orb.version}
-                    </p>
                   </div>
                 }
               >

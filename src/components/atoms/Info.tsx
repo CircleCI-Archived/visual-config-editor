@@ -15,7 +15,7 @@ export const Info = ({ description }: { description: string }) => {
       }}
       onMouseLeave={() => updateTooltip(undefined)}
     >
-      <InfoIcon className="w-5 p-1" color="#6A6A6A" />
+      <InfoIcon className="w-5 h-5 p-1" color="#6A6A6A" />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import CommandIcon from '../../../icons/components/CommandIcon';
 import { useStoreActions, useStoreState } from '../../../state/Hooks';
 import { DataModel, NavigationComponent } from '../../../state/Store';
 import { Button } from '../../atoms/Button';
+import { Footer } from '../../atoms/Footer';
 import BreadCrumbs from '../../containers/BreadCrumbs';
 import { commandSubtypes } from '../../containers/inspector/subtypes/CommandSubtypes';
 import ParamListContainer from '../../containers/ParamListContainer';
@@ -91,7 +92,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         {(formikProps) => (
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
-              <div className="p-6">
+              <div className="p-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
                 <button
                   className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                   type="button"
@@ -123,7 +124,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
             </TabbedMenu>
 
             <span className="border-b border-circle-gray-300 mt-auto" />
-            <div className="flex flex-row ml-auto center py-6 mr-4">
+            <Footer>
               <Button
                 variant="secondary"
                 type="button"
@@ -142,7 +143,7 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
               >
                 {props.editing ? 'Save Step' : 'Create Step'}
               </Button>
-            </div>
+            </Footer>
           </Form>
         )}
       </Formik>
