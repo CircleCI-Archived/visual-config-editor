@@ -9054,10 +9054,10 @@ monaco-editor-webpack-plugin@^5.0.0:
   dependencies:
     loader-utils "^2.0.0"
 
-monaco-editor@^0.29.1:
-  version "0.29.1"
-  resolved "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.29.1.tgz"
-  integrity sha512-rguaEG/zrPQSaKzQB7IfX/PpNa0qxF1FY8ZXRkN4WIl8qZdTQRSRJCtRto7IMcSgrU6H53RXI+fTcywOBC4aVw==
+monaco-editor@^0.34.0:
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.34.0.tgz#b1749870a1f795dbfc4dc03d8e9b646ddcbeefa7"
+  integrity sha512-VF+S5zG8wxfinLKLrWcl4WUizMx+LeJrG4PM/M78OhcwocpV0jiyhX/pG6Q9jIOhrb/ckYi6nHnaR5OojlOZCQ==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -13537,10 +13537,10 @@ yallist@^4.0.0:
   resolved "https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yaml@*:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.1.1.tgz#1e06fb4ca46e60d9da07e4f786ea370ed3c3cfec"
-  integrity sha512-o96x3OPo8GjWeSLF+wOAbrPfhFOGY0W00GNaxCDv+9hkcDJEnev1yh8S7pgHF0ik6zc8sQLuL8hjHjJULZp8bw==
+yaml@2.0.0-9:
+  version "2.0.0-9"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.0.0-9.tgz#0099f0645d1ffa686a2c5141b6da340f545d3634"
+  integrity sha512-Bf2KowHjyVkIIiGMt7+fbhmlvKOaE8DWuD07bnL4+FQ9sPmEl/5IzGpBpoxPqOaHuyasBjJhyXDcISpJWfhCGw==
 
 yaml@^1.10.0, yaml@^1.10.2:
   version "1.10.2"
