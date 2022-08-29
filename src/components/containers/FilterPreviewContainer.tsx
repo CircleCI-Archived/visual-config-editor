@@ -31,6 +31,7 @@ export const FilterTargetList = ({
     <>
       {values?.map((value) => (
         <div
+          key={value}
           className="w-full mt-2 pl-2 py-1 px-3
         bg-white border border-circle-gray-300 hover:border-circle-black rounded flex flex-row h-10"
         >
