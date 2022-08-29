@@ -21,6 +21,7 @@ export const ExternalLinks = () => {
         {links.map((link) => (
           <a
             href={link.url}
+            key={link.name}
             className="rounded flex w-full hover:bg-circle-gray-250 border-b border-circle-gray-300 p-2"
           >
             {link.name}

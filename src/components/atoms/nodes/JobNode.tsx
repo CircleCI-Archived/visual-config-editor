@@ -104,14 +104,16 @@ const JobNode: React.FunctionComponent<
       );
       const onlyFilter = jobFilter?.only
         ? jobFilter?.only?.some((pattern) =>
-            sample.match(formatPattern(pattern)),
-          )
+          sample.match(formatPattern(pattern)),
+        )
         : true;
 
       filtered = ignoreFilter || !onlyFilter;
     } catch (e) {
       console.warn('Invalid regex pattern');
     }
+  } else if (toolbox.filter.type === 'tags') {
+    filtered = true;
   }
 
   const jobIcon = (isApproval: boolean = false) => {
@@ -229,11 +231,10 @@ const JobNode: React.FunctionComponent<
       }}
     >
       <button
-        className={`opacity-${
-          hovering['handles'] && !hovering['node'] && !connecting?.start
-            ? 100
-            : 0
-        } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
+        className={`opacity-${hovering['handles'] && !hovering['node'] && !connecting?.start
+          ? 100
+          : 0
+          } transition-opacity duration-300 w-4 h-4 my-auto mr-5`}
         id={`${props.id}_source`}
         {...trackHovering(['requires', 'handles'], ['requires'])}
         draggable
@@ -243,15 +244,13 @@ const JobNode: React.FunctionComponent<
       </button>
 
       <div
-        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer ${
-          filtered ? 'bg-gray-200 opacity-60' : 'opacity-100'
-        }
-        ${
-          (hovering['node'] && !hovering['remove']) ||
-          (hovering['handles'] && connecting?.start)
+        className={`p-2 bg-white node flex flex-row text-black rounded-md border cursor-pointer ${filtered ? 'bg-gray-200 opacity-60' : 'opacity-100'
+          }
+        ${(hovering['node'] && !hovering['remove']) ||
+            (hovering['handles'] && connecting?.start)
             ? 'border-circle-blue'
             : 'border-circle-gray-300'
-        }`}
+          }`}
         ref={nodeRef}
         {...trackHovering(['node'], ['node'])}
       >
@@ -276,11 +275,10 @@ const JobNode: React.FunctionComponent<
       </div>
 
       <button
-        className={`opacity-${
-          hovering['handles'] && !hovering['node'] && !connecting?.start
-            ? 100
-            : 0
-        } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
+        className={`opacity-${hovering['handles'] && !hovering['node'] && !connecting?.start
+          ? 100
+          : 0
+          } source transition-opacity duration-300 w-4 h-4 my-auto ml-5`}
         {...trackHovering(['requiredBy', 'handles'], ['requiredBy'])}
         id={`${props.id}_target`}
         // onClick={() => {--
