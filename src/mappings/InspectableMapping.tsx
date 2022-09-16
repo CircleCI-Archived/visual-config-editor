@@ -68,7 +68,7 @@ export default interface InspectableMapping<
       extras?: any,
       stage?: Elements,
     ) => ConfigNodeProps;
-    /** @todo: Add store functionality to better support updating defintions and their corresponding workflow nodes */
+    /** @todo: Add store functionality to better support updating definitions and their corresponding workflow nodes */
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;
   };
   subtypes?: {
