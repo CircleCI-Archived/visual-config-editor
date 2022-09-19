@@ -63,7 +63,7 @@ const commandSubtypes: CommandSubTypes = {
   },
   add_ssh_keys: {
     name: 'Add SSH Keys',
-    docsLink: `${sourceURL}#checkout`,
+    docsLink: `${sourceURL}#add-ssh-keys`,
     description:
       'A special step used to check out source code to the configured path',
     fields: (
