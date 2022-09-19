@@ -65,7 +65,7 @@ const commandSubtypes: CommandSubTypes = {
     name: 'Add SSH Keys',
     docsLink: `${sourceURL}#checkout`,
     description:
-      'A special step used to check out source code to the configured path',
+      'Add SSH keys so jobs check out code or access other services',
     fields: (
       <ListProperty
         addButton
