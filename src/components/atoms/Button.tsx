@@ -33,11 +33,12 @@ export const Button = ({
   return (
     <button
       {...props}
-      className={`${className} ${
+      className={`${
         margin ? `mx-${margin}` : 'mx-3'
-      } w-min h-min whitespace-nowrap text-sm font-medium py-2 px-4 duration:50 transition-colors rounded-md2 ${
+      } whitespace-nowrap text-sm font-medium py-2 px-4 duration:50 transition-colors rounded-md2 ${
         styles[variant].default
       }
+      ${className}
       ${props.disabled ? 'opacity-50 cursor-default' : styles[variant].active}`}
     >
       {props.children}

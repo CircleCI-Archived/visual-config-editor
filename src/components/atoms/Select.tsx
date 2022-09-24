@@ -61,10 +61,10 @@ const Select = (props: SelectProps) => {
         props.borderless
           ? 'border-transparent'
           : ' border-circle-gray-300 shadow-sm'
-      } px-2 hover:border-circle-gray-700 border w-auto 
+      } px-2 hover:border-circle-gray-700 border 
         ${props.className}`}
     >
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {props.icon}
         <div
           className={`${

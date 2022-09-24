@@ -34,13 +34,13 @@ export const OpenConfig = () => {
       <Button
         variant={config ? 'secondary' : 'primary'}
         margin="2"
-        className="w-10 whitespace-nowrap flex ml-auto"
+        className="w-12 h-8 whitespace-nowrap flex ml-auto"
         onClick={(e) => {
           inputFile.current?.click();
           e.stopPropagation();
         }}
       >
-        <OpenIcon className="w-5" color={config ? '#161616' : '#FFFFFF'} />
+        <OpenIcon className="w-6" color={config ? '#161616' : '#FFFFFF'} />
       </Button>
     </>
   );
