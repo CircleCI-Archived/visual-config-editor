@@ -374,9 +374,10 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     to-fast-properties "^2.0.0"
 
-"@circleci/circleci-config-parser@file:../circleci-circleci-config-parser-0.0.0-development.tgz":
-  version "0.0.0-development"
-  resolved "file:../circleci-circleci-config-parser-0.0.0-development.tgz#2f460c80c259b57a301e4a8c722c294362d9295c"
+"@circleci/circleci-config-parser@^0.10.0-alpha.3":
+  version "0.10.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-parser/-/circleci-config-parser-0.10.0-alpha.3.tgz#137c0490d3ee4e0751efa24dfbf701a3485536bc"
+  integrity sha512-mvX/dSEOpg0JJ5EWkheFuOYp4bVh9JvsM8x4Ybt1Eg7wVgxoYINYRHh3KtQYCf5ctMkJX9MO43ctGKa5qGvuvQ==
   dependencies:
     "@circleci/circleci-config-sdk" "^0.10.1"
     ajv "^8.11.0"

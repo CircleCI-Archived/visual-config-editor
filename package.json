@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@circleci/circleci-config-parser": "file:../circleci-circleci-config-parser-0.0.0-development.tgz",
+    "@circleci/circleci-config-parser": "^0.10.0-alpha.3",
     "@circleci/circleci-config-sdk": "^0.10.1",
     "@monaco-editor/react": "^4.4.5",
     "algoliasearch": "^4.13.1",
