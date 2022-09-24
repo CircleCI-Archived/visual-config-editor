@@ -66,7 +66,7 @@ $ nvm use
 Using yarn:
 
 ```shell
-$ yarn start
+$ yarn dev
 ```
 
 ## Example Generated Config
