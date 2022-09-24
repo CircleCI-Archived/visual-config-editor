@@ -1,4 +1,5 @@
-import { orb, parsers, reusable } from '@circleci/circleci-config-sdk';
+import { parseWorkflowJob } from '@circleci/circleci-config-parser';
+import { orb, reusable } from '@circleci/circleci-config-sdk';
 import { WorkflowJob } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Form, Formik } from 'formik';
 import CommandIcon from '../../../icons/components/CommandIcon';
@@ -127,6 +128,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
         }}
         enableReinitialize
         onSubmit={(values) => {
+          console.log(values)
           const parameters = values.parameters;
           const context = parameters.context
             ? parameters.context.filter(Boolean)
@@ -142,7 +144,7 @@ const StagedJobMenu = ({ source, values, id }: WorkflowJobMenuProps) => {
                 : undefined,
           };
 
-          const update = parsers.parseWorkflowJob(
+          const update = parseWorkflowJob(
             source.name,
             Object.assign(
               {},

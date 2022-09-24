@@ -1,4 +1,4 @@
-import Editor, { DiffEditor } from '@monaco-editor/react';
+// import Editor, { DiffEditor } from '@monaco-editor/react';
 import { useEffect, useState } from 'react';
 import CopyIcon from '../../icons/ui/CopyIcon';
 import {
@@ -85,7 +85,7 @@ const EditorPane = (props: any) => {
         </div>
       </div>
       <div className="flex-1 overflow-hidden">
-        {editingConfig ? (
+        {/* {editingConfig ? (
           <DiffEditor
             theme="vs-dark"
             language="yaml"
@@ -99,7 +99,7 @@ const EditorPane = (props: any) => {
             language={config ? 'yaml' : 'terminal'}
             value={editorText}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

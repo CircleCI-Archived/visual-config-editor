@@ -865,7 +865,7 @@ const Actions: StoreActions = {
     };
     state.selectedWorkflowId = Object.keys(workflows)[0];
     state.stagedJobs = { workflows: workflowJobCounts };
-    state.config = config.generate();
+    state.config = config.stringify();
   }),
   generateConfig: action((state, payload) => {
     const defs = state.definitions;
@@ -905,9 +905,9 @@ const Actions: StoreActions = {
     );
 
     if (payload) {
-      state.editingConfig = config.generate();
+      state.editingConfig = config.stringify();
     } else {
-      state.config = config.generate();
+      state.config = config.stringify();
       state.editingConfig = undefined;
     }
   }),

@@ -1,4 +1,3 @@
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
 import { useStoreState } from '../../../../state/Hooks';
 import { NavigationComponent } from '../../../../state/Store';
 import BreadCrumbs from '../../../containers/BreadCrumbs';
@@ -17,7 +16,7 @@ import { OrbImportWithMeta } from '../OrbDefinitionsMenu';
 
 const StepTypePage = (
   props: SubTypeSelectPageProps<
-    string | CustomCommand | orb.OrbRef<CommandParameterLiteral>
+    string | reusable.ReusableCommand | orb.OrbRef<CommandParameterLiteral>
   >,
 ) => {
   const definitions = useStoreState((state) => state.definitions);
@@ -60,7 +59,7 @@ const StepTypePage = (
         </div>
         <div className="p-6 flex-col overflow-y-scroll">
           {Object.values(definitions.commands).length > 0 ? (
-            mapDefinitions<reusable.CustomCommand>(
+            mapDefinitions<reusable.ReusableCommand>(
               definitions.commands,
               (command) => (
                 <button

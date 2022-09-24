@@ -1,6 +1,8 @@
 import { parameters } from '@circleci/circleci-config-sdk';
 import { AnyParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { Fragment } from 'react';
+import { useStoreState } from '../../state/Hooks';
+import { ExecutorProperty } from '../atoms/form/ExecutorProperty';
 import InspectorProperty from '../atoms/form/InspectorProperty';
 import { MatrixProperty } from '../atoms/form/MatrixProperty';
 
@@ -49,7 +51,9 @@ const subtypes: ParamInspector = {
     };
   },
   executor: (parameter) => {
-    return {};
+    return {
+      special: 'executor',
+    };
   },
   steps: (parameter) => {
     return {};
@@ -66,12 +70,23 @@ const ParamListContainer = ({
   matrix,
   ...props
 }: ParamListContainerProps) => {
+  const definitions = useStoreState((state) => state.definitions);
+
   return (
     <>
       {paramList.parameters.map((parameter, index) => {
         return (
           <Fragment key={index}>
-            {matrix ? (
+            {parameter.type === 'executor' ? (
+              <ExecutorProperty
+                label={parameter.name}
+                name={parameter.name}
+                placeholder={parameter.defaultValue as string | undefined}
+                required={parameter.defaultValue === undefined}
+                orbPool={definitions.orbs}
+                definitionPool={definitions.executors}
+              />
+            ) : matrix ? (
               <MatrixProperty
                 {...props}
                 label={parameter.name}
@@ -89,6 +104,7 @@ const ParamListContainer = ({
                 values={values}
                 name={parent ? `${parent}.${parameter.name}` : parameter.name}
                 {...subtypes[parameter.type](parameter)}
+                definitions={definitions}
               />
             )}
           </Fragment>

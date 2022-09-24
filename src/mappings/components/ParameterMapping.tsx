@@ -1,4 +1,5 @@
-import { parameters, parsers } from '@circleci/circleci-config-sdk';
+import { parseParameter } from '@circleci/circleci-config-parser';
+import { parameters } from '@circleci/circleci-config-sdk';
 import { CustomParameter } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import ParameterSummary from '../../components/atoms/summaries/ParameterSummary';
@@ -33,7 +34,7 @@ export const ParameterMapping: InspectableMapping<
     },
   },
   transform: ({ name, ...values }) => {
-    return parsers.parseParameter(
+    return parseParameter(
       values,
       name,
     ) as CustomParameter<PipelineParameterLiteral>;

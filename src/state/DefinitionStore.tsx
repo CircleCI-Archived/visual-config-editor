@@ -91,7 +91,7 @@ export type DefinitionRecord<G extends Generable> = Record<
  * Component definitions which are used to generate the configuration
  */
 export type DefinitionsModel = {
-  commands: DefinitionRecord<reusable.CustomCommand>;
+  commands: DefinitionRecord<reusable.ReusableCommand>;
   executors: DefinitionRecord<reusable.ReusableExecutor>;
   jobs: DefinitionRecord<Job>;
   workflows: DefinitionRecord<WorkflowStage>;
@@ -500,7 +500,7 @@ export const generateLifeCycleMatrix = (actions: Actions<StoreActions>) => {
 export const createDefinitionStore = (): AllDefinitionActions => {
   return {
     // actions - lifecycle for each definition
-    ...(createDefinitionActions<reusable.CustomCommand>(
+    ...(createDefinitionActions<reusable.ReusableCommand>(
       CommandMapping,
     ) as CommandActions),
     ...(createDefinitionActions<Job>(JobMapping) as JobActions),
@@ -523,13 +523,13 @@ export const createDefinitionStore = (): AllDefinitionActions => {
       ['jobs'],
     ),
     ...createObservableThunks<
-      reusable.CustomCommand,
-      reusable.CustomCommand | Job
-    >(CommandMapping as ObserverMapping<reusable.CustomCommand>, [
+      reusable.ReusableCommand,
+      reusable.ReusableCommand | Job
+    >(CommandMapping as ObserverMapping<reusable.ReusableCommand>, [
       'commands',
       'jobs',
     ]),
-    ...createObservableThunks<WorkflowStage, reusable.CustomCommand | Job>(
+    ...createObservableThunks<WorkflowStage, reusable.ReusableCommand | Job>(
       WorkflowMapping as ObserverMapping<WorkflowStage>,
       ['jobs'],
     ),

@@ -14,6 +14,7 @@ export type InspectorFieldProps = {
   name: any;
   as?: string;
   type?: string;
+  special?: string;
   value?: any;
   labelStyle?: string;
   hidden?: boolean;

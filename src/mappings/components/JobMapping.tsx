@@ -1,10 +1,5 @@
-import {
-  Job,
-  orb,
-  parsers,
-  reusable,
-  workflow,
-} from '@circleci/circleci-config-sdk';
+import { parseJob } from '@circleci/circleci-config-parser';
+import { Job, orb, reusable, workflow } from '@circleci/circleci-config-sdk';
 import JobNode from '../../components/atoms/nodes/JobNode';
 import JobSummary from '../../components/atoms/summaries/JobSummary';
 import JobInspector from '../../components/containers/inspector/JobInspector';
@@ -30,18 +25,18 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   },
   parameters: componentParametersSubtypes.job,
   subscriptions: {
-    commands: (prev, cur: reusable.CustomCommand, j) => {
+    commands: (prev, cur: reusable.ReusableCommand, j) => {
       let steps;
 
       if (cur) {
         steps = j.steps.map((step) =>
-          step instanceof reusable.ReusableCommand && step.name === prev.name
-            ? new reusable.ReusableCommand(cur, step.parameters)
+          step instanceof reusable.ReusedCommand && step.name === prev.name
+            ? new reusable.ReusedCommand(cur, step.parameters)
             : step,
         );
       } else {
         steps = j.steps.filter((step) =>
-          step instanceof reusable.ReusableCommand
+          step instanceof reusable.ReusedCommand
             ? step.name !== prev.name
             : true,
         );
@@ -92,7 +87,7 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
    dependsOn: (definitions) => [definitions.commands, definitions.executors],
    */
   transform: ({ name, ...values }, definitions) => {
-    return parsers.parseJob(
+    return parseJob(
       name,
       values,
       definitionsAsArray(definitions.commands),
