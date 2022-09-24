@@ -1,4 +1,5 @@
-import { parsers, reusable } from '@circleci/circleci-config-sdk';
+import { parseReusableCommand } from '@circleci/circleci-config-parser';
+import { reusable } from '@circleci/circleci-config-sdk';
 import CommandSummary from '../../components/atoms/summaries/CommandSummary';
 import CommandInspector from '../../components/containers/inspector/CommandInspector';
 import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
@@ -9,7 +10,7 @@ import {
 } from '../../state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
 
-export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
+export const CommandMapping: InspectableMapping<reusable.ReusableCommand> = {
   key: 'commands',
   name: {
     singular: 'Command',
@@ -26,19 +27,19 @@ export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
 
       if (cur) {
         steps = c.steps.map((step) =>
-          step instanceof reusable.ReusableCommand && step.name === prev.name
-            ? new reusable.ReusableCommand(cur, step.parameters)
+          step instanceof reusable.ReusedCommand && step.name === prev.name
+            ? new reusable.ReusedCommand(cur, step.parameters)
             : step,
         );
       } else {
         steps = c.steps.filter((step) =>
-          step instanceof reusable.ReusableCommand
+          step instanceof reusable.ReusedCommand
             ? step.name !== prev.name
             : true,
         );
       }
 
-      return new reusable.CustomCommand(
+      return new reusable.ReusableCommand(
         c.name,
         steps,
         c.parameters,
@@ -48,11 +49,11 @@ export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   },
   resolveObservables: (command) => ({
     commands: command.steps.filter(
-      (command) => command instanceof reusable.ReusableCommand,
+      (command) => command instanceof reusable.ReusedCommand,
     ),
   }),
   transform: ({ name, ...values }, definitions) => {
-    return parsers.parseCustomCommand(
+    return parseReusableCommand(
       name,
       values,
       definitionsAsArray(definitions.commands),
@@ -75,7 +76,7 @@ export const CommandMapping: InspectableMapping<reusable.CustomCommand> = {
   },
 };
 
-export type CommandAction = DefinitionAction<reusable.CustomCommand>;
+export type CommandAction = DefinitionAction<reusable.ReusableCommand>;
 
 export type CommandActions = {
   define_commands: CommandAction;

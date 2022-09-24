@@ -12,6 +12,7 @@ import {
 import { useStoreActions } from '../../../state/Hooks';
 import AddButton from '../../atoms/AddButton';
 import { Empty } from '../../atoms/Empty';
+import { ExecutorProperty } from '../../atoms/form/ExecutorProperty';
 import InspectorProperty from '../../atoms/form/InspectorProperty';
 import ListProperty from '../../atoms/form/ListProperty';
 import StepListItem from '../../atoms/form/StepListItem';
@@ -78,7 +79,7 @@ const EmbeddedExecutor = ({
                   }
 
                   embeddedHelper.setValue(undefined);
-                  defineExecutor(data.executor.asReusable(name));
+                  defineExecutor(data.executor.toReusable(name));
                   executor.setValue(name);
                   triggerToast({
                     label: name,
@@ -138,73 +139,14 @@ const JobInspector = ({
           {...props}
         />
       ) : (
-        <>
-          <InspectorProperty
-            label="Executor"
-            as="select"
-            name="executor.name"
-            placeholder="Select Executor"
-            className="w-full"
-            required
-            onChange={(e: string) => {
-              const subscription = { name: e, type: 'executors' };
-              const subs = subscriptions
-                ? [...subscriptions, subscription]
-                : [subscription];
-
-              setSubscriptions && setSubscriptions(subs);
-            }}
-            dependent={(executorName: string) => {
-              const splitName = executorName?.split('/');
-
-              if (!splitName) {
-                return <></>;
-              }
-              const executor =
-                splitName.length === 1
-                  ? definitions.executors[executorName]?.value
-                  : definitions.orbs[splitName[0]].value.executors[
-                      splitName[1]
-                    ];
-
-              return (
-                <>
-                  {executor?.parameters && (
-                    <>
-                      <CollapsibleList title="Properties" expanded>
-                        <div className="pt-2">
-                          <ParamListContainer
-                            paramList={executor.parameters}
-                            parent="executor"
-                          />
-                        </div>
-                      </CollapsibleList>
-                      <div className="w-full border-b border-circle-gray-300 my-2"></div>
-                    </>
-                  )}
-                </>
-              );
-            }}
-          >
-            {[
-              ...mapDefinitions(definitions.executors, (executor) => (
-                <option value={executor.name} key={executor.name}>
-                  {executor.name}
-                </option>
-              )),
-              ...mapDefinitions<orb.OrbImport>(
-                definitions.orbs,
-                (orb) =>
-                  orb.executors &&
-                  Object.values(orb.executors).map((executor) => (
-                    <option value={executor.name} key={executor.name}>
-                      {executor.name}
-                    </option>
-                  )),
-              ),
-            ]}
-          </InspectorProperty>
-        </>
+        <ExecutorProperty
+          label="Executor"
+          name="executor"
+          placeholder="Select Executor"
+          required
+          orbPool={definitions.orbs}
+          definitionPool={definitions.executors}
+        />
       )}
 
       <ListProperty

@@ -1,7 +1,8 @@
-import { CustomCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Commands/exports/Reusable';
+
+import { ReusableCommand } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Reusable';
 import CommandIcon from '../../../icons/components/CommandIcon';
 
-const CommandSummary: React.FunctionComponent<{ data: CustomCommand }> = (
+const CommandSummary: React.FunctionComponent<{ data: ReusableCommand }> = (
   props,
 ) => {
   return (

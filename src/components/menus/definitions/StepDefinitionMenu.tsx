@@ -34,14 +34,14 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
   const builtInSubtype = builtIn
     ? commandSubtypes[subtype as string]
     : undefined;
-  let customCommand: reusable.CustomCommand | undefined;
+  let customCommand: reusable.ReusableCommand | undefined;
 
   if (!builtIn) {
     customCommand = isName
       ? Object.values(definitions.commands).find(
           (command) => (command.value.name = subtype),
         )?.value
-      : (subtype as reusable.CustomCommand);
+      : (subtype as reusable.ReusableCommand);
   }
 
   return (
@@ -92,7 +92,10 @@ const StepDefinitionMenu = (props: StepDefinitionProps) => {
         {(formikProps) => (
           <Form className="flex flex-col flex-1">
             <TabbedMenu tabs={['PROPERTIES']}>
-              <div className="p-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
+              <div
+                className="p-6 overflow-y-auto"
+                style={{ height: 'calc(100vh - 200px)' }}
+              >
                 <button
                   className="p-4 mb-4 w-full border-circle-gray-300 border hover:border-circle-black rounded text-left"
                   type="button"

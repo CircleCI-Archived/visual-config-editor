@@ -1,4 +1,4 @@
-import Editor, { DiffEditor } from '@monaco-editor/react';
+// import Editor, { DiffEditor } from '@monaco-editor/react';
 import { useEffect, useState } from 'react';
 import CopyIcon from '../../icons/ui/CopyIcon';
 import {
@@ -10,6 +10,7 @@ import { version } from '../../version.json';
 import { Button } from '../atoms/Button';
 import { OpenConfig } from '../atoms/OpenConfig';
 import templates from '../../examples';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 
 const EditorPane = (props: any) => {
   const config = useStoreState((state) => state.config);
@@ -68,11 +69,11 @@ const EditorPane = (props: any) => {
         <div className="ml-4 border-b-4 px-3 py-2 pt-4 w-max text-sm tracking-wide font-bold text-white border-white">
           CONFIG
         </div>
-        <div className="p-2 ml-auto flex flex-row">
+        <div className="px-2 pt-2 ml-auto flex flex-row">
           <Button
             variant={'secondary'}
             disabled={!config}
-            className="whitespace-nowrap flex ml-auto w-10"
+            className="whitespace-nowrap flex ml-auto w-12 h-8"
             onClick={() => {
               if (config) {
                 navigator.clipboard.writeText(configYAML(config));

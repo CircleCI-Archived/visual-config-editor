@@ -51,7 +51,7 @@ const dataMappings: DataMapping[] = [
   },
   {
     key: 'commands',
-    component: [reusable.CustomCommand],
+    component: [reusable.ReusableCommand],
     mapping: CommandMapping,
   },
   {

@@ -36,7 +36,7 @@ export class OrbImportWithMeta extends orb.OrbImport {
     description?: string,
     display?: OrbDisplayMeta,
   ) {
-    super(alias, namespace, orb, version, manifest, description, display);
+    super(alias, namespace, orb, version, description, manifest, display);
 
     this.logo_url = logo_url;
     this.url = url;

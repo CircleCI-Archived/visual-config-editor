@@ -4,8 +4,9 @@ import { StoreActions, StoreModel } from './Store';
 
 import { parse } from 'yaml';
 import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
-import { Config, parsers } from '@circleci/circleci-config-sdk';
+import { Config } from '@circleci/circleci-config-sdk';
 import { loadOrb } from '../components/menus/definitions/OrbDefinitionsMenu';
+import { parseConfig, parseOrbImport } from '@circleci/circleci-config-parser';
 const typedHooks = createTypedHooks<StoreModel & StoreActions>();
 
 export const useStoreActions = typedHooks.useStoreActions;
@@ -54,7 +55,7 @@ export const parseConfigHook = (
     let parseResult;
     try {
       parseResult = {
-        config: parsers.parseConfig(yml, orbImports),
+        config: parseConfig(yml, orbImports),
         manifests: orbImports,
       };
     } catch (e) {
@@ -73,7 +74,7 @@ export const parseConfigHook = (
 
     const orbPromises = Object.entries(configBlob.orbs).map(
       ([alias, stanza]) => {
-        const parsedOrb = parsers.parseOrbImport({ [alias]: stanza });
+        const parsedOrb = parseOrbImport({ [alias]: stanza });
         if (!parsedOrb) {
           throw new Error(`Could not parse orb ${alias}`);
         }

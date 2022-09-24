@@ -15,7 +15,6 @@ const NavigationPane = (props: any, { width }: NavigationPaneProps) => {
   const NavPage = navigation.component.Component;
 
   return (
-    <FocusScope contain={false}>
       <div
         ref={props.navigationPane}
         aria-label="Navigation Pane"
@@ -25,7 +24,6 @@ const NavigationPane = (props: any, { width }: NavigationPaneProps) => {
       >
         <NavPage {...navigation.props} />
       </div>
-    </FocusScope>
   );
 };
 

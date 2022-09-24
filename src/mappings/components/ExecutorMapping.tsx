@@ -1,10 +1,10 @@
 import {
   executors,
   Job,
-  parsers,
   reusable,
   workflow,
 } from '@circleci/circleci-config-sdk';
+import { parseReusableExecutor } from '@circleci/circleci-config-parser';
 import ExecutorSummary from '../../components/atoms/summaries/ExecutorSummary';
 import ExecutorInspector from '../../components/containers/inspector/ExecutorInspector';
 import { executorSubtypes } from '../../components/containers/inspector/subtypes/ExecutorSubtypes';
@@ -72,7 +72,7 @@ export const ExecutorMapping: InspectableMapping<
   },
   parameters: componentParametersSubtypes.executor,
   transform: ({ name, ...values }) => {
-    return parsers.parseReusableExecutor(name, values);
+    return parseReusableExecutor(name, values);
   },
   store: {
     add: (actions) => actions.define_executors,
