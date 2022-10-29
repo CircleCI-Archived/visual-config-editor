@@ -1,6 +1,6 @@
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { FormikValues } from 'formik';
-import { Elements, NodeProps } from 'react-flow-renderer';
+import { Edge, NodeProps } from 'react-flow-renderer';
 import { IconProps } from '../icons/IconProps';
 import {
   DefinitionsModel,
@@ -66,7 +66,7 @@ export default interface InspectableMapping<
     transform?: (
       data: GenerableType,
       extras?: any,
-      stage?: Elements,
+      stage?: { nodes: Node[], edges: Edge[] },
     ) => ConfigNodeProps;
     /** @todo: Add store functionality to better support updating definitions and their corresponding workflow nodes */
     component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;

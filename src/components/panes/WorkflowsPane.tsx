@@ -1,6 +1,7 @@
 import Logo from '../../icons/ui/Logo';
 import HeaderMenu from '../containers/HeaderMenu';
-import WorkflowContainer from '../containers/WorkflowContainer';
+// import WorkflowContainer from '../containers/WorkflowContainer';
+import { FlowProvided } from '../flow/Flow';
 
 const WorkflowsPane = () => {
   return (
@@ -18,10 +19,11 @@ const WorkflowsPane = () => {
         </div>
         <HeaderMenu />
       </header>
-      <WorkflowContainer
+      {/* <WorkflowContainer
         bgClassName="bg-circle-gray-200"
         className="border border-r-0 h-full border-b-0 border-circle-gray-300"
-      />
+      /> */}
+      <FlowProvided className="border border-r-0 h-full border-b-0 border-circle-gray-300"></FlowProvided>
     </div>
   );
 };

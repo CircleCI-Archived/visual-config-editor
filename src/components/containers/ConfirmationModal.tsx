@@ -57,7 +57,7 @@ const ConfirmationModal = () => {
   }, [updateConfirmation]);
 
   const handleUserKeyPress = useCallback(
-    (event) => {
+    (event: any) => {
       const { key } = event;
       if (key === 'Escape') {
         closeHandler();

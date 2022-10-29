@@ -101,36 +101,36 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
     remove: (actions) => actions.delete_jobs,
   },
   dragTarget: 'workflow',
-  node: {
-    transform: (data, params, elements) => {
-      const stagedNames = new Set(
-        elements
-          ?.filter((element) => element.type === 'jobs')
-          .map((job) => job.data.parameters?.name || job.data.name),
-      );
-      let name = data.name;
+  // node: {
+  //   transform: (data, params, elements) => {
+  //     const stagedNames = new Set(
+  //       elements
+  //         ?.filter((element) => element.type === 'jobs')
+  //         .map((job) => job.data.parameters?.name || job.data.name),
+  //     );
+  //     let name = data.name;
 
-      if (stagedNames && stagedNames.has(name)) {
-        for (let i = 2; true; i++) {
-          const newName = `${name} (${i})`;
+  //     if (stagedNames && stagedNames.has(name)) {
+  //       for (let i = 2; true; i++) {
+  //         const newName = `${name} (${i})`;
 
-          if (!stagedNames.has(newName)) {
-            name = newName;
-            break;
-          }
-        }
-      }
+  //         if (!stagedNames.has(newName)) {
+  //           name = newName;
+  //           break;
+  //         }
+  //       }
+  //     }
 
-      const newParams = params || {};
+  //     const newParams = params || {};
 
-      if (name !== data.name) {
-        newParams.name = name;
-      }
+  //     if (name !== data.name) {
+  //       newParams.name = name;
+  //     }
 
-      return new workflow.WorkflowJob(data, newParams);
-    },
-    component: JobNode,
-  },
+  //     return new workflow.WorkflowJob(data, newParams);
+  //   },
+  //   component: JobNode,
+  // },
   components: {
     icon: JobIcon,
     summary: JobSummary,
