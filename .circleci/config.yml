@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@4.7.0
+  cypress: cypress-io/cypress@2.1.0
 
 commands:
   update-version:
@@ -45,10 +46,18 @@ jobs:
             git push -f git@github.com:CircleCI-Public/visual-config-editor.git master:gh-pages
 
 workflows:
-  deploy:
+  build-deploy:
     jobs:
+      - cypress/run:  
+          name: test
+          executor: cypress/browsers-chrome99-ff97
+          yarn: true
+          no-workspace: true
+          command: yarn test
       - deploy-page:
           context: cci-config-sdk-publishing
+          requires:
+            - test
           filters:
             branches:
               ignore: /.*/
