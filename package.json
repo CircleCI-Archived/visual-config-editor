@@ -23,7 +23,8 @@
     "react-flow-renderer": "9.6.7",
     "react-instantsearch-hooks-web": "^6.29.0",
     "react-redux": "^7.2.6",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "wait-on": "^6.0.1"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.6.2",
