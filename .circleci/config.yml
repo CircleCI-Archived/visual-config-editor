@@ -50,7 +50,9 @@ workflows:
     jobs:
       - cypress/run:  
           name: test
-          executor: "node-cypress"
+          executor: 
+            name: "cypress/base"
+            node: "16.18.0
           yarn: true
       - deploy-page:
           context: cci-config-sdk-publishing
