@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 cypress/screenshots
-cypress/videos
+cypress/videos  
