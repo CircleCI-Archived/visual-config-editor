@@ -52,7 +52,7 @@ workflows:
           name: test
           executor: 
             name: "cypress/base"
-            node: "16.18.0
+            node: "16.18.0"
           yarn: true
       - deploy-page:
           context: cci-config-sdk-publishing
