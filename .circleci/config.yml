@@ -52,7 +52,7 @@ workflows:
           name: test
           executor: cypress/browsers-chrome99-ff97
           yarn: true
-          command: yarn dev & wait-on http://localhost:5174/ && yarn cypress run --headless
+          command: yarn test
       - deploy-page:
           context: cci-config-sdk-publishing
           requires:

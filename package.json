@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cy:run": "yarn cypress run",
+    "test": "start-server-and-test dev http://localhost:5174 cy:run"
   },
   "dependencies": {
     "@circleci/circleci-config-parser": "^0.10.0-alpha.3",
@@ -23,8 +25,8 @@
     "react-flow-renderer": "9.6.7",
     "react-instantsearch-hooks-web": "^6.29.0",
     "react-redux": "^7.2.6",
-    "uuid": "^8.3.2",
-    "wait-on": "^6.0.1"
+    "start-server-and-test": "^1.14.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.6.2",
