@@ -52,6 +52,7 @@ workflows:
           name: test
           executor: cypress/browsers-chrome99-ff97
           yarn: true
+          no-workspace: true
           command: yarn test
       - deploy-page:
           context: cci-config-sdk-publishing
