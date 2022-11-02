@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "cy:run": "yarn cypress run",
-    "test": "start-server-and-test dev http://localhost:5174 cy:run"
+    "test": "start-server-and-test dev http://localhost:5173 cy:run"
   },
   "dependencies": {
     "@circleci/circleci-config-parser": "^0.10.0-alpha.3",
