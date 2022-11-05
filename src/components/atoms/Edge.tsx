@@ -1,5 +1,5 @@
 import React from 'react';
-import { EdgeProps } from 'react-flow-renderer';
+// import { EdgeProps } from 'react-flow-renderer';
 
 // export default function Edge({
 //   id,

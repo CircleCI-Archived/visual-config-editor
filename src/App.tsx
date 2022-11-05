@@ -5,6 +5,7 @@ import Toast from './components/atoms/Toast';
 import ToolTip from './components/atoms/Tooltip';
 import ConfirmationModal from './components/containers/ConfirmationModal';
 import KBarList from './components/containers/KBarList';
+import { FlowProvided } from './components/flow/Flow';
 import EditorPane from './components/panes/EditorPane';
 import NavigationPane from './components/panes/NavigationPane';
 import WorkflowsPane from './components/panes/WorkflowsPane';

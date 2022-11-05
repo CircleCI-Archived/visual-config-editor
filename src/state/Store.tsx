@@ -14,7 +14,7 @@ import {
   Edge,
   Node,
   XYPosition,
-} from 'react-flow-renderer';
+} from 'reactflow';
 import { v4 } from 'uuid';
 import { searchClient, store } from '../App';
 import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';

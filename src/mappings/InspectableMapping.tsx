@@ -1,6 +1,6 @@
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { FormikValues } from 'formik';
-import { Edge, NodeProps } from 'react-flow-renderer';
+    import { Edge, NodeProps } from 'reactflow';
 import { IconProps } from '../icons/IconProps';
 import {
   DefinitionsModel,
