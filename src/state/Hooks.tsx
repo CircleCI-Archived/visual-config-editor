@@ -1,13 +1,13 @@
 import { createTypedHooks } from 'easy-peasy';
 import { useEffect, useState } from 'react';
-import { StoreActions, StoreModel } from './Store';
+import { StoreActionsModel, StoreModel } from './Store';
 
 import { parse } from 'yaml';
 import { OrbImportManifest } from '@circleci/circleci-config-sdk/dist/src/lib/Orb/types/Orb.types';
 import { Config } from '@circleci/circleci-config-sdk';
 import { loadOrb } from '../components/menus/definitions/OrbDefinitionsMenu';
 import { parseConfig, parseOrbImport } from '@circleci/circleci-config-parser';
-const typedHooks = createTypedHooks<StoreModel & StoreActions>();
+const typedHooks = createTypedHooks<StoreModel & StoreActionsModel>();
 
 export const useStoreActions = typedHooks.useStoreActions;
 export const useStoreDispatch = typedHooks.useStoreDispatch;

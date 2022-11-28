@@ -14,6 +14,7 @@
     "@circleci/circleci-config-parser": "^0.10.0-alpha.3",
     "@circleci/circleci-config-sdk": "^0.10.1",
     "@monaco-editor/react": "^4.4.5",
+    "@vitejs/plugin-react": "^2.2.0",
     "algoliasearch": "^4.13.1",
     "easy-peasy": "^5.0.3",
     "formik": "^2.2.9",
@@ -24,7 +25,7 @@
     "react-dom": "^18.2.0",
     "react-instantsearch-hooks-web": "^6.29.0",
     "react-redux": "^7.2.6",
-    "reactflow": "11.0.0",
+    "reactflow": "^11.2.0",
     "start-server-and-test": "^1.14.0",
     "uuid": "^8.3.2"
   },

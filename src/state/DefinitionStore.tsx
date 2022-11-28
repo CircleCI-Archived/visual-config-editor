@@ -32,7 +32,7 @@ import {
   WorkflowStage,
 } from '../mappings/components/WorkflowMapping';
 import GenerableMapping, { typeToMapping } from '../mappings/GenerableMapping';
-import { StoreActions, StoreModel, UpdateType } from './Store';
+import { StoreActionsModel, StoreModel, UpdateType } from './Store';
 
 export type ParameterDefinition = 'parameters';
 export type JobsDefinition = 'jobs';
@@ -108,7 +108,7 @@ export type AllDefinitionActions = JobActions &
   WorkflowActions;
 
 export type DefinitionSubscriptionThunk = ThunkOn<
-  StoreActions,
+  StoreActionsModel,
   UpdateType<NamedGenerable>
 >;
 
@@ -362,7 +362,7 @@ const createObserverSubscriptions = <
 >(
   observableType: DefinitionType,
   subType: 'update' | 'delete',
-  extra?: TargetResolver<StoreActions, {}>,
+  extra?: TargetResolver<StoreActionsModel, {}>,
 ): DefinitionSubscriptionThunk => {
   return thunkOn(
     (actions, empty) => {
@@ -474,7 +474,7 @@ export const createObservableThunks = <
   };
 };
 
-export const generateLifeCycleMatrix = (actions: Actions<StoreActions>) => {
+export const generateLifeCycleMatrix = (actions: Actions<StoreActionsModel>) => {
   const lifeCycles = ['define', 'update', 'cleanup'];
   const types: DefinitionType[] = [
     'parameters',
@@ -545,7 +545,7 @@ export const DefinitionStore: DefinitionsStoreModel = {
     jobs: {},
     workflows: {
       'build-and-deploy': {
-        value: new WorkflowStage('build-and-deploy', v4(), [], undefined, []),
+        value: new WorkflowStage('build-and-deploy', v4(), [], undefined, {nodes: [], edges: []}),
       },
     },
     parameters: {},

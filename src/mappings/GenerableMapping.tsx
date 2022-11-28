@@ -12,7 +12,7 @@ import {
   MappingSubscriptions,
   NamedGenerable,
 } from '../state/DefinitionStore';
-import Store, { StoreActions, StoreModel, UpdateType } from '../state/Store';
+import Store, { StoreActionsModel, StoreModel, UpdateType } from '../state/Store';
 import { CommandMapping } from './components/CommandMapping';
 import { ExecutorMapping } from './components/ExecutorMapping';
 import { JobMapping } from './components/JobMapping';
@@ -149,7 +149,7 @@ export default interface GenerableMapping<
    * Store action resolver to watch other actions for changes.
    */
   externalUpdates?: (
-    actions: TargetResolver<StoreActions, {}>,
+    actions: TargetResolver<StoreActionsModel, {}>,
   ) => Target | Target[];
   resolveObservables?: (
     generable: GenerableType,

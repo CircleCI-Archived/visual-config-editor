@@ -2,7 +2,7 @@ import {
   Config,
   Job,
   parameters,
-  workflow,
+  workflow
 } from '@circleci/circleci-config-sdk';
 import { PipelineParameterLiteral } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Parameters/types/CustomParameterLiterals.types';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
@@ -13,17 +13,15 @@ import {
   Connection,
   Edge,
   Node,
-  XYPosition,
+  XYPosition
 } from 'reactflow';
 import { v4 } from 'uuid';
 import { searchClient, store } from '../App';
 import { ConfirmationModalModel } from '../components/containers/ConfirmationModal';
 import DefinitionsMenu from '../components/menus/definitions/DefinitionsMenu';
 import { OrbImportWithMeta } from '../components/menus/definitions/OrbDefinitionsMenu';
-import { JobMapping } from '../mappings/components/JobMapping';
 import {
-  setWorkflowDefinition,
-  WorkflowStage,
+  WorkflowStage
 } from '../mappings/components/WorkflowMapping';
 import InspectableMapping from '../mappings/InspectableMapping';
 import {
@@ -36,8 +34,9 @@ import {
   DefinitionSubscriptions,
   DefinitionType,
   generateLifeCycleMatrix,
-  NamedGenerable,
+  NamedGenerable
 } from './DefinitionStore';
+import { FlowActions, FlowActionsModel, FlowStore, FlowStoreModel } from './FlowStore';
 
 export interface NavigationBack {
   distance?: number;
@@ -101,7 +100,7 @@ export interface StagedJobMap {
   };
 }
 
-export type StoreModel = DefinitionsStoreModel & {
+export type StoreModel = DefinitionsStoreModel & FlowStoreModel & {
   /** Last generated configuration */
   config: string | undefined;
   /** The configuration with proposed changes */
@@ -154,41 +153,16 @@ export interface UpdateType<Out, In = Out> {
   res?: (value: unknown) => void;
 }
 
-export type StoreActions = AllDefinitionActions & {
+export type StoreActionsModel = AllDefinitionActions & FlowActionsModel & {
   persistProps: Action<StoreModel, { [key: string]: object }>;
   setDragging: Action<StoreModel, DataModel | undefined>;
-  setConnecting: Action<
-    StoreModel,
-    {
-      ref?: MutableRefObject<any>;
-      id: Connection;
-      name?: string;
-    }
-  >;
-  setAltAction: Action<StoreModel, boolean>;
-  updateConnecting: Action<
-    StoreModel,
-    | {
-        ref?: MutableRefObject<any>;
-        id: string;
-        pos?: XYPosition;
-        name?: string;
-      }
-    | undefined
-  >;
-
   setGuideStep: Action<StoreModel, number | undefined>;
 
   navigateTo: Action<StoreModel, NavigationStop & { values?: any }>;
   navigateBack: Action<StoreModel, WithToast<NavigationBack> | void>;
-  onToastEvent: ThunkOn<StoreActions, WithToast<any> | ToastModel | void>;
+  onToastEvent: ThunkOn<StoreActionsModel, WithToast<any> | ToastModel | void>;
 
   selectWorkflow: Action<StoreModel, string>;
-  addWorkflowElement: Action<StoreModel, any>;
-  removeWorkflowElement: Action<StoreModel, string>;
-  updateWorkflowElement: Action<StoreModel, { id: string; data: any }>;
-  setWorkflowElements: Action<StoreModel, any>;
-  observeWorkflowSources: ThunkOn<StoreActions, UpdateType<Job>>;
 
   importOrb: Action<StoreModel, OrbImportWithMeta>;
   unimportOrb: Action<StoreModel, OrbImportWithMeta>;
@@ -197,7 +171,7 @@ export type StoreActions = AllDefinitionActions & {
     StoreModel,
     { config: Config; manifests?: Record<string, OrbImportManifest> } | Error
   >;
-  loadDefinitions: ThunkOn<StoreActions, Config | Error>;
+  loadDefinitions: ThunkOn<StoreActionsModel, Config | Error>;
   generateConfig: Action<StoreModel, void | Partial<DefinitionsModel>>;
   error: Action<StoreModel, any>;
 
@@ -205,36 +179,16 @@ export type StoreActions = AllDefinitionActions & {
   setToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerToast: Action<StoreModel, ToastModel | undefined | void>;
   triggerConfirmation: Action<StoreModel, ConfirmationModalModel | undefined>;
-  triggerConfigRefresh: ThunkOn<StoreActions, void>;
+  triggerConfigRefresh: ThunkOn<StoreActionsModel, void>;
 
   updateTooltip: Action<StoreModel, InfoToolTip | undefined>;
 };
 
-const Actions: StoreActions = {
+const StoreActions: StoreActionsModel = {
   ...createDefinitionStore(),
+  ...FlowActions,
   persistProps: action((state, payload) => {
     state.navigation = { ...state.navigation, props: payload };
-  }),
-  setAltAction: action((state, payload) => {
-    state.altAction = payload;
-  }),
-  setConnecting: action((state, payload) => {
-    if (payload.ref) {
-      state.connecting = {
-        intent: state.altAction ? 'deleting' : 'creating',
-        start: payload,
-      };
-    } else {
-      state.connecting = undefined;
-    }
-  }),
-  updateConnecting: action((state, payload) => {
-    // if (state.connecting?.start) {
-    //   state.connecting = {
-    //     ...state.connecting,
-    //     end: payload,
-    //   };
-    // }
   }),
 
   setGuideStep: action((state, payload) => {
@@ -350,277 +304,277 @@ const Actions: StoreActions = {
     state.selectedWorkflowId = index;
   }),
 
-  addWorkflowElement: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-    const wf = workflowDef.value;
-    let jobs = wf.jobs;
-
-    if (payload.type === 'jobs') {
-      const jobData = payload.data as WorkflowJobAbstract;
-      const jobName = jobData.name;
-      const stagedJobs = state.stagedJobs.workflows;
-      let curWorkflow = stagedJobs[wf.name];
-
-      if (wf.name in state.stagedJobs.workflows) {
-        if (!curWorkflow[jobName]) {
-          curWorkflow[jobName] = 1;
-        } else {
-          curWorkflow[jobName]++;
-        }
-      } else {
-        stagedJobs[wf.name] = { [jobName]: 1 };
-      }
-
-      jobs = jobs.concat(jobData);
-
-      state.stagedJobs = { workflows: stagedJobs };
-    }
-
-    // setWorkflowDefinition(state, wf.name, {
-    //   ...workflowDef,
-    //   value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, [
-    //     ...wf.elements,
-    //     payload,
-    //   ]),
-    // });
-
-    // wf.elements.push(payload);
-  }),
-  removeWorkflowElement: action((state, payload) => {
-    const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-    const wf = workflowDef.value;
-    const map = state.stagedJobs;
-    const stagedJob = map.workflows[wf.name];
-    let jobs = wf.jobs;
-
-    // const elements = wf.elements.filter((element) => {
-    //   if (element.type === 'requires') {
-    //     const connection = element as Connection;
-
-    //     if (connection.source === payload || connection.target === payload) {
-    //       return false;
-    //     }
-    //   }
-
-    //   if (element.type === 'jobs' && element.id === payload) {
-    //     const workflowJob = element.data as WorkflowJobAbstract;
-    //     const name = workflowJob.name;
-    //     const sameSourceJobs = stagedJob[name];
-
-    //     if (sameSourceJobs) {
-    //       stagedJob[name]--;
-
-    //       if (stagedJob[name] === 0) {
-    //         delete stagedJob[name];
-    //       }
-
-    //       state.stagedJobs = { workflows: map.workflows };
-    //     }
-
-    //     jobs = jobs.filter(
-    //       (job) =>
-    //         !(job instanceof workflow.WorkflowJob) || job.job.name !== payload,
-    //     );
-    //   }
-
-    //   return element.id !== payload;
-    // });
-
-    // setWorkflowDefinition(state, wf.name, {
-    //   ...workflowDef,
-    //   value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
-    // });
-  }),
-  setWorkflowElements: action((state, payload) => {
-  //   const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
-  //   const workflow = workflowDef.value;
-  //   const jobs = payload
-  //     .filter((element) => element.type === JobMapping.key)
-  //     .map((element) => element.data);
-
-  //   setWorkflowDefinition(state, workflow.name, {
-  //     ...workflowDef,
-
-  //     value: new WorkflowStage(
-  //       workflow.name,
-  //       workflow.id,
-  //       jobs,
-  //       workflow.when,
-  //       payload,
-  //     ),
-  //   });
-  }),
-  // // TODO: refactor and handle by DefinitionStore
-  updateWorkflowElement: action((state, payload) => {
+  // addWorkflowElement: action((state, payload) => {
   //   const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
   //   const wf = workflowDef.value;
-  //   const newName = payload.data.parameters?.name || payload.data.name;
-  //   const changedName = newName !== payload.data.name;
+  //   let jobs = wf.jobs;
 
-  //   const elements = wf.elements.map((element) => {
-  //     if (element.id === payload.id) {
-  //       return {
-  //         ...element,
-  //         ...payload,
-  //         id: newName,
-  //       };
-  //     } else if (element.type === 'requires' && changedName) {
-  //       const connection = element as Connection;
+  //   if (payload.type === 'jobs') {
+  //     const jobData = payload.data as WorkflowJobAbstract;
+  //     const jobName = jobData.name;
+  //     const stagedJobs = state.stagedJobs.workflows;
+  //     let curWorkflow = stagedJobs[wf.name];
 
-  //       if (connection.source === payload.id) {
-  //         return {
-  //           ...element,
-  //           source: newName,
-  //           sourceHandle: `${newName}_source`,
-  //         };
-  //       } else if (connection.target === payload.id) {
-  //         return {
-  //           ...element,
-  //           target: newName,
-  //           targetHandle: `${newName}_target`,
-  //         };
+  //     if (wf.name in state.stagedJobs.workflows) {
+  //       if (!curWorkflow[jobName]) {
+  //         curWorkflow[jobName] = 1;
+  //       } else {
+  //         curWorkflow[jobName]++;
   //       }
+  //     } else {
+  //       stagedJobs[wf.name] = { [jobName]: 1 };
   //     }
 
-  //     return element;
-  //   });
+  //     jobs = jobs.concat(jobData);
 
-  //   // TODO: optimize this
-  //   const jobs = wf.jobs.map((staged) => {
-  //     if (staged.name === payload.id) {
-  //       return payload.data;
-  //     }
+  //     state.stagedJobs = { workflows: stagedJobs };
+  //   }
 
-  //     if (staged.parameters?.requires && changedName) {
-  //       const requires = staged.parameters.requires.map((req) => {
-  //         if (req === payload.id) {
-  //           return newName;
-  //         } else {
-  //           return req;
-  //         }
-  //       });
+  //   // setWorkflowDefinition(state, wf.name, {
+  //   //   ...workflowDef,
+  //   //   value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, [
+  //   //     ...wf.elements,
+  //   //     payload,
+  //   //   ]),
+  //   // });
 
-  //       if (staged instanceof workflow.WorkflowJob) {
-  //         return new workflow.WorkflowJob(staged.job, {
-  //           ...staged.parameters,
-  //           requires,
-  //         });
-  //       }
+  //   // wf.elements.push(payload);
+  // }),
+  // removeWorkflowElement: action((state, payload) => {
+  //   const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
+  //   const wf = workflowDef.value;
+  //   const map = state.stagedJobs;
+  //   const stagedJob = map.workflows[wf.name];
+  //   let jobs = wf.jobs;
 
-  //       return new workflow.WorkflowJobApproval(staged.name, {
-  //         ...staged.parameters,
-  //         requires,
-  //       });
-  //     }
+  //   // const elements = wf.elements.filter((element) => {
+  //   //   if (element.type === 'requires') {
+  //   //     const connection = element as Connection;
 
-  //     return staged;
-  //   });
+  //   //     if (connection.source === payload || connection.target === payload) {
+  //   //       return false;
+  //   //     }
+  //   //   }
 
-  //   setWorkflowDefinition(state, wf.name, {
-  //     ...workflowDef,
+  //   //   if (element.type === 'jobs' && element.id === payload) {
+  //   //     const workflowJob = element.data as WorkflowJobAbstract;
+  //   //     const name = workflowJob.name;
+  //   //     const sameSourceJobs = stagedJob[name];
 
-  //     value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
-  //   });
-  }),
-  observeWorkflowSources: thunkOn(
-    (actions) => actions.update_jobs,
-    (actions, thunk) => {
-      // const state = store.getState();
-      // const payload = thunk.payload;
+  //   //     if (sameSourceJobs) {
+  //   //       stagedJob[name]--;
 
-      // Object.values(state.definitions.workflows).forEach((workflowDef) => {
-      //   const wf = workflowDef.value;
-      //   const change = payload as unknown as UpdateType<Job>;
-      //   const oldName = change.old.name;
-      //   const newName = change.new.name;
-      //   const changedName = oldName !== newName;
+  //   //       if (stagedJob[name] === 0) {
+  //   //         delete stagedJob[name];
+  //   //       }
 
-      //   const elements = wf.elements.map((element) => {
-      //     if (element.type === 'jobs' && element.data.job.name === oldName) {
-      //       const wfJob = element.data as workflow.WorkflowJob;
+  //   //       state.stagedJobs = { workflows: map.workflows };
+  //   //     }
 
-      //       return {
-      //         ...element,
-      //         data: new workflow.WorkflowJob(
-      //           change.new,
-      //           wfJob.parameters,
-      //           wfJob.pre_steps,
-      //           wfJob.post_steps,
-      //         ),
-      //         id: newName,
-      //       };
-      //     } else if (element.type === 'requires' && changedName) {
-      //       const connection = element as Connection;
+  //   //     jobs = jobs.filter(
+  //   //       (job) =>
+  //   //         !(job instanceof workflow.WorkflowJob) || job.job.name !== payload,
+  //   //     );
+  //   //   }
 
-      //       if (connection.source === oldName) {
-      //         return {
-      //           ...element,
-      //           source: newName,
-      //           sourceHandle: `${newName}_source`,
-      //         };
-      //       } else if (connection.target === oldName) {
-      //         return {
-      //           ...element,
-      //           target: newName,
-      //           targetHandle: `${newName}_target`,
-      //         };
-      //       }
-      //     }
+  //   //   return element.id !== payload;
+  //   // });
 
-      //     return element;
-      //   });
+  //   // setWorkflowDefinition(state, wf.name, {
+  //   //   ...workflowDef,
+  //   //   value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
+  //   // });
+  // }),
+  // setWorkflowElements: action((state, payload) => {
+  // //   const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
+  // //   const workflow = workflowDef.value;
+  // //   const jobs = payload
+  // //     .filter((element) => element.type === JobMapping.key)
+  // //     .map((element) => element.data);
 
-      //   // TODO: optimize this
-      //   const jobs = wf.jobs.map((staged) => {
-      //     if (
-      //       staged.name === oldName &&
-      //       staged instanceof workflow.WorkflowJob
-      //     ) {
-      //       return new workflow.WorkflowJob(
-      //         change.new,
-      //         staged.parameters,
-      //         staged.pre_steps,
-      //         staged.post_steps,
-      //       );
-      //     }
+  // //   setWorkflowDefinition(state, workflow.name, {
+  // //     ...workflowDef,
 
-      //     if (staged.parameters?.requires && changedName) {
-      //       const requires = staged.parameters.requires.map((req) => {
-      //         if (req === oldName) {
-      //           return newName;
-      //         } else {
-      //           return req;
-      //         }
-      //       });
+  // //     value: new WorkflowStage(
+  // //       workflow.name,
+  // //       workflow.id,
+  // //       jobs,
+  // //       workflow.when,
+  // //       payload,
+  // //     ),
+  // //   });
+  // }),
+  // // // TODO: refactor and handle by DefinitionStore
+  // updateWorkflowElement: action((state, payload) => {
+  // //   const workflowDef = state.definitions.workflows[state.selectedWorkflowId];
+  // //   const wf = workflowDef.value;
+  // //   const newName = payload.data.parameters?.name || payload.data.name;
+  // //   const changedName = newName !== payload.data.name;
 
-      //       if (staged instanceof workflow.WorkflowJob) {
-      //         return new workflow.WorkflowJob(
-      //           staged.job,
-      //           {
-      //             ...staged.parameters,
-      //             requires,
-      //           },
-      //           staged.pre_steps,
-      //           staged.post_steps,
-      //         );
-      //       }
+  // //   const elements = wf.elements.map((element) => {
+  // //     if (element.id === payload.id) {
+  // //       return {
+  // //         ...element,
+  // //         ...payload,
+  // //         id: newName,
+  // //       };
+  // //     } else if (element.type === 'requires' && changedName) {
+  // //       const connection = element as Connection;
 
-      //       return new workflow.WorkflowJobApproval(staged.name, {
-      //         ...staged.parameters,
-      //         requires,
-      //       });
-      //     }
+  // //       if (connection.source === payload.id) {
+  // //         return {
+  // //           ...element,
+  // //           source: newName,
+  // //           sourceHandle: `${newName}_source`,
+  // //         };
+  // //       } else if (connection.target === payload.id) {
+  // //         return {
+  // //           ...element,
+  // //           target: newName,
+  // //           targetHandle: `${newName}_target`,
+  // //         };
+  // //       }
+  // //     }
 
-      //     return staged;
-      //   });
+  // //     return element;
+  // //   });
 
-      //   actions.update_workflows({
-      //     old: wf,
-      //     new: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
-      //   });
-      // });
-    },
-  ),
+  // //   // TODO: optimize this
+  // //   const jobs = wf.jobs.map((staged) => {
+  // //     if (staged.name === payload.id) {
+  // //       return payload.data;
+  // //     }
+
+  // //     if (staged.parameters?.requires && changedName) {
+  // //       const requires = staged.parameters.requires.map((req) => {
+  // //         if (req === payload.id) {
+  // //           return newName;
+  // //         } else {
+  // //           return req;
+  // //         }
+  // //       });
+
+  // //       if (staged instanceof workflow.WorkflowJob) {
+  // //         return new workflow.WorkflowJob(staged.job, {
+  // //           ...staged.parameters,
+  // //           requires,
+  // //         });
+  // //       }
+
+  // //       return new workflow.WorkflowJobApproval(staged.name, {
+  // //         ...staged.parameters,
+  // //         requires,
+  // //       });
+  // //     }
+
+  // //     return staged;
+  // //   });
+
+  // //   setWorkflowDefinition(state, wf.name, {
+  // //     ...workflowDef,
+
+  // //     value: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
+  // //   });
+  // }),
+  // observeWorkflowSources: thunkOn(
+  //   (actions) => actions.update_jobs,
+  //   (actions, thunk) => {
+  //     // const state = store.getState();
+  //     // const payload = thunk.payload;
+
+  //     // Object.values(state.definitions.workflows).forEach((workflowDef) => {
+  //     //   const wf = workflowDef.value;
+  //     //   const change = payload as unknown as UpdateType<Job>;
+  //     //   const oldName = change.old.name;
+  //     //   const newName = change.new.name;
+  //     //   const changedName = oldName !== newName;
+
+  //     //   const elements = wf.elements.map((element) => {
+  //     //     if (element.type === 'jobs' && element.data.job.name === oldName) {
+  //     //       const wfJob = element.data as workflow.WorkflowJob;
+
+  //     //       return {
+  //     //         ...element,
+  //     //         data: new workflow.WorkflowJob(
+  //     //           change.new,
+  //     //           wfJob.parameters,
+  //     //           wfJob.pre_steps,
+  //     //           wfJob.post_steps,
+  //     //         ),
+  //     //         id: newName,
+  //     //       };
+  //     //     } else if (element.type === 'requires' && changedName) {
+  //     //       const connection = element as Connection;
+
+  //     //       if (connection.source === oldName) {
+  //     //         return {
+  //     //           ...element,
+  //     //           source: newName,
+  //     //           sourceHandle: `${newName}_source`,
+  //     //         };
+  //     //       } else if (connection.target === oldName) {
+  //     //         return {
+  //     //           ...element,
+  //     //           target: newName,
+  //     //           targetHandle: `${newName}_target`,
+  //     //         };
+  //     //       }
+  //     //     }
+
+  //     //     return element;
+  //     //   });
+
+  //     //   // TODO: optimize this
+  //     //   const jobs = wf.jobs.map((staged) => {
+  //     //     if (
+  //     //       staged.name === oldName &&
+  //     //       staged instanceof workflow.WorkflowJob
+  //     //     ) {
+  //     //       return new workflow.WorkflowJob(
+  //     //         change.new,
+  //     //         staged.parameters,
+  //     //         staged.pre_steps,
+  //     //         staged.post_steps,
+  //     //       );
+  //     //     }
+
+  //     //     if (staged.parameters?.requires && changedName) {
+  //     //       const requires = staged.parameters.requires.map((req) => {
+  //     //         if (req === oldName) {
+  //     //           return newName;
+  //     //         } else {
+  //     //           return req;
+  //     //         }
+  //     //       });
+
+  //     //       if (staged instanceof workflow.WorkflowJob) {
+  //     //         return new workflow.WorkflowJob(
+  //     //           staged.job,
+  //     //           {
+  //     //             ...staged.parameters,
+  //     //             requires,
+  //     //           },
+  //     //           staged.pre_steps,
+  //     //           staged.post_steps,
+  //     //         );
+  //     //       }
+
+  //     //       return new workflow.WorkflowJobApproval(staged.name, {
+  //     //         ...staged.parameters,
+  //     //         requires,
+  //     //       });
+  //     //     }
+
+  //     //     return staged;
+  //     //   });
+
+  //     //   actions.update_workflows({
+  //     //     old: wf,
+  //     //     new: new WorkflowStage(wf.name, wf.id, jobs, wf.when, elements),
+  //     //   });
+  //     // });
+  //   },
+  // ),
   importOrb: action((state, payload) => {
     const orb = state.definitions.orbs[payload.name];
     if (!orb) {
@@ -925,10 +879,10 @@ const Actions: StoreActions = {
     (actions) => [
       actions.importOrb,
       actions.unimportOrb,
-      actions.addWorkflowElement,
-      actions.setWorkflowElements,
-      actions.removeWorkflowElement,
-      actions.updateWorkflowElement,
+      // actions.addWorkflowElement,
+      // actions.setWorkflowElements,
+      // actions.removeWorkflowElement,
+      // actions.updateWorkflowElement,
       ...generateLifeCycleMatrix(actions),
     ],
     (actions) => {
@@ -940,7 +894,7 @@ const Actions: StoreActions = {
   }),
 };
 
-const Store: StoreModel & StoreActions = {
+const Store: StoreModel & StoreActionsModel  = {
   selectedWorkflowId: 'build-and-deploy',
   editingConfig: undefined,
   config: undefined,
@@ -962,7 +916,8 @@ const Store: StoreModel & StoreActions = {
       'build-and-deploy': {},
     },
   },
-  ...Actions,
+  ...StoreActions,
+  ...FlowStore,
 };
 
 export default Store;

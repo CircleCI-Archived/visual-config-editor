@@ -1,6 +1,6 @@
 import { Button } from '../atoms/Button';
 import { ExternalLinks } from './ExternalLinks';
-import { FlowTools } from './FlowTools';
+import { FlowTools } from '../flow/FlowTools';
 import PreviewToolbox from './PreviewToolbox';
 
 export default function HeaderMenu() {

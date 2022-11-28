@@ -1,13 +1,14 @@
 import { ButtonHTMLAttributes } from 'react';
 
-const styles = {
+const styles: Record<string, { default: string, active: string, selected?: string }> = {
   dangerous: {
     default: 'bg-circle-red-dangerous text-white',
-    active: 'hover:bg-circle-red-dangerous-dark ',
+    active: 'hover:bg-circle-red-dangerous-dark',
   },
   secondary: {
     default: 'bg-circle-gray-250',
     active: 'hover:bg-circle-gray-300',
+    selected: 'bg-circle-gray-400'
   },
   flat: {
     default: 'text-circle-gray-400',
@@ -25,10 +26,12 @@ export const Button = ({
   variant,
   className,
   margin,
+  selected,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant: ButtonVariant;
   margin?: string;
+  selected?: boolean;
 }) => {
   return (
     <button
@@ -39,7 +42,8 @@ export const Button = ({
         styles[variant].default
       }
       ${className}
-      ${props.disabled ? 'opacity-50 cursor-default' : styles[variant].active}`}
+      ${props.disabled ? 'opacity-50 cursor-default' : styles[variant].active}
+      ${selected && styles[variant].selected}`}
     >
       {props.children}
     </button>
