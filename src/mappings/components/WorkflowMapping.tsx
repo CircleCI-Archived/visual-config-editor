@@ -2,8 +2,8 @@ import { Job, workflow, Workflow } from '@circleci/circleci-config-sdk';
 import { When } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Logic';
 import { WorkflowJobAbstract } from '@circleci/circleci-config-sdk/dist/src/lib/Components/Workflow';
 import { Edge, Node } from 'reactflow';
-import { Definition, DefinitionAction } from '../../state/DefinitionStore';
-import { StoreModel } from '../../state/Store';
+import { Definition, DefinitionAction } from '../../core/state/DefinitionStore';
+import { StoreModel } from '../../core/state/Store';
 import GenerableMapping from '../GenerableMapping';
 
 export type WorkflowElements = { nodes: Node[], edges: Edge[]};

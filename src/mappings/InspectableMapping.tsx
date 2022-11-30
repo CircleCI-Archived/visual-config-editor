@@ -1,13 +1,13 @@
 import { Generable } from '@circleci/circleci-config-sdk/dist/src/lib/Components';
 import { FormikValues } from 'formik';
     import { Edge, NodeProps } from 'reactflow';
-import { IconProps } from '../icons/IconProps';
+import { IconProps } from '../core/icons/IconProps';
 import {
   DefinitionsModel,
   DefinitionSubscriptions,
   NamedGenerable,
-} from '../state/DefinitionStore';
-import { NavigationComponent } from '../state/Store';
+} from '../core/state/DefinitionStore';
+import { NavigationComponent } from '../core/state/Store';
 import { WorkflowStage } from './components/WorkflowMapping';
 import GenerableMapping, { SubTypeMapping } from './GenerableMapping';
 export interface GenerableInfoType {
@@ -61,16 +61,6 @@ export default interface InspectableMapping<
     data: GenerableType,
     nodeData: ConfigNodeProps,
   ) => { [K in KeysOfUnion<ConfigNodeProps>]?: any };
-  node?: {
-    /** Transform definition data */
-    transform?: (
-      data: GenerableType,
-      extras?: any,
-      stage?: { nodes: Node[], edges: Edge[] },
-    ) => ConfigNodeProps;
-    /** @todo: Add store functionality to better support updating definitions and their corresponding workflow nodes */
-    component: React.FunctionComponent<{ data: ConfigNodeProps } & NodeProps>;
-  };
   subtypes?: {
     component: NavigationComponent;
     getSubtype: (data: GenerableType) => string | undefined;
