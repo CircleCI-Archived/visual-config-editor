@@ -1,4 +1,5 @@
 import { Action, action } from "easy-peasy";
+import { DataModel } from "./Store";
 
 export enum FlowMode {
     SELECT,
@@ -10,6 +11,8 @@ export enum FlowMode {
 
 export type FlowStoreModel = {
     mode: FlowMode;
+    /** Data being dragged from definition */
+    dragging?: DataModel;
 }
 
 export type FlowActionsModel = {

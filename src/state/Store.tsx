@@ -120,23 +120,6 @@ export type StoreModel = DefinitionsStoreModel & FlowStoreModel & {
   confirm?: ConfirmationModalModel;
   tooltip?: InfoToolTip;
 
-  /** Data being dragged from definition */
-  dragging?: DataModel;
-  altAction?: boolean;
-  connecting?: {
-    intent: 'creating' | 'deleting';
-    start?: {
-      ref?: MutableRefObject<any>;
-      id: Connection;
-      name?: string;
-    };
-    end?: {
-      id: Connection;
-      pos?: XYPosition;
-      ref?: MutableRefObject<any>;
-      name?: string;
-    };
-  };
   /** Currently selected workflow pane index */
   selectedWorkflowId: string;
   configError?: string;
