@@ -1,18 +1,19 @@
 import { parseJob } from '@circleci/circleci-config-parser';
 import { Job, orb, reusable, workflow } from '@circleci/circleci-config-sdk';
-import JobNode from '../../components/atoms/nodes/JobNode';
-import JobSummary from '../../components/atoms/summaries/JobSummary';
-import JobInspector from '../../components/containers/inspector/JobInspector';
-import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
-import JobIcon from '../../icons/components/JobIcon';
+import JobSummary from '../../core/components/atoms/summaries/JobSummary';
+import JobInspector from '../../core/components/containers/inspector/JobInspector';
+import { componentParametersSubtypes } from '../../core/components/containers/inspector/subtypes/ParameterSubtypes';
+import JobIcon from '../../core/icons/components/JobIcon';
 import {
   DefinitionAction,
   definitionsAsArray,
-} from '../../state/DefinitionStore';
+} from '../../core/state/DefinitionStore';
+import JobNode from '../../flow/components/JobNode';
 import InspectableMapping from '../InspectableMapping';
+import { NodeMapping } from '../NodeMapping';
 import { UNDEFINED_EXECUTOR } from './ExecutorMapping';
 
-export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
+export const JobMapping: InspectableMapping<Job> & NodeMapping<Job, workflow.WorkflowJob> = {
   key: 'jobs',
   name: {
     singular: 'Job',
@@ -102,15 +103,18 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
   },
   dragTarget: 'workflow',
   node: {
-    transform: (data, params, elements) => {
+    getId: (data) => {
+      return data.parameters?.name || data.name;
+    },
+    transform: (data, nodes, params) => {
       const stagedNames = new Set(
-        elements
-          ?.filter((element) => element.type === 'jobs')
-          .map((job) => job.data.parameters?.name || job.data.name),
+        nodes
+          ?.filter((element) => element.type === 'workflow_job')
+          .map((node) => node.data.parameters?.name || node.data.name),
       );
       let name = data.name;
 
-      if (stagedNames && stagedNames.has(name)) {
+      if (stagedNames.has(name)) {
         for (let i = 2; true; i++) {
           const newName = `${name} (${i})`;
 
@@ -130,6 +134,7 @@ export const JobMapping: InspectableMapping<Job, workflow.WorkflowJob> = {
       return new workflow.WorkflowJob(data, newParams);
     },
     component: JobNode,
+    key: 'workflow_job'
   },
   components: {
     icon: JobIcon,

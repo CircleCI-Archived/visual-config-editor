@@ -5,13 +5,13 @@ import {
   workflow,
 } from '@circleci/circleci-config-sdk';
 import { parseReusableExecutor } from '@circleci/circleci-config-parser';
-import ExecutorSummary from '../../components/atoms/summaries/ExecutorSummary';
-import ExecutorInspector from '../../components/containers/inspector/ExecutorInspector';
-import { executorSubtypes } from '../../components/containers/inspector/subtypes/ExecutorSubtypes';
-import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
-import ExecutorTypePageNav from '../../components/menus/definitions/subtypes/ExecutorTypePage';
-import ExecutorIcon from '../../icons/components/ExecutorIcon';
-import { DefinitionAction } from '../../state/DefinitionStore';
+import ExecutorSummary from '../../core/components/atoms/summaries/ExecutorSummary';
+import ExecutorInspector from '../../core/components/containers/inspector/ExecutorInspector';
+import { executorSubtypes } from '../../core/components/containers/inspector/subtypes/ExecutorSubtypes';
+import { componentParametersSubtypes } from '../../core/components/containers/inspector/subtypes/ParameterSubtypes';
+import ExecutorTypePageNav from '../../core/components/menus/definitions/subtypes/ExecutorTypePage';
+import ExecutorIcon from '../../core/icons/components/ExecutorIcon';
+import { DefinitionAction } from '../../core/state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
 import { JobMapping } from './JobMapping';
 

@@ -1,16 +1,16 @@
 import algoliasearch from 'algoliasearch';
 import { createStore, StoreProvider } from 'easy-peasy';
 import { useRef } from 'react';
-import Toast from './components/atoms/Toast';
-import ToolTip from './components/atoms/Tooltip';
-import ConfirmationModal from './components/containers/ConfirmationModal';
-import KBarList from './components/containers/KBarList';
-import EditorPane from './components/panes/EditorPane';
-import NavigationPane from './components/panes/NavigationPane';
-import WorkflowsPane from './components/panes/WorkflowsPane';
+import Toast from './core/components/atoms/Toast';
+import ToolTip from './core/components/atoms/Tooltip';
+import ConfirmationModal from './core/components/containers/ConfirmationModal';
+import KBarList from './core/components/containers/KBarList';
+import EditorPane from './core/components/panes/EditorPane';
+import NavigationPane from './core/components/panes/NavigationPane';
+import WorkflowsPane from './core/components/panes/WorkflowsPane';
 import './index.css';
-import useWindowDimensions, { useStoreState } from './state/Hooks';
-import Store from './state/Store';
+import useWindowDimensions, { useStoreState } from './core/state/Hooks';
+import Store from './core/state/Store';
 export const store = createStore(Store);
 export const inspectorWidth = 400;
 
