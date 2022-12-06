@@ -1,13 +1,13 @@
 import { parseReusableCommand } from '@circleci/circleci-config-parser';
 import { reusable } from '@circleci/circleci-config-sdk';
-import CommandSummary from '../../components/atoms/summaries/CommandSummary';
-import CommandInspector from '../../components/containers/inspector/CommandInspector';
-import { componentParametersSubtypes } from '../../components/containers/inspector/subtypes/ParameterSubtypes';
-import CommandIcon from '../../icons/components/CommandIcon';
+import CommandSummary from '../../core/components/atoms/summaries/CommandSummary';
+import CommandInspector from '../../core/components/containers/inspector/CommandInspector';
+import { componentParametersSubtypes } from '../../core/components/containers/inspector/subtypes/ParameterSubtypes';
+import CommandIcon from '../../core/icons/components/CommandIcon';
 import {
   DefinitionAction,
   definitionsAsArray,
-} from '../../state/DefinitionStore';
+} from '../../core/state/DefinitionStore';
 import InspectableMapping from '../InspectableMapping';
 
 export const CommandMapping: InspectableMapping<reusable.ReusableCommand> = {

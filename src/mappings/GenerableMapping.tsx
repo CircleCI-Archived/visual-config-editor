@@ -11,8 +11,8 @@ import {
   DefinitionType,
   MappingSubscriptions,
   NamedGenerable,
-} from '../state/DefinitionStore';
-import Store, { StoreActionsModel, StoreModel, UpdateType } from '../state/Store';
+} from '../core/state/DefinitionStore';
+import Store, { StoreActionsModel, StoreModel, UpdateType } from '../core/state/Store';
 import { CommandMapping } from './components/CommandMapping';
 import { ExecutorMapping } from './components/ExecutorMapping';
 import { JobMapping } from './components/JobMapping';
