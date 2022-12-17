@@ -4337,19 +4337,19 @@ react-flow-renderer@9.6.7:
     react-redux "^7.2.4"
     redux "^4.1.1"
 
-react-instantsearch-hooks-web@^6.29.0:
-  version "6.38.0"
-  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks-web/-/react-instantsearch-hooks-web-6.38.0.tgz#6713b8f5ca55a326c0e4d8119fddc44dbe1d889b"
-  integrity sha512-gNMv+Ep4q5DL/TDP+nWZrCRRDnamme5rdLuNjK1w0eZkzXBjoD7ngsEzJoFKs7SmmBFpOXNCgUNvAucbNLOM9w==
+react-instantsearch-hooks-web@^6.38.1:
+  version "6.38.1"
+  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks-web/-/react-instantsearch-hooks-web-6.38.1.tgz#8ce841122c6f55d8b8621a8b4e4fae7674e93ab0"
+  integrity sha512-CSaHleVFVDz9mCos+eJMxagM9a6H9NO8nvkAqCwx2MOzqJFS1aE5htx8nnlTZt7nqpclPwu3VZUzMFrreA9D6g==
   dependencies:
     "@babel/runtime" "^7.1.2"
     instantsearch.js "^4.47.0"
-    react-instantsearch-hooks "6.38.0"
+    react-instantsearch-hooks "6.38.1"
 
-react-instantsearch-hooks@6.38.0:
-  version "6.38.0"
-  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks/-/react-instantsearch-hooks-6.38.0.tgz#203a200e1ae9cd0fdb10fcd30187d39c03d97d6d"
-  integrity sha512-P/SX99udPeaL4up4U4aKaBsiYS7kgOJo5UxG/oTqJXnGpKPqnxZAqIDG3vs8qhXeRAv3PU2H3WMj4og54L5tAg==
+react-instantsearch-hooks@6.38.1:
+  version "6.38.1"
+  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks/-/react-instantsearch-hooks-6.38.1.tgz#fbff44598a4fdf4bcd680b37f0af328f0807ccdf"
+  integrity sha512-y3Y2w3mnaZWJb2GKVddX2ht4hYy5zd+Hxs+YdACgJeM9Ta1qA6xeH+DxEv3ECY6OgeBekccCTeJhC/CZ1v+VrQ==
   dependencies:
     "@babel/runtime" "^7.1.2"
     algoliasearch-helper "^3.11.1"
