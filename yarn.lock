@@ -390,6 +390,14 @@
   dependencies:
     yaml "2.1.1"
 
+"@circleci/circleci-config-sdk@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@circleci/circleci-config-sdk/-/circleci-config-sdk-0.12.0.tgz#14dc64c809742ccd6ab2abb9753a825542dfff15"
+  integrity sha512-rh2/yD/kayBa5UjJnDyj5EsXyPrTHC/szzAMYiRMkfkbYrkb47SNn6h7FxNBKAGroj5oncv+ekh5OrPI0CD8fw==
+  dependencies:
+    browser-or-node "^2.0.0"
+    yaml "2.1.1"
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
@@ -2340,6 +2348,11 @@ braces@^3.0.2, braces@~3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
+
+browser-or-node@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/browser-or-node/-/browser-or-node-2.1.1.tgz#738790b3a86a8fc020193fa581273fbe65eaea0f"
+  integrity sha512-8CVjaLJGuSKMVTxJ2DpBl5XnlNDiT4cQFeuCJJrvJmts9YrTZDizTX7PjC2s6W4x+MBGZeEY6dGMrF04/6Hgqg==
 
 browserslist@^4.21.3, browserslist@^4.21.4:
   version "4.21.4"
