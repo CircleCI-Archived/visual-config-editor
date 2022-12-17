@@ -22,7 +22,7 @@
     "react-aria": "3.19.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^18.2.0",
-    "react-flow-renderer": "9.6.7",
+    "react-flow-renderer": "9.7.4",
     "react-instantsearch-hooks-web": "^6.29.0",
     "react-redux": "^7.2.6",
     "start-server-and-test": "^1.14.0",
